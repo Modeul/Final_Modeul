@@ -10,6 +10,7 @@ export default {
 			stuff: {},
 			category: {},
 			imageList: '',
+			participationMemberList:[],
 		};
 	},
 	methods: {
@@ -66,8 +67,26 @@ export default {
 
 			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => {
+					console.log(result)
+					this.getParticipationMemberList();
+				})
 				.catch(error => console.log('error', error));
+		},
+		/* 특정 공구상품 글에 참여한 멤버 목록 요청!! */
+		getParticipationMemberList(){
+			var requestOptions = {
+				method: 'GET',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participations/stuff/${this.$route.params.id}`, requestOptions)
+			.then(response => response.json())
+			.then(data => {
+				this.participationMemberList = data.list;
+				console.log(this.participationMemberList);
+			})
+			.catch(error => console.log('error', error));
 		}
 	},
 	computed: {
@@ -85,6 +104,7 @@ export default {
 				this.$store.commit('LOADING_STATUS', false);
 			})
 			.catch((error) => console.log("error", error));
+		this.getParticipationMemberList();
 		this.$store.commit('LOADING_STATUS', false);
 	},
 };
@@ -209,24 +229,24 @@ export default {
 								</div>
 
 							</section> -->
-	<section class="canvas detail-join">
-		<div class="detail-join-title">참여중인 사람</div>
-		<div class="detail-join-wrap">
-			<v-sheet max-width="240">
-				<v-slide-group show-arrows="false">
-					<v-slide-group-item v-for="n in 8" :key="n" v-slot="{ isSelected, toggle }">
-						<button>
-							<img src="https://randomuser.me/api/portraits/men/82.jpg">
-						</button>
-					</v-slide-group-item>
-				</v-slide-group>
-				
-			</v-sheet>
-			<button class="detail-join-button" @click="participationStuff">
-				참여하기
-			</button>
-		</div>
-	</section>
+		<section class="canvas detail-join">
+			<div class="detail-join-title">참여중인 사람</div>
+			<div class="detail-join-wrap">
+				<v-sheet max-width="240">
+					<v-slide-group show-arrows="false">
+						<v-slide-group-item v-for="n in participationMemberList" :key="n" v-slot="{ isSelected, toggle }">
+							<button>
+								<img :src="'/images/member/' + n.memberImage">
+							</button>
+						</v-slide-group-item>
+					</v-slide-group>
+					
+				</v-sheet>
+				<button class="detail-join-button" @click="participationStuff">
+					참여하기
+				</button>
+			</div>
+		</section>
 	</div>
 </template>
 
