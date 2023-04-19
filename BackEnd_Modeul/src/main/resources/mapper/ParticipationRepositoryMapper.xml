@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.modeul.web.repository.ParticipationRepository">
+
+  <resultMap id="ParticipationResultMap" type="Participation">
+    <result property="memberId" column="member_id" />
+    <result property="stuffId" column="stuff_id" />
+  </resultMap>
+ 
+	<insert id="insert" parameterType="Participation">
+		insert into participation(member_id, stuff_id)
+		values(#{memberId}, #{stuffId})
+	</insert>
+</mapper>

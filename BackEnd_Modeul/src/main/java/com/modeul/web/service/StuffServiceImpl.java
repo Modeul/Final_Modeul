@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
+import com.modeul.web.repository.ParticipationRepository;
 import com.modeul.web.repository.StuffRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 @Service
@@ -18,6 +18,9 @@ public class StuffServiceImpl implements StuffService {
 	
 	@Autowired
 	private StuffRepository repository;
+
+	@Autowired
+	private ParticipationRepository participationRepository;
 	
 	// 공구상품 목록 조회용
 	@Override
@@ -64,7 +67,7 @@ public class StuffServiceImpl implements StuffService {
 	public void regStuff(Stuff stuff) {
 
 		int insertCount = repository.insert(stuff);
-		System.out.printf("inserCount: %d",insertCount); 
+		System.out.printf("inserCount: %d\n",insertCount); 
 		
 		// 이미지 유효성 검사
 		if(stuff.getImageList() == null || stuff.getImageList().size() <= 0) {
@@ -75,7 +78,15 @@ public class StuffServiceImpl implements StuffService {
 			image.setStuffId(stuff.getId());
 			repository.imageUpload(image.getName(), image.getStuffId());
 		});
+
+		Participation participation = new Participation();
+		participation.setStuffId(stuff.getId());
+		participation.setMemberId(stuff.getMemberId());	// 아직은 null 값이다..
+
+		// 글 삭제 시, 참여 채팅방도 같이 사라져야 한다???, 일단 편의를 위해 이렇게 동작하도록 함.
 		
+		int participationCount = participationRepository.insert(participation);
+		System.out.printf("participationCount: %d\n", participationCount);
 	}
 
 	@Override

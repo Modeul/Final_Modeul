@@ -45,6 +45,29 @@ export default {
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
+		},
+
+		/* 공구상품 글에 참여!! */
+		participationStuff(){
+			var myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/json");
+
+			var raw = JSON.stringify({
+				stuffId: this.stuff.id,
+				memberId: this.stuff.memberId
+			});
+
+			var requestOptions = {
+				method: 'POST',
+				headers: myHeaders,
+				body: raw,
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log('error', error));
 		}
 	},
 	computed: {
@@ -183,7 +206,7 @@ export default {
 					<a class="icon-member">멤버d</a>
 					<a class="icon-member">멤버e</a>
 				</div>
-				<button class="detail-join-button" onclick="location.href='list.html'">
+				<button class="detail-join-button" @click="participationStuff">
 					참여하기
 				</button>
 			</div>
