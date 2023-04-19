@@ -21,7 +21,7 @@ import Layout from './components/Layout.vue';
 import Index from './components/Index.vue';
 import Signup from './components/Signup.vue';
 import Login from './components/Login.vue';
-// import Chat from './components/Chat.vue';
+import Chat from './components/Chat.vue';
 
 import MemberLayout from './components/member/Layout.vue';    // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from './components/member/stuff/List.vue';
@@ -47,7 +47,7 @@ const routes = [
 			{ path: 'index', component: Index },
 			{ path: 'login', component: Login },
 			{ path: 'signup', component: Signup },
-			// { path: 'chat', component: Chat }
+			{ path: 'chat', component: Chat }
 		]
 	},
 	{
