@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+.header-categ-box{
+    padding-bottom: 13px;
+}
+
+/* 서치박스 */
+
+.d-fl-al{
+    justify-content: center;
+    
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    top:-3px;
+    border-radius: 10px;
+    width: 90%;
+    margin-top: 15px;
+  }
+
