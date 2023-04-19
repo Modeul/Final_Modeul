@@ -126,7 +126,7 @@ public class StuffController {
 		  // 파일 경로 알아 내기(논리적, 물리적)** : urlPath, realPath
 		  String currentDir = System.getProperty("user.dir");
 		  
-		  String realPath = "VuePrj_Modeul/public/images/member/stuff";
+		  String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
 		  
 		  // uuid 추가
 		  String uuid = UUID.randomUUID().toString();

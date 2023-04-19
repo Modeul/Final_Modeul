@@ -64,7 +64,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch("http://localhost:8080/api/participation", requestOptions)
+			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
 			.then(response => response.text())
 			.then(result => console.log(result))
 			.catch(error => console.log('error', error));

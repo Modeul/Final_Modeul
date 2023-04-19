@@ -27,5 +27,13 @@ public class ParticipationController {
 
        return "ok";
     }
+
+    @GetMapping("/participations/{memberId}")
+    public Map<String, Object> getList(@PathVariable("memberId") Long memberId){
+
+        Map<String, Object> dataList = new HashMap<>();
+        // dataList.put();
+        return dataList;
+    }
     
 }
