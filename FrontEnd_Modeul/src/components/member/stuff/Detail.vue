@@ -10,6 +10,7 @@ export default {
 			stuff: {},
 			category: {},
 			imageList: '',
+			participationMemberList:[],
 		};
 	},
 	methods: {
@@ -48,7 +49,7 @@ export default {
 		},
 
 		/* 공구상품 글에 참여!! */
-		participationStuff(){
+		participationStuff() {
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -65,8 +66,26 @@ export default {
 			};
 
 			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
-			.then(response => response.text())
-			.then(result => console.log(result))
+				.then(response => response.text())
+				.then(result => {
+					console.log(result)
+					this.getParticipationMemberList();
+				})
+				.catch(error => console.log('error', error));
+		},
+		/* 특정 공구상품 글에 참여한 멤버 목록 요청!! */
+		getParticipationMemberList(){
+			var requestOptions = {
+				method: 'GET',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participations/stuff/${this.$route.params.id}`, requestOptions)
+			.then(response => response.json())
+			.then(data => {
+				this.participationMemberList = data.list;
+				console.log(this.participationMemberList);
+			})
 			.catch(error => console.log('error', error));
 		}
 	},
@@ -85,18 +104,15 @@ export default {
 				this.$store.commit('LOADING_STATUS', false);
 			})
 			.catch((error) => console.log("error", error));
+		this.getParticipationMemberList();
 		this.$store.commit('LOADING_STATUS', false);
 	},
 };
 </script>
 
-<style scoped>
-@import "/css/component/member/stuff/component-detail.css";
-</style>
-
 <template>
 	<!-- detail : flex-container -->
-	<div class="detail">
+<div class="detail">
 		<header class="detail-header">
 			<router-link to="list" class="icon icon-back">뒤로가기</router-link>
 
@@ -105,22 +121,22 @@ export default {
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
 				<div class="icon-edit2">
-					<div class="d-fl-al fl-dir-col">
-						<router-link :to="'./edit/' + stuff.id">
-							<div class="icon-edit3"></div>
-						</router-link>
-						<div @click="modalHandler2" class="icon-edit4">
+				<div class="d-fl-al fl-dir-col">
+					<router-link :to="'./edit/' + stuff.id">
+						<div class="icon-edit3"></div>
+					</router-link>
+					<div @click="modalHandler2" class="icon-edit4">
 
-						</div>
 					</div>
 				</div>
-				<!-- 취소 확인 모달 -->
+			</div>
+			<!-- 취소 확인 모달 -->
 			<div v-if="openModal2" class="black-bg">
 				<div class="delete-box">
-						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-						<div class="delete-box-2">
-							<div @click="deleteStuff" class="delete-box-3">삭제</div>
-							<div @click="modalHandler2" class="delete-box-4">취소</div>
+					<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+					<div class="delete-box-2">
+						<div @click="deleteStuff" class="delete-box-3">삭제</div>
+						<div @click="modalHandler2" class="delete-box-4">취소</div>
 						</div>
 					</div>
 				</div>
@@ -141,7 +157,8 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-							<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList"
+							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -159,9 +176,9 @@ export default {
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
 					<!-- <div class="d-fl">
-			              <div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-			              <div class="ed-text" @click="deleteStuff">삭제</div>
-			            </div> -->
+								              <div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
+								              <div class="ed-text" @click="deleteStuff">삭제</div>
+								            </div> -->
 					<div class="detail-price">{{ stuff.price }}원</div>
 
 				</section>
@@ -186,8 +203,8 @@ export default {
 				<section class="canvas detail-writing">
 					<h1 class="d-none">writing</h1>
 					<!-- <p class="detail-paragraph">
-			            {{ stuff.content }}
-			          </p> -->
+								            {{ stuff.content }}
+								          </p> -->
 					<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
 				</section>
 			</div>
@@ -195,23 +212,65 @@ export default {
 
 		<!-- detail-join : detail - itme2  -->
 
+		<!-- <section class="canvas detail-join">
+								<h1 class="d-none">join</h1>
+								<h2 class="detail-join-title">참여중인 사람</h2>
+								<div class="detail-join-wrap">
+									<div class="detail-join-members">
+										<a class="icon-member">멤버a</a>
+										<a class="icon-member">멤버b</a>
+										<a class="icon-member">멤버c</a>
+										<a class="icon-member">멤버d</a>
+										<a class="icon-member">멤버e</a>
+									</div>
+									<button class="detail-join-button" @click="participationStuff">
+										참여하기
+									</button>
+								</div>
+
+							</section> -->
 		<section class="canvas detail-join">
-			<h1 class="d-none">join</h1>
-			<h2 class="detail-join-title">참여중인 사람</h2>
+			<div class="detail-join-title">참여중인 사람</div>
 			<div class="detail-join-wrap">
-				<div class="detail-join-members">
-					<a class="icon-member">멤버a</a>
-					<a class="icon-member">멤버b</a>
-					<a class="icon-member">멤버c</a>
-					<a class="icon-member">멤버d</a>
-					<a class="icon-member">멤버e</a>
-				</div>
+				<v-sheet max-width="240">
+					<v-slide-group show-arrows="false">
+						<v-slide-group-item v-for="n in participationMemberList" :key="n" v-slot="{ isSelected, toggle }">
+							<button>
+								<img :src="'/images/member/' + n.memberImage">
+							</button>
+						</v-slide-group-item>
+					</v-slide-group>
+					
+				</v-sheet>
 				<button class="detail-join-button" @click="participationStuff">
 					참여하기
 				</button>
 			</div>
-
 		</section>
 	</div>
 </template>
 
+<style scoped>
+@import "/css/component/member/stuff/component-detail.css";
+
+.v-slide-group button {
+	box-sizing: border-box;
+	padding: 16px;
+	width: 52px;
+}
+.v-slide-group img {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+}
+
+/* .v-slide-group__prev, .v-slide-group__next{
+	min-width: 18px !important;
+	width: 18px;
+} */
+
+.participation{
+	display: flex;
+	justify-content:space-around;
+}
+</style>
