@@ -33,4 +33,9 @@
 	  where
 	  nickname = #{nickname}
   </select>
+  
+  <select id="findByUid" resultType="Member">
+	  select * from member where uid = #{uid}
+  </select>
+ 
 </mapper>

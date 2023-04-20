@@ -1,6 +1,7 @@
 package com.modeul.web.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.modeul.web.entity.Member;
@@ -11,10 +12,14 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private MemberRepository repository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 
 	@Override
 	public int addMember(Member member) {
+		member.setPwd(passwordEncoder.encode(member.getPwd()));
 		return repository.insert(member);
 	}
 	

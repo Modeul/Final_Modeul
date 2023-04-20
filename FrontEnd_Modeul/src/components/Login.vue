@@ -10,13 +10,13 @@
       <main>
             <div class="input-container">
                 
-                <form>
+                <form method="post">
 
                     <div class="input-field-1">
                         <label for="uid" class="uid-label">
                             <span class="d-none">uid</span>
                         </label>
-                        <input type="text" id="uid" name="uid" 
+                        <input type="text" id="uid" name="username" 
                             class="input-text" placeholder=" 아이디">
                     </div>
                     <div class="input-field-1 m-t-1">
@@ -27,7 +27,7 @@
                             class="input-text" placeholder=" 비밀번호">
                     </div>
                     <div>
-                        <router-link to="/member/stuff/list"><input class="btn-2" type="submit" value="로그인"></router-link>
+                        <input class="btn-2" type="submit" value="로그인">
                     </div>
                 </form>
 
@@ -56,5 +56,5 @@
 <style scoped>
 	@import "/css/component/component.css";
 	@import "/css/component/component-login.css";
-	@import "/css/button.css"
+	@import "/css/button.css";
 </style>

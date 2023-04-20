@@ -23,7 +23,7 @@ public class Member {
 	private String phone;
 	private String nickname;
 	private Date regDate;
-	private LocalDateTime level;
+	private int level;
 	
 	public Member(String uid, String pwd, String name, String email, String nickname) {
 		this.uid = uid;

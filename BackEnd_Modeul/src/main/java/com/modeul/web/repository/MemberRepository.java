@@ -15,4 +15,6 @@ public interface MemberRepository {
 	String getByEmail(String email);
 
 	String getByNickname(String nickname);
+	
+	Member findByUid(String uid);
 }
