@@ -33,4 +33,33 @@
 	  where
 	  nickname = #{nickname}
   </select>
+
+	<update id="update" parameterType="Member">
+		update member
+		<set>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			<if test="phone != null">
+				phone = #{phone},
+			</if>
+			<if test="nickname != null">
+				nickname = #{nickname},
+			</if>
+			<if test="level != null">
+				level = #{level}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
 </mapper>
