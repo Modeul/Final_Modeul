@@ -1,6 +1,7 @@
 package com.modeul.web.controller.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.modeul.web.entity.Participation;
+import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.service.ParticipationService;
 
 @RestController
@@ -34,6 +36,13 @@ public class ParticipationController {
         Map<String, Object> dataList = new HashMap<>();
         // dataList.put();
         return dataList;
+    }
+
+    @GetMapping("/chat/{stuffId}")
+    public List<ParticipationMemberView> getViewMemberListbystuffId(@PathVariable("stuffId") Long stuffId){
+        List<ParticipationMemberView> memberList = participationService.getViewAllbwyStuffId(stuffId);
+        System.out.println(memberList);
+        return memberList;
     }
     
 }

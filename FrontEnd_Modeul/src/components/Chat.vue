@@ -22,10 +22,10 @@
 			</div>
 			<div class="chat-side-list-wrap">
 				<!-- 유저 1명 -->
-				<div class="chat-side-list-user">
+				<div v-for="user in participantList" class="chat-side-list-user">
 					<div class="chat-side-list-user-info">
-						<div class="chat-user-img"><img src="../../public/images/member/stuff/chatid110.svg" alt=""></div>
-						<div class="chat-user-nickname">감자탕</div>
+						<div class="chat-user-img"><img :src="'/images/member/stuff/'+user.memberImage"></div>
+						<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 					</div>
 					<div class="chat-side-list-user-icon"> <img src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
 				</div>
@@ -74,17 +74,11 @@
 export default {
 	data() {
 		return {
-			myUserId: 1,
-			stuffId: 2,
+			myUserId: 110,
+			stuffId: 449,
 			drawer: null,
 
-			participant: {
-				user: {
-						userId: 1,
-						userName: '감자',
-						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-					}
-			},
+			participantList: '',
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12"
@@ -93,7 +87,7 @@ export default {
 				{
 					user: {
 						userId: 1,
-						userName: '감자',
+						userName: '감자맨',
 						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
 					},
 					massage: {
@@ -149,7 +143,23 @@ export default {
 		}
 	},
 	computed: {
-	}
+	},
+	methods: {
+		loadParticipantUser(){
+			this.stuffId = 449;
+			fetch(`http://localhost:8080/api/chat/${this.stuffId}`)
+			.then(response => response.json())
+			.then(result=>{
+				console.log(result);
+				this.participantList = result
+			})
+			// .then(result => console.log(result))
+			.catch(error => console.log('error', error));
+		}
+	},
+	mounted() {
+		this.loadParticipantUser();
+	},
 }
 </script>
 <style scoped>
