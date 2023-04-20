@@ -17,7 +17,7 @@ public class ParticipationView extends Participation {
     private String stuffNumPeople;
     private String stuffDeadline;
     private String stuffPrice;
-    private String stuffMemberId;
+    private Long stuffMemberId;
     private Long categoryId;
     private String categoryName;
     private String imageName;

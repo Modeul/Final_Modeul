@@ -24,10 +24,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Image;
+import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.ImageService;
+import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
 
 // 데이터만 전송하는 것이 Rest인 것을 까먹음.. 즉, RestController이다.
@@ -43,6 +45,10 @@ public class StuffController {
 
 	@Autowired
 	private ImageService imageService;
+
+	@Autowired
+    private ParticipationService participationService;
+
 
 	// 반환 타입 주의!
 	@GetMapping("/stuffs")
@@ -82,10 +88,13 @@ public class StuffController {
 		System.out.println("id:" + stuff.getId());
 		List<Image> imageList = imageService.getListById(stuff.getId());
 
+		List<ParticipationMemberView> participationList = participationService.getMemberBystuffId(stuff.getId());
+
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff",stuff);
 		data.put("category",category);
 		data.put("imageList",imageList);
+		data.put("participationList",participationList);
 
 		return data;
 	}

@@ -6,9 +6,18 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
+import com.modeul.web.entity.ParticipationView;
 
 @Mapper
 public interface ParticipationRepository {
     int insert(Participation participation);
-    List<ParticipationMemberView> findViewAllMemberListbyStuffId(Long stuffId);
+
+    List<ParticipationView> findByMemberId(Long memberId, 
+                                            Long categoryId, 
+                                            String orderField, 
+                                            String orderDir,
+                                            Integer size, 
+                                            Integer offset);
+
+    List<ParticipationMemberView> findMemberBystuffId(Long stuffId);
 }

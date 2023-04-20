@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
+import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.repository.ParticipationRepository;
 
 @Service
@@ -21,8 +22,17 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
     @Override
-    public List<ParticipationMemberView> getViewAllbwyStuffId(Long stuffId) {
-        return repository.findViewAllMemberListbyStuffId(stuffId);
+    public List<ParticipationView> getByMemberId(Long memberId, Long categoryId, int page) {
+
+        int size = page * 7;
+
+        return repository.findByMemberId(memberId, categoryId, "participation_date", "desc", size, 0);
     }
+
+    @Override
+    public List<ParticipationMemberView> getMemberBystuffId(Long stuffId) {
+        return repository.findMemberBystuffId(stuffId);
+    }
+
     
 }
