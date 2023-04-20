@@ -10,7 +10,7 @@ export default {
 			stuff: {},
 			category: {},
 			imageList: '',
-			participationMemberList:[],
+			participationList:[],
 		};
 	},
 	methods: {
@@ -68,23 +68,22 @@ export default {
 			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result)
-					this.getParticipationMemberList();
+					console.log(result);
+					this.loadParticipationList();
 				})
 				.catch(error => console.log('error', error));
 		},
-		/* 특정 공구상품 글에 참여한 멤버 목록 요청!! */
-		getParticipationMemberList(){
+		// 참여 인원 추가하면 참여 멤버 실시간 업데이트하기 
+		loadParticipationList(){
 			var requestOptions = {
 				method: 'GET',
 				redirect: 'follow'
 			};
-
 			fetch(`${this.$store.state.host}/api/participations/stuff/${this.$route.params.id}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
-				this.participationMemberList = data.list;
-				console.log(this.participationMemberList);
+				this.participationList = data.list;
+				console.log(this.participationList);
 			})
 			.catch(error => console.log('error', error));
 		}
@@ -100,12 +99,14 @@ export default {
 				this.stuff = data.stuff;
 				this.category = data.category;
 				this.imageList = data.imageList;
+				this.participationList = data.participationList;
 				this.formatDateStuff();
 				this.$store.commit('LOADING_STATUS', false);
 			})
 			.catch((error) => console.log("error", error));
-		this.getParticipationMemberList();
 		this.$store.commit('LOADING_STATUS', false);
+		
+		this.loadParticipationList();
 	},
 };
 </script>
@@ -212,31 +213,14 @@ export default {
 
 		<!-- detail-join : detail - itme2  -->
 
-		<!-- <section class="canvas detail-join">
-								<h1 class="d-none">join</h1>
-								<h2 class="detail-join-title">참여중인 사람</h2>
-								<div class="detail-join-wrap">
-									<div class="detail-join-members">
-										<a class="icon-member">멤버a</a>
-										<a class="icon-member">멤버b</a>
-										<a class="icon-member">멤버c</a>
-										<a class="icon-member">멤버d</a>
-										<a class="icon-member">멤버e</a>
-									</div>
-									<button class="detail-join-button" @click="participationStuff">
-										참여하기
-									</button>
-								</div>
-
-							</section> -->
 		<section class="canvas detail-join">
 			<div class="detail-join-title">참여중인 사람</div>
 			<div class="detail-join-wrap">
 				<v-sheet max-width="240">
 					<v-slide-group show-arrows="false">
-						<v-slide-group-item v-for="n in participationMemberList" :key="n" v-slot="{ isSelected, toggle }">
+						<v-slide-group-item v-for="m in participationList" :key="m" v-slot="{ isSelected, toggle }">
 							<button>
-								<img :src="'/images/member/' + n.memberImage">
+								<img :src="'/images/member/' + m.memberImage">
 							</button>
 						</v-slide-group-item>
 					</v-slide-group>

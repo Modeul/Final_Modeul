@@ -22,8 +22,11 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
     @Override
-    public List<ParticipationView> getByMemberId(Long memberId) {
-        return repository.findByMemberId(memberId);
+    public List<ParticipationView> getByMemberId(Long memberId, Long categoryId, int page) {
+
+        int size = page * 7;
+
+        return repository.findByMemberId(memberId, categoryId, "participation_date", "desc", size, 0);
     }
 
     @Override

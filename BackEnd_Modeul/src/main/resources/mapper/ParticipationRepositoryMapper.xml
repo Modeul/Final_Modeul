@@ -36,18 +36,26 @@
 		values(#{memberId}, #{stuffId})
 	</insert>
 
+  <!-- order by들 다시 생각 -->
   <select id="findByMemberId" resultMap="ParticipationViewResultMap">
     select * 
     from participation_view
     where member_id = #{memberId}
-    order by stuff_id
+    <if test="categoryId != null">
+				and category_id = #{categoryId}
+    </if>
+    <if test="orderField != null and orderDir != null">
+			order by ${orderField} ${orderDir}
+		</if>
+    <if test="size != null and offset != null">
+			limit ${size} offset ${offset}
+		</if>
   </select>
 
   <select id="findMemberBystuffId" resultMap="ParticipationMemberViewResultMap">
     select * 
     from participation_member_view
     where stuff_id = #{stuffId}
-    order by stuff_id
   </select>
 
 </mapper>

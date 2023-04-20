@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.modeul.web.entity.Participation;
@@ -33,9 +34,11 @@ public class ParticipationController {
 
     @GetMapping("/participations/{memberId}")
     public Map<String, Object> getList(
-        @PathVariable("memberId") Long memberId){
+        @PathVariable("memberId") Long memberId,
+        @RequestParam(name="c", required=false) Long categoryId,
+        @RequestParam(name="p", defaultValue = "1") int page){
         
-        List<ParticipationView> list = participationService.getByMemberId(memberId);
+        List<ParticipationView> list = participationService.getByMemberId(memberId, categoryId, page);
         
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("list", list);
@@ -43,6 +46,7 @@ public class ParticipationController {
         return dataList;
     }
     
+    // 참여하기 버튼 누르면 실시간 참여 멤버 인원 업데이트를 위해 필요하다.
     @GetMapping("/participations/stuff/{stuffId}")
     public Map<String, Object> get(
         @PathVariable("stuffId") Long stuffId){

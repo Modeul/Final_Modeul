@@ -12,6 +12,12 @@ import com.modeul.web.entity.ParticipationView;
 public interface ParticipationRepository {
     int insert(Participation participation);
 
-    List<ParticipationView> findByMemberId(Long memberId);
+    List<ParticipationView> findByMemberId(Long memberId, 
+                                            Long categoryId, 
+                                            String orderField, 
+                                            String orderDir,
+                                            Integer size, 
+                                            Integer offset);
+
     List<ParticipationMemberView> findMemberBystuffId(Long stuffId);
 }
