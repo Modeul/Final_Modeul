@@ -5,12 +5,15 @@ import 'dayjs/locale/ko';
 export default {
 	data() {
 		return {
+			memberId:29,
+			stuffId:2,
 			openModal: false,
 			openModal2: false,
 			stuff: {},
 			category: {},
 			imageList: '',
 			participationList:[],
+
 		};
 	},
 	methods: {
@@ -54,8 +57,10 @@ export default {
 			myHeaders.append("Content-Type", "application/json");
 
 			var raw = JSON.stringify({
-				stuffId: this.stuff.id,
-				memberId: this.stuff.memberId
+				// memberid:this.stuff.memberId,
+				// stuffId:this.stuff.id
+				memberId:this.memberId,
+				stuffId:this.stuffId
 			});
 
 			var requestOptions = {
@@ -79,7 +84,7 @@ export default {
 				method: 'GET',
 				redirect: 'follow'
 			};
-			fetch(`${this.$store.state.host}/api/participations/stuff/${this.$route.params.id}`, requestOptions)
+			fetch(`${this.$store.state.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
 				this.participationList = data.list;
