@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
+import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.ParticipationService;
 
 @RestController
@@ -24,6 +27,9 @@ public class ParticipationController {
     
     @Autowired
     private ParticipationService participationService;
+
+	@Autowired
+	private CategoryService categoryService;
 
     @PostMapping("/participation")
     public String addParticipation(@RequestBody Participation participation){
@@ -35,13 +41,17 @@ public class ParticipationController {
     @GetMapping("/participations/{memberId}")
     public Map<String, Object> getList(
         @PathVariable("memberId") Long memberId,
-        @RequestParam(name="c", required=false) Long categoryId,
-        @RequestParam(name="p", defaultValue = "1") int page){
+        @RequestParam(name="p", defaultValue = "1") int page,
+        @RequestParam(name="c", required=false) Long categoryId){
         
         List<ParticipationView> list = participationService.getByMemberId(memberId, categoryId, page);
+        List<Category> categoryList = categoryService.getList();
+        Long stuffCount = participationService.getStuffCountBymemberId(memberId);
         
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("list", list);
+        dataList.put("categoryList", categoryList);
+        dataList.put("stuffCount", stuffCount);
         
         return dataList;
     }
@@ -52,12 +62,27 @@ public class ParticipationController {
         @PathVariable("stuffId") Long stuffId){
 
         List<ParticipationMemberView> list = participationService.getMemberBystuffId(stuffId);
+        Long memberCount = participationService.getMemberCountBystuffId(stuffId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("list", list);
+        data.put("memberCount", memberCount);
 
         return data;
     }
+
+    @DeleteMapping("/participation/{stuffId}/{memberId}")
+    public String cancelParticipation(
+        @PathVariable("stuffId") Long stuffId, 
+        @PathVariable("memberId") Long memberId){
+        
+        int cancelParticipationCount = participationService.cancelParticipation(stuffId, memberId);
+        
+        System.out.printf("cancelParticipationCount: %d", cancelParticipationCount);
+        
+        return "cancel ok";
+    }
+
     @GetMapping("/chat/{stuffId}")
     public List<ParticipationMemberView> getViewMemberListbystuffId(@PathVariable("stuffId") Long stuffId){
         List<ParticipationMemberView> memberList = participationService.getMemberBystuffId(stuffId);

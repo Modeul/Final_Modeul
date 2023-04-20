@@ -89,12 +89,14 @@ public class StuffController {
 		List<Image> imageList = imageService.getListById(stuff.getId());
 
 		List<ParticipationMemberView> participationList = participationService.getMemberBystuffId(stuff.getId());
+		Long memberCount = participationService.getMemberCountBystuffId(stuff.getId());
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff",stuff);
 		data.put("category",category);
 		data.put("imageList",imageList);
 		data.put("participationList",participationList);
+		data.put("memberCount",memberCount);
 
 		return data;
 	}
@@ -229,6 +231,6 @@ public class StuffController {
 			public String deleteStuff(
 				@PathVariable("id") Long id){
 					service.deleteStuff(id);
-			return "menu del:";      
+			return "stuff del:";      
    		}
 }
