@@ -1,14 +1,18 @@
 
 <template>
+			<!-- 추방 재확인 모달 -->
+			<div v-if="openModal" class="black-bg">
+				<div class="delete-box">
+					<div class="delete-box-1">정말로 추방하시겠습니까?</div>
+					<div class="delete-box-2">
+						<div @click="deleteUser" class="delete-box-3">추방</div>
+						<div @click="modalHandler" class="delete-box-4">취소</div>
+					</div>
+				</div>
+			</div>
 	<div class="canvas">
 
-		<v-navigation-drawer v-model="drawer" temporary location="right" width="268">
-			<!-- <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg">a</v-list-item>
-			<v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/79.jpg">b</v-list-item>
-			<v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/80.jpg">c</v-list-item>
-			<v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/81.jpg">d</v-list-item>
-			<v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/82.jpg">e</v-list-item> -->
-
+		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1006;">
 		<div class="chat-side">
 			<div class="chat-side-top">
 				<div class="chat-side-top-left">
@@ -27,15 +31,13 @@
 						<div class="chat-user-img"><img :src="'/images/member/stuff/'+user.memberImage"></div>
 						<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 					</div>
-					<div class="chat-side-list-user-icon"> <img src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
+					<div class="chat-side-list-user-icon"> <img @click="modalHandler" src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
 				</div>
 			</div>
 			<div class="chat-side-bottom">
 				<div class="chat-side-bottom-icon"></div>
 			</div>
 		</div>
-
-
 		</v-navigation-drawer>
 
 		<v-app-bar height="80" density="compact" flat absolute>
@@ -65,7 +67,13 @@
 					</div>
 				</div>
 			</div>
-
+			<div class="chat-input-wrap">
+                <div class="cal-btn"><img src="../../public/images/member/stuff/cal-btn.svg"></div>
+                <div class="chat-input-box">
+                    <input class="chat-input" placeholder="메시지를 입력해주세요.">
+                    <div class="submit-btn"><img src="../../public/images/member/stuff/chat-submit-btn.svg"></div>
+                </div>
+            </div>
 		</div>
 	</div>
 </template>
@@ -77,6 +85,7 @@ export default {
 			myUserId: 110,
 			stuffId: 449,
 			drawer: null,
+			openModal:false,
 
 			participantList: '',
 			chat: {
@@ -86,7 +95,7 @@ export default {
 			massageView: [
 				{
 					user: {
-						userId: 1,
+						userId: 110,
 						userName: '감자맨',
 						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
 					},
@@ -150,11 +159,15 @@ export default {
 			fetch(`http://localhost:8080/api/chat/${this.stuffId}`)
 			.then(response => response.json())
 			.then(result=>{
-				console.log(result);
 				this.participantList = result
 			})
-			// .then(result => console.log(result))
 			.catch(error => console.log('error', error));
+		},
+		deleteUser(){
+
+		},
+		modalHandler(){
+			this.openModal = !this.openModal;
 		}
 	},
 	mounted() {
@@ -219,7 +232,7 @@ export default {
 
 .chat-line-wrap .chat-content{
 	font-size: 14px;
-	max-width: 240px;
+	max-width: 220px;
 	padding: 6px 12px;
 	columns: #1A1A1A;
 	word-break: break-all;
@@ -244,7 +257,54 @@ export default {
 	color: #353535;
 	font-size: 8px;
 }
+/* 인풋 */
+.chat-input-wrap{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin:0 auto;
+    padding: 0 20px 20px 20px;
+    box-sizing: border-box;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 66px;
 
+    background: #FFFFFF;
+}
+.cal-btn{
+    width:40px;
+    height: 40px;
+    cursor: pointer;
+}
+.chat-input-box{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: 100%;
+    height: 44px;
+
+    background: #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 30px;
+
+}
+.chat-input{
+    width: 90%;
+    margin-left: 14px;
+    font-size: 14px;
+}
+.submit-btn{
+    width: 24px;
+    height:24px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+/* 사이드바 */
 .chat-side{
 	display: flex;
 	flex-direction: column;
@@ -257,6 +317,7 @@ export default {
 	
 	background: #FFFFFF;
 
+	z-index: 9;
 }
 .chat-side-top{
 	display: flex;
@@ -397,5 +458,79 @@ export default {
 	width: 20px;
 	height: 20px;
 	background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.6659 20C12.8427 20 13.0123 19.9247 13.1373 19.7908C13.2623 19.6568 13.3325 19.4752 13.3325 19.2857C13.3325 19.0963 13.2623 18.9146 13.1373 18.7806C13.0123 18.6467 12.8427 18.5714 12.6659 18.5714H3.99976C3.29256 18.5714 2.61432 18.2704 2.11426 17.7346C1.61419 17.1988 1.33325 16.472 1.33325 15.7143V4.28571C1.33325 3.52795 1.61419 2.80123 2.11426 2.26541C2.61432 1.72959 3.29256 1.42857 3.99976 1.42857H12.6659C12.8427 1.42857 13.0123 1.35332 13.1373 1.21936C13.2623 1.08541 13.3325 0.903726 13.3325 0.714286C13.3325 0.524845 13.2623 0.343164 13.1373 0.20921C13.0123 0.075255 12.8427 0 12.6659 0H3.99976C2.93896 0 1.9216 0.451529 1.1715 1.25526C0.421402 2.05898 0 3.14907 0 4.28571V15.7143C0 16.8509 0.421402 17.941 1.1715 18.7447C1.9216 19.5485 2.93896 20 3.99976 20H12.6659ZM14.1938 4.49429C14.2557 4.42777 14.3293 4.37499 14.4103 4.33898C14.4913 4.30297 14.5781 4.28444 14.6658 4.28444C14.7535 4.28444 14.8403 4.30297 14.9213 4.33898C15.0023 4.37499 15.0758 4.42777 15.1378 4.49429L19.8042 9.49429C19.8662 9.56064 19.9155 9.63946 19.9491 9.72624C19.9827 9.81302 20 9.90605 20 10C20 10.094 19.9827 10.187 19.9491 10.2738C19.9155 10.3605 19.8662 10.4394 19.8042 10.5057L15.1378 15.5057C15.0758 15.5721 15.0022 15.6248 14.9212 15.6607C14.8402 15.6967 14.7534 15.7152 14.6658 15.7152C14.5781 15.7152 14.4913 15.6967 14.4104 15.6607C14.3294 15.6248 14.2558 15.5721 14.1938 15.5057C14.1318 15.4393 14.0827 15.3605 14.0491 15.2737C14.0156 15.1869 13.9983 15.0939 13.9983 15C13.9983 14.9061 14.0156 14.8131 14.0491 14.7263C14.0827 14.6395 14.1318 14.5607 14.1938 14.4943L17.7229 10.7143H5.99964C5.82284 10.7143 5.65328 10.639 5.52827 10.5051C5.40325 10.3711 5.33302 10.1894 5.33302 10C5.33302 9.81056 5.40325 9.62888 5.52827 9.49492C5.65328 9.36097 5.82284 9.28571 5.99964 9.28571H17.7229L14.1938 5.50571C14.1317 5.43936 14.0825 5.36054 14.0489 5.27376C14.0153 5.18698 13.998 5.09395 13.998 5C13.998 4.90605 14.0153 4.81302 14.0489 4.72624C14.0825 4.63946 14.1317 4.56064 14.1938 4.49429Z' fill='black'/%3E%3C/svg%3E%0A");
+}
+/* 추방 확인 모달 */
+.black-bg {
+	position: fixed;
+	background: rgba(0, 0, 0, 0.7);
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1007;
+}
+.delete-box{
+	width: 253px;
+	height: 113px;
+	background: #FFFFFF;
+	border-radius: 10px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	z-index: 1007;
+
+}
+.delete-box-1{
+	width: 135px;
+	height: 12px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 12px;
+	margin-top: 28px;
+}
+.delete-box-2{
+	width: 180px;
+	height: 26px;
+	margin-top: 23px;
+	display: flex;
+	justify-content: center;
+}
+.delete-box-3{
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border:0.5px solid #E01616;
+	color: #E01616;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+}
+.delete-box-4{
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border:0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	margin-left: 25px;
+	cursor: pointer;
 }
 </style>
