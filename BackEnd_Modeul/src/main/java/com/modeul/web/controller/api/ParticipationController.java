@@ -60,7 +60,7 @@ public class ParticipationController {
     }
     @GetMapping("/chat/{stuffId}")
     public List<ParticipationMemberView> getViewMemberListbystuffId(@PathVariable("stuffId") Long stuffId){
-        List<ParticipationMemberView> memberList = participationService.getViewAllbwyStuffId(stuffId);
+        List<ParticipationMemberView> memberList = participationService.getMemberBystuffId(stuffId);
         System.out.println(memberList);
         return memberList;
     }
