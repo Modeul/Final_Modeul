@@ -4,11 +4,24 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.modeul.web.repository.MemberRepository">
+
+<resultMap id="MemberResultMap" type="Member">
+	<result property="regDate" column="reg_date" />
+</resultMap>
+
 <!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
   <insert id="insert" parameterType="Member">
     insert into member(uid,pwd,name,email,nickname)
     values(#{uid},#{pwd},#{name},#{email},#{nickname})
   </insert>
+
+	<select id="getbyId" resultMap="MemberResultMap">
+	  select *
+	  	from member
+	  where
+	  	id = #{id}
+  </select>
+  
   
    <select id="getbyUid" resultType="String">
 	  select uid

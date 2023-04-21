@@ -13,6 +13,8 @@ public interface MemberService {
 	Boolean checkNickname(String nickname);
 
 	int updateMember(Member member);
+
+	Member getMember(int id);
 	
 }
 
