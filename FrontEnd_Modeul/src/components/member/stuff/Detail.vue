@@ -164,7 +164,7 @@ export default {
 
 
 				<div class="detail-img">
-					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
+					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%" >
 						<v-carousel-item v-for="img in imageList"
 							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
@@ -255,13 +255,12 @@ export default {
 	border-radius: 50%;
 }
 
-/* .v-slide-group__prev, .v-slide-group__next{
-	min-width: 18px !important;
-	width: 18px;
-} */
-
 .participation{
 	display: flex;
 	justify-content:space-around;
 }
+.v-img__img--contain{
+	object-fit: cover;
+}
+
 </style>
