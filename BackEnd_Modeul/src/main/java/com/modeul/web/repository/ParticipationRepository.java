@@ -30,5 +30,5 @@ public interface ParticipationRepository {
     Long findMemberCountBystuffId(Long stuffId);
 
     /* 멤버별 참여 목록 수 집계 */
-    Long findStuffCountBymemberId(Long memberId);
+    int findStuffCountBymemberId(Long memberId);
 }

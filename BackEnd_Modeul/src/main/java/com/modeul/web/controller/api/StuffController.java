@@ -88,14 +88,14 @@ public class StuffController {
 		System.out.println("id:" + stuff.getId());
 		List<Image> imageList = imageService.getListById(stuff.getId());
 
-		List<ParticipationMemberView> participationList = participationService.getMemberBystuffId(stuff.getId());
+		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
 		Long memberCount = participationService.getMemberCountBystuffId(stuff.getId());
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff",stuff);
 		data.put("category",category);
 		data.put("imageList",imageList);
-		data.put("participationList",participationList);
+		data.put("participantList",participantList);
 		data.put("memberCount",memberCount);
 
 		return data;
