@@ -14,7 +14,7 @@
             </div>
 
             <div>
-                <div class="d-gr li-gr-2 f-size-1 m-t-16px list-cl">
+                <div class="d-gr li-gr-2 f-size-1 m-t-16px list-cl" v-for="p in participationList">
                     <div class="li-pic b-rad-1">사진</div>
                     <div class="li-title">서강대 앞 교촌치킨 시켜드실 분</div>
                     <div class="li-heart icon icon-heart">찬하트</div>
@@ -57,7 +57,34 @@
     </section>
 </template>
 
+<script>
+export default {
+    data() {
+        return {
+            memberId:2,
+            participationList:[]
+        }
+    },
+    methods:{
+        load(){
+            fetch(`${this.$store.state.host}/api/participations/${this.memberId}`)
+            .then(response => response.json())
+            .then(dataList => {
+                console.log(dataList);
+                this.participationList = dataList.list;
+            })
+            .catch(error => console.log('error', error));
+        }
+    },
+    mounted() {
+        this.load();
+    },
+}
+</script>
+
 <style scoped>
     @import "/css/component/member/stuff/component-list.css";
     @import "/css/component/member/participation/component-parti-list.css";
 </style>
+
+
