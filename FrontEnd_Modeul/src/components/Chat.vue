@@ -215,7 +215,7 @@ export default {
 			// myHeaders.append("Content-Type", "application/json");
 
 			
-			// console.log(this.calResult);
+			console.log(this.calResult);
 
 			// var raw = JSON.stringify(this.member);
 
