@@ -31,6 +31,7 @@ import EditReg from './components/member/stuff/EditReg.vue';
 import ListSearch from './components/member/stuff/ListSearch.vue';
 import Gps from './components/member/stuff/Gps.vue';
 import ParticipationList from './components/member/participation/List.vue';
+import MypageEdit from './components/member/MypageEdit.vue';
 
 import AdminLayout from './components/admin/Layout.vue';
 import AdminLogin from './components/admin/Login.vue';
@@ -52,6 +53,7 @@ const routes = [
 	},
 	{
 		path: '/member', component: MemberLayout, children: [
+			{ path: 'mypage/edit', component: MypageEdit },
 			{ path: 'stuff/list', component: List },
 			{ path: 'stuff/:id', component: Detail },
 			{ path: 'stuff/reg', component: Reg },
