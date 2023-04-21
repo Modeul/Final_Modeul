@@ -24,6 +24,7 @@
 		<result property="numPeople" column="num_people" />
 		<result property="memberId" column="member_id" />
 		<result property="regDate" column="reg_date" />
+		<result property="participantCount" column="participation_count" />
 	</resultMap>
 
 	<select id="findbyId" resultMap="stuffResultMap">
@@ -47,7 +48,8 @@
 			</if>
 		</trim>
 		<if test="orderField != null and orderDir != null">
-			order by ${orderField} ${orderDir}		<!-- orderField랑 orderDir, limit, offset 
+			order by ${orderField} ${orderDir}
+			<!-- orderField랑 orderDir, limit, offset 
 				값 필수라서 trim 안함 -->
 		</if>
 

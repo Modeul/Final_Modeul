@@ -4,7 +4,6 @@ import com.modeul.web.entity.Member;
 
 public interface MemberService {
 	
-
 	int addMember(Member member);
 	
 	Boolean checkUid(String uid);
@@ -12,6 +11,10 @@ public interface MemberService {
 	Boolean checkEmail(String email);
 
 	Boolean checkNickname(String nickname);
+
+	int updateMember(Member member);
+
+	Member getMember(int id);
 	
 }
 

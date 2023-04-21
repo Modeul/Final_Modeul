@@ -34,5 +34,20 @@ public class ParticipationServiceImpl implements ParticipationService {
         return repository.findMemberBystuffId(stuffId);
     }
 
+    @Override
+    public int cancelParticipation(Long stuffId, Long memberId) {
+        return repository.delete(stuffId, memberId);
+    }
+
+    @Override
+    public Long getMemberCountBystuffId(Long stuffId) {
+        return repository.findMemberCountBystuffId(stuffId);
+    }
+
+    @Override
+    public Long getStuffCountBymemberId(Long memberId) {
+        return repository.findStuffCountBymemberId(memberId);
+    }
+
     
 }

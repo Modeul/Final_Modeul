@@ -10,9 +10,13 @@ public interface MemberRepository {
 
 	int insert(Member member);
 	
+	Member getbyId(int id);
+
 	String getbyUid(String uid);
 
 	String getByEmail(String email);
 
 	String getByNickname(String nickname);
+
+	int update(Member member);
 }

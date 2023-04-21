@@ -12,6 +12,7 @@ import com.modeul.web.entity.ParticipationView;
 public interface ParticipationRepository {
     int insert(Participation participation);
 
+    /* 멤버별 참여 목록 전체 조회 */
     List<ParticipationView> findByMemberId(Long memberId, 
                                             Long categoryId, 
                                             String orderField, 
@@ -19,5 +20,15 @@ public interface ParticipationRepository {
                                             Integer size, 
                                             Integer offset);
 
+    /* 공구상품별 공구상품 글에 참여한 회원 조회 */
     List<ParticipationMemberView> findMemberBystuffId(Long stuffId);
+
+    /* 상세 페이지의 참여 취소 기능 */
+    int delete(Long stuffId, Long memberId);
+
+    /* 공구상품별 참여 멤버 집계 */
+    Long findMemberCountBystuffId(Long stuffId);
+
+    /* 멤버별 참여 목록 수 집계 */
+    Long findStuffCountBymemberId(Long memberId);
 }

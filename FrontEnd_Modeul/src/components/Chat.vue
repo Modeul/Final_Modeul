@@ -38,6 +38,8 @@
 				<div class="chat-side-bottom-icon"></div>
 			</div>
 		</div>
+
+
 		</v-navigation-drawer>
 
 		<v-app-bar height="80" density="compact" flat absolute>
@@ -67,6 +69,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="chat-input-wrap">
                 <div @click.stop="calDrawer = !calDrawer " class="cal-btn"><img src="../../public/images/member/stuff/cal-btn.svg"></div>
                 <div class="chat-input-box">
@@ -230,11 +233,11 @@ export default {
 		loadParticipantUser(){
 			this.stuffId = 449;
 			fetch(`http://localhost:8080/api/chat/${this.stuffId}`)
-			.then(response => response.json())
+				.then(response => response.json())
 			.then(result=>{
 				this.participantList = result
 			})
-			.catch(error => console.log('error', error));
+				.catch(error => console.log('error', error));
 		},
 		deleteUser(){
 
@@ -480,50 +483,50 @@ export default {
 }
 /* 인풋 */
 .chat-input-wrap{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    margin:0 auto;
-    padding: 0 20px 20px 20px;
-    box-sizing: border-box;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 66px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	margin:0 auto;
+	padding: 0 20px 20px 20px;
+	box-sizing: border-box;
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 66px;
 
-    background: #FFFFFF;
+	background: #FFFFFF;
 }
 .cal-btn{
-    width:40px;
-    height: 40px;
-    cursor: pointer;
+	width:40px;
+	height: 40px;
+	cursor: pointer;
 }
 .chat-input-box{
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 
-    width: 100%;
-    height: 44px;
+	width: 100%;
+	height: 44px;
 
-    background: #FFFFFF;
-    border: 1px solid #333333;
-    border-radius: 30px;
+	background: #FFFFFF;
+	border: 1px solid #333333;
+	border-radius: 30px;
 
 }
 .chat-input{
-    width: 90%;
-    margin-left: 14px;
+	width: 90%;
+	margin-left: 14px;
     font-size: 14px;
 }
 .submit-btn{
-    width: 24px;
-    height:24px;
-    margin-right: 15px;
-    cursor: pointer;
+	width: 24px;
+	height:24px;
+	margin-right: 15px;
+	cursor: pointer;
 }
 /* 사이드바 */
 .chat-side{
@@ -597,7 +600,8 @@ export default {
 	background: #ffffff;
 }
 .chat-side-top-icon{
-	width: 20.17px;
+	cursor: pointer;
+	width: 21px;
 	height: 14.67px;
 	background-image: url("data:image/svg+xml,%3Csvg width='21' height='15' viewBox='0 0 21 15' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.6663 9.50004C11.2188 9.50004 6.33301 10.7192 6.33301 13.1667V15H20.9997V13.1667C20.9997 10.7192 16.1138 9.50004 13.6663 9.50004ZM0.833008 5.83337V7.66671H8.16634V5.83337M13.6663 7.66671C14.6388 7.66671 15.5714 7.2804 16.2591 6.59277C16.9467 5.90513 17.333 4.9725 17.333 4.00004C17.333 3.02758 16.9467 2.09495 16.2591 1.40732C15.5714 0.719682 14.6388 0.333374 13.6663 0.333374C12.6939 0.333374 11.7613 0.719682 11.0736 1.40732C10.386 2.09495 9.99968 3.02758 9.99968 4.00004C9.99968 4.9725 10.386 5.90513 11.0736 6.59277C11.7613 7.2804 12.6939 7.66671 13.6663 7.66671Z' fill='black'/%3E%3C/svg%3E%0A");
 }
@@ -616,6 +620,7 @@ export default {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: space-between;
 	padding: 10px;
 	gap: 4px;
 
@@ -626,6 +631,7 @@ export default {
 }
 .chat-side-list-user:hover{
 	background-color: #f2f2f2;
+	transition: 0.3s;
 }
 .chat-side-list-user-info{
 	box-sizing: border-box;
@@ -652,15 +658,12 @@ export default {
 
 .chat-side-list-user-icon{
 	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding: 10px;
-	gap: 10px;
-
-	width: 30px;
-	height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 10px;
 }
 .chat-side-bottom{
 	display: flex;

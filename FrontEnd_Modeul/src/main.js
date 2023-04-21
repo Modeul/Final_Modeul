@@ -22,6 +22,7 @@ import Index from './components/Index.vue';
 import Signup from './components/Signup.vue';
 import Login from './components/Login.vue';
 import Chat from './components/Chat.vue';
+import MyPage from './components/member/MyPage.vue';
 
 
 import MemberLayout from './components/member/Layout.vue';    // 그냥 Layout이라고 또 쓸 수도 있다?
@@ -32,6 +33,7 @@ import EditReg from './components/member/stuff/EditReg.vue';
 import ListSearch from './components/member/stuff/ListSearch.vue';
 import Gps from './components/member/stuff/Gps.vue';
 import ParticipationList from './components/member/participation/List.vue';
+import MypageEdit from './components/member/MypageEdit.vue';
 
 import AdminLayout from './components/admin/Layout.vue';
 import AdminLogin from './components/admin/Login.vue';
@@ -49,10 +51,13 @@ const routes = [
 			{ path: 'login', component: Login },
 			{ path: 'signup', component: Signup },
 			{ path: 'chat', component: Chat }
+			
 		]
 	},
 	{
 		path: '/member', component: MemberLayout, children: [
+			{ path: 'mypage', component: MyPage },
+			{ path: 'mypage/edit', component: MypageEdit },
 			{ path: 'stuff/list', component: List },
 			{ path: 'stuff/:id', component: Detail },
 			{ path: 'stuff/reg', component: Reg },

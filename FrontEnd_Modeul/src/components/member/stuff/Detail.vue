@@ -5,15 +5,15 @@ import 'dayjs/locale/ko';
 export default {
 	data() {
 		return {
-			memberId:29,
-			stuffId:2,
+			memberId:2,
+			stuffId:1,
 			openModal: false,
 			openModal2: false,
 			stuff: {},
 			category: {},
 			imageList: '',
 			participationList:[],
-
+			memberCount:''
 		};
 	},
 	methods: {
@@ -58,9 +58,9 @@ export default {
 
 			var raw = JSON.stringify({
 				// memberid:this.stuff.memberId,
-				// stuffId:this.stuff.id
 				memberId:this.memberId,
-				stuffId:this.stuffId
+				stuffId:this.stuff.id,
+				// stuffId:this.stuffId
 			});
 
 			var requestOptions = {
@@ -88,6 +88,7 @@ export default {
 			.then(response => response.json())
 			.then(data => {
 				this.participationList = data.list;
+				this.memberCount = data.memberCount;
 				console.log(this.participationList);
 			})
 			.catch(error => console.log('error', error));
@@ -105,6 +106,7 @@ export default {
 				this.category = data.category;
 				this.imageList = data.imageList;
 				this.participationList = data.participationList;
+				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.$store.commit('LOADING_STATUS', false);
 			})
@@ -193,7 +195,7 @@ export default {
 					<h1 class="d-none">info</h1>
 					<div class="detail-in">
 						<div class="detail-info-title">인원</div>
-						<div class="detail-info-txt">2 / {{ stuff.numPeople }} 명</div>
+						<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
 					</div>
 					<div class="detail-in">
 						<div class="detail-info-title">기한</div>

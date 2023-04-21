@@ -42,5 +42,16 @@ public class MemberServiceImpl implements MemberService {
 		return result;
 	}
 
+	@Override
+	public int updateMember(Member member) {
+
+		return repository.update(member);
+	}
+
+	@Override
+	public Member getMember(int id) {
+		return repository.getbyId(id);
+	}
+
 
 }
