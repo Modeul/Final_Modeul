@@ -22,6 +22,7 @@ import Index from './components/Index.vue';
 import Signup from './components/Signup.vue';
 import Login from './components/Login.vue';
 import Chat from './components/Chat.vue';
+import MyPage from './components/member/MyPage.vue';
 
 import MemberLayout from './components/member/Layout.vue';    // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from './components/member/stuff/List.vue';
@@ -48,6 +49,7 @@ const routes = [
 			{ path: 'login', component: Login },
 			{ path: 'signup', component: Signup },
 			{ path: 'chat', component: Chat }
+			
 		]
 	},
 	{
@@ -58,7 +60,8 @@ const routes = [
 			{ path: 'stuff/edit/:id', component: EditReg },
 			{ path: 'stuff/listsearch', component: ListSearch },
 			{ path: 'stuff/gps', component: Gps },
-			{ path: 'participation/list', component: ParticipationList }
+			{ path: 'participation/list', component: ParticipationList },
+			{ path: 'mypage', component: MyPage }
 		]
 	},
 	{
