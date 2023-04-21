@@ -192,7 +192,7 @@ export default {
 							(stuff.deadlineState == 2)? 'hour-left' : 'minute-left' ">{{ stuff.dDay }}</div>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
-								<span class="li-member-limit"> 1</span>
+								<span class="li-member-limit"> {{ stuff.participantCount }} </span>
 								/ {{ stuff.numPeople }} 명
 							</div>
 							<!-- <div class="li-place">{{ stuff.place }}</div> -->
