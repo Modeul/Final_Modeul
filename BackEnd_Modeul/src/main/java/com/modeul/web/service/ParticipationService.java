@@ -19,5 +19,5 @@ public interface ParticipationService {
         Long getMemberCountBystuffId(Long stuffId);
     
         /* 멤버별 참여 목록 수 집계 */
-        Long getStuffCountBymemberId(Long memberId);
+        int getStuffCountBymemberId(Long memberId);
 }

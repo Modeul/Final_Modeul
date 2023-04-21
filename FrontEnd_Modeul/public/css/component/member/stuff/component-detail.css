@@ -191,6 +191,23 @@ main {
   transition: 0.5s;
 }
 
+.detail-cancel-button {
+  width: 62px;
+  height: 28px;
+  border-radius: 7px;
+  font-size: 13px;
+  white-space: nowrap;
+  background-color: #f20e0e;
+  color: #fff;
+  font-size: 0.7em;
+  font-weight: 600;
+}
+.detail-cancel-button:hover{
+background-color: #ac3607;
+transition: 0.5s;
+}
+
+
 /* 수정/삭제 모달 */
 
 .white-bg {

@@ -12,8 +12,11 @@ export default {
 			stuff: {},
 			category: {},
 			imageList: '',
-			participationList:[],
-			memberCount:''
+			participantList:[],
+			memberCount:'',
+			isParticipated:'',
+			isParticipationChecked:'',
+			dialog: false
 		};
 	},
 	methods: {
@@ -52,7 +55,7 @@ export default {
 		},
 
 		/* 공구상품 글에 참여!! */
-		participationStuff() {
+		participationHandler() {
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -75,6 +78,7 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
+					this.isParticipated = !this.isParticipated;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -87,9 +91,25 @@ export default {
 			fetch(`${this.$store.state.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
-				this.participationList = data.list;
+				this.participantList = data.list;
 				this.memberCount = data.memberCount;
-				console.log(this.participationList);
+				console.log(this.participantList);
+			})
+			.catch(error => console.log('error', error));
+		},
+		// 공구상품 항목의 참여 취소 요청
+		cancelParticipationHandler(){
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				console.log(result);
+				this.loadParticipationList();
+				this.isParticipated = !this.isParticipated;
 			})
 			.catch(error => console.log('error', error));
 		}
@@ -105,7 +125,7 @@ export default {
 				this.stuff = data.stuff;
 				this.category = data.category;
 				this.imageList = data.imageList;
-				this.participationList = data.participationList;
+				this.participantList = data.participantList;
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.$store.commit('LOADING_STATUS', false);
@@ -225,7 +245,7 @@ export default {
 			<div class="detail-join-wrap">
 				<v-sheet max-width="240">
 					<v-slide-group show-arrows="false">
-						<v-slide-group-item v-for="m in participationList" :key="m" v-slot="{ isSelected, toggle }">
+						<v-slide-group-item v-for="m in participantList" :key="m" v-slot="{ isSelected, toggle }">
 							<button>
 								<img :src="'/images/member/' + m.memberImage">
 							</button>
@@ -233,9 +253,51 @@ export default {
 					</v-slide-group>
 					
 				</v-sheet>
-				<button class="detail-join-button" @click="participationStuff">
-					참여하기
-				</button>
+
+				<v-btn
+					class="detail-join-button"
+					v-if="!isParticipated"
+					@click="[dialog=true, participationHandler()]"
+				>
+				참여하기
+				</v-btn>
+				<v-btn
+					class="detail-cancel-button"
+					v-if="isParticipated"
+					@click="[dialog=true, cancelParticipationHandler()]"
+				>
+				취소하기
+				</v-btn>
+
+				<v-dialog
+					v-model="dialog"
+					width="auto"
+					v-if="isParticipated"
+				>
+					<v-card>
+						<v-card-text>
+							참여되었습니다.
+						</v-card-text>
+						<v-card-actions>
+						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+
+				<v-dialog
+					v-model="dialog"
+					width="auto"
+					v-if="!isParticipated"
+				>
+					<v-card>
+						<v-card-text>
+							취소되었습니다.
+						</v-card-text>
+						<v-card-actions>
+						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
 			</div>
 		</section>
 	</div>
