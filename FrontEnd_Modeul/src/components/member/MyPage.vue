@@ -62,8 +62,8 @@
         width: 320px;
     }
     .header{
-        padding-top: 25px;
-        box-sizing: border-box;
+        width: 91px;
+        margin-top: 25px;
     }
     section{
         display: flex;
