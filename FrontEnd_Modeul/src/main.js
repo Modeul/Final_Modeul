@@ -55,6 +55,7 @@ const routes = [
 	},
 	{
 		path: '/member', component: MemberLayout, children: [
+			{ path: 'mypage', component: MyPage },
 			{ path: 'mypage/edit', component: MypageEdit },
 			{ path: 'stuff/list', component: List },
 			{ path: 'stuff/:id', component: Detail },
@@ -62,8 +63,7 @@ const routes = [
 			{ path: 'stuff/edit/:id', component: EditReg },
 			{ path: 'stuff/listsearch', component: ListSearch },
 			{ path: 'stuff/gps', component: Gps },
-			{ path: 'participation/list', component: ParticipationList },
-			{ path: 'mypage', component: MyPage }
+			{ path: 'participation/list', component: ParticipationList }
 		]
 	},
 	{

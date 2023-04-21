@@ -1,16 +1,18 @@
 <template>
     <div class="canvas">
-        <header class="header">
-            <img src="/public/images/member/stuff/mypage-logo.svg">
-        </header>
+        <router-link to="/member/stuff/list">
+            <header class="header">
+                <img src="/public/images/member/stuff/mypage-logo.svg">
+            </header>
+        </router-link>
         <section>
             <div class="profile-wrap">
                 <div class="profile-img">
                     <img>
                 </div>
-                <div class="edit-btn">
+                <router-link to="/member/mypage/edit" class="edit-btn">
                     <img src="/public/images/member/stuff/mp-edit-btn.svg">
-                </div>
+                </router-link>
                 <div class="profile-name">날아라 감자맨</div>
                 <div class="star">
                     <img src="/public/images/member/stuff/star.svg">
@@ -23,10 +25,12 @@
                     <img src="/public/images/member/stuff/write.svg">
                     <span>작성 글 목록</span>
                 </li>
-                <li>
-                    <img src="/public/images/member/stuff/cart.svg">
-                    <span>참여 딜 목록</span>
-                </li>
+                <router-link to = "participation/list">
+                    <li>
+                        <img src="/public/images/member/stuff/cart.svg">
+                        <span>참여 딜 목록</span>
+                    </li>
+                </router-link>
                 <li>
                     <img src="/public/images/member/stuff/heart_plus.svg">
                     <span>관심목록</span>

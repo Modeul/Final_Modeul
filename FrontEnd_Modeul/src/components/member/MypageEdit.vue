@@ -1,7 +1,7 @@
 <template>
     <div class="mypage">
         <div class="header">
-            <div class="back"></div>
+            <router-link to="/member/mypage" class="back"></router-link>
             <div class="title">프로필 수정</div>
         </div>
         <div class="profile-pic">
