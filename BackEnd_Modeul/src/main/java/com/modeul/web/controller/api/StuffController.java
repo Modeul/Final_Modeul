@@ -89,7 +89,7 @@ public class StuffController {
 		List<Image> imageList = imageService.getListById(stuff.getId());
 
 		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
-		Long memberCount = participationService.getMemberCountBystuffId(stuff.getId());
+		int memberCount = participationService.getMemberCountBystuffId(stuff.getId());
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff",stuff);

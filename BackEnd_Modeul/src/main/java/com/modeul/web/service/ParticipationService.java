@@ -16,7 +16,7 @@ public interface ParticipationService {
         int cancelParticipation(Long stuffId, Long memberId);
 
         /* 공구상품별 참여 멤버 집계 */
-        Long getMemberCountBystuffId(Long stuffId);
+        int getMemberCountBystuffId(Long stuffId);
     
         /* 멤버별 참여 목록 수 집계 */
         int getStuffCountBymemberId(Long memberId);

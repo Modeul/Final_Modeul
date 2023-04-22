@@ -20,6 +20,10 @@ export default {
 		};
 	},
 	methods: {
+		/* 뒤로가기 : 이전페이지로 이동 */
+		goback(){
+          this.$router.go(-1);    
+      	},
 		/* 모달 이벤트 */
 		modalHandler() {
 			this.openModal = !this.openModal;
@@ -82,7 +86,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		// 참여 인원 추가하면 참여 멤버 실시간 업데이트하기 
+		/* 참여 인원 추가하면 참여 멤버 실시간 업데이트하기 */
 		loadParticipationList(){
 			var requestOptions = {
 				method: 'GET',
@@ -97,7 +101,7 @@ export default {
 			})
 			.catch(error => console.log('error', error));
 		},
-		// 공구상품 항목의 참여 취소 요청
+		/* 공구상품 항목의 참여 취소 요청 */
 		cancelParticipationHandler(){
 			var requestOptions = {
 				method: 'DELETE',
@@ -142,7 +146,7 @@ export default {
 	<!-- detail : flex-container -->
 <div class="detail">
 		<header class="detail-header">
-			<router-link to="list" class="icon icon-back">뒤로가기</router-link>
+			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
 			<!-- 수정/삭제 모달 버튼 -->
 			<i @click="modalHandler" class="icon-edit"></i>

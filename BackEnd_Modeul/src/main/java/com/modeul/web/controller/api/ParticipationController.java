@@ -47,12 +47,12 @@ public class ParticipationController {
         List<ParticipationView> list = participationService.getByMemberId(memberId, categoryId, page);
         List<Category> categoryList = categoryService.getList();
         int stuffCount = participationService.getStuffCountBymemberId(memberId);
-        
+
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("list", list);
         dataList.put("categoryList", categoryList);
         dataList.put("stuffCount", stuffCount);
-        
+
         return dataList;
     }
 
@@ -62,7 +62,7 @@ public class ParticipationController {
         @PathVariable("stuffId") Long stuffId){
 
         List<ParticipationMemberView> list = participationService.getMemberBystuffId(stuffId);
-        Long memberCount = participationService.getMemberCountBystuffId(stuffId);
+        int memberCount = participationService.getMemberCountBystuffId(stuffId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("list", list);

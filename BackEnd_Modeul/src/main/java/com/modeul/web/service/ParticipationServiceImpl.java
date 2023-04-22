@@ -40,18 +40,20 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
     @Override
-    public Long getMemberCountBystuffId(Long stuffId) {
-        // Long memberCount = repository.findMemberCountBystuffId(stuffId);
+    public int getMemberCountBystuffId(Long stuffId) {
+        Integer memberCount = repository.findMemberCountBystuffId(stuffId);
+        int result = memberCount == null ? 0 : memberCount;
 
-        // if(memberCount == null)
-        //     memberCount = 0L;
-
-        return repository.findMemberCountBystuffId(stuffId);
+        return result;
     }
 
     @Override
     public int getStuffCountBymemberId(Long memberId) {
-        return repository.findStuffCountBymemberId(memberId);
+
+        Integer stuffCount = repository.findStuffCountBymemberId(memberId);
+        int result = stuffCount == null ? 0 : stuffCount;
+
+        return result;
     }
 
     
