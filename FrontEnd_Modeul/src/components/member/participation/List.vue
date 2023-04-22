@@ -100,7 +100,6 @@ export default {
                     this.participationList = this.formatDateList(dataList.list);
                     this.categoryList = dataList.categoryList;
                     this.stuffCount = dataList.stuffCount;
-                    //this.memberCount = dataList.memberCount;
                     // this.listCount = dataList.listCount;
                     console.log(this.participationList);
                     this.$store.commit('LOADING_STATUS', false);

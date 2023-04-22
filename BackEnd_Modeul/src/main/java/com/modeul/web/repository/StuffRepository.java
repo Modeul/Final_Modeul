@@ -24,6 +24,8 @@ public interface StuffRepository {
 
 	Stuff findbyId(Long id);
 	
+	StuffView findViewbyId(Long id);
+	
 	// 이것을 Member로 받아도 된다. 단, 생성자를 따로 만들어주어야 한다. 
 	// 생성자가 여러 개여도 인자보고 찾아간다.
 //	int insert(

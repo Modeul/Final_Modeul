@@ -21,7 +21,7 @@ public interface StuffService {
 	List<StuffView> getRecentViewList(String query, Long categoryId, int page);
 	
 	Stuff getById(Long id);
-
+	StuffView getViewById(Long id);
 
 	Long getListCount(Long categoryId, int page);
 

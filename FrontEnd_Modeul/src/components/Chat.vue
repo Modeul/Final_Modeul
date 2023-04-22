@@ -16,9 +16,9 @@
 		<div class="chat-side">
 			<div class="chat-side-top">
 				<div class="chat-side-top-left">
-					<div class="chat-side-title">여러가지 나눔</div>
-					<div class="chat-side-people">11명 참여중</div>
-					<div class="chat-side-date">개설일 2023. 04. 18</div>
+					<div class="chat-side-title">{{ chat.title }}</div>
+					<div class="chat-side-people">{{ chat.participantCount }}명 참여중</div>
+					<div class="chat-side-date">개설일 {{ chat.regDate }}</div>
 				</div>
 				<div class="chat-side-top-right">
 					<div class="chat-side-top-icon"></div>
@@ -28,7 +28,7 @@
 				<!-- 유저 1명 -->
 				<div v-for="user in participantList" class="chat-side-list-user">
 					<div class="chat-side-list-user-info">
-						<div class="chat-user-img"><img :src="'/images/member/stuff/'+user.memberImage"></div>
+						<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/'+user.memberImage"></div>
 						<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 					</div>
 					<div class="chat-side-list-user-icon"> <img @click="modalHandler" src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
@@ -45,7 +45,7 @@
 		<v-app-bar height="80" density="compact" flat absolute>
 
 			<template v-slot:prepend>
-				<v-btn icon="mdi-arrow-left"></v-btn>
+				<v-btn icon="mdi-arrow-left" @click="goback"></v-btn>
 			</template>
 
 			<p class="chat-title">{{ chat.title }}</p>
@@ -87,7 +87,8 @@ export default {
 	data() {
 		return {
 			myUserId: 110,
-			stuffId: 449,
+			// stuffId: 449,
+			stuffId: '',
 			drawer: null,
 			openModal:false,
 
@@ -158,14 +159,17 @@ export default {
 	computed: {
 	},
 	methods: {
-		loadParticipantUser(){
-			this.stuffId = 449;
-			fetch(`http://localhost:8080/api/chat/${this.stuffId}`)
+		goback(){
+          this.$router.go(-1);    
+      	},
+		loadParticipationInfo(){
+			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 				.then(response => response.json())
-			.then(result=>{
-				this.participantList = result
+			.then(dataList=>{
+				this.participantList = dataList.memberList;
+				this.chat = dataList.stuffView;
 			})
-				.catch(error => console.log('error', error));
+			.catch(error => console.log('error', error));
 		},
 		deleteUser(){
 
@@ -175,7 +179,7 @@ export default {
 		}
 	},
 	mounted() {
-		this.loadParticipantUser();
+		this.loadParticipationInfo();
 	},
 }
 </script>
@@ -428,6 +432,8 @@ export default {
 .chat-user-img{
 	width: 38px;
 	height: 38px;
+	object-fit: cover;
+	border-radius: 50%;
 }
 .chat-user-nickname{
 	font-size: 14px;

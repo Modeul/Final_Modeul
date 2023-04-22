@@ -185,8 +185,6 @@ export default {
 			<div class="detail-main">
 				<!-- detail-img : detail-main - item1 -->
 
-
-
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%" >
 						<v-carousel-item v-for="img in imageList"
@@ -258,20 +256,28 @@ export default {
 					
 				</v-sheet>
 
-				<v-btn
-					class="detail-join-button"
-					v-if="!isParticipated"
-					@click="[dialog=true, participationHandler()]"
-				>
-				참여하기
-				</v-btn>
-				<v-btn
-					class="detail-cancel-button"
-					v-if="isParticipated"
-					@click="[dialog=true, cancelParticipationHandler()]"
-				>
-				취소하기
-				</v-btn>
+				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
+				<div class="detail-join-button-wrap">
+					<button
+						class="detail-join-button"
+						v-if="!isParticipated"
+						@click="[dialog=true, participationHandler()]"
+					>
+					참여하기
+					</button>
+
+					<div class="join-button-wrap">
+						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
+						<button
+							class="detail-cancel-button"
+							v-if="isParticipated"
+							@click="[dialog=true, cancelParticipationHandler()]"
+						>
+						참여취소
+						</button>
+					</div>
+				</div>
+				
 
 				<v-dialog
 					v-model="dialog"
