@@ -28,7 +28,9 @@
   <resultMap id="ParticipationMemberViewResultMap" type="ParticipationMemberView">
     <result property="stuffId" column="stuff_id" />
     <result property="memberId" column="member_id" />
+    <result property="participationDate" column="participation_date" />
     <result property="memberNickname" column="member_nickname" />
+    <result property="memberEmail" column="member_email" />
     <result property="memberImage" column="member_image" />
   </resultMap>
   
@@ -61,6 +63,17 @@
     where stuff_id = #{stuffId}
     order by participation_date
   </select>
+
+
+  <!-- 공구상품별 공구상품 글에 참여한 회원 1명 정보 조회  -->
+  <select id="findMemberBystuffIdmemberId" resultMap="ParticipationMemberViewResultMap">
+    select * 
+    from participation_member_view
+    where stuff_id = #{stuffId}
+    and member_Id = #{memberId}
+    order by participation_date
+  </select>
+
 
   <!-- 상세 페이지의 참여 취소 기능 -->
   <delete id="delete" parameterType="Participation">

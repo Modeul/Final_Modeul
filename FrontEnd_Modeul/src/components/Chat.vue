@@ -59,13 +59,23 @@
 		<div class="chat-canvas">
 
 
-			<div class="chat-line-wrap" v-for="m in massageView" :class="(myUserId == m.user.userId)? 'mine':'others'">
+			<!-- <div class="chat-line-wrap" v-for="m in messageView" :class="(myUserId == m.user.userId)? 'mine':'others'">
 				<img v-if="!(myUserId == m.user.userId)" class="user-profile" :src="m.user.userImg">
 				<div class="chat-box">
 					<p v-if="!(myUserId == m.user.userId)" class="chat-nickname">{{ m.user.userName }}</p>
 					<div class="chat-content-wrap">
-						<p class="chat-content">{{ m.massage.contents }}</p>
-						<p class="chat-time">{{m.massage.time}}</p>
+						<p class="chat-content">{{ m.message.contents }}</p>
+						<p class="chat-time">{{m.message.time}}</p>
+					</div>
+				</div>
+			</div> -->
+			<div class="chat-line-wrap" v-for="m in messageView" :class="(myUserId == m.memberId)? 'mine':'others'">
+				<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
+				<div class="chat-box">
+					<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
+					<div class="chat-content-wrap">
+						<p class="chat-content">{{ m.content }}</p>
+						<p class="chat-time">{{m.sendDate}}</p>
 					</div>
 				</div>
 			</div>
@@ -73,7 +83,7 @@
 			<div class="chat-input-wrap">
 				<div class="cal-btn"><img src="../../public/images/member/stuff/cal-btn.svg"></div>
 				<div class="chat-input-box">
-					<input class="chat-input" placeholder="메시지를 입력해주세요.">
+					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn"><img src="../../public/images/member/stuff/chat-submit-btn.svg"></div>
 				</div>
 			</div>
@@ -83,10 +93,17 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko'
+
 export default {
 	data() {
 		return {
-			myUserId: 110,
+			userName: "",
+			message: "",
+			recvList: [],
+			myUserId: 3,
+			myUserId: 3,
 			// stuffId: 449,
 			stuffId: '',
 			drawer: null,
@@ -97,77 +114,162 @@ export default {
 				title: "여러가지 나눔",
 				participantCount: "12"
 			},
-			massageView: [
-				{
-					user: {
-						userId: 110,
-						userName: '감자맨',
-						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-					},
-					massage: {
-						contents: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
-						time: '오후 11:00'
-					}
-				},
-				{
-					user: {
-						userId: 2,
-						userName: '고구마',
-						userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-					},
-					massage: {
-						contents: 'aaaa',
-						time: '오후 11:02'
-					}
-				},
-				{
-					user: {
-						userId: 2,
-						userName: '고구마',
-						userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-					},
-					massage: {
-						contents: '333333333333333333333333333333333333333333333333333333333',
-						time: '오후 11:05'
-					}
-				},
-				{
-					user: {
-						userId: 1,
-						userName: '감자',
-						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-					},
-					massage: {
-						contents: '444',
-						time: '오후 11:10'
-					}
-				},
-				{
-					user: {
-						userId: 2,
-						userName: '고구마',
-						userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-					},
-					massage: {
-						contents: 'aaaa',
-						time: '오후 11:02'
-					}
-				},
+			memberInfo:{
+				type:'',
+				memberId:'',
+				sender:'',
+				content:'',
+				sendDate:'',
+				participationId:'',
+				stuffId:'',
+				memberImage:''
+			},
+			messageView: [
+				// {
+				// 	user: {
+				// 		userId: 110,
+				// 		userName: '감자맨',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
+				// 		time: '오후 11:00'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 2,
+				// 		userName: '고구마',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: 'aaaa',
+				// 		time: '오후 11:02'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 2,
+				// 		userName: '고구마',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: '333333333333333333333333333333333333333333333333333333333',
+				// 		time: '오후 11:05'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 1,
+				// 		userName: '감자',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: '444',
+				// 		time: '오후 11:10'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 2,
+				// 		userName: '고구마',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: 'aaaa',
+				// 		time: '오후 11:02'
+				// 	}
+				// },
 			],
 		}
 	},
 	computed: {
 	},
 	methods: {
+		sendMessage (e) {
+			console.log("keyboard");
+			if(e.keyCode === 13 && this.message !== null){
+				console.log("send");
+				this.send()
+				this.message = ''
+			}
+		},    
+		send() {
+			console.log(this.memberInfo);
+			console.log(this.memberInfo.memberImage);
+			console.log(this.memberInfo.memberNickname);
+			
+
+			const date = new dayjs().locale('ko');
+
+			console.log("Send message:" + this.message);
+			
+			if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
+
+				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
+				const chatMessage = { 
+					stuffId: this.$route.params.stuffId, 
+					memberId: this.$route.params.memberId,
+					sender: this.memberInfo.memberNickname,
+					sendDate: date.format("A HH:MM"),
+					content: this.message,
+					type: 'TALK',
+					memberImage: this.memberInfo.memberImage
+				};
+
+				this.myUserId = this.memberInfo.memberId;
+
+				// ** messageView에 우리가 직접 안 담아도 된다. stomp의 pub에 의해 담겨진다..
+				// this.messageView.push(chatMessage);
+				this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
+				console.log("complete message:" + this.message);
+			}
+		},  
+		connect() {
+			this.$store.state.stompClient.connect(
+				{},
+				frame => {
+					// 소켓 연결 성공!
+					this.connected = true;
+					console.log('소켓 연결 성공', frame);
+					
+					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
+					this.$store.state.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
+						console.log('구독으로 받은 메시지 입니다.', res.body);
+
+						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+						this.messageView.push(JSON.parse(res.body));
+						console.log(this.messageView);
+					});
+					
+					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
+					this.$store.state.stompClient.send('/pub/chat/enterUser',
+						JSON.stringify({
+							"type":'ENTER',
+							"stuffId": this.$route.params.stuffId, 
+							"sender": this.$route.params.memberId
+						})
+					);
+				}
+			)
+		},   
 		goback(){
           this.$router.go(-1);    
       	},
-		loadParticipationInfo(){
+		loadParticipationListInfo(){
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 				.then(response => response.json())
 			.then(dataList=>{
 				this.participantList = dataList.memberList;
 				this.chat = dataList.stuffView;
+			})
+			.catch(error => console.log('error', error));
+		},
+		loadParticipantInfo(){
+			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}/${this.$route.params.memberId}`)
+				.then(response => response.json())
+			.then(data=>{
+				this.memberInfo = data.memberInfo;
 			})
 			.catch(error => console.log('error', error));
 		},
@@ -178,8 +280,12 @@ export default {
 			this.openModal = !this.openModal;
 		}
 	},
+	created(){
+		this.connect();
+	},
 	mounted() {
-		this.loadParticipationInfo();
+		this.loadParticipationListInfo();
+		this.loadParticipantInfo();
 	},
 }
 </script>

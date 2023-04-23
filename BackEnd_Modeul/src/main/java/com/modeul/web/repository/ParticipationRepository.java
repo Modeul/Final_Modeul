@@ -31,4 +31,6 @@ public interface ParticipationRepository {
 
     /* 멤버별 참여 목록 수 집계 */
     Integer findStuffCountBymemberId(Long memberId);
+
+    ParticipationMemberView findMemberBystuffIdmemberId(Long stuffId, Long memberId);
 }

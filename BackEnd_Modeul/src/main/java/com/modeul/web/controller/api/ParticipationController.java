@@ -92,17 +92,31 @@ public class ParticipationController {
     public Map<String, Object> getViewChat(
         @PathVariable("stuffId") Long stuffId){
 
-        StuffView stuffView = stuffService.getViewById(stuffId);
         List<ParticipationMemberView> memberList = participationService.getMemberBystuffId(stuffId);
-        int memberCount = participationService.getMemberCountBystuffId(stuffId);
+        StuffView stuffView = stuffService.getViewById(stuffId);
+
+        // stuffId,memberId를 동시에 만족하는 회원 1명 정보 필요! 
 
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("memberList", memberList);
-        dataList.put("memberCount", memberCount);
         dataList.put("stuffView", stuffView);
         
         System.out.println(memberList);
         return dataList;
+    }
+
+    @GetMapping("/chat/{stuffId}/{memberId}")
+    public Map<String, Object> getChat(
+        @PathVariable("stuffId") Long stuffId,
+        @PathVariable("memberId") Long memberId){
+
+        ParticipationMemberView memberInfo = participationService.getMemberBystuffIdmemberId(stuffId, memberId);
+
+        Map<String, Object> data = new HashMap<>(); 
+        data.put("memberInfo", memberInfo);
+        
+        System.out.println(memberInfo);
+        return data;
     }
     
 }

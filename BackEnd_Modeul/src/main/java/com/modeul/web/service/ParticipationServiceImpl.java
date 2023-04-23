@@ -56,5 +56,10 @@ public class ParticipationServiceImpl implements ParticipationService {
         return result;
     }
 
+    @Override
+    public ParticipationMemberView getMemberBystuffIdmemberId(Long stuffId, Long memberId) {
+        return repository.findMemberBystuffIdmemberId(stuffId, memberId);
+    }
+
     
 }

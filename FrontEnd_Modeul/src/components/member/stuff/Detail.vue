@@ -267,7 +267,7 @@ export default {
 					</button>
 
 					<div class="join-button-wrap">
-						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
 						<button
 							class="detail-cancel-button"
 							v-if="isParticipated"

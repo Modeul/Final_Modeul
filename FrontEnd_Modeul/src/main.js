@@ -49,7 +49,7 @@ const routes = [
 			{ path: 'index', component: Index },
 			{ path: 'login', component: Login },
 			{ path: 'signup', component: Signup },
-			{ path: 'chat/:stuffId', component: Chat }
+			{ path: 'chat/:stuffId/:memberId', component: Chat }
 			
 		]
 	},
