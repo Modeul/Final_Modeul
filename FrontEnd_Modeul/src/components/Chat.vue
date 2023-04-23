@@ -232,6 +232,8 @@ export default {
 					// 소켓 연결 성공!
 					this.connected = true;
 					console.log('소켓 연결 성공', frame);
+
+					//this.myUserId = this.memberInfo.memberId;
 					
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.$store.state.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
@@ -247,7 +249,9 @@ export default {
 						JSON.stringify({
 							"type":'ENTER',
 							"stuffId": this.$route.params.stuffId, 
-							"sender": this.$route.params.memberId
+							//"memberId": this.$route.params.memberId,
+							"sender": this.memberInfo.memberNickname,
+							"memberImage": this.memberInfo.memberImage
 						})
 					);
 				}
