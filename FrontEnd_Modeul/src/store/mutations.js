@@ -13,12 +13,12 @@ export default{
 			}
 			return state.host = hostName
 		},
-		stompClient: function(state){
-			// const serverURL = 'http://192.168.0.8:8080/ws-stomp'
-			const serverURL = 'http://localhost:8080/ws-stomp'
-			let socket = new SockJS(serverURL);
-			let stompClient = Stomp.over(socket);
+		// stompClient: function(state){
+		// 	// const serverURL = 'http://192.168.0.8:8080/ws-stomp'
+		// 	const serverURL = 'http://localhost:8080/ws-stomp'
+		// 	let socket = new SockJS(serverURL);
+		// 	let stompClient = Stomp.over(socket);
 
-			return state.stompClient = stompClient
-		}
+		// 	return state.stompClient = stompClient
+		// }
 }

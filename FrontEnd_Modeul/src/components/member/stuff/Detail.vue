@@ -246,7 +246,7 @@ export default {
 			<div class="detail-join-title">참여중인 사람</div>
 			<div class="detail-join-wrap">
 				<v-sheet max-width="240">
-					<v-slide-group show-arrows="false">
+					<v-slide-group>
 						<v-slide-group-item v-for="m in participantList" :key="m" v-slot="{ isSelected, toggle }">
 							<button>
 								<img :src="'/images/member/' + m.memberImage">

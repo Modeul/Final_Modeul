@@ -95,6 +95,8 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import Stomp from 'webstomp-client';
+import SockJS from 'sockjs-client';
 
 export default {
 	data() {
@@ -108,6 +110,7 @@ export default {
 			stuffId: '',
 			drawer: null,
 			openModal:false,
+			stompClient: '',
 
 			participantList: '',
 			chat: {
@@ -125,61 +128,7 @@ export default {
 				memberImage:''
 			},
 			messageView: [
-				// {
-				// 	user: {
-				// 		userId: 110,
-				// 		userName: '감자맨',
-				// 		userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-				// 	},
-				// 	message: {
-				// 		contents: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
-				// 		time: '오후 11:00'
-				// 	}
-				// },
-				// {
-				// 	user: {
-				// 		userId: 2,
-				// 		userName: '고구마',
-				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-				// 	},
-				// 	message: {
-				// 		contents: 'aaaa',
-				// 		time: '오후 11:02'
-				// 	}
-				// },
-				// {
-				// 	user: {
-				// 		userId: 2,
-				// 		userName: '고구마',
-				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-				// 	},
-				// 	message: {
-				// 		contents: '333333333333333333333333333333333333333333333333333333333',
-				// 		time: '오후 11:05'
-				// 	}
-				// },
-				// {
-				// 	user: {
-				// 		userId: 1,
-				// 		userName: '감자',
-				// 		userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-				// 	},
-				// 	message: {
-				// 		contents: '444',
-				// 		time: '오후 11:10'
-				// 	}
-				// },
-				// {
-				// 	user: {
-				// 		userId: 2,
-				// 		userName: '고구마',
-				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-				// 	},
-				// 	message: {
-				// 		contents: 'aaaa',
-				// 		time: '오후 11:02'
-				// 	}
-				// },
+
 			],
 		}
 	},
@@ -187,8 +136,8 @@ export default {
 	},
 	methods: {
 		sendMessage (e) {
-			console.log("keyboard");
-			if(e.keyCode === 13 && this.message !== null){
+			// console.log("keyboard");
+			if(e.keyCode === 13 && this.message != '' && this.message.trim() != ''){
 				console.log("send");
 				this.send()
 				this.message = ''
@@ -198,35 +147,41 @@ export default {
 			console.log(this.memberInfo);
 			console.log(this.memberInfo.memberImage);
 			console.log(this.memberInfo.memberNickname);
-			
-
-			const date = new dayjs().locale('ko');
 
 			console.log("Send message:" + this.message);
 			
-			if (this.$store.state.stompClient && this.$store.state.stompClient.connected) {
+			if (this.stompClient && this.stompClient.connected) {
+				const date = new dayjs();
+				// console.log(date);
 
 				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
 				const chatMessage = { 
 					stuffId: this.$route.params.stuffId, 
 					memberId: this.$route.params.memberId,
 					sender: this.memberInfo.memberNickname,
-					sendDate: date.format("A HH:MM"),
+					sendDate: date,
 					content: this.message,
 					type: 'TALK',
 					memberImage: this.memberInfo.memberImage
 				};
 
+				// console.log(chatMessage);
+
 				this.myUserId = this.memberInfo.memberId;
 
 				// ** messageView에 우리가 직접 안 담아도 된다. stomp의 pub에 의해 담겨진다..
 				// this.messageView.push(chatMessage);
-				this.$store.state.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
+				this.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
 				console.log("complete message:" + this.message);
 			}
+		},
+		stompConnect(){
+			const serverURL = `${this.$store.state.host}/ws-stomp`
+			let socket = new SockJS(serverURL);
+			this.stompClient = Stomp.over(socket);
 		},  
 		connect() {
-			this.$store.state.stompClient.connect(
+			this.stompClient.connect(
 				{},
 				frame => {
 					// 소켓 연결 성공!
@@ -236,16 +191,18 @@ export default {
 					//this.myUserId = this.memberInfo.memberId;
 					
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
-					this.$store.state.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
+					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
 						console.log('구독으로 받은 메시지 입니다.', res.body);
 
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(JSON.parse(res.body));
 						console.log(this.messageView);
 					});
+
+					// io요청???
 					
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
-					this.$store.state.stompClient.send('/pub/chat/enterUser',
+					this.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
 							"type":'ENTER',
 							"stuffId": this.$route.params.stuffId, 
@@ -285,11 +242,13 @@ export default {
 		}
 	},
 	created(){
+		this.loadParticipationListInfo();
+		this.loadParticipantInfo();
+		this.stompConnect();
 		this.connect();
 	},
 	mounted() {
-		this.loadParticipationListInfo();
-		this.loadParticipantInfo();
+		
 	},
 }
 </script>
