@@ -34,6 +34,7 @@ export default {
 					console.log('소켓 연결 성공', frame);
 					// 서버의 메시지 전송 endpoint를 구독합니다.
 					// 이런형태를 pub sub 구조라고 합니다.
+
 				},
 				error => {
 					// 소켓 연결 실패..
@@ -52,7 +53,7 @@ export default {
 
 					this.connected = false;
 				}
-		)},     
+		)},   
 	},
 	created() {
     	// App.vue가 생성되면 소켓 연결을 시도합니다.

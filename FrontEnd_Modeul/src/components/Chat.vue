@@ -103,7 +103,7 @@ export default {
 				title: "여러가지 나눔",
 				participantCount: "12"
 			},
-			memberInfo:'',
+			memberInfo:{},
 			messageView: [
 				// {
 				// 	user: {
@@ -212,8 +212,7 @@ export default {
 					// 소켓 연결 성공!
 					this.connected = true;
 					console.log('소켓 연결 성공', frame);
-					
-					// ** 이것을 설정해주면 사람 등장 시, 멘트가 오른쪽에 나온다.
+
 					//this.myUserId = this.memberInfo.memberId;
 					
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
@@ -226,7 +225,6 @@ export default {
 					});
 					
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
-					// ** 이것을 설정해주면 사람 등장 시, 멘트가 오른쪽에 나온다.
 					this.$store.state.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
 							"type":'ENTER',
