@@ -53,5 +53,15 @@ public class MemberServiceImpl implements MemberService {
 		return repository.getbyId(id);
 	}
 
+	@Override
+	public int deleteMember(Member member) {
+		return repository.delete(member);
+	}
+
+	@Override
+	public void updateImg(Member member) {
+		
+	}
+
 
 }

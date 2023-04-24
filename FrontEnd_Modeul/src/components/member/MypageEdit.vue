@@ -8,9 +8,14 @@
             <div class="profile-img">
                 <img class="profile-img" :src="'/images/member/'+loginInfo.image">
             </div>
-            <div class="edit-btn">
-                <img src="/public/images/member/stuff/mypageEditIcon.svg">
-            </div>
+            <form @submit="uploadImg" method="post" enctype="multipart/form-data" ref="form">
+                <label for="file">
+                <div class="edit-btn">
+                    <input type="file" class="d-none" id="file" @change="changeImg">
+                    <img src="/public/images/member/stuff/mypageEditIcon.svg">
+                </div>
+                </label>
+            </form>
         </div>
         <div class="mypage-input">
             <div class="input-field">
@@ -24,7 +29,7 @@
             <div>
             <div v-if="!this.nicknamebtn" class="input-field">
                 <div class="nickname-icon"></div>
-				<div class="text" type="text" :value="loginInfo.nickname">
+				<div class="text" type="text">
                     {{ loginInfo.nickname }}
                     <input 
                         @click.prevent="active"
@@ -38,7 +43,7 @@
             </div>
             <div v-if="this.nicknamebtn" class="input-field">
                 <div class="nickname-icon"></div>
-				<input class="text" type="text" :value="loginInfo.nickname">
+				<input class="text" type="text" v-model="loginInfo.nickname">
                     <input
                         @click.prevent="checkNicknameDupl"
                         class="btn-change"
@@ -57,13 +62,12 @@
 export default {
     data() {
         return {
-            member:"",
+            myMemberId:"110",
             ErrorMsg:"",
             nicknameDupl:"",
             nicknamebtn:false,
-            myMemberId : 110,
-			loginInfo : '',
-            clicked : false,
+			loginInfo : "",
+            file: [],
         };
     },
     methods: {
@@ -74,33 +78,52 @@ export default {
                 this.nicknamebtn = false;
             } else if (!this.nicknameDupl) {
                 this.ErrorMsg = "중복 된 닉네임입니다.";
+            } else if (this.loginInfo.nickname.length < 2 || this.loginInfo.nickname.length > 20) {
+                this.ErrorMsg = "닉네임을 2글자 이상 입력해주세요.";
             }
             if(this.ErrorMsg){
                 console.log("에러메시지 존재");
                 return false;
             }
             if(!this.ErrorMsg){
-                fetch(`${this.$store.state.host}/api/???`, requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
-                .catch((error) => console.log("error", error));
-                this.$router.push('/member/mypage');
-            }
 
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                var raw = JSON.stringify({
+                    "id": this.loginInfo.id,
+                    "nickname": this.loginInfo.nickname
+                });
+
+                var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+                };
+
+                fetch(`${this.$store.state.host}/api/member/update`, requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+                this.$router.replace('/member/mypage');
+            }
         },
         active(){
             this.nicknamebtn = !this.nicknamebtn;
         },
             // 닉네임 중복 검사
         checkNicknameDupl() {
-            console.log("중복검사실행");
+        console.log("변경요청 닉네임 : "+this.loginInfo.nickname);
+        console.log("중복검사실행");
         this.nicknameDupl = "";
         this.ErrorMsg= "";
         fetch(
-            `${this.$store.state.host}/api/signup/checkNickname?nickname=${this.member.nickname}`
+            `${this.$store.state.host}/api/signup/checkNickname?nickname=${this.loginInfo.nickname}`
         )
             .then((response) => response.text())
             .then((result) => {
+                console.log(result);
             if (result == "false") this.nicknameDupl = false;
             else this.nicknameDupl = true;
 
@@ -113,7 +136,14 @@ export default {
             })
             .catch((error) => console.log("error", error));
         },
+        uploadImg(){
 
+        },
+        changeImg(e){
+            this.file = e.target.files;
+            console.log(e.target.files);
+            this.loginInfo.image = this.file[0].name;
+        },
     },
 	mounted() {
 		fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
@@ -261,6 +291,11 @@ export default {
         color: white;
         text-align: center;
     }
+    .btn-save:hover{
+        background: #7299BE;
+        transition: 0.3s;
+        transform: scale(1.1);
+    }
     .btn-change{
         position: absolute;
         top: 50%;
@@ -276,6 +311,11 @@ export default {
         cursor: pointer;
 
         transform: translate(-50%, -50%);
+    }
+    .btn-change:active{
+        transform: scale(1.1);
+        background: #7299BE;
+        transition: 0.3s;
     }
     .error-txt{
         font-size: 12px;

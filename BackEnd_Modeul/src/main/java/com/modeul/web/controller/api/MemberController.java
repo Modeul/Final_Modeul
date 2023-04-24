@@ -29,5 +29,11 @@ public class MemberController {
 
 		return memberService.updateMember(member);
 	}
+
+	@PutMapping("delete")
+	public int deleteMember(@RequestBody Member member){
+
+		return memberService.deleteMember(member);
+	}
 	
 }
