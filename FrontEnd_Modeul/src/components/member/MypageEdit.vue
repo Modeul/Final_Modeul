@@ -6,7 +6,7 @@
         </div>
         <div class="profile-pic">
             <div class="profile-img">
-                <img>
+                <img class="profile-img" :src="'/images/member/'+loginInfo.image">
             </div>
             <div class="edit-btn">
                 <img src="/public/images/member/stuff/mypageEditIcon.svg">
@@ -21,21 +21,36 @@
                 <div class="email-icon"></div>
                 <span class="text">{{ loginInfo.email }}</span>
             </div>
-            <div class="input-field">
+            <div>
+            <div v-if="!this.nicknamebtn" class="input-field">
+                <div class="nickname-icon"></div>
+				<div class="text" type="text" :value="loginInfo.nickname">
+                    {{ loginInfo.nickname }}
+                    <input 
+                        @click.prevent="active"
+                        class="btn-change"
+                        id="btn-auth"
+                        type="button"
+                        value="변경"
+                        />
+                </div>
+	
+            </div>
+            <div v-if="this.nicknamebtn" class="input-field">
                 <div class="nickname-icon"></div>
 				<input class="text" type="text" :value="loginInfo.nickname">
                     <input
                         @click.prevent="checkNicknameDupl"
-                        class="btn-auth"
+                        class="btn-change"
                         id="btn-auth"
                         type="button"
                         value="확인"
                         />
             </div>
-            <div class="email"></div>
-            <div class="nickname"></div>
+            <span class="error-txt">{{this.ErrorMsg}}</span>
         </div>
-        <div class="btn-save">저장하기</div>
+        </div>
+        <div @click.prevent="submit" class="btn-save">저장하기</div>
     </div>
 </template>
 <script>
@@ -48,12 +63,13 @@ export default {
             nicknamebtn:false,
             myMemberId : 110,
 			loginInfo : '',
+            clicked : false,
         };
     },
     methods: {
         submit(){
             this.ErrorMsg = "";
-            if (!this.member.nickname) {
+            if (!this.loginInfo.nickname) {
                 this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
                 this.nicknamebtn = false;
             } else if (!this.nicknameDupl) {
@@ -69,12 +85,15 @@ export default {
                 .then((result) => console.log(result))
                 .catch((error) => console.log("error", error));
                 this.$router.push('/member/mypage');
-
             }
 
         },
+        active(){
+            this.nicknamebtn = !this.nicknamebtn;
+        },
             // 닉네임 중복 검사
         checkNicknameDupl() {
+            console.log("중복검사실행");
         this.nicknameDupl = "";
         this.ErrorMsg= "";
         fetch(
@@ -96,13 +115,6 @@ export default {
         },
 
     },
-	data() {
-		return {
-			myMemberId : 110,
-			loginInfo : '',
-
-		}
-	},
 	mounted() {
 		fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
 				.then(response => response.json())
@@ -188,6 +200,7 @@ export default {
     }
     .mypage-input .input-field{
         display: flex;
+        position: relative;
         align-items: center;
         width: 300px;
         height: 45px;
@@ -247,5 +260,26 @@ export default {
         line-height: 40px;
         color: white;
         text-align: center;
+    }
+    .btn-change{
+        position: absolute;
+        top: 50%;
+        right: -3%;
+        width: 40px;
+        height: 25px;
+        border: solid 1px #253232;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+        font-size: 10px;
+        line-height: 13px;
+        color: rgba(0, 0, 0, 0.7);
+        cursor: pointer;
+
+        transform: translate(-50%, -50%);
+    }
+    .error-txt{
+        font-size: 12px;
+        color: red;
+        margin-left: 8px;
     }
 </style>
