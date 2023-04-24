@@ -26,6 +26,10 @@
 		<result property="regDate" column="reg_date" />
 		<result property="participantCount" column="participation_count" />
 	</resultMap>
+	
+	<resultMap id="ImageResultMap" type="Image">
+		<result property="stuffId" column="stuff_id" />
+	</resultMap>
 
 	<select id="findbyId" resultMap="stuffResultMap">
 		select *
@@ -93,7 +97,7 @@
 	</insert>
 
 	
-	<insert id="imageUpload" parameterType="Image">
+	<insert id="uploadImage" parameterType="Image">
 		insert into image(name, stuff_id)
 		values(#{name}, #{stuffId})
 	</insert>
@@ -106,12 +110,17 @@
 	</update>
 
 	<!-- 지정 공구상품 이미지 전체 삭제 --> 	
-	<delete id="deleteImage" >			
+	<delete id="deleteImage" parameterType="Long">			
 		delete from image where stuff_id = #{stuffId}		
 	</delete>
 
 	<!-- 특정 공구상품 정보 전체 삭제 --> 	
-	<delete id="delete" parameterType="Stuff">
+	<delete id="delete" parameterType="Long">
       delete from stuff where id=${id}
    </delete>
+   
+   <!-- 이미지 정보 조회 -->
+   <select id="findImagebyId" parameterType="Long" resultType="Image">
+      select * from image where stuff_id = ${id}
+   </select>
 </mapper>

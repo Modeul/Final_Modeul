@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 
@@ -40,7 +41,7 @@ public interface StuffRepository {
 	int insert(Stuff stuff);
 	
 	/* 공구상픔 이미지 등록 */
-	int imageUpload(String name, Long stuffId);
+	int uploadImage(Image image);
 
 	Long getCountList(Long categoryId);
 
@@ -52,5 +53,8 @@ public interface StuffRepository {
 	
 	/* 특정 공구상품 정보 삭제 */
 	void delete(Long id);
+
+	/* 이미지 정보 조회 */
+	List<Image> findImagebyId(Long id);
 
 }
