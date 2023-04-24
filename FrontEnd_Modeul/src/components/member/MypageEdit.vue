@@ -15,24 +15,87 @@
         <div class="mypage-input">
             <div class="input-field">
                 <div class="uid-icon"></div>
-                <span class="text">uid</span>
+                <span class="text">uid db</span>
             </div>
             <div class="input-field">
                 <div class="email-icon"></div>
-                <span class="text">uid</span>
+                <span class="text">이메일 db</span>
             </div>
-            <div class="input-field">
+            <div class="input-field-2">
                 <div class="nickname-icon"></div>
-                <span class="text">uid</span>
-            </div>
-            <div class="email"></div>
-            <div class="nickname"></div>
+                <input class="text m-r-30px" placeholder="닉네임db연결위치">
+                    <input
+                    @click.prevent="checkNicknameDupl"
+                    class="btn-auth"
+                    id="btn-auth"
+                    type="button"
+                    value="확인"
+                    />
+                <!-- <div v-if="nicknamebtn==''" class="btn-null"></div>
+                <div v-if="nicknamebtn==true" class="btn-check"></div>
+                <div v-if="nicknamebtn==false" class="btn-x"></div>  -->
+            </div>      
+        
         </div>
         <div class="btn-save">저장하기</div>
     </div>
 </template>
 <script>
 export default {
+    data() {
+        return {
+            member:"",
+            ErrorMsg:"",
+            nicknameDupl:"",
+            nicknamebtn:false,
+        };
+    },
+    methods: {
+        submit(){
+            this.ErrorMsg = "";
+            if (!this.member.nickname) {
+                this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
+                this.nicknamebtn = false;
+            } else if (!this.nicknameDupl) {
+                this.ErrorMsg = "중복 된 닉네임입니다.";
+            }
+            if(this.ErrorMsg){
+                console.log("에러메시지 존재");
+                return false;
+            }
+            if(!this.ErrorMsg){
+                fetch(`${this.$store.state.host}/api/???`, requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.log("error", error));
+                this.$router.push('/member/mypage');
+
+            }
+
+        },
+            // 닉네임 중복 검사
+        checkNicknameDupl() {
+        this.nicknameDupl = "";
+        this.ErrorMsg= "";
+        fetch(
+            `${this.$store.state.host}/api/signup/checkNickname?nickname=${this.member.nickname}`
+        )
+            .then((response) => response.text())
+            .then((result) => {
+            if (result == "false") this.nicknameDupl = false;
+            else this.nicknameDupl = true;
+
+            if (!this.nicknameDupl) {
+                this.nicknamebtn = false;
+                this.ErrorMsg = "중복된 닉네임 입니다.";
+            } else {
+                this.nicknamebtn = true;
+            }
+            })
+            .catch((error) => console.log("error", error));
+        },
+
+    },
     
 }
 </script>
@@ -114,6 +177,14 @@ export default {
         width: 300px;
         height: 45px;
         border: 1px solid #D5D5D5;
+        border-radius: 10px;
+    }
+    .mypage-input .input-field-2{
+        display: flex;
+        align-items: center;
+        width: 300px;
+        height: 45px;
+        border: 1px solid #7299BE;
         border-radius: 10px;
     }
     .mypage-input .uid-icon{

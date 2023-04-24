@@ -36,6 +36,10 @@
                     <span>관심목록</span>
                 </li>
                 <li>
+                    <img src="/public/images/member/stuff/password-icon.svg">
+                    <span>비밀번호 변경</span>
+                </li>
+                <li>
                     <img src="/public/images/member/stuff/logout.svg">
                     <span>로그아웃</span>
                 </li>
