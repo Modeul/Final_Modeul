@@ -38,8 +38,6 @@
 				<div class="chat-side-bottom-icon"></div>
 			</div>
 		</div>
-
-
 		</v-navigation-drawer>
 
 		<v-app-bar height="80" density="compact" flat absolute>
@@ -87,7 +85,7 @@
 				<router-link to="list" class="icon cal-back">뒤로가기</router-link>
 				<div>정산하기</div>
 			</header>
-			<form @submit.prevent="submit" method="post">
+			<form @submit.prevent="submitResult" method="post">
 				<section class="cal-contents">
 					<h1 class="d-none">memberPrice</h1>
 					<div v-for="(user, index) in participantList" class="cal-members" :key="user.id">
@@ -98,7 +96,7 @@
 							{{ user.memberNickname }}
 						</div>
 						<div>
-							<input type="text" @blur="addMember(index), calResult[index].price=$event.target.value" @input="calculate"> 원
+							<input type="text" @blur="addPrice(index), calResult[index].price=$event.target.value" @input="calculate"> 원
 						</div>
 						
 					</div>
@@ -121,6 +119,14 @@ import 'dayjs/locale/ko'
 export default {
 	data() {
 		return {
+			sum: 0,
+			calResultMsg: "우리 정산해요\n",
+			message: {
+				sender: "",
+				content: "",
+				// participationId: null
+			},
+
 			myUserId: 110,
 			stuffId: 449,
 			drawer: null,
@@ -128,10 +134,12 @@ export default {
 			openModal:false,
 
 			participantList: '',
+
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12"
 			},
+
 			memberInfo:{},
 			messageView: [
 				// {
@@ -300,6 +308,51 @@ export default {
 
 		calHandler(){
 			this.openCal = !this.openCal;
+		},
+		// 정산
+		addPrice(index){
+			// this.memberPrice = e.target.value;
+			this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
+		},
+		calculate(e){
+			this.sum = this.sum + parseInt(e.target.value,10);
+		},
+		submitResult(){
+			// calResultMsg생성
+			for(let i=0; i<this.calResult.length; i++){
+				this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`
+			}
+			this.calResultMsg += `총 ${this.sum}원 입니다.`
+			console.log(this.calResultMsg);
+
+			// Message객체에 저장
+			this.message.sender = this.myUserId;
+			this.message.content = this.calResultMsg;
+			// this.message.participationId = 2;
+			// this.message.participationId = this.participantList[0].memberId;
+			// this.message.participationId = this.participantList;
+
+			// 
+			var myHeaders = new Headers();
+        	myHeaders.append("Content-Type", "application/json");
+
+			// console.log(this.message);
+			var raw = JSON.stringify(this.message);
+			// console.log(raw);
+
+			var requestOptions = {
+			method: "POST",
+			headers: myHeaders,
+			body: raw,
+			redirect: "follow",
+        	};
+
+			fetch(`${this.$store.state.host}/api/aa`, requestOptions)
+				.then(response => response.text())
+				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+			// console.log(requestOptions);
+	
 		}
 	},
 	created(){
