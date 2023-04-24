@@ -2,13 +2,15 @@ package com.modeul.web.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 
 public interface StuffService {
 	
 	// 레코드 행이 2개로 반환 되어서 List<Stuff> 형으로 타입 바꾸기
-	void regStuff(Stuff stuff);
+	void regStuff(Stuff stuff, List<MultipartFile> imgs);
 	
 	
 	List<StuffView> getViewAll();	// 전체 페이지 목록 조회용

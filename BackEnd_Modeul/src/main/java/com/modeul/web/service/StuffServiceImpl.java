@@ -1,11 +1,16 @@
 package com.modeul.web.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
@@ -64,19 +69,51 @@ public class StuffServiceImpl implements StuffService {
 	// 공구상품 글 등록용, 트랜잭션 처리!
 	@Transactional
 	@Override
-	public void regStuff(Stuff stuff) {
+	public void regStuff(Stuff stuff, List<MultipartFile> imgs) {
 
 		int insertCount = repository.insert(stuff);
-		System.out.printf("inserCount: %d\n",insertCount); 
 		
 		// 이미지 유효성 검사
-		if(stuff.getImageList() == null || stuff.getImageList().size() <= 0) {
+		if(imgs.get(0).getOriginalFilename().equals("")) {
 			return;
 		}
 		
-		stuff.getImageList().forEach(image -> {
-			image.setStuffId(stuff.getId());
-			repository.imageUpload(image.getName(), image.getStuffId());
+		// 파일 경로 알아 내기(논리적, 물리적)** : urlPath, realPath
+		String currentDir = System.getProperty("user.dir");
+		  
+		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
+		
+		// 물리 경로에 폴더가 없으면, 폴더도 생성
+		File savePath = new File(currentDir, realPath);
+		
+		if (!savePath.exists())
+			savePath.mkdirs();
+
+		// uuid 추가
+		String uuid = UUID.randomUUID().toString();
+		
+		imgs.forEach(img -> {
+			System.out.println(img);
+			
+			String uploadFileName = img.getOriginalFilename();
+			  
+			uploadFileName = uuid + "_" + uploadFileName;
+			
+			Image image = Image.builder()
+				.name(uploadFileName)
+				.stuffId(stuff.getId())
+				.build();
+			
+			repository.uploadImage(image);
+			
+			// 그 물리적 경로로 파일 저장하는 방법**
+			try {
+				img.transferTo(new File(savePath, uploadFileName));
+			} catch (IllegalStateException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		});
 
 		Participation participation = new Participation();
@@ -135,16 +172,36 @@ public class StuffServiceImpl implements StuffService {
 			
 			stuff.getImageList().forEach(image -> {
 				image.setStuffId(stuff.getId());
-				repository.imageUpload(image.getName(), image.getStuffId());
+				repository.uploadImage(image);
 			});
 		}
 		return updateCount;
 	}
 
 	/* 공구상품 정보 삭제 */
+	@Transactional
 	@Override
    	public void deleteStuff(Long id) {
-    	repository.delete(id);
+		
+		List<Image> images = repository.findImagebyId(id);
+		
+		repository.deleteImage(id);
+		
+		repository.delete(id);
+		
+		if(images.isEmpty())
+			return;
+		
+		String currentDir = System.getProperty("user.dir");
+		  
+		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
+
+		File savePath = new File(currentDir, realPath);
+		
+		images.forEach(image ->{
+			File file = new File(savePath, image.getName());
+			file.delete();
+		});
    	}
 
 }

@@ -13,7 +13,7 @@
                 <router-link to="/member/mypage/edit" class="edit-btn">
                     <img src="/public/images/member/stuff/mp-edit-btn.svg">
                 </router-link>
-                <div class="profile-name">날아라 감자맨</div>
+                <div class="profile-name">{{ loginInfo.nickname }}</div>
                 <div class="star">
                     <img src="/public/images/member/stuff/star.svg">
                     <span class="star-avg">5.0</span>
@@ -36,6 +36,10 @@
                     <span>관심목록</span>
                 </li>
                 <li>
+                    <img src="/public/images/member/stuff/password-icon.svg">
+                    <span>비밀번호 변경</span>
+                </li>
+                <li>
                     <img src="/public/images/member/stuff/logout.svg">
                     <span>로그아웃</span>
                 </li>
@@ -50,14 +54,23 @@
 <script>
     export default{
         data(){
+            return{
+                myMemberId : 110,
+			    loginInfo : '',
+            }
 
         },
         methods:{
             
         },
         mounted(){
-
-        }
+            fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
+                .then(response => response.json())
+                .then(data => {
+                    this.loginInfo = data;
+                    console.log(data);
+                })
+        },
     }
 </script>
 <style scoped>
