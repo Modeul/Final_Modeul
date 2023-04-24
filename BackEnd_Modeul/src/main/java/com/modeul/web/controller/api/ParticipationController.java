@@ -95,8 +95,6 @@ public class ParticipationController {
         List<ParticipationMemberView> memberList = participationService.getMemberBystuffId(stuffId);
         StuffView stuffView = stuffService.getViewById(stuffId);
 
-        // stuffId,memberId를 동시에 만족하는 회원 1명 정보 필요! 
-
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("memberList", memberList);
         dataList.put("stuffView", stuffView);

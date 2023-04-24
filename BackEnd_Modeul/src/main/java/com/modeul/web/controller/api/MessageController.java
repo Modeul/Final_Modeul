@@ -22,17 +22,13 @@ public class MessageController {
         // sub를 메시지를 받을 endpoint로 설정합니다.
         @MessageMapping("/chat/enterUser")
         public void enterUser(@RequestBody MessageView messageView, SimpMessageHeaderAccessor headerAccessor) throws JsonProcessingException{
-            
 
-            // String publishMessage = (String) messagingTemplate.getStringSerializer().deserialize(messageView.getContent());
             System.out.println(messageView);
+            
             headerAccessor.getSessionAttributes().put("stuffId", messageView.getStuffId());
 
             messageView.setContent(messageView.getSender() + "님이 입장하셨습니다.");
             
-            
-            //String text = mapper.writeValueAsString(messageView);
-
             messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), messageView);
         }
 

@@ -206,9 +206,9 @@ export default {
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
 					<!-- <div class="d-fl">
-								              <div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-								              <div class="ed-text" @click="deleteStuff">삭제</div>
-								            </div> -->
+						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
+						<div class="ed-text" @click="deleteStuff">삭제</div>
+					</div> -->
 					<div class="detail-price">{{ stuff.price }}원</div>
 
 				</section>
