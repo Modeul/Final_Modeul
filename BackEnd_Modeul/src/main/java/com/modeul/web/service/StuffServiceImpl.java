@@ -96,6 +96,12 @@ public class StuffServiceImpl implements StuffService {
 	}
 
 	@Override
+	public StuffView getViewById(Long id) {
+		
+		return repository.findViewbyId(id);
+	}
+
+	@Override
 	public List<StuffView> getRecentViewList(Long categoryId, int page) {
 		
 		int size = page * 7;

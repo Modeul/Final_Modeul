@@ -16,9 +16,9 @@
 		<div class="chat-side">
 			<div class="chat-side-top">
 				<div class="chat-side-top-left">
-					<div class="chat-side-title">여러가지 나눔</div>
-					<div class="chat-side-people">11명 참여중</div>
-					<div class="chat-side-date">개설일 2023. 04. 18</div>
+					<div class="chat-side-title">{{ chat.title }}</div>
+					<div class="chat-side-people">{{ chat.participantCount }}명 참여중</div>
+					<div class="chat-side-date">개설일 {{ chat.regDate }}</div>
 				</div>
 				<div class="chat-side-top-right">
 					<div class="chat-side-top-icon"></div>
@@ -28,7 +28,7 @@
 				<!-- 유저 1명 -->
 				<div v-for="user in participantList" class="chat-side-list-user">
 					<div class="chat-side-list-user-info">
-						<div class="chat-user-img"><img :src="'/images/member/stuff/'+user.memberImage"></div>
+						<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/'+user.memberImage"></div>
 						<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 					</div>
 					<div class="chat-side-list-user-icon"> <img @click="modalHandler" src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
@@ -45,7 +45,7 @@
 		<v-app-bar height="80" density="compact" flat absolute>
 
 			<template v-slot:prepend>
-				<v-btn icon="mdi-arrow-left"></v-btn>
+				<v-btn icon="mdi-arrow-left" @click="goback"></v-btn>
 			</template>
 
 			<p class="chat-title">{{ chat.title }}</p>
@@ -58,14 +58,13 @@
 
 		<div class="chat-canvas">
 
-
-			<div class="chat-line-wrap" v-for="m in massageView" :class="(myUserId == m.user.userId)? 'mine':'others'">
-				<img v-if="!(myUserId == m.user.userId)" class="user-profile" :src="m.user.userImg">
+			<div class="chat-line-wrap" v-for="m in messageView" :class="(myUserId == m.memberId)? 'mine':'others'">
+				<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
 				<div class="chat-box">
-					<p v-if="!(myUserId == m.user.userId)" class="chat-nickname">{{ m.user.userName }}</p>
+					<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
 					<div class="chat-content-wrap">
-						<p class="chat-content">{{ m.massage.contents }}</p>
-						<p class="chat-time">{{m.massage.time}}</p>
+						<p class="chat-content">{{ m.content }}</p>
+						<p class="chat-time">{{m.sendDate}}</p>
 					</div>
 				</div>
 			</div>
@@ -116,15 +115,12 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko'
+
 export default {
 	data() {
 		return {
-
-			calResult: [
-				{nic: '', price: 0}
-			],
-		
-			sum: 0,
 			myUserId: 110,
 			stuffId: 449,
 			drawer: null,
@@ -136,62 +132,63 @@ export default {
 				title: "여러가지 나눔",
 				participantCount: "12"
 			},
-			massageView: [
-				{
-					user: {
-						userId: 110,
-						userName: '감자맨',
-						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-					},
-					massage: {
-						contents: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
-						time: '오후 11:00'
-					}
-				},
-				{
-					user: {
-						userId: 2,
-						userName: '고구마',
-						userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-					},
-					massage: {
-						contents: 'aaaa',
-						time: '오후 11:02'
-					}
-				},
-				{
-					user: {
-						userId: 2,
-						userName: '고구마',
-						userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-					},
-					massage: {
-						contents: '333333333333333333333333333333333333333333333333333333333',
-						time: '오후 11:05'
-					}
-				},
-				{
-					user: {
-						userId: 1,
-						userName: '감자',
-						userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
-					},
-					massage: {
-						contents: '444',
-						time: '오후 11:10'
-					}
-				},
-				{
-					user: {
-						userId: 2,
-						userName: '고구마',
-						userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
-					},
-					massage: {
-						contents: 'aaaa',
-						time: '오후 11:02'
-					}
-				},
+			memberInfo:'',
+			messageView: [
+				// {
+				// 	user: {
+				// 		userId: 110,
+				// 		userName: '감자맨',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: '안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요',
+				// 		time: '오후 11:00'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 2,
+				// 		userName: '고구마',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: 'aaaa',
+				// 		time: '오후 11:02'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 2,
+				// 		userName: '고구마',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: '333333333333333333333333333333333333333333333333333333333',
+				// 		time: '오후 11:05'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 1,
+				// 		userName: '감자',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/78.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: '444',
+				// 		time: '오후 11:10'
+				// 	}
+				// },
+				// {
+				// 	user: {
+				// 		userId: 2,
+				// 		userName: '고구마',
+				// 		userImg: 'https://randomuser.me/api/portraits/men/79.jpg'
+				// 	},
+				// 	message: {
+				// 		contents: 'aaaa',
+				// 		time: '오후 11:02'
+				// 	}
+				// },
 			],
 			calResult: [
 				
@@ -203,41 +200,14 @@ export default {
 		
 	},
 	methods: {
-		
-		addMember(index){
-			// this.memberPrice = e.target.value;
-			this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
-		},
-
-		calculate(e){
-			this.sum = this.sum + parseInt(e.target.value,10);
-		},
-		submit(){
-			
-			// var myHeaders = new Headers();
-			// myHeaders.append("Content-Type", "application/json");
-
-			
-			console.log(this.calResult);
-
-			// var raw = JSON.stringify(this.member);
-
-			// var requestOptions = {
-			// method: "POST",
-			// headers: myHeaders,
-			// body: raw,
-			// redirect: "follow",
-			// };
-		},
-
 		loadParticipantUser(){
 			this.stuffId = 449;
 			fetch(`http://localhost:8080/api/chat/${this.stuffId}`)
 				.then(response => response.json())
-			.then(result=>{
-				this.participantList = result
+			.then(data=>{
+				this.memberInfo = data.memberInfo;
 			})
-				.catch(error => console.log('error', error));
+			.catch(error => console.log('error', error));
 		},
 		deleteUser(){
 
@@ -250,8 +220,12 @@ export default {
 			this.openCal = !this.openCal;
 		}
 	},
+	created(){
+		this.connect();
+	},
 	mounted() {
-		this.loadParticipantUser();
+		this.loadParticipationListInfo();
+		this.loadParticipantInfo();
 	},
 }
 </script>
@@ -648,6 +622,8 @@ export default {
 .chat-user-img{
 	width: 38px;
 	height: 38px;
+	object-fit: cover;
+	border-radius: 50%;
 }
 .chat-user-nickname{
 	font-size: 14px;

@@ -20,4 +20,9 @@ export default defineConfig({
   //     "/api": "http://localhost:8080",
   //   },
   // },
+ 	//  server: {
+	// 	hmr: {
+	// 	overlay: false,
+	// 	},
+	// },
 })
