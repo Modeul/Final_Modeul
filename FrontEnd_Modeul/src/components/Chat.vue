@@ -96,9 +96,8 @@
 							{{ user.memberNickname }}
 						</div>
 						<div>
-							<input type="text" @blur="addPrice(index), calResult[index].price=$event.target.value" @input="calculate"> 원
+							<input class="cal-member-price" type="text" @blur="addPrice(index), calResult[index].price=$event.target.value" @input="calculate"> 원
 						</div>
-						
 					</div>
 					<div class="cal-sum">
 						<label>합계:</label>
@@ -208,6 +207,11 @@ export default {
 		
 	},
 	methods: {
+
+		// getContent(content) {
+		// 	return (content || "").split('\n').join('<br>');
+		// },
+
 		sendMessage (e) {
 			console.log("keyboard");
 			if(e.keyCode === 13 && this.message !== null){
@@ -322,7 +326,9 @@ export default {
 			for(let i=0; i<this.calResult.length; i++){
 				this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`
 			}
-			this.calResultMsg += `총 ${this.sum}원 입니다.`
+			this.calResultMsg += `총 ${this.sum}원 입니다.\n`
+			this.calResultMsg = (this.calResultMsg || "").split('\n').join('<br>')
+			// this.calResultMsg = this.getContent(this.calResult);
 			console.log(this.calResultMsg);
 
 			// Message객체에 저장
@@ -412,25 +418,25 @@ export default {
             
             z-index: 9; 
         }
-		.cal-contents {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 28px 24px 0px;
+	.cal-contents {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 28px 24px 0px;
 		overflow: auto;
-        /* gap: 24px; */
+		/* gap: 24px; */
 
-        /* width: 327px; */
+		/* width: 327px; */
 		width: 100%;
-        height: 531px;
+		height: 531px;
 
-        background: #fff;
-        border-radius: 30px 30px 10px 10px;
+		background: #fff;
+		border-radius: 30px 30px 10px 10px;
 
-        flex: none;
-        order: 1;
-        flex-grow: 1;
-    }
+		flex: none;
+		order: 1;
+		flex-grow: 1;
+	}	
         
         .cal-members {
             display: flex;
@@ -455,11 +461,16 @@ export default {
 
             .cal-members div:nth-child(3) {
                 position: relative;
-				right: 0px;
+				right: 4px;
+				
                 font-size: 12px;
                 font-weight: 700;
                 color: #222;
             }
+
+			.cal-member-price {
+				width: 50px;
+			}
         
         .cal-sum {
             display: flex;
