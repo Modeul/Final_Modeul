@@ -96,7 +96,7 @@
 							{{ user.memberNickname }}
 						</div>
 						<div>
-							<input class="cal-member-price" type="text" @blur="addPrice(index), calResult[index].price=$event.target.value" @input="calculate"> 원
+							<input class="cal-member-price" type="text" @blur="savePrice(index), calResult[index].price=$event.target.value" @input="sumPrice"> 원
 						</div>
 					</div>
 					<div class="cal-sum">
@@ -107,6 +107,64 @@
 					<button type="submit" class="btn-cal cal-button">정산하기</button>
 				</section>
 			</form>
+
+			<div class="text-center">
+				<v-dialog
+					v-model="errDialog"
+					activator="parent"
+					width="auto"
+				>
+					<v-card>
+					<v-card-text>
+						정확한 값을 입력하세요.
+					</v-card-text>
+					<v-card-actions>
+						<v-btn class="errDialog" block @click="errDialog = false">확인</v-btn>
+					</v-card-actions>
+					</v-card>
+				</v-dialog>
+			</div>
+
+			<div>
+				<v-row justify="center">
+					<v-dialog
+					v-model="confirmDialog"
+					persistent
+					width="auto"
+					>
+					<v-card>
+						<v-card-title class="text-h5">
+						전송하시겠습니까?
+						</v-card-title>
+						<div>
+							<v-card-text v-for="r in calResult">
+								{{ r.nic }}님 {{ r.price }}원
+							</v-card-text>
+							<div>
+								총 {{ this.sum }}원
+							</div>
+						</div>
+						<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn
+							color="green-darken-1"
+							variant="text"
+							@click="confirmDialog = false"
+						>
+							아니요
+						</v-btn>
+						<v-btn
+							color="green-darken-1"
+							variant="text"
+							@click="confirmDialog = false"
+						>
+							네
+						</v-btn>
+						</v-card-actions>
+					</v-card>
+					</v-dialog>
+				</v-row>
+			</div>
 		</section>
 	</v-navigation-drawer>
 </template>
@@ -125,7 +183,8 @@ export default {
 				content: "",
 				// participationId: null
 			},
-
+			errDialog: false,
+			confirmDialog: false,
 			myUserId: 110,
 			stuffId: 449,
 			drawer: null,
@@ -314,17 +373,26 @@ export default {
 			this.openCal = !this.openCal;
 		},
 		// 정산
-		addPrice(index){
+		savePrice(index){
 			// this.memberPrice = e.target.value;
 			this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
 		},
-		calculate(e){
+		sumPrice(e){
 			this.sum = this.sum + parseInt(e.target.value,10);
 		},
 		submitResult(){
 			// calResultMsg생성
 			for(let i=0; i<this.calResult.length; i++){
-				this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`
+				if(this.calResult[i].price < 1 || this.calResult[i].price > 1000000){
+					this.errDialog = true;
+					return;
+				}
+				else {
+					this.confirmDialog = true;
+					this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`;
+				}
+
+				
 			}
 			this.calResultMsg += `총 ${this.sum}원 입니다.\n`
 			this.calResultMsg = (this.calResultMsg || "").split('\n').join('<br>')
@@ -353,10 +421,10 @@ export default {
 			redirect: "follow",
         	};
 
-			fetch(`${this.$store.state.host}/api/aa`, requestOptions)
-				.then(response => response.text())
-				.then(result => console.log(result))
-				.catch(error => console.log('error', error));
+			// fetch(`${this.$store.state.host}/api/aa`, requestOptions)
+			// 	.then(response => response.text())
+			// 	.then(result => console.log(result))
+			// 	.catch(error => console.log('error', error));
 			// console.log(requestOptions);
 	
 		}
@@ -371,6 +439,11 @@ export default {
 }
 </script>
 <style scoped>
+.errDialog {
+	color: #63A0C2; 
+	font-weight: 700;
+	
+}
 .cal {
     display: flex;
     flex-direction: column;
