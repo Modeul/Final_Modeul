@@ -30,6 +30,14 @@
 	  where
 	  uid = #{uid}
   </select>
+
+   <select id="getPwdByUid" resultType="Member">
+	  select *
+	  from
+	  member
+	  where
+	  uid = #{uid}
+  </select>
   
   <select id="getByEmail" resultType="String">
 	  select email

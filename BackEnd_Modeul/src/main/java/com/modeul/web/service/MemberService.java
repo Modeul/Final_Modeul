@@ -4,6 +4,8 @@ import com.modeul.web.entity.Member;
 
 public interface MemberService {
 	
+	String login(Member member);
+
 	int addMember(Member member);
 	
 	Boolean checkUid(String uid);

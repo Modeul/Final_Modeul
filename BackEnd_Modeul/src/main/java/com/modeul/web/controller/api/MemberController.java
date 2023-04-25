@@ -25,6 +25,14 @@ public class MemberController {
 	@Autowired
 	MailService mailService;
 
+	@PostMapping("login")
+	public String login(@RequestBody Member member) {
+		String result = memberService.login(member);
+		System.out.println("result : "+result);
+		// 1:아이디없음, 2:비밀번호틀림, 3:로그인성공
+		return result;
+	}
+
 	@GetMapping("{id}")
 	public Member getMember(@PathVariable("id") int id){
 

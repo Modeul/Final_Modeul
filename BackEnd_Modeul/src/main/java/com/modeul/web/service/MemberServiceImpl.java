@@ -1,6 +1,7 @@
 package com.modeul.web.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.modeul.web.entity.Member;
@@ -12,10 +13,29 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired
 	private MemberRepository repository;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public int addMember(Member member) {
+		String encodedPassword = passwordEncoder.encode(member.getPwd());
+		member.setPwd(encodedPassword);
+
 		return repository.insert(member);
+	}
+
+	@Override
+	public String login(Member member) {
+		Member loginMember = repository.getPwdByUid(member.getUid());
+		if (loginMember == null) {
+			System.out.println("해당 아이디가 없습니다.");
+			return "1";
+		}
+		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			System.out.println("비밀번호가 일치하지 않습니다.");
+			return "2";
+		}
+		return "3";
 	}
 	
 	@Override
