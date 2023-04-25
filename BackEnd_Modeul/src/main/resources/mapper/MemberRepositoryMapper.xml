@@ -74,5 +74,17 @@
 		</set>
 		where id=#{id}
 	</update>
+
+	<update id="delete" parameterType="Member">
+		update member
+		set pwd = '',
+			uid = '',
+			name = '',
+			email = '',
+			address = '',
+			nickname = '',
+			level = '1'
+		where id=#{id}
+	</update>
 	
 </mapper>

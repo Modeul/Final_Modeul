@@ -15,6 +15,10 @@ public interface MemberService {
 	int updateMember(Member member);
 
 	Member getMember(int id);
+
+	int deleteMember(Member member);
+
+	void updateImg(Member member);
 	
 }
 

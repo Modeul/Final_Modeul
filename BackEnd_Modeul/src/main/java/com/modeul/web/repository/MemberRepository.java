@@ -19,4 +19,6 @@ public interface MemberRepository {
 	String getByNickname(String nickname);
 
 	int update(Member member);
+
+    int delete(Member member);
 }
