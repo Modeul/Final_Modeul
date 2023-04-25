@@ -2,21 +2,24 @@ package com.modeul.web.controller.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modeul.web.entity.MessageView;
-import com.modeul.web.entity.MessageView.MessageType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,50 +27,99 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping
 @RequiredArgsConstructor
 public class MessageController {
-	
-	static Map<Long, Map<String, Object>> chatBuffer = new HashMap<>();
-	
+
+	static Map<Long, Map<String, Object>> chatBuffers = new HashMap<>();
+
 	private final SimpMessageSendingOperations messagingTemplate;
 
-	@GetMapping("/api/chatlog/{id}")
-	public Map<String, Object> getChatLogs(@PathVariable("id") long id) {
+	@GetMapping("/api/chatlog")
+	public String getChatLogs(long stuffId, long memberId) throws JsonMappingException, JsonProcessingException {
 
-		// 로그파일 내놔(id);
+		Map<String, Object> chatBuffer = chatBuffers.get(stuffId);
+		String chatLog;
+		if (chatBuffer == null) // 채팅이 활성화 상태가 아닌 경우
+		{
+			chatBuffer = new HashMap<String, Object>();
 
-		Map<String, Object> chatData1 = new HashMap<>();
-		chatData1.put("ParticipationCount", "1");
-		List<MessageView> buffer = new ArrayList<>();
-		MessageView mv1 = new MessageView(MessageType.TALK, 2L, "aaa", "안녕하세요제발", "1234:11:11", null, 449L, null);
-		MessageView mv2 = new MessageView(MessageType.TALK, 13L, "감자탕", "안녕하세요제발222", "1234:11:12", null, 449L, null);
-		buffer.add(mv1);
-		buffer.add(mv2);
-		chatData1.put("buffer", buffer);
+			Set<Long> participationSet = new HashSet<Long>();
+			participationSet.add(memberId);
+			System.out.printf("접속한 MemberId : %s\n", participationSet);
+			chatBuffer.put("participationSet", participationSet);
 
-		chatBuffer.put(449L, chatData1);
+			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
+			chatLog = "[{\"type\":\"ENTER\",\"memberId\":110,\"sender\":\"말하는감자2\",\"content\":\"말하는감자2님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid110.svg\"},{\"type\":\"ENTER\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"아보카도레미님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"asdfa\",\"sendDate\":\"2023-04-25T03:25:53.438Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"qwer\",\"sendDate\":\"2023-04-25T03:25:54.142Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"}]";
 
-		return chatBuffer.get(id);
+			// chatLog = null;
+
+			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
+
+			if (chatLog == null || chatLog.equals("")) { // DB에 chatLog가 비어있는 경우
+				chatBuffer.put("buffer", new ArrayList<MessageView>());
+			} else { // DB에서 존재하는 chatLog를 얻어온 경우
+				ObjectMapper mapper = new ObjectMapper();
+				List<MessageView> list = mapper.readValue(chatLog, new TypeReference<List<MessageView>>() {
+				});
+				chatBuffer.put("buffer", list);
+			}
+		} else { // 채팅이 활성화 상태인 경우
+
+			Set<Long> participationSet = (Set<Long>) chatBuffer.get("participationSet");
+			participationSet.add(memberId);
+			System.out.printf("접속한 MemberId : %s\n", participationSet);
+			chatBuffer.put("participationSet", participationSet);
+
+			ObjectMapper objectMapper = new ObjectMapper();
+
+			chatLog = objectMapper.writeValueAsString(chatBuffer.get("buffer"));
+		}
+
+		chatBuffers.put(stuffId, chatBuffer);
+
+		return chatLog;
 	}
 
 	// sub를 메시지를 받을 endpoint로 설정합니다.
 	@MessageMapping("/chat/enterUser")
-	public void enterUser(@RequestBody MessageView messageView, SimpMessageHeaderAccessor headerAccessor)
-			throws JsonProcessingException {
-
-		// String publishMessage = (String)
-		// messagingTemplate.getStringSerializer().deserialize(messageView.getContent());
-		System.out.println(messageView);
-
-		// chatBuffer.containsKey(messageView.getStuffId())
-
-		// 방별로 map으로 buffer를 만들어 두었다가 들어올때 나갈때 io 발생시키기
-		// 기존에 채팅 버퍼에 있던 채팅 내용을 input
-
-		headerAccessor.getSessionAttributes().put("stuffId", messageView.getStuffId());
+	public void enterUser(@RequestBody MessageView messageView, SimpMessageHeaderAccessor headerAccessor) {
 
 		messageView.setContent(messageView.getSender() + "님이 입장하셨습니다.");
 
-		// String text = mapper.writeValueAsString(messageView);
+		Map<String, Object> chatBuffer = chatBuffers.get(messageView.getStuffId());
+		List<MessageView> chatList = (List<MessageView>) chatBuffer.get("buffer");
+		chatList.add(messageView);
 
+		messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), messageView);
+	}
+
+	@MessageMapping("/chat/exitUser")
+	public void exitUser(@RequestBody MessageView messageView, SimpMessageHeaderAccessor headerAccessor)
+			throws JsonProcessingException {
+
+		Map<String, Object> chatBuffer = chatBuffers.get(messageView.getStuffId());
+		Set<Long> participationSet = (Set<Long>) chatBuffer.get("participationSet");
+		participationSet.remove(messageView.getMemberId());
+
+		messageView.setContent(messageView.getSender() + "님이 퇴장하셨습니다.");
+		List<MessageView> chatList = (List<MessageView>) chatBuffer.get("buffer");
+		chatList.add(messageView);
+
+		if (participationSet.size() == 0) {
+
+			ObjectMapper objectMapper = new ObjectMapper();
+
+			String json = objectMapper.writeValueAsString(chatList);
+			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
+			System.out.println(json);
+			//service
+			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
+
+			chatBuffers.remove(messageView.getStuffId());
+		} else {
+			System.out.println(participationSet);
+			System.out.printf("남은 활성인원수 : %s\n", participationSet.size());
+		}
+
+		
 		messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), messageView);
 
 	}
@@ -76,11 +128,20 @@ public class MessageController {
 	@MessageMapping("/chat/message")
 	public void message(@RequestBody MessageView messageView) {
 
-		// System.out.println(messageView);
+		Map<String, Object> chatBuffer = chatBuffers.get(messageView.getStuffId());
+		List buffer = (List<MessageView>) chatBuffers.get(messageView.getStuffId()).get("buffer");
 
-		// messageView.setContent(messageView.getContent());
+		buffer.add(messageView);
+		
+		chatBuffer.put("buffer", buffer);
+		chatBuffers.put(messageView.getStuffId(), chatBuffer);
+
+		// System.out.println("@@@@@@@@@@bufferList@@@@@@@@@@");
+		// for (MessageView m : (List<MessageView>) chatBuffer.get("buffer")) {
+		// 	System.out.println(m);
+		// }
+		// System.out.println("----------bufferList----------");
 
 		messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), messageView);
 	}
-
 }

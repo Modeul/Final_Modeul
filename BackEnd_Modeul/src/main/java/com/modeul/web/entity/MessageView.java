@@ -1,7 +1,5 @@
 package com.modeul.web.entity;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,18 +31,3 @@ public class MessageView {
     private String memberImage; // 회원 프로필 사진
 
 }
-
-// map chatBuffer
-// {
-// 	"449" : "{"count" : 0,
-// 						"buffer" : "[]" }"
-// }
-
-// "chatlog449.json"
-
-// [{}, {}, {},{}, 
-// {}, 
-// {},
-// {},{},{},{},{},{},{}
-// ]
-
