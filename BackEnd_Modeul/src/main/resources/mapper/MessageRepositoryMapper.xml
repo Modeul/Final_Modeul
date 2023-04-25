@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.modeul.web.repository.MessageRepository">
+
+  <resultMap id="ChatResultMap" type="Chat">
+    <result property="stuffId" column="stuff_id" />
+    <result property="chatLog" column="chat_log" />
+  </resultMap>
+
+  <insert id="insert" parameterType="Chat">
+    insert into chat(stuff_id, chat_log)
+    values(#{stuffId},#{chat_log})
+  </insert>
+
+  <select id="findChatLogBystuffId" resultMap="ChatResultMap">
+    select * 
+    from chat
+    where stuff_id = #{stuffId}
+  </select>
+	
+</mapper>
