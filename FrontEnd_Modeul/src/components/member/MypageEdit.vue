@@ -313,7 +313,6 @@ export default {
         transform: translate(-50%, -50%);
     }
     .btn-change:active{
-        transform: scale(1.1);
         background: #7299BE;
         transition: 0.3s;
     }
