@@ -185,8 +185,6 @@ public class StuffServiceImpl implements StuffService {
 		
 		List<Image> images = repository.findImagebyId(id);
 		
-		repository.deleteImage(id);
-		
 		repository.delete(id);
 		
 		if(images.isEmpty())
