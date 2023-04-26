@@ -28,7 +28,7 @@
   </select>
 
 	<update id="update" parameterType="Chat">
-		update set chat_log = #{chatLog}
+		update chat set chat_log = #{chatLog}
 		where stuff_id = #{stuffId}
 	</update>
 

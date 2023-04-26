@@ -119,7 +119,6 @@ export default {
 	},
 	methods: {
 		sendMessage(e) {
-			// console.log("keyboard");
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
 				console.log("send");
 				this.send()
@@ -127,15 +126,8 @@ export default {
 			}
 		},
 		send() {
-			console.log(this.memberInfo);
-			console.log(this.memberInfo.memberImage);
-			console.log(this.memberInfo.memberNickname);
-
-			console.log("Send message:" + this.message);
-
 			if (this.stompClient && this.stompClient.connected) {
-				const date = new dayjs();
-				// console.log(date);
+				const date = new dayjs().locale('ko').format("A hh:mm");
 
 				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
 				const chatMessage = {
@@ -148,14 +140,10 @@ export default {
 					memberImage: this.memberInfo.memberImage
 				};
 
-				// console.log(chatMessage);
 
 				this.myUserId = this.memberInfo.memberId;
 
-				// ** messageView에 우리가 직접 안 담아도 된다. stomp의 pub에 의해 담겨진다..
-				// this.messageView.push(chatMessage);
 				this.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
-				console.log("complete message:" + this.message);
 			}
 		},
 		stompConnect() {
@@ -169,12 +157,6 @@ export default {
 				async frame => {
 					// 소켓 연결 성공!
 					this.connected = true;
-					console.log('소켓 연결 성공', frame);
-
-					//this.myUserId = this.memberInfo.memberId;
-
-					// this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}/${this.$route.params.memberId}`, res => {
-					// console.log('구독으로 받은 메시지 입니다.', res.body);
 
 					await fetch(`${this.$store.state.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&
@@ -187,12 +169,9 @@ export default {
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
-						console.log('구독으로 받은 메시지 입니다.', res.body);
 
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(JSON.parse(res.body));
-						console.log("구독");
-						// console.log(this.messageView);
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
@@ -255,9 +234,6 @@ export default {
 		this.connect();
 	},
 	updated(){
-		console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-		console.log(this.messageView);
-		console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
 	},
 	mounted() {
 		window.addEventListener('beforeunload', this.unLoadEvent);
