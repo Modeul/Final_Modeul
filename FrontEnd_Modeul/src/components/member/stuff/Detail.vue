@@ -83,6 +83,7 @@ export default {
 					console.log(result);
 					this.loadParticipationList();
 					this.isParticipated = !this.isParticipated;
+					this.dialog=true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -114,6 +115,7 @@ export default {
 				console.log(result);
 				this.loadParticipationList();
 				this.isParticipated = !this.isParticipated;
+				this.dialog=true;
 			})
 			.catch(error => console.log('error', error));
 		}
@@ -261,8 +263,9 @@ export default {
 					<button
 						class="detail-join-button"
 						v-if="!isParticipated"
-						@click="[dialog=true, participationHandler()]"
+						@click="participationHandler"
 					>
+					<!-- @click="[dialog=true, participationHandler()]" -->
 					참여하기
 					</button>
 
@@ -271,7 +274,7 @@ export default {
 						<button
 							class="detail-cancel-button"
 							v-if="isParticipated"
-							@click="[dialog=true, cancelParticipationHandler()]"
+							@click="cancelParticipationHandler"
 						>
 						참여취소
 						</button>

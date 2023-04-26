@@ -5,11 +5,26 @@
 		<div class="delete-box">
 			<div class="delete-box-1">정말로 추방하시겠습니까?</div>
 			<div class="delete-box-2">
-				<div @click="deleteUser" class="delete-box-3">추방</div>
-				<div @click="modalHandler" class="delete-box-4">취소</div>
+				<div @click="deleteUser(this.banishUserId)" class="delete-box-3">추방</div>
+				<div @click="modalCloseHandler" class="delete-box-4">취소</div>
 			</div>
 		</div>
 	</div>
+
+	<v-dialog
+		v-model="dialog"
+		width="auto"
+	>
+		<v-card>
+			<v-card-text>
+				추방되었습니다.
+			</v-card-text>
+			<v-card-actions>
+			<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
+
 	<div class="canvas">
 		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1006;">
 			<div class="chat-side">
@@ -30,7 +45,7 @@
 							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon"> <img @click="modalHandler"
+						<div class="chat-side-list-user-icon"> <img @click="modalHandler(user.memberId)"
 								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
 					</div>
 				</div>
@@ -113,6 +128,8 @@ export default {
 			messageView: [
 
 			],
+			dialog:false,
+			banishUserId:''
 		}
 	},
 	computed: {
@@ -227,10 +244,30 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		deleteUser() {
+		deleteUser(user) {
+			this.banishUserId = user;
 
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUserId}`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				console.log(result);
+				this.openModal = !this.openModal;
+				this.loadParticipationListInfo();
+				this.dialog=true;
+			})
+			.catch(error => console.log('error', error));
 		},
-		modalHandler() {
+		modalHandler(userId) {
+			this.openModal = !this.openModal;
+			this.banishUserId = userId;
+			console.log("banishUserId:" + this.banishUserId); 
+		},
+		modalCloseHandler() {
 			this.openModal = !this.openModal;
 		},
 		unLoadEvent() {
