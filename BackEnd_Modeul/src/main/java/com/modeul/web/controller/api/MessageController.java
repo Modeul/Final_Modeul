@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -19,23 +20,30 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modeul.web.entity.Chat;
 import com.modeul.web.entity.MessageView;
+import com.modeul.web.repository.MessageRepository;
 
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping
-@RequiredArgsConstructor
 public class MessageController {
 
 	static Map<Long, Map<String, Object>> chatBuffers = new HashMap<>();
 
-	private final SimpMessageSendingOperations messagingTemplate;
+	// chatBuffers {"449" : {"participationSet" : Set<Long>, "buffer" : List<MessageView>}}
+
+	@Autowired
+	private SimpMessageSendingOperations messagingTemplate;
+
+	@Autowired
+	private MessageRepository repository;
 
 	@GetMapping("/api/chatlog")
 	public String getChatLogs(long stuffId, long memberId) throws JsonMappingException, JsonProcessingException {
 
 		Map<String, Object> chatBuffer = chatBuffers.get(stuffId);
+
 		String chatLog;
 		if (chatBuffer == null) // 채팅이 활성화 상태가 아닌 경우
 		{
@@ -47,15 +55,18 @@ public class MessageController {
 			chatBuffer.put("participationSet", participationSet);
 
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
-			chatLog = "[{\"type\":\"ENTER\",\"memberId\":110,\"sender\":\"말하는감자2\",\"content\":\"말하는감자2님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid110.svg\"},{\"type\":\"ENTER\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"아보카도레미님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"asdfa\",\"sendDate\":\"2023-04-25T03:25:53.438Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"qwer\",\"sendDate\":\"2023-04-25T03:25:54.142Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"}]";
+			// chatLog = "[{\"type\":\"ENTER\",\"memberId\":110,\"sender\":\"말하는감자2\",\"content\":\"말하는감자2님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid110.svg\"},{\"type\":\"ENTER\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"아보카도레미님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"asdfa\",\"sendDate\":\"2023-04-25T03:25:53.438Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"qwer\",\"sendDate\":\"2023-04-25T03:25:54.142Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"}]";
 
-			// chatLog = null;
-
+			chatLog = repository.findChatLogBystuffId(stuffId);
+			repository.delete(stuffId);
+			
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
 
 			if (chatLog == null || chatLog.equals("")) { // DB에 chatLog가 비어있는 경우
+				repository.insert(new Chat(stuffId, ""));
 				chatBuffer.put("buffer", new ArrayList<MessageView>());
 			} else { // DB에서 존재하는 chatLog를 얻어온 경우
+				chatLog = chatLog.replace("\\\"", "\"");
 				ObjectMapper mapper = new ObjectMapper();
 				List<MessageView> list = mapper.readValue(chatLog, new TypeReference<List<MessageView>>() {
 				});
@@ -108,9 +119,13 @@ public class MessageController {
 			ObjectMapper objectMapper = new ObjectMapper();
 
 			String json = objectMapper.writeValueAsString(chatList);
+			json = json.replace("\"", "\\\"");
 			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
-			System.out.println(json);
-			//service
+			// System.out.println(json);
+			Chat chatLog = new Chat(messageView.getStuffId(), json);
+			System.out.println(chatLog);
+			// repository.update(chatLog);
+			repository.insert(chatLog);
 			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
 
 			chatBuffers.remove(messageView.getStuffId());

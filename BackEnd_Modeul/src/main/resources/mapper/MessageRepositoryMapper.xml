@@ -12,13 +12,29 @@
 
   <insert id="insert" parameterType="Chat">
     insert into chat(stuff_id, chat_log)
-    values(#{stuffId},#{chat_log})
+    values(#{stuffId}, #{chatLog})
   </insert>
 
-  <select id="findChatLogBystuffId" resultMap="ChatResultMap">
+  <!-- <select id="findChatLogBystuffId" resultMap="ChatResultMap">
     select * 
     from chat
     where stuff_id = #{stuffId}
+  </select> -->
+
+	<select id="findChatLogBystuffId" resultType="String">
+    select chat_log
+    from chat
+    where stuff_id = #{stuffId}
   </select>
+
+	<update id="update" parameterType="Chat">
+		update set chat_log = #{chatLog}
+		where stuff_id = #{stuffId}
+	</update>
+
+	<delete id="delete">
+		delete from chat
+		where stuff_id = #{stuffId}
+	</delete>
 	
 </mapper>

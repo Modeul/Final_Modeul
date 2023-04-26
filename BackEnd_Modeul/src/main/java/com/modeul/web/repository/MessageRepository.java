@@ -6,8 +6,11 @@ import com.modeul.web.entity.Chat;
 
 @Mapper
 public interface MessageRepository {
-    
+
 	int insert(Chat chat);
 
-    Chat findChatLogBystuffId(Long stuffId);
+	int update(Chat chat);
+	int delete(Long stuffId);
+	// Chat findChatLogBystuffId(Long stuffId);
+	String findChatLogBystuffId(Long stuffId);
 }

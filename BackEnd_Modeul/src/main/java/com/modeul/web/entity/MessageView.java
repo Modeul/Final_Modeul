@@ -29,5 +29,4 @@ public class MessageView {
     private Long participationId; // 참여 테이블 FK
     private Long stuffId;         // 채팅방과 FK
     private String memberImage; // 회원 프로필 사진
-
 }
