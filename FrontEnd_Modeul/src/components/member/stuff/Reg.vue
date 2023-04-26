@@ -65,16 +65,15 @@
 					<!-- 이미지 업로드  -->
 					<div class="file-box">
 						<label for="file">
-							<div class="btn-file"></div> 
-							<div class="btn-uploaded-files">
-								<img class="uploaded-files" :src="imageURL" />
+							<div class="btn-file">{{ imageList.length }}/6</div>
+							<div class="btn-uploaded-files" v-for="item in imageList">
+								<img class="uploaded-files" :src="item" />
 							</div>
-							<div class="btn-uploaded-files"></div>
 						</label>
 
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
+							@change="uploadImage">
 					</div>
-
 
 					<!-- 에러메시지 모달창 -->
 					<div v-if="openModal == true" class="black-bg">
@@ -89,7 +88,8 @@
 					<select class="category-box" name="categoryId">
 						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
-						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id v-text="c.name">
+						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
+							v-text="c.name">
 						</option>
 
 					</select>
@@ -104,19 +104,22 @@
 					<div class="select-box2 d-fl">
 						<label for="" class="input-field-txt">인원</label>
 						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
+							<input class="btn-minus" id="people-count" type="button" value=""
+								@click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
+							<input type="text" class="people-count-num" name="numPeople" id="result"
+								v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
+							<input class="btn-plus" id="people-count" type="button" value=""
+								@click.prevent="numPeoplePlusHandler">
 						</div>
 					</div>
 
 					<!-- 마감일 설정 -->
 					<div id="btn-date" class="select-box d-fl jf-sb">
 						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
-							name="deadline" v-model="stuff.deadline">
+						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
+							aria-required="true" name="deadline" v-model="stuff.deadline">
 
 					</div>
 
@@ -158,8 +161,8 @@ export default {
 			categorySelected: null,
 			isNext: false,
 			categoryList: [],
-			file: [],
-			imageURL: '',
+			files: [],
+			imageList: [],
 			stuff: {
 				title: '',
 				place: '',
@@ -167,7 +170,7 @@ export default {
 				categoryId: 1,
 				deadline: '',
 				price: '',
-				url: '',
+				url: '1',
 				content: '',
 				imageList: [
 					{
@@ -278,7 +281,7 @@ export default {
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.$store.state.host}/api/stuff/upload`, requestOptions)
+				fetch(`${this.$store.state.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
@@ -289,11 +292,18 @@ export default {
 
 		// 썸네일 조작
 		uploadImage(e) {
-			this.file = e.target.files;
-			console.log(this.file);
-			this.url = URL.createObjectURL(this.file[0]);
-			console.log(this.url);
-			this.imageURL = this.url;
+			this.files = e.target.files;
+			
+			if (this.files.length > 6) {
+				alert(`최대 6개까지 선택할 수 있습니다.`);
+				return;
+			}
+			
+			this.imageList = [];
+
+			for (let file of this.files) {
+				this.imageList.push(URL.createObjectURL(file));
+			}
 		},
 		// 제목 체크
 		isValidTitle() {
@@ -320,7 +330,7 @@ export default {
 		},
 		isValidDeadline() {
 			const deadlineObj = new dayjs(this.stuff.deadline)
-			if(deadlineObj.diff(dayjs(), 'minute') <= 0)
+			if (deadlineObj.diff(dayjs(), 'minute') <= 0)
 				return false;
 			else
 				return true;
@@ -346,6 +356,5 @@ select {
 	/* 파이어폭스 화살표 없애기 */
 	appearance: none
 		/* 화살표 없애기 */
-		
-}
-</style>
+
+}</style>
