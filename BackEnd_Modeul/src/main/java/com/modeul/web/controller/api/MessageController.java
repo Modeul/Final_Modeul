@@ -62,8 +62,8 @@ public class MessageController {
 			
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
 
-			if (chatLog == null || chatLog.equals("")) { // DB에 chatLog가 비어있는 경우
-				repository.insert(new Chat(stuffId, ""));
+			if (chatLog == null) { // DB에 chatLog가 비어있는 경우
+				// repository.insert(new Chat(stuffId, ""));
 				chatBuffer.put("buffer", new ArrayList<MessageView>());
 			} else { // DB에서 존재하는 chatLog를 얻어온 경우
 				chatLog = chatLog.replace("\\\"", "\"");
