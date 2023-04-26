@@ -55,15 +55,14 @@ public class MessageController {
 			chatBuffer.put("participationSet", participationSet);
 
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
-			// chatLog = "[{\"type\":\"ENTER\",\"memberId\":110,\"sender\":\"말하는감자2\",\"content\":\"말하는감자2님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid110.svg\"},{\"type\":\"ENTER\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"아보카도레미님이 입장하셨습니다.\",\"sendDate\":null,\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"asdfa\",\"sendDate\":\"2023-04-25T03:25:53.438Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"},{\"type\":\"TALK\",\"memberId\":111,\"sender\":\"아보카도레미\",\"content\":\"qwer\",\"sendDate\":\"2023-04-25T03:25:54.142Z\",\"participationId\":null,\"stuffId\":449,\"memberImage\":\"chatid111.svg\"}]";
-
 			chatLog = repository.findChatLogBystuffId(stuffId);
-			repository.delete(stuffId);
-			
+			// repository.delete(stuffId);
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
 
 			if (chatLog == null) { // DB에 chatLog가 비어있는 경우
-				// repository.insert(new Chat(stuffId, ""));
+				repository.insert(new Chat(stuffId, ""));
+				chatBuffer.put("buffer", new ArrayList<MessageView>());
+			} else if (chatLog.equals("")) {
 				chatBuffer.put("buffer", new ArrayList<MessageView>());
 			} else { // DB에서 존재하는 chatLog를 얻어온 경우
 				chatLog = chatLog.replace("\\\"", "\"");
@@ -123,10 +122,7 @@ public class MessageController {
 			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
 			// System.out.println(json);
 			Chat chatLog = new Chat(messageView.getStuffId(), json);
-			System.out.println(chatLog);
-			// repository.update(chatLog);
-			repository.insert(chatLog);
-			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
+			repository.update(chatLog);
 
 			chatBuffers.remove(messageView.getStuffId());
 		} else {
@@ -150,12 +146,6 @@ public class MessageController {
 		
 		chatBuffer.put("buffer", buffer);
 		chatBuffers.put(messageView.getStuffId(), chatBuffer);
-
-		// System.out.println("@@@@@@@@@@bufferList@@@@@@@@@@");
-		// for (MessageView m : (List<MessageView>) chatBuffer.get("buffer")) {
-		// 	System.out.println(m);
-		// }
-		// System.out.println("----------bufferList----------");
 
 		messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), messageView);
 	}
