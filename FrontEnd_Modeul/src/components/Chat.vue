@@ -105,17 +105,7 @@
             </div>
             <div class="cal-member-price">
                 <span>
-                    <!-- <input v-model.number="member.value[1]"
-					
-					> -->
-                    <!-- <input type="text" 
-                    v-model.number="member.value[1]" -->
-					<input type="text" 
-                    v-model.number="member.value[1]"
-                        @blur="savePrice(index), 
-
-                        calResult[index].price=$event.target.value" 
-                        @input="sumPrice"> 
+					<input type="text" v-model.number="member.value[1]" @blur="savePrice(index)" > 
                 </span>
                     원
             </div>
@@ -127,36 +117,6 @@
 		</div>
     </section>
 			</form>
-            <!-- <form @submit.prevent="submitResult" method="post">
-                <section class="cal-contents">
-                    <h1 class="d-none">memberPrice</h1>
-                    <div v-for="(user, index) in participantList" class="cal-members" :key="user.id">
-                        <div class="chat-user-img">
-                            <img :src="'/images/member/stuff/'+user.memberImage">
-                        </div>
-                        <div>
-                            {{ user.memberNickname }}
-                        </div>
-                        <div class="cal-member-price">
-                            <span>
-								<input type="text" 
-
-								v-model.number="price"
-									@blur="savePrice(index), 
-									calResult[index].price=$event.target.value" 
-									@input="sumPrice"> 
-							</span>
-								원
-                        </div>
-                    </div>
-                    <div class="cal-sum">
-                        <label>합계:</label>
-                        <span>{{ sum }}</span>
-                        <span>원</span>
-                    </div>
-                    <button type="submit" class="btn-cal cal-button">정산하기</button>
-                </section>
-            </form> -->
 
             <div>
                 <v-dialog
@@ -233,15 +193,7 @@ import { reactive } from 'vue';
 
 export default {
 	setup(){
-		test2 = ref(0);
 
-
-
-		// memberPriceMap(){
-		// 	return this.participantList.map((m)=> {
-		// 		return {key: m.memberNickname, value: [m.memberImage, 0]}
-		// 	})
-		// },
  	},
 
 	data() {
@@ -283,59 +235,9 @@ export default {
 			})
 		},
 		
-		// sum(){
-		// 	for(let p of this.memberPriceMap)
-		// 		test += p.value[1];
-		// 	return test;
-		// },
-		
-		
-
-		// total(){
-		// 	let sum = 0;
-		// 	// for (const arr of this.memberPriceMap.allBalue) {
-		// 	// 	// sum += arr.reduce((acc, num) => acc + num, 0);
-		// 	// 	return arr;
-		// 	// }
-			
-
-		// 	// return this.memberPriceMap.value[1].reduce((acc, num) => acc + num, 0);
-
-		// 	// return console.log(this.memberPriceMap.type);
-		// 	// return this.memberPriceMap;
-
-		// 	// const prices = 
-		// 	// return this.memberPriceMap(obj => obj.value[1]);
-
-			
-			
-
-		// 	// let sum = 0;
-		// 	// for(let b of a)
-		// 	// 	sum += b.reduce((acc,num)=>acc+num,0)
-			
-		// 	// // return console.log(a);
-		// 	// return a;
-		// },
-
-	// 	let total = computed(()=>{
-    // let result = 0;
-    // for(let m of model.list)
-    //     result += m.price;
-
-    // return result;
-// });
-		
 	},
 	methods: {
-		// total(){
-		// 	let a = []
-		// 	this.memberPriceMap.forEach(obj=>a.push(obj.value[1]));
-
-		// 	return a;
-		// },
 		
-		// 정산 
 		total(){
 			this.memberPriceMap.forEach(obj=>this.a.push(obj.value[1]));
 			this.sum = this.a.reduce((p,c)=>p+c,0);
@@ -348,17 +250,10 @@ export default {
 		},
 		
         savePrice(index){
-
-			// this.memberPriceList=this.participantList.map((m)=> {
-			// 	return {key: m.memberNickname, value: this.memberPrice}
-			// })
-			// m.memberNickname);
-			// console.log(this.participantList);
 			console.log(this.memberPriceMap);
 			this.total();
 			console.log(this.a);
 			console.log(this.sum);
-            // this.calList.push({nic: this.participantList[index].memberNickname, price: this.price});
 			
         },
         sumPrice(e){
@@ -541,36 +436,6 @@ export default {
 }
 </script>
 
-<script setup>
-import { computed, reactive } from 'vue';
-
-// let calList = []
-// let calResult = reactive(calList)
-
-// console.log(calResult);
-// 각 memeber의 price 입력
-// (1) 새로운 배열에 nic과 price 객체 저장
-// console.log(participantList);
-// let result = reactive({nicname:"", price: 0});
-// result.nicname = this.participantList.map((m)=>m.memberNickname);
-// console.log(result);
-
-// (2)price가 변할 때, sum의 값 변경: input 시 sum 값 변경
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</script>
 <style scoped>
 .cal {
     display: flex;
