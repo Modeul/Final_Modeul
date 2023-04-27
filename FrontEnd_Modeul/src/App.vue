@@ -28,3 +28,4 @@ export default {
 		<Loader :loading="this.$store.state.loadingStatus"></Loader>
 	</v-app>
 </template>
+

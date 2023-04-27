@@ -5,6 +5,8 @@ import 'dayjs/locale/ko'
 export default {
 	data() {
 		return {
+			showMap: true,
+			mapStatus: true,
 			isNext: false,
 			categoryList: [],
 			files: [],
@@ -104,7 +106,7 @@ export default {
 			}
 
 			if (!this.valiError) {
-			var formData = new FormData(this.$refs.form);
+				var formData = new FormData(this.$refs.form);
 
 				var requestOptions = {
 					method: 'PUT',
@@ -125,7 +127,7 @@ export default {
 		// 썸네일 조작
 		uploadImage(e) {
 			this.files = e.target.files;
-			
+
 			if (this.files.length > 6) {
 				alert(`최대 6개까지 선택할 수 있습니다.`);
 				return;
@@ -180,7 +182,7 @@ export default {
 		},
 		isValidDeadline() {
 			const deadlineObj = new dayjs(this.stuff.deadline)
-			if(deadlineObj.diff(dayjs(), 'minute') <= 0)
+			if (deadlineObj.diff(dayjs(), 'minute') <= 0)
 				return false;
 			else
 				return true;
@@ -188,6 +190,74 @@ export default {
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},
+
+		postCode() {
+
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.stuff.place = data.address;
+
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.stuff.coordX = result.x;
+							this.stuff.coordY = result.y;
+							console.log(this.stuff.coordX);
+							this.showMap = true;
+							this.mapStatus = true;
+							document.querySelector("#content").focus();
+
+						}
+					});
+
+				}
+			}).open();
+		},
+		drawMap() {
+			const mapContainer = document.getElementById('map');
+
+			let coords = new daum.maps.LatLng(this.stuff.coordY, this.stuff.coordX);
+			let mapOption = {
+				center: coords,
+				level: 5
+			};
+
+			let map = new daum.maps.Map(mapContainer, mapOption);
+			let marker = new daum.maps.Marker({
+				position: coords,
+				map: map
+			});
+
+			map.relayout();
+			map.setCenter(coords);
+			marker.setPosition(coords);
+		},
+
+		toggleMap() {
+			console.log(this.stuff.croodX);
+			let map = document.querySelector("#map");
+			if (this.showMap) {
+				map.style.height = '300px';
+				this.showMap = !this.showMap;
+
+				if (this.mapStatus) {
+					setTimeout(() => {
+						this.drawMap();
+						this.mapStatus = false;
+					}, 500);
+				}
+
+
+			} else {
+				map.style.height = 0;
+				this.showMap = !this.showMap;
+			}
+
+		}
 	},
 	mounted() {
 		this.numPeoplePlusHandler();
@@ -206,6 +276,8 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-reg.css";
+
+
 </style>
 <template>
 	<!-- =================== reg2 ======================= -->
@@ -245,7 +317,8 @@ export default {
 								<img class="uploaded-files" :src="changed ? img : '/images/member/stuff/' + img.name">
 							</div>
 						</label>
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
+							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -270,19 +343,22 @@ export default {
 					<div class="select-box2 d-fl">
 						<label for="" class="input-field-txt">인원</label>
 						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
+							<input class="btn-minus" id="people-count" type="button" value=""
+								@click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
+							<input type="text" class="people-count-num" name="numPeople" id="result"
+								v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
+							<input class="btn-plus" id="people-count" type="button" value=""
+								@click.prevent="numPeoplePlusHandler">
 						</div>
 					</div>
 
 					<!-- 마감일 설정 -->
 					<div id="btn-date" class="select-box d-fl jf-sb">
 						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
-							name="deadline" v-model="stuff.deadline">
+						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
+							aria-required="true" name="deadline" v-model="stuff.deadline">
 					</div>
 
 
@@ -293,8 +369,14 @@ export default {
 
 					<div class="select-box">
 						<label for="place" class="input-field-txt">장소</label>
-						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place">
+						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place"
+							@click="postCode">
 					</div>
+					<div class="select-box toggle-map" v-if="showMap" @click="toggleMap">지도 열기</div>
+					<div class="select-box toggle-map" v-else @click="toggleMap">지도 닫기</div>
+					<div id="map"></div>
+					<input type="text" class="input-field" name="coordX" v-show="false" v-model="stuff.coordX">
+					<input type="text" class="input-field" name="coordY" v-show="false" v-model="stuff.coordY">
 
 					<div class="select-box">
 						<label for="url" class="input-field-txt">링크</label>

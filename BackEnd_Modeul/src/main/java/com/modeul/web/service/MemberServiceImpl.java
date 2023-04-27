@@ -28,16 +28,14 @@ public class MemberServiceImpl implements MemberService {
 	public String login(Member member) {
 		Member loginMember = repository.getPwdByUid(member.getUid());
 		if (loginMember == null) {
-			System.out.println("해당 아이디가 없습니다.");
-			return "1";
+			return "해당 아이디가 없습니다.";
 		}
 		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
-			System.out.println("비밀번호가 일치하지 않습니다.");
-			return "2";
+			return "비밀번호가 일치하지 않습니다.";
 		}
-		return "3";
+		return null;
 	}
-	
+
 	@Override
 	public Boolean checkUid(String uid) {
 		String getUid = repository.getbyUid(uid);

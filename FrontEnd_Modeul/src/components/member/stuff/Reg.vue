@@ -130,8 +130,16 @@
 
 					<div class="select-box">
 						<label for="place" class="input-field-txt">장소</label>
-						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place">
+						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place"
+							@click="postCode">
 					</div>
+					<div class="select-box toggle-map" v-if="mapNav">
+						<div  v-if="showMap" @click="toggleMap">지도 열기</div>
+						<div  v-else @click="toggleMap">지도 닫기</div>
+					</div>
+					<div id="map"></div>
+					<input type="text" class="input-field" name="coordX" v-show="false" v-model="stuff.coordX">
+					<input type="text" class="input-field" name="coordY" v-show="false" v-model="stuff.coordY">
 
 					<div class="select-box">
 						<label for="url" class="input-field-txt">링크</label>
@@ -163,6 +171,12 @@ export default {
 			categoryList: [],
 			files: [],
 			imageList: [],
+			showMap: false,
+			mapStatus: false,
+			mapNav: false,
+
+			croodX: 0,
+			croodY: 0,
 			stuff: {
 				title: '',
 				place: '',
@@ -293,12 +307,12 @@ export default {
 		// 썸네일 조작
 		uploadImage(e) {
 			this.files = e.target.files;
-			
+
 			if (this.files.length > 6) {
 				alert(`최대 6개까지 선택할 수 있습니다.`);
 				return;
 			}
-			
+
 			this.imageList = [];
 
 			for (let file of this.files) {
@@ -338,6 +352,78 @@ export default {
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},
+
+		postCode() {
+
+
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.stuff.place = data.address;
+
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.stuff.coordX = result.x;
+							this.stuff.coordY = result.y;
+							console.log(this.stuff.coordX);
+							this.showMap = true;
+							this.mapStatus = true;
+							this.mapNav = true;
+							document.querySelector("#content").focus();
+
+						}
+					});
+
+				}
+			}).open();
+		},
+
+		drawMap() {
+			const mapContainer = document.getElementById('map');
+			let coords = new daum.maps.LatLng(this.stuff.coordY, this.stuff.coordX);
+			let mapOption = {
+				center: coords,
+				level: 5
+			};
+
+
+			let map = new daum.maps.Map(mapContainer, mapOption);
+
+
+			let marker = new daum.maps.Marker({
+				position: coords,
+				map: map
+			});
+
+			map.relayout();
+			map.setCenter(coords);
+			marker.setPosition(coords);
+		},
+		toggleMap() {
+
+			let map = document.querySelector("#map");
+			if (this.showMap) {
+				map.style.height = '300px';
+				this.showMap = !this.showMap;
+
+				if (this.mapStatus) {
+					setTimeout(() => {
+						this.mapStatus = false;
+						this.drawMap();
+					}, 500);
+				}
+
+
+			} else {
+				map.style.height = 0;
+				this.showMap = !this.showMap;
+			}
+
+		}
 	},
 	mounted() {
 		this.loadCategory();
@@ -349,6 +435,8 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-reg.css";
 
+
+
 select {
 	-webkit-appearance: none;
 	/* 크롬 화살표 없애기 */
@@ -357,4 +445,5 @@ select {
 	appearance: none
 		/* 화살표 없애기 */
 
-}</style>
+}
+</style>

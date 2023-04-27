@@ -136,7 +136,7 @@ main {
     height: auto;
     width: 320px;
     margin-top: 13px;
-    margin-bottom: 100px;
+    margin-bottom: 150px;
 }
 .detail-paragraph {
     height: 100%;
@@ -160,6 +160,7 @@ main {
   box-shadow: rgb(0 0 0 / 12%) 0px -6px 6px -6px;
   padding: 13px 20px 22px 20px;
   box-sizing: border-box;
+  z-index: 5;
 }
 
 .detail-join-title {
@@ -405,4 +406,64 @@ transition: 0.5s;
 .noImg{
   height:100%;
   background-image: url(../../../../images/member/stuff/noimg.svg);
+}
+
+#map {
+	transition: height ease-out 0.5s 0s;
+  width:300px;
+  height:0;
+  margin-top:10px;
+  display: block;
+}
+
+.canvas.map {
+	text-align: center;
+  margin: 10px auto auto;
+}
+
+.map-content {
+  display: inline-flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  position: relative;
+  background: rgba(114, 153, 190, 1);
+  border-radius: .4em;
+
+}
+
+.map-content:after {
+
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-top-color: rgba(114, 153, 190, 1);
+  border-bottom: 0;
+  border-left: 0;
+  margin-left: -10px;
+  margin-bottom: -20px;
+}
+
+.map-content-items:nth-child(1) {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.map-content-items:nth-child(2) {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 1;
 }
