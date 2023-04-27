@@ -756,7 +756,7 @@ export default {
 	cursor: pointer;
 }
 
-.v-dialog::v-deep{
+.v-dialog:deep{
 	font-size: 14px;
 }
 </style>

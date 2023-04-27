@@ -17,8 +17,9 @@ export default {
 			participantList: [],
 			memberCount: '',
 			isParticipated: '',
-			isParticipationChecked: '',
-			dialog: false
+			isCheckParticipation:'',
+			dialog: false,
+			participantInfo:{},
 		};
 	},
 	methods: {
@@ -84,7 +85,7 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
-					this.isParticipated = !this.isParticipated;
+					this.isCheckParticipation = !this.isCheckParticipation;
 					this.dialog=true;
 				})
 				.catch(error => console.log('error', error));
@@ -104,6 +105,25 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
+		loadParticipantInfo(){
+			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
+				.then(response => response.json())
+				.then(data => {
+					this.participantInfo = data.memberInfo;
+					console.log(this.participantInfo);
+				})
+				.catch(error => console.log('error', error));
+		},
+		// 참여버튼 참여한지에 따라 초기값 설정
+		checkParticipation(){
+			for(let p in this.participantList){
+				console.log(p.memberId+'\n');
+				if(p.memberId === this.participantInfo.memberId){
+					this.isCheckParticipation = !this.isCheckParticipation;
+					this.isParticipated = !this.isParticipated;
+				}
+			}
+		},
 		/* 공구상품 항목의 참여 취소 요청 */
 		cancelParticipationHandler() {
 			var requestOptions = {
@@ -116,7 +136,7 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
-					this.isParticipated = !this.isParticipated;
+					this.isCheckParticipation = !this.isCheckParticipation;
 					this.dialog=true;
 				})
 				.catch(error => console.log('error', error));
@@ -196,6 +216,8 @@ export default {
 		this.$store.commit('LOADING_STATUS', false);
 
 		this.loadParticipationList();
+		this.loadParticipantInfo();
+		this.checkParticipation();
 	},
 };
 </script>
@@ -323,18 +345,16 @@ export default {
 				<div class="detail-join-button-wrap">
 					<button
 						class="detail-join-button"
-						v-if="!isParticipated"
+						v-if="!isCheckParticipation"
 						@click="participationHandler"
 					>
-					<!-- @click="[dialog=true, participationHandler()]" -->
 					참여하기
 					</button>
 
-					<div class="join-button-wrap">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
+					<div class="join-button-wrap" v-if="isCheckParticipation">
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button">채팅하기</router-link>
 						<button
 							class="detail-cancel-button"
-							v-if="isParticipated"
 							@click="cancelParticipationHandler"
 						>
 						참여취소
@@ -343,7 +363,7 @@ export default {
 				</div>
 
 
-				<v-dialog v-model="dialog" width="auto" v-if="isParticipated">
+				<v-dialog v-model="dialog" width="auto" v-if="isCheckParticipation">
 					<v-card>
 						<v-card-text class="participationcard">
 							참여되었습니다.
@@ -354,7 +374,7 @@ export default {
 					</v-card>
 				</v-dialog>
 
-				<v-dialog v-model="dialog" width="auto" v-if="!isParticipated">
+				<v-dialog v-model="dialog" width="auto" v-if="!isCheckParticipation">
 					<v-card>
 						<v-card-text>
 							취소되었습니다.
@@ -397,7 +417,7 @@ export default {
 /* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
 개발자모드에서 보여지는 css 계층의 값 변경 가능*/
 
-.v-dialog::v-deep{
+.v-dialog:deep{
 	font-size: 14px;
 }
 </style>
