@@ -28,7 +28,6 @@ import MyPage from './components/member/MyPage.vue';
 import MypageEdit from './components/member/MypageEdit.vue';
 import ChangePwd from './components/member/ChangePwd.vue';
 
-
 import MemberLayout from './components/member/Layout.vue';    // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from './components/member/stuff/List.vue';
 import Detail from './components/member/stuff/Detail.vue';
