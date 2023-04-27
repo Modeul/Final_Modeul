@@ -288,11 +288,11 @@ export default {
 					v-if="isParticipated"
 				>
 					<v-card>
-						<v-card-text>
+						<v-card-text class="participationcard">
 							참여되었습니다.
 						</v-card-text>
 						<v-card-actions>
-						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -307,7 +307,7 @@ export default {
 							취소되었습니다.
 						</v-card-text>
 						<v-card-actions>
-						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -338,4 +338,10 @@ export default {
 	object-fit: cover;
 }
 
+/* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
+개발자모드에서 보여지는 css 계층의 값 변경 가능*/
+
+.v-dialog::v-deep{
+	font-size: 14px;
+}
 </style>

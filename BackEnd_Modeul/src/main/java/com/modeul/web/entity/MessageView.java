@@ -18,7 +18,7 @@ public class MessageView {
     // 메세지 타입에 따라서 동작하는 구조가 달라진다!!
 
     public enum MessageType{
-        ENTER, TALK, LEAVE;
+        ENTER, TALK, LEAVE, BANISH;
     }
 
     private MessageType type; // 메세지 타입
