@@ -407,3 +407,12 @@
 .over-h{
     overflow: hidden;
 }
+
+.border-radious {
+    border-radius: 10px;
+}
+
+.dialog-title {
+    text-align: start;
+    font-size: 20px;
+}

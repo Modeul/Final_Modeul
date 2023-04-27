@@ -95,8 +95,11 @@
 						<div>
 							{{ user.memberNickname }}
 						</div>
-						<div>
-							<input class="cal-member-price" type="text" @blur="savePrice(index), calResult[index].price=$event.target.value" @input="sumPrice"> 원
+						<div class="cal-member-price">
+							<input type="text" 
+                                @blur="savePrice(index), 
+                                calResult[index].price=$event.target.value" 
+                                @input="sumPrice"> 원
 						</div>
 					</div>
 					<div class="cal-sum">
@@ -108,7 +111,7 @@
 				</section>
 			</form>
 
-			<div class="text-center">
+			<div>
 				<v-dialog
 					v-model="errDialog"
 					activator="parent"
@@ -119,7 +122,7 @@
 						정확한 값을 입력하세요.
 					</v-card-text>
 					<v-card-actions>
-						<v-btn class="errDialog" block @click="errDialog = false">확인</v-btn>
+						<v-btn color="#63A0C2" block @click="errDialog = false">확인</v-btn>
 					</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -132,13 +135,15 @@
 					persistent
 					width="auto"
 					>
-					<v-card>
-						<v-card-title class="text-h5">
-						전송하시겠습니까?
-						</v-card-title>
+					<v-card class="confirmDialog">
 						<div>
-							<v-card-text v-for="r in calResult">
-								{{ r.nic }}님 {{ r.price }}원
+							<v-card-title class="dialog-title">
+								채팅방 전송
+							</v-card-title>
+						</div>
+						<div>
+							<v-card-text class="confirmDialog-member" v-for="r in calResult">
+								{{ r.nic }}님:  {{ r.price }}원
 							</v-card-text>
 							<div>
 								총 {{ this.sum }}원
@@ -146,19 +151,19 @@
 						</div>
 						<v-card-actions>
 						<v-spacer></v-spacer>
-						<v-btn
-							color="green-darken-1"
+						<v-btn 
+							color="#63A0C2"
 							variant="text"
 							@click="confirmDialog = false"
 						>
-							아니요
+							취소
 						</v-btn>
 						<v-btn
-							color="green-darken-1"
+							color="#63A0C2"
 							variant="text"
 							@click="confirmDialog = false"
 						>
-							네
+							확인
 						</v-btn>
 						</v-card-actions>
 					</v-card>
@@ -258,7 +263,8 @@ export default {
 			],
 			calResult: [
 				
-			]
+			],
+
 		}
 	},
 
@@ -373,6 +379,8 @@ export default {
 			this.openCal = !this.openCal;
 		},
 		// 정산
+		
+
 		savePrice(index){
 			// this.memberPrice = e.target.value;
 			this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
@@ -390,9 +398,7 @@ export default {
 				else {
 					this.confirmDialog = true;
 					this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`;
-				}
-
-				
+				}	
 			}
 			this.calResultMsg += `총 ${this.sum}원 입니다.\n`
 			this.calResultMsg = (this.calResultMsg || "").split('\n').join('<br>')
@@ -439,11 +445,8 @@ export default {
 }
 </script>
 <style scoped>
-.errDialog {
-	color: #63A0C2; 
-	font-weight: 700;
-	
-}
+
+
 .cal {
     display: flex;
     flex-direction: column;
@@ -455,7 +458,6 @@ export default {
     height: 626px;
 	width: 100%;
 	/* height: 100%; */
-
 	 
     background: #F1F2F2;
 }
@@ -491,6 +493,21 @@ export default {
             
             z-index: 9; 
         }
+	
+		.confirmDialog {
+			font-weight: 500;
+			padding-right: 24px;
+			text-align: end;
+			font-size: 16px;
+		}
+
+		.confirmDialog-member {
+			display: flex;
+			margin-left: 20px;
+			padding: 3px;
+		}
+	
+		
 	.cal-contents {
 		display: flex;
 		flex-direction: column;
@@ -532,7 +549,7 @@ export default {
                 font-size: 12px;
             }
 
-            .cal-members div:nth-child(3) {
+            .cal-member-price{
                 position: relative;
 				right: 4px;
 				
@@ -541,7 +558,7 @@ export default {
                 color: #222;
             }
 
-			.cal-member-price {
+			.cal-member-price input{
 				width: 50px;
 			}
         
