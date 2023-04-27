@@ -83,6 +83,105 @@
 
 		</div>
 	</div>
+
+
+	<v-navigation-drawer style="height: 80%;"  v-model="calDrawer" location="bottom" temporary>
+        <section class="cal">
+            <h1 class="d-none">calculate</h1>
+            <header class="cal-header">
+                <h1 class="d-none">title</h1>
+                <router-link to="list" class="icon cal-back">뒤로가기</router-link>
+                <div>정산하기</div>
+            </header>
+            <form @submit.prevent="submitResult" method="post">
+                <section class="cal-contents">
+                    <h1 class="d-none">memberPrice</h1>
+                    <div v-for="(user, index) in participantList" class="cal-members" :key="user.id">
+                        <div class="chat-user-img">
+                            <img :src="'/images/member/stuff/'+user.memberImage">
+                        </div>
+                        <div>
+                            {{ user.memberNickname }}
+                        </div>
+                        <div class="cal-member-price">
+                            <input type="text" 
+                                @blur="savePrice(index), 
+                                calResult[index].price=$event.target.value" 
+                                @input="sumPrice"> 원
+                        </div>
+                    </div>
+                    <div class="cal-sum">
+                        <label>합계:</label>
+                        <span>{{ sum }}</span>
+                        <span>원</span>
+                    </div>
+                    <button type="submit" class="btn-cal cal-button">정산하기</button>
+                </section>
+            </form>
+
+            <div>
+                <v-dialog
+                    v-model="errDialog"
+                    activator="parent"
+                    width="auto"
+                >
+                    <v-card>
+                    <v-card-text>
+                        정확한 값을 입력하세요.
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="#63A0C2" block @click="errDialog = false">확인</v-btn>
+                    </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </div>
+
+			<!-- 정산 -->
+            <div>
+                <v-row justify="center">
+                    <v-dialog
+                    v-model="confirmDialog"
+                    persistent
+                    width="auto"
+                    >
+                    <v-card class="confirmDialog">
+                        <div>
+                            <v-card-title class="dialog-title">
+                                채팅방 전송
+                            </v-card-title>
+                        </div>
+                        <div>
+                            <v-card-text class="confirmDialog-member" v-for="r in calResult">
+                                {{ r.nic }}님:  {{ r.price }}원
+                            </v-card-text>
+                            <div>
+                                총 {{ this.sum }}원
+                            </div>
+                        </div>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn 
+                            color="#63A0C2"
+                            variant="text"
+                            @click="confirmDialog = false"
+                        >
+                            취소
+                        </v-btn>
+                        <v-btn
+                            color="#63A0C2"
+                            variant="text"
+                            @click="confirmDialog = false"
+                        >
+                            확인
+                        </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                    </v-dialog>
+                </v-row>
+            </div>
+        </section>
+    </v-navigation-drawer>
+
 </template>
 
 <script>
