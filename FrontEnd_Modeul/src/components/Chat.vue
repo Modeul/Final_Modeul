@@ -74,108 +74,114 @@
 		</div>
 
 			<div class="chat-input-wrap">
-				<div class="cal-btn"><img src="../../public/images/member/stuff/cal-btn.svg"></div>
+				<div class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
-					<div class="submit-btn"><img src="../../public/images/member/stuff/chat-submit-btn.svg"></div>
+					<div class="submit-btn"><img src="../../images/member/stuff/chat-submit-btn.svg"></div>
 				</div>
 			</div>
 
+		</div>
+	</div>
+
+	<!-- 정산 -->
 	<v-navigation-drawer style="height: 80%;"  v-model="calDrawer" location="bottom" temporary>
-		<section class="cal">
-			<h1 class="d-none">calculate</h1>
-			<header class="cal-header">
-				<h1 class="d-none">title</h1>
-				<router-link to="list" class="icon cal-back">뒤로가기</router-link>
-				<div>정산하기</div>
-			</header>
-			<form @submit.prevent="submitResult" method="post">
-				<section class="cal-contents">
-					<h1 class="d-none">memberPrice</h1>
-					<div v-for="(user, index) in participantList" class="cal-members" :key="user.id">
-						<div class="chat-user-img">
-							<img :src="'/images/member/stuff/'+user.memberImage">
-						</div>
-						<div>
-							{{ user.memberNickname }}
-						</div>
-						<div class="cal-member-price">
-							<input type="text" 
+        <section class="cal">
+            <h1 class="d-none">calculate</h1>
+            <header class="cal-header">
+                <h1 class="d-none">title</h1>
+                <router-link to="list" class="icon cal-back">뒤로가기</router-link>
+                <div>정산하기</div>
+            </header>
+            <form @submit.prevent="submitResult" method="post">
+                <section class="cal-contents">
+                    <h1 class="d-none">memberPrice</h1>
+                    <div v-for="(user, index) in participantList" class="cal-members" :key="user.id">
+                        <div class="chat-user-img">
+                            <img :src="'/images/member/stuff/'+user.memberImage">
+                        </div>
+                        <div>
+                            {{ user.memberNickname }}
+                        </div>
+                        <div class="cal-member-price">
+                            <input type="text" 
                                 @blur="savePrice(index), 
                                 calResult[index].price=$event.target.value" 
                                 @input="sumPrice"> 원
-						</div>
-					</div>
-					<div class="cal-sum">
-						<label>합계:</label>
-						<span>{{ sum }}</span>
-						<span>원</span>
-					</div>
-					<button type="submit" class="btn-cal cal-button">정산하기</button>
-				</section>
-			</form>
+                        </div>
+                    </div>
+                    <div class="cal-sum">
+                        <label>합계:</label>
+                        <span>{{ sum }}</span>
+                        <span>원</span>
+                    </div>
+                    <button type="submit" class="btn-cal cal-button">정산하기</button>
+                </section>
+            </form>
 
-			<div>
-				<v-dialog
-					v-model="errDialog"
-					activator="parent"
-					width="auto"
-				>
-					<v-card>
-					<v-card-text>
-						정확한 값을 입력하세요.
-					</v-card-text>
-					<v-card-actions>
-						<v-btn color="#63A0C2" block @click="errDialog = false">확인</v-btn>
-					</v-card-actions>
-					</v-card>
-				</v-dialog>
-			</div>
+            <div>
+                <v-dialog
+                    v-model="errDialog"
+                    activator="parent"
+                    width="auto"
+                >
+                    <v-card>
+                    <v-card-text>
+                        정확한 값을 입력하세요.
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="#63A0C2" block @click="errDialog = false">확인</v-btn>
+                    </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </div>
 
-			<div>
-				<v-row justify="center">
-					<v-dialog
-					v-model="confirmDialog"
-					persistent
-					width="auto"
-					>
-					<v-card class="confirmDialog">
-						<div>
-							<v-card-title class="dialog-title">
-								채팅방 전송
-							</v-card-title>
-						</div>
-						<div>
-							<v-card-text class="confirmDialog-member" v-for="r in calResult">
-								{{ r.nic }}님:  {{ r.price }}원
-							</v-card-text>
-							<div>
-								총 {{ this.sum }}원
-							</div>
-						</div>
-						<v-card-actions>
-						<v-spacer></v-spacer>
-						<v-btn 
-							color="#63A0C2"
-							variant="text"
-							@click="confirmDialog = false"
-						>
-							취소
-						</v-btn>
-						<v-btn
-							color="#63A0C2"
-							variant="text"
-							@click="confirmDialog = false"
-						>
-							확인
-						</v-btn>
-						</v-card-actions>
-					</v-card>
-					</v-dialog>
-				</v-row>
-			</div>
-		</section>
-	</v-navigation-drawer>
+            <div>
+                <v-row justify="center">
+                    <v-dialog
+                    v-model="confirmDialog"
+                    persistent
+                    width="auto"
+                    >
+                    <v-card class="confirmDialog">
+                        <div>
+                            <v-card-title class="dialog-title">
+                                채팅방 전송
+                            </v-card-title>
+                        </div>
+                        <div>
+                            <v-card-text class="confirmDialog-member" v-for="r in calResult">
+                                {{ r.nic }}님:  {{ r.price }}원
+                            </v-card-text>
+                            <div>
+                                총 {{ this.sum }}원
+                            </div>
+                        </div>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn 
+                            color="#63A0C2"
+                            variant="text"
+                            @click="confirmDialog = false"
+                        >
+                            취소
+                        </v-btn>
+                        <v-btn
+                            color="#63A0C2"
+                            variant="text"
+                            @click="confirmDialog = false"
+                        >
+                            확인
+                        </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                    </v-dialog>
+                </v-row>
+            </div>
+        </section>
+    </v-navigation-drawer>
+
+
 </template>
 
 <script>
@@ -187,40 +193,99 @@ import SockJS from 'sockjs-client';
 export default {
 	data() {
 		return {
+
+			// 정산
+            sum: 0,
+            calResultMsg: "우리 정산해요\n",
+            errDialog: false,
+            confirmDialog: false,
+            calDrawer: null,
+			calResult: [],
+
 			userName: "",
 			message: "",
 			recvList: [],
-			myUserId: 3,
-			myUserId: 3,
+			myUserId: this.$route.params.memberId,
 			// stuffId: 449,
 			stuffId: '',
 			drawer: null,
-			openModal:false,
+			openModal: false,
+			stompClient: '',
 
 			participantList: '',
-
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12"
 			},
-			memberInfo:{},
+			memberInfo:'',
 			messageView: [
 
 			],
-			calResult: [
-				
-			],
-
 		}
 	},
-
 	computed: {
-		
 	},
 	methods: {
-		sendMessage (e) {
-			console.log("keyboard");
-			if(e.keyCode === 13 && this.message !== null){
+		// 정산
+        calHandler(){
+            this.openCal = !this.openCal;
+        },
+        savePrice(index){
+            // this.memberPrice = e.target.value;
+            this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
+        },
+        sumPrice(e){
+            this.sum = this.sum + parseInt(e.target.value,10);
+        },
+        submitResult(){
+            // calResultMsg생성
+            for(let i=0; i<this.calResult.length; i++){
+                if(this.calResult[i].price < 1 || this.calResult[i].price > 1000000){
+                    this.errDialog = true;
+                    return;
+                }
+                else {
+                    this.confirmDialog = true;
+                    this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`;
+                }   
+            }
+            this.calResultMsg += `총 ${this.sum}원 입니다.\n`
+            this.calResultMsg = (this.calResultMsg || "").split('\n').join('<br>')
+            // this.calResultMsg = this.getContent(this.calResult);
+            console.log(this.calResultMsg);
+
+            // Message객체에 저장
+            this.message.sender = this.myUserId;
+            this.message.content = this.calResultMsg;
+            // this.message.participationId = 2;
+            // this.message.participationId = this.participantList[0].memberId;
+            // this.message.participationId = this.participantList;
+
+            // 
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            // console.log(this.message);
+            var raw = JSON.stringify(this.message);
+            // console.log(raw);
+
+            var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+            };
+
+            // fetch(`${this.$store.state.host}/api/aa`, requestOptions)
+            //  .then(response => response.text())
+            //  .then(result => console.log(result))
+            //  .catch(error => console.log('error', error));
+            // console.log(requestOptions);
+    
+        },
+
+		sendMessage(e) {
+			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
 				console.log("send");
 				this.send()
 				this.message = ''
@@ -345,8 +410,7 @@ export default {
 }
 </script>
 <style scoped>
-
-
+/* 정산 */
 .cal {
     display: flex;
     flex-direction: column;
@@ -356,9 +420,9 @@ export default {
     position: relative;
     /* width: 327px;  */
     height: 626px;
-	width: 100%;
-	/* height: 100%; */
-	 
+    width: 100%;
+    /* height: 100%; */
+     
     background: #F1F2F2;
 }
 .cal-header {
@@ -379,7 +443,7 @@ export default {
         .cal-header div {
             color: #222222;
             font-weight: 700;
-			margin-left: 18px;
+            margin-left: 18px;
         }
 
         .cal-back {
@@ -393,40 +457,40 @@ export default {
             
             z-index: 9; 
         }
-	
-		.confirmDialog {
-			font-weight: 500;
-			padding-right: 24px;
-			text-align: end;
-			font-size: 16px;
-		}
+    
+        .confirmDialog {
+            font-weight: 500;
+            padding-right: 24px;
+            text-align: end;
+            font-size: 16px;
+        }
 
-		.confirmDialog-member {
-			display: flex;
-			margin-left: 20px;
-			padding: 3px;
-		}
-	
-		
-	.cal-contents {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 28px 24px 0px;
-		overflow: auto;
-		/* gap: 24px; */
+        .confirmDialog-member {
+            display: flex;
+            margin-left: 20px;
+            padding: 3px;
+        }
+    
+        
+    .cal-contents {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 28px 24px 0px;
+        overflow: auto;
+        /* gap: 24px; */
 
-		/* width: 327px; */
-		width: 100%;
-		height: 531px;
+        /* width: 327px; */
+        width: 100%;
+        height: 531px;
 
-		background: #fff;
-		border-radius: 30px 30px 10px 10px;
+        background: #fff;
+        border-radius: 30px 30px 10px 10px;
 
-		flex: none;
-		order: 1;
-		flex-grow: 1;
-	}	
+        flex: none;
+        order: 1;
+        flex-grow: 1;
+    }   
         
         .cal-members {
             display: flex;
@@ -437,30 +501,30 @@ export default {
 
             /* width: 239px; */
             height: 70px;
-			width: 100%;
+            width: 100%;
 
             flex: none;
             order: 0;
             flex-grow: 0;
         }
             .cal-members div:nth-child(2) {
-				flex-grow: 1;
+                flex-grow: 1;
                 margin: 0 10px;
                 font-size: 12px;
             }
 
             .cal-member-price{
                 position: relative;
-				right: 4px;
-				
+                right: 4px;
+                
                 font-size: 12px;
                 font-weight: 700;
                 color: #222;
             }
 
-			.cal-member-price input{
-				width: 50px;
-			}
+            .cal-member-price input{
+                width: 50px;
+            }
         
         .cal-sum {
             display: flex;
@@ -506,11 +570,8 @@ export default {
             flex-grow: 0;
         }
 
-
-
-
-
-.canvas, .v-app-bar {
+.canvas,
+.v-app-bar {
 	min-width: 320px;
 }
 
