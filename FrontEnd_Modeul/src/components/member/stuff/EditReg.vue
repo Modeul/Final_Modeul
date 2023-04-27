@@ -129,7 +129,8 @@ export default {
 			this.files = e.target.files;
 
 			if (this.files.length > 6) {
-				alert(`최대 6개까지 선택할 수 있습니다.`);
+				this.valiError = "이미지는 최대 6개까지 선택할 수 있습니다.";
+				this.openModal = true;
 				return;
 			}
 
