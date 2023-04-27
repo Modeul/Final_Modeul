@@ -74,7 +74,7 @@
 		</div>
 
 			<div class="chat-input-wrap">
-				<div class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
+				<div @click.stop="calDrawer = !calDrawer" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn"><img src="../../images/member/stuff/chat-submit-btn.svg"></div>
@@ -93,7 +93,36 @@
                 <router-link to="list" class="icon cal-back">뒤로가기</router-link>
                 <div>정산하기</div>
             </header>
-            <form @submit.prevent="submitResult" method="post">
+			<form @submit.prevent="submitResult" method="post">
+				<section class="cal-contents">
+        <h1 class="d-none">memberPrice</h1>
+        <div v-for="member in memberPriceMap" class="cal-members" :key="member.id">
+            <div class="chat-user-img">
+                <img :src="'/images/member/stuff/'+member.value[0]">
+            </div>
+            <div>
+                {{ member.key }}
+            </div>
+            <div class="cal-member-price">
+                <span>
+                    <!-- <input v-model.number="member.value[1]"
+					
+					> -->
+
+                    <input type="text" 
+                    v-model.number="member.value[1]"
+                        @blur="savePrice(index), 
+
+                        calResult[index].price=$event.target.value" 
+                        @input="sumPrice"> 
+                </span>
+                    원
+            </div>
+
+        </div>
+    </section>
+			</form>
+            <!-- <form @submit.prevent="submitResult" method="post">
                 <section class="cal-contents">
                     <h1 class="d-none">memberPrice</h1>
                     <div v-for="(user, index) in participantList" class="cal-members" :key="user.id">
@@ -104,10 +133,15 @@
                             {{ user.memberNickname }}
                         </div>
                         <div class="cal-member-price">
-                            <input type="text" 
-                                @blur="savePrice(index), 
-                                calResult[index].price=$event.target.value" 
-                                @input="sumPrice"> 원
+                            <span>
+								<input type="text" 
+
+								v-model.number="price"
+									@blur="savePrice(index), 
+									calResult[index].price=$event.target.value" 
+									@input="sumPrice"> 
+							</span>
+								원
                         </div>
                     </div>
                     <div class="cal-sum">
@@ -117,7 +151,7 @@
                     </div>
                     <button type="submit" class="btn-cal cal-button">정산하기</button>
                 </section>
-            </form>
+            </form> -->
 
             <div>
                 <v-dialog
@@ -136,7 +170,6 @@
                 </v-dialog>
             </div>
 
-			<!-- 정산 -->
             <div>
                 <v-row justify="center">
                     <v-dialog
@@ -186,11 +219,18 @@
 
 <script>
 import dayjs from 'dayjs';
+
 import 'dayjs/locale/ko'
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
+import { reactive } from 'vue';
+
 
 export default {
+	setup(){
+
+	},
+
 	data() {
 		return {
 			 // 정산
@@ -199,7 +239,6 @@ export default {
             errDialog: false,
             confirmDialog: false,
             calDrawer: null,
-			calResult: [],
 
 			userName: "",
 			message: "",
@@ -223,15 +262,38 @@ export default {
 		}
 	},
 	computed: {
+
+		memberPriceMap(){
+			return this.participantList.map((m)=> {
+				return {key: m.memberNickname, value: [m.memberImage]}
+			})
+		}
+		// a(){
+		// 	return this.participantList.map((m)=> {
+		// 		return {key: m.memberNickname, value: this.price}
+		// 	})
+		// }
+		// memberPriceList: computed(()=>participantList.map((m)=>m.memberNickname))
+		// memberPriceList: function(){ 
+		// 	return this.participantList.map((m)=>m.memberNickname)
+		// }
 	},
 	methods: {
-		// 정산
-        calHandler(){
-            this.openCal = !this.openCal;
-        },
+		// 정산 
+
+		// nic과 price를 입력 -> 배열에 push
+		// 하지만, 같은 nic으로 다른 price가 입력될 경우, 즉 price의 변경이 일어날 경우, reactive
+		// 각 칸에 금액 입력시 calResult배열에 memberNickname과 price 저장
         savePrice(index){
-            // this.memberPrice = e.target.value;
-            this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
+
+			// this.memberPriceList=this.participantList.map((m)=> {
+			// 	return {key: m.memberNickname, value: this.memberPrice}
+			// })
+			// m.memberNickname);
+			// console.log(this.participantList);
+			console.log(this.memberPriceMap);
+            // this.calList.push({nic: this.participantList[index].memberNickname, price: this.price});
+			
         },
         sumPrice(e){
             this.sum = this.sum + parseInt(e.target.value,10);
@@ -397,16 +459,49 @@ export default {
 		this.loadParticipantInfo();
 		this.stompConnect();
 		this.connect();
+
 	},
 	updated(){
 	},
 	mounted() {
 		window.addEventListener('beforeunload', this.unLoadEvent);
+
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
 	}
 }
+</script>
+
+<script setup>
+import { computed, reactive } from 'vue';
+
+// let calList = []
+// let calResult = reactive(calList)
+
+// console.log(calResult);
+// 각 memeber의 price 입력
+// (1) 새로운 배열에 nic과 price 객체 저장
+// console.log(participantList);
+// let result = reactive({nicname:"", price: 0});
+// result.nicname = this.participantList.map((m)=>m.memberNickname);
+// console.log(result);
+
+// (2)price가 변할 때, sum의 값 변경: input 시 sum 값 변경
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 <style scoped>
 .cal {
