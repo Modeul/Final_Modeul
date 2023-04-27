@@ -193,6 +193,14 @@ import SockJS from 'sockjs-client';
 export default {
 	data() {
 		return {
+			 // 정산
+			sum: 0,
+            calResultMsg: "우리 정산해요\n",
+            errDialog: false,
+            confirmDialog: false,
+            calDrawer: null,
+			calResult: [],
+
 			userName: "",
 			message: "",
 			recvList: [],
@@ -217,6 +225,64 @@ export default {
 	computed: {
 	},
 	methods: {
+		// 정산
+        calHandler(){
+            this.openCal = !this.openCal;
+        },
+        savePrice(index){
+            // this.memberPrice = e.target.value;
+            this.calResult.push({nic: this.participantList[index].memberNickname, price: this.price});
+        },
+        sumPrice(e){
+            this.sum = this.sum + parseInt(e.target.value,10);
+        },
+        submitResult(){
+            // calResultMsg생성
+            for(let i=0; i<this.calResult.length; i++){
+                if(this.calResult[i].price < 1 || this.calResult[i].price > 1000000){
+                    this.errDialog = true;
+                    return;
+                }
+                else {
+                    this.confirmDialog = true;
+                    this.calResultMsg += `${this.calResult[i].nic}: ${this.calResult[i].price}원\n`;
+                }   
+            }
+            this.calResultMsg += `총 ${this.sum}원 입니다.\n`
+            this.calResultMsg = (this.calResultMsg || "").split('\n').join('<br>')
+            // this.calResultMsg = this.getContent(this.calResult);
+            console.log(this.calResultMsg);
+
+            // Message객체에 저장
+            this.message.sender = this.myUserId;
+            this.message.content = this.calResultMsg;
+            // this.message.participationId = 2;
+            // this.message.participationId = this.participantList[0].memberId;
+            // this.message.participationId = this.participantList;
+
+            // 
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            // console.log(this.message);
+            var raw = JSON.stringify(this.message);
+            // console.log(raw);
+
+            var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+            };
+
+            // fetch(`${this.$store.state.host}/api/aa`, requestOptions)
+            //  .then(response => response.text())
+            //  .then(result => console.log(result))
+            //  .catch(error => console.log('error', error));
+            // console.log(requestOptions);
+    
+        },
+
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
 				console.log("send");
@@ -343,6 +409,165 @@ export default {
 }
 </script>
 <style scoped>
+.cal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 24px 24px;
+
+    position: relative;
+    /* width: 327px;  */
+    height: 626px;
+    width: 100%;
+    /* height: 100%; */
+     
+    background: #F1F2F2;
+}
+.cal-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        /* justify-content:space-between; */
+        padding: 12px 40px;
+        gap: 71px;
+
+        width: 327px;
+        height: 71px;
+
+        flex: none;
+        order: 0;
+        flex-grow: 0;
+    }
+        .cal-header div {
+            color: #222222;
+            font-weight: 700;
+            margin-left: 18px;
+        }
+
+        .cal-back {
+            background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
+            /* position: absolute; */
+            /* top: 18px;
+            left: 19px;*/
+        
+            width: 16px;
+            height: 16px;
+            
+            z-index: 9; 
+        }
+    
+        .confirmDialog {
+            font-weight: 500;
+            padding-right: 24px;
+            text-align: end;
+            font-size: 16px;
+        }
+
+        .confirmDialog-member {
+            display: flex;
+            margin-left: 20px;
+            padding: 3px;
+        }
+    
+        
+    .cal-contents {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 28px 24px 0px;
+        overflow: auto;
+        /* gap: 24px; */
+
+        /* width: 327px; */
+        width: 100%;
+        height: 531px;
+
+        background: #fff;
+        border-radius: 30px 30px 10px 10px;
+
+        flex: none;
+        order: 1;
+        flex-grow: 1;
+    }   
+        
+        .cal-members {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 20px 0px;
+            /* gap: 12px; */
+
+            /* width: 239px; */
+            height: 70px;
+            width: 100%;
+
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+        }
+            .cal-members div:nth-child(2) {
+                flex-grow: 1;
+                margin: 0 10px;
+                font-size: 12px;
+            }
+
+            .cal-member-price{
+                position: relative;
+                right: 4px;
+                
+                font-size: 12px;
+                font-weight: 700;
+                color: #222;
+            }
+
+            .cal-member-price input{
+                width: 50px;
+            }
+        
+        .cal-sum {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: end;
+            padding: 20px 0px;
+            margin-right: 10%;
+            gap: 20px;
+
+            width: 239px;
+            height: 60px;
+
+            background: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            color: #222;
+
+            flex: none;
+            order: 1;
+            flex-grow: 0;
+        }
+
+        .cal-button {
+            width: 136px;
+            height: 45px;
+          
+            /* position: absolute;
+            left: 119.5px;
+            right: 119.5px;
+            top: 514px;
+            bottom: 90.6px; */
+          
+            border-radius: 10px;
+          
+            background: #63A0C2;
+            font-size: 12px;
+            color: #fff;
+            font-weight: 700;
+          
+            flex: none;
+            order: 2;
+            flex-grow: 0;
+        }
+
 .canvas,
 .v-app-bar {
 	min-width: 320px;
