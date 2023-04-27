@@ -1,6 +1,4 @@
 <script>
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko'
 
 
 export default {
@@ -20,28 +18,28 @@ export default {
 			this.page=1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.$store.state.host}/api/stuff/crawlinglist?p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.list);
+					this.list = this.formatDateList(dataList.crawlingList);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(this.list)
+					// console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
 
 			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
-
+			console.log(this.page , this.categoryId);
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.$store.state.host}/api/stuff/crawlinglist?p=${this.page}&c=${this.categoryId}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.list);
+					this.list = this.formatDateList(dataList.crawlingList);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
 					console.log(dataList);
@@ -49,53 +47,6 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 				
-		},
-		formatDateList(list) {
-			if (list == null)
-				return;
-			let resultList = [];
-			for (let item of list) {
-				if (item.deadline == null)
-					continue;
-				const today = new dayjs().format('YYYY-MM-DD');
-
-				const deadlineObj = dayjs(item.deadline).locale('ko');
-				const isToday = (deadlineObj.format('YYYY-MM-DD') == today) ? '오늘, ' : ''
-				item.deadline = isToday + deadlineObj.format("M월 D일 (dd) HH시까지");
-
-				// deadlineState
-				// 0: 마감 -> (마감) // 회색
-				// 1: 1일 이상 남음 -> (D-n) // 파랑? 초록?
-				// 2: 당일 마감 -> (마감 n 시간 전) // 초록? 주황? 
-				// 3: 1시간 내 마감 -> (1시간 내 마감)  // 빨강?
-
-				item.dDay = dayjs().diff(deadlineObj, 'day');
-				if (parseInt(item.dDay) < 0){
-					item.dDay = 'D' + item.dDay;
-					item.deadlineState = 1;
-				}
-				else if (parseInt(item.dDay) == 0) {
-					item.dDay = deadlineObj.diff(dayjs(), 'hours')
-					if (parseInt(item.dDay) > 0){
-						item.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
-						item.deadlineState = 2;
-					}
-					else if (parseInt(item.dDay) == 0){
-						item.dDay = '1시간 내 마감';
-						item.deadlineState = 3;
-					}
-					else{
-						item.dDay = '마감';
-						item.deadlineState = 0;
-					}
-				}
-				else{
-					item.dDay = '마감';
-					item.deadlineState = 0;
-				}
-				resultList.push(item);
-			}
-			return resultList;
 		},
 	},
 	mounted() {
@@ -139,10 +90,10 @@ export default {
 								<router-link to="/member/stuff/list">HOME</router-link>
 							</span>
 							<span class="sidebar-padding">
-								<router-link to="/member/stuff/crawlinglist">추천상품</router-link>
+								<router-link to="/member/stuff/listsearch">검색하기</router-link>
 							</span>
 							<span class="sidebar-padding">
-								<router-link to="/member/stuff/listsearch">검색하기</router-link>
+								<router-link to="/member/stuff/crawlinglist">추천상품</router-link>
 							</span>
 							<span class="sidebar-padding">
 								<router-link to="/member/stuff/reg">글 등록하기</router-link>

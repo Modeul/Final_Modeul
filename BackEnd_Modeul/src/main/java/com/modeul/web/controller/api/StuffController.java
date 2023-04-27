@@ -23,11 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.modeul.web.entity.Category;
+import com.modeul.web.entity.Crawling;
 import com.modeul.web.entity.Image;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
+import com.modeul.web.service.CrawlingService;
 import com.modeul.web.service.ImageService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
@@ -47,7 +49,10 @@ public class StuffController {
 	private ImageService imageService;
 
 	@Autowired
-    private ParticipationService participationService;
+    private ParticipationService participationService;	
+
+	@Autowired
+	private CrawlingService crawlingservice;
 
 
 	// 반환 타입 주의!
@@ -233,4 +238,26 @@ public class StuffController {
 					service.deleteStuff(id);
 			return "stuff del:";      
    		}
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 크롤링 컨트롤러 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+	//  get ,   insert  , delete
+	@GetMapping("/stuff/crawlinglist")
+	public Map<String,Object> getCrawlingList(
+			@RequestParam(name="p", defaultValue = "1") int page,		
+			@RequestParam(name="c", required=false) Long categoryId
+			){
+		
+		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
+		List<Category> categoryList = categoryService.getList();
+		Long listCount = service.getListCount(categoryId, page);
+		Map<String, Object> dataList = new HashMap<>();
+		dataList.put("crawlingList", crawlingList);
+		// dataList.put("list", list);
+		dataList.put("categoryList", categoryList);
+		dataList.put("listCount", listCount);
+
+		return dataList;
+	}
+
 }
