@@ -233,7 +233,7 @@ export default {
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
 			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		}, 500);
+		}, 100);
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -245,7 +245,9 @@ export default {
 	},
 	watch: {
 		chatLength: function () {
-			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+			setTimeout(() => {
+				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+			}, 50);
 		}
 	},
 }
