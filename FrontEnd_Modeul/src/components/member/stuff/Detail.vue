@@ -116,13 +116,14 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation(){
-			for(let p in this.participantList){
-				console.log(p.memberId+'\n');
+			for(let p of this.participantList){
+				console.log("p.memberId: " + p.memberId+'\n');
 				if(p.memberId === this.participantInfo.memberId){
 					this.isCheckParticipation = !this.isCheckParticipation;
 					this.isParticipated = !this.isParticipated;
 				}
 			}
+			console.log("this.participantInfo.memberId: " + this.participantInfo[this.participantInfo.memberId]);
 		},
 		/* 공구상품 항목의 참여 취소 요청 */
 		cancelParticipationHandler() {
@@ -199,6 +200,10 @@ export default {
 	computed: {
 
 	},
+	created() {
+		this.loadParticipationList();
+		this.loadParticipantInfo();
+	},
 	async mounted() {
 		this.$store.commit('LOADING_STATUS', true);
 		await fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`)
@@ -215,8 +220,6 @@ export default {
 			.catch((error) => console.log("error", error));
 		this.$store.commit('LOADING_STATUS', false);
 
-		this.loadParticipationList();
-		this.loadParticipantInfo();
 		this.checkParticipation();
 	},
 };
