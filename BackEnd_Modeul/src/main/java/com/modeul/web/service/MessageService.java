@@ -1,11 +1,14 @@
-// package com.modeul.web.service;
+package com.modeul.web.service;
 
-// import com.modeul.web.entity.Chat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.modeul.web.entity.MessageView;
 
-// public interface MessageService {
+public interface MessageService {
 
-//     int addChatLog(Chat chat);
+		String getChatLogs(long stuffId, long memberId) throws JsonMappingException, JsonProcessingException ;
 
-//     Chat getChatLogBystuffId(Long stuffId);
-    
-// }
+		MessageView enterUser(MessageView messageView);
+		MessageView exitUser(MessageView messageView) throws JsonProcessingException;
+		MessageView defaultMessage(MessageView messageView);
+}

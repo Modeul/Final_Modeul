@@ -83,27 +83,24 @@
 
 		<div class="chat-canvas">
 
-
-	
 			<div v-for="m in messageView">
-			<!-- v-if="!(m.type=='ENTER')"  -->
-			<div class="chat-line-wrap" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
-				<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
-				<div class="chat-box">
-					<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
-					<div class="chat-content-wrap">
-						<p class="chat-content">{{ m.content }}</p>
-						<p class="chat-time">{{ m.sendDate }}</p>
+				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
+					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
+					<div class="chat-box">
+						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
+						<div class="chat-content-wrap">
+							<p class="chat-content">{{ m.content }}</p>
+							<p class="chat-time">{{ m.sendDate }}</p>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
 			<div class="chat-input-wrap">
-				<div class="cal-btn"><img src="../../public/images/member/stuff/cal-btn.svg"></div>
+				<div class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
-					<div class="submit-btn"><img src="../../public/images/member/stuff/chat-submit-btn.svg"></div>
+					<div class="submit-btn"><img src="../../images/member/stuff/chat-submit-btn.svg"></div>
 				</div>
 			</div>
 
@@ -136,9 +133,7 @@ export default {
 				participantCount: "12"
 			},
 			memberInfo:'',
-			messageView: [
-
-			],
+			messageView: [],
 			dialog:false,
 			banishUser:{
 				id:'',
@@ -152,7 +147,6 @@ export default {
 	},
 	methods: {
 		sendMessage(e) {
-			// console.log("keyboard");
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
 				console.log("send");
 				this.send()
@@ -160,35 +154,24 @@ export default {
 			}
 		},
 		send() {
-			console.log(this.memberInfo);
-			console.log(this.memberInfo.memberImage);
-			console.log(this.memberInfo.memberNickname);
-
-			console.log("Send message:" + this.message);
-
 			if (this.stompClient && this.stompClient.connected) {
-				const date = new dayjs();
-				// console.log(date);
+				const date = new dayjs().locale('ko').format("A hh:mm");
 
 				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
+				// 로그인을 통해 얻은 정보로 대체
 				const chatMessage = {
+					type: 'TALK',
 					stuffId: this.$route.params.stuffId,
-					memberId: this.$route.params.memberId,
-					sender: this.memberInfo.memberNickname,
+					memberId: this.memberInfo.id,
+					sender: this.memberInfo.nickname,
+					memberImage: this.memberInfo.image,
 					sendDate: date,
 					content: this.message,
-					type: 'TALK',
-					memberImage: this.memberInfo.memberImage
 				};
 
-				// console.log(chatMessage);
+				this.myUserId = this.memberInfo.id;
 
-				this.myUserId = this.memberInfo.memberId;
-
-				// ** messageView에 우리가 직접 안 담아도 된다. stomp의 pub에 의해 담겨진다..
-				// this.messageView.push(chatMessage);
 				this.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
-				console.log("complete message:" + this.message);
 			}
 		},
 		stompConnect() {
@@ -202,12 +185,6 @@ export default {
 				async frame => {
 					// 소켓 연결 성공!
 					this.connected = true;
-					console.log('소켓 연결 성공', frame);
-
-					//this.myUserId = this.memberInfo.memberId;
-
-					// this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}/${this.$route.params.memberId}`, res => {
-					// console.log('구독으로 받은 메시지 입니다.', res.body);
 
 					await fetch(`${this.$store.state.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&
@@ -220,22 +197,20 @@ export default {
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
-						console.log('구독으로 받은 메시지 입니다.', res.body);
 
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(JSON.parse(res.body));
-						console.log("구독");
-						// console.log(this.messageView);
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
+					// 로그인 구현 이후 로그인으로 얻은 정보로 대체
 					this.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
-							"type": 'ENTER',
-							"stuffId": this.$route.params.stuffId,
-							"memberId": this.$route.params.memberId,
-							"sender": this.memberInfo.memberNickname,
-							"memberImage": this.memberInfo.memberImage
+							type: 'ENTER',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+							sender: this.memberInfo.nickname,
+							memberImage: this.memberInfo.image,
 						})
 					)
 				});
@@ -270,7 +245,7 @@ export default {
 		goback() {
 			this.$router.go(-1);
 		},
-		loadParticipationListInfo() {
+		loadParticipationList() {
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -279,13 +254,10 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo() {
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}/${this.$route.params.memberId}`)
-				.then(response => response.json())
-				.then(data => {
-					this.memberInfo = data.memberInfo;
-				})
-				.catch(error => console.log('error', error));
+		async loadParticipant() {
+			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
+			const data = await response.json();
+			this.memberInfo = data;
 		},
 		banishUserHandler() {
 			
@@ -357,11 +329,11 @@ export default {
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
-					"type": 'ENTER',
-					"stuffId": this.$route.params.stuffId,
-					"memberId": this.$route.params.memberId,
-					"sender": this.memberInfo.memberNickname,
-					"memberImage": this.memberInfo.memberImage
+					type: 'ENTER',
+					stuffId: this.$route.params.stuffId,
+					memberId: this.memberInfo.id,
+					sender: this.memberInfo.nickname,
+					memberImage: this.memberInfo.image
 				})
 			);
 		}
@@ -370,32 +342,44 @@ export default {
 		this.unLoadEvent()
 	},
 	created() {
-		this.loadParticipationListInfo();
-		this.loadParticipantInfo();
+		this.loadParticipationList();
+		this.loadParticipant();
 		this.stompConnect();
 		this.connect();
 	},
-	updated(){
-		console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-		console.log(this.messageView);
-		console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
+	updated() {
 	},
 	mounted() {
 		window.addEventListener('beforeunload', this.unLoadEvent);
+		setTimeout(() => {
+			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+		}, 100);
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
-	}
+	},
+	computed: {
+		chatLength: function () {
+			return this.messageView.length;
+		}
+	},
+	watch: {
+		chatLength: function () {
+			setTimeout(() => {
+				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+			}, 50);
+		}
+	},
 }
 </script>
 <style scoped>
-.canvas,
-.v-app-bar {
+.canvas .v-app-bar {
 	min-width: 320px;
 }
 
 .chat-canvas {
 	margin-top: 64px;
+	padding-bottom: 78px;
 }
 
 .v-app-bar .chat-title {
