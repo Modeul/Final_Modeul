@@ -14,6 +14,8 @@
 		<result property="regDate" column="reg_date" />
 		<result property="categoryId" column="category_id" />
 		<result property="memberId" column="member_id" />
+		<result property="coordX" column="coord_x" />
+		<result property="coordY" column="coord_y" />
 	</resultMap>
 	<!-- StuffView는 원래 알던 개념 db 칼럼명과 일치시켜서 그 칼럼의 데이터 이용하게 한다. 그리고 StuffView 
 		이런 식으로 덩어리로 인자를 사용하면 resultMap으로 세부 칼럼들을 매핑 시켜줘야 한다. -->
@@ -25,6 +27,8 @@
 		<result property="memberId" column="member_id" />
 		<result property="regDate" column="reg_date" />
 		<result property="participantCount" column="participation_count" />
+		<result property="coordX" column="coord_x" />
+		<result property="coordY" column="coord_y" />
 	</resultMap>
 	
 	<resultMap id="ImageResultMap" type="Image">
@@ -87,8 +91,8 @@
 	<!-- 공구상품글 등록  -->
 	<insert id="insert" parameterType="Stuff">
 		insert into stuff(title, place, num_people, deadline, price, url,
-		content, category_id)
-		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId})
+		content, category_id, coord_x, coord_y)
+		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId}, #{coordX}, #{coordY})
 		<selectKey resultType="long" keyProperty="id" order="AFTER">
 
 			select last_insert_id()
@@ -105,17 +109,17 @@
 	<!-- 상품 정보 수정, 나중에 categoryId 추가하기!! -->
 	<update id="update" parameterType="Stuff">
 		update stuff set title = #{title}, place = #{place}, num_people = #{numPeople}, deadline = #{deadline}, price = #{price}, 
-		url = #{url}, content = #{content}, category_id = #{categoryId}
+		url = #{url}, content = #{content}, category_id = #{categoryId}, coord_x = #{coordX}, coord_y = #{coordY}
 		where id = #{id}
 	</update>
 
 	<!-- 지정 공구상품 이미지 전체 삭제 --> 	
-	<delete id="deleteImage" parameterType="Long">			
+	<delete id="deleteImage" >			
 		delete from image where stuff_id = #{stuffId}		
 	</delete>
 
 	<!-- 특정 공구상품 정보 전체 삭제 --> 	
-	<delete id="delete" parameterType="Long">
+	<delete id="delete" parameterType="Stuff">
       delete from stuff where id=${id}
    </delete>
    

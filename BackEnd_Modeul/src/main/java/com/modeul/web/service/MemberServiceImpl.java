@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Boolean checkUid(String uid) {
 		String getUid = repository.getbyUid(uid);

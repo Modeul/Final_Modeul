@@ -5,11 +5,36 @@
 		<div class="delete-box">
 			<div class="delete-box-1">정말로 추방하시겠습니까?</div>
 			<div class="delete-box-2">
-				<div @click="deleteUser" class="delete-box-3">추방</div>
-				<div @click="modalHandler" class="delete-box-4">취소</div>
+				<div @click="banishUserHandler" class="delete-box-3">추방</div>
+				<div @click="modalBanishCloseHandler" class="delete-box-4">취소</div>
 			</div>
 		</div>
 	</div>
+
+	<div v-if="openLeaveModal" class="black-bg">
+		<div class="delete-box">
+			<div class="delete-box-1">정말로 나가시겠습니까?</div>
+			<div class="delete-box-2">
+				<div @click="disconnect" class="delete-box-3">나가기</div>
+				<div @click="modalLeaveCloseHandler" class="delete-box-4">취소</div>
+			</div>
+		</div>
+	</div>
+
+	<v-dialog
+		v-model="dialog"
+		width="auto"
+	>
+		<v-card>
+			<v-card-text>
+				추방되었습니다.
+			</v-card-text>
+			<v-card-actions>
+			<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
+
 	<div class="canvas">
 		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1006;">
 			<div class="chat-side">
@@ -30,12 +55,12 @@
 							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon"> <img @click="modalHandler"
-								src="../../images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
+						<div class="chat-side-list-user-icon"> <img @click="modalBanishHandler(user)"
+								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
 					</div>
 				</div>
 				<div class="chat-side-bottom">
-					<div class="chat-side-bottom-icon"></div>
+					<div class="chat-side-bottom-icon" @click="modalLeaveHandler()"></div>
 				</div>
 			</div>
 
@@ -58,20 +83,18 @@
 
 		<div class="chat-canvas">
 
-
-	
 			<div v-for="m in messageView">
-			<div class="chat-line-wrap" v-if="!(m.type=='ENTER')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
-				<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
-				<div class="chat-box">
-					<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
-					<div class="chat-content-wrap">
-						<p class="chat-content">{{ m.content }}</p>
-						<p class="chat-time">{{ m.sendDate }}</p>
+				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
+					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
+					<div class="chat-box">
+						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
+						<div class="chat-content-wrap">
+							<p class="chat-content">{{ m.content }}</p>
+							<p class="chat-time">{{ m.sendDate }}</p>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
 			<div class="chat-input-wrap">
 				<div @click.stop="calDrawer = !calDrawer" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
@@ -256,9 +279,14 @@ export default {
 				participantCount: "12"
 			},
 			memberInfo:'',
-			messageView: [
-
-			],
+			messageView: [],
+			dialog:false,
+			banishUser:{
+				id:'',
+				nickname:'',
+				image:''
+			},
+			openLeaveModal:false,
 		}
 	},
 	computed: {
@@ -357,18 +385,18 @@ export default {
 				const date = new dayjs().locale('ko').format("A hh:mm");
 
 				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
+				// 로그인을 통해 얻은 정보로 대체
 				const chatMessage = {
+					type: 'TALK',
 					stuffId: this.$route.params.stuffId,
-					memberId: this.$route.params.memberId,
-					sender: this.memberInfo.memberNickname,
+					memberId: this.memberInfo.id,
+					sender: this.memberInfo.nickname,
+					memberImage: this.memberInfo.image,
 					sendDate: date,
 					content: this.message,
-					type: 'TALK',
-					memberImage: this.memberInfo.memberImage
 				};
 
-
-				this.myUserId = this.memberInfo.memberId;
+				this.myUserId = this.memberInfo.id;
 
 				this.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
 			}
@@ -402,21 +430,49 @@ export default {
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
+					// 로그인 구현 이후 로그인으로 얻은 정보로 대체
 					this.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
-							"type": 'ENTER',
-							"stuffId": this.$route.params.stuffId,
-							"memberId": this.$route.params.memberId,
-							"sender": this.memberInfo.memberNickname,
-							"memberImage": this.memberInfo.memberImage
+							type: 'ENTER',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+							sender: this.memberInfo.nickname,
+							memberImage: this.memberInfo.image,
 						})
 					)
 				});
 		},
+		disconnect(){		
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				console.log(result);
+				// ** 소켓 끊어주기 추가
+
+				// this.stompClient.disconnect(
+				// 	{},
+				// 	frame => {
+				// 		// 콜백함수 추가!!
+				// 		this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+						
+				// 		// 소켓 연결 끊기 성공!
+				// 		this.connected = false;
+				// 		console.log('소켓 연결 끊기 성공!', frame);
+				// });
+				this.$router.go(-1);
+
+			})
+			.catch(error => console.log('error', error));
+		},
 		goback() {
 			this.$router.go(-1);
 		},
-		loadParticipationListInfo() {
+		loadParticipationList() {
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -425,28 +481,86 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo() {
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}/${this.$route.params.memberId}`)
-				.then(response => response.json())
-				.then(data => {
-					this.memberInfo = data.memberInfo;
-				})
-				.catch(error => console.log('error', error));
+		async loadParticipant() {
+			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
+			const data = await response.json();
+			this.memberInfo = data;
 		},
-		deleteUser() {
+		banishUserHandler() {
+			
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
 
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				console.log(result);
+				this.openModal = !this.openModal;
+				this.loadParticipationList();
+				this.dialog=true;
+
+			// ** 소켓 끊어주기 추가
+
+			// 	this.stompClient.send('/pub/chat/banishUser',
+			// 	JSON.stringify({
+			// 		"type": 'BANISH',
+			// 		"stuffId": this.$route.params.stuffId,
+			// 		"memberId": this.banishUserId,
+			// 		"sender": this.banishUser.nickname,
+			// 		"memberImage": this.banishUser.image
+			// 	})
+			// );
+
+				// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
+				// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
+				/* 
+				if(this.banishUser.id === this.$route.params.memberId){
+					this.$router.go(0);
+					this.stompClient.disconnect(
+						{},
+						frame => {
+							this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+							
+							// 소켓 연결 끊기 성공!
+							this.connected = false;
+							console.log('소켓 연결 끊기 성공!', frame);
+
+							// 강퇴된 그 사람이 뒤로가기 되기
+							
+					});
+					this.$router.go(-1);
+				}
+				*/
+			})
+			.catch(error => console.log('error', error));
 		},
-		modalHandler() {
+		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
+			this.banishUser.id = user.memberId;
+			this.banishUser.nickname = user.memberNickname;
+			this.banishUser.image = user.memberImage;
+			console.log("banishUserId:" + this.banishUser.id); 
+			console.log("banishUserNickName:" + this.banishUser.nickname); 
+		},
+		modalBanishCloseHandler() {
+			this.openModal = !this.openModal;
+		},
+		modalLeaveHandler() {
+			this.openLeaveModal = !this.openLeaveModal;
+		},
+		modalLeaveCloseHandler() {
+			this.openLeaveModal = !this.openLeaveModal;
 		},
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
-					"type": 'ENTER',
-					"stuffId": this.$route.params.stuffId,
-					"memberId": this.$route.params.memberId,
-					"sender": this.memberInfo.memberNickname,
-					"memberImage": this.memberInfo.memberImage
+					type: 'ENTER',
+					stuffId: this.$route.params.stuffId,
+					memberId: this.memberInfo.id,
+					sender: this.memberInfo.nickname,
+					memberImage: this.memberInfo.image
 				})
 			);
 		}
@@ -455,21 +569,35 @@ export default {
 		this.unLoadEvent()
 	},
 	created() {
-		this.loadParticipationListInfo();
-		this.loadParticipantInfo();
+		this.loadParticipationList();
+		this.loadParticipant();
 		this.stompConnect();
 		this.connect();
 
 	},
-	updated(){
+	updated() {
 	},
 	mounted() {
 		window.addEventListener('beforeunload', this.unLoadEvent);
-
+		setTimeout(() => {
+			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+		}, 100);
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
-	}
+	},
+	computed: {
+		chatLength: function () {
+			return this.messageView.length;
+		}
+	},
+	watch: {
+		chatLength: function () {
+			setTimeout(() => {
+				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+			}, 50);
+		}
+	},
 }
 </script>
 
@@ -504,165 +632,6 @@ import { computed, reactive } from 'vue';
 
 </script>
 <style scoped>
-.cal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px 24px 24px;
-
-    position: relative;
-    /* width: 327px;  */
-    height: 626px;
-    width: 100%;
-    /* height: 100%; */
-     
-    background: #F1F2F2;
-}
-.cal-header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        /* justify-content:space-between; */
-        padding: 12px 40px;
-        gap: 71px;
-
-        width: 327px;
-        height: 71px;
-
-        flex: none;
-        order: 0;
-        flex-grow: 0;
-    }
-        .cal-header div {
-            color: #222222;
-            font-weight: 700;
-            margin-left: 18px;
-        }
-
-        .cal-back {
-            background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
-            /* position: absolute; */
-            /* top: 18px;
-            left: 19px;*/
-        
-            width: 16px;
-            height: 16px;
-            
-            z-index: 9; 
-        }
-    
-        .confirmDialog {
-            font-weight: 500;
-            padding-right: 24px;
-            text-align: end;
-            font-size: 16px;
-        }
-
-        .confirmDialog-member {
-            display: flex;
-            margin-left: 20px;
-            padding: 3px;
-        }
-    
-        
-    .cal-contents {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 28px 24px 0px;
-        overflow: auto;
-        /* gap: 24px; */
-
-        /* width: 327px; */
-        width: 100%;
-        height: 531px;
-
-        background: #fff;
-        border-radius: 30px 30px 10px 10px;
-
-        flex: none;
-        order: 1;
-        flex-grow: 1;
-    }   
-        
-        .cal-members {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 20px 0px;
-            /* gap: 12px; */
-
-            /* width: 239px; */
-            height: 70px;
-            width: 100%;
-
-            flex: none;
-            order: 0;
-            flex-grow: 0;
-        }
-            .cal-members div:nth-child(2) {
-                flex-grow: 1;
-                margin: 0 10px;
-                font-size: 12px;
-            }
-
-            .cal-member-price{
-                position: relative;
-                right: 4px;
-                
-                font-size: 12px;
-                font-weight: 700;
-                color: #222;
-            }
-
-            .cal-member-price input{
-                width: 50px;
-            }
-        
-        .cal-sum {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: end;
-            padding: 20px 0px;
-            margin-right: 10%;
-            gap: 20px;
-
-            width: 239px;
-            height: 60px;
-
-            background: #FFFFFF;
-            font-size: 12px;
-            font-weight: 700;
-            color: #222;
-
-            flex: none;
-            order: 1;
-            flex-grow: 0;
-        }
-
-        .cal-button {
-            width: 136px;
-            height: 45px;
-          
-            /* position: absolute;
-            left: 119.5px;
-            right: 119.5px;
-            top: 514px;
-            bottom: 90.6px; */
-          
-            border-radius: 10px;
-          
-            background: #63A0C2;
-            font-size: 12px;
-            color: #fff;
-            font-weight: 700;
-          
-            flex: none;
-            order: 2;
-            flex-grow: 0;
-        }
-
 .canvas,
 .v-app-bar {
 	min-width: 320px;
@@ -670,6 +639,7 @@ import { computed, reactive } from 'vue';
 
 .chat-canvas {
 	margin-top: 64px;
+	padding-bottom: 78px;
 }
 
 .v-app-bar .chat-title {
@@ -963,6 +933,7 @@ import { computed, reactive } from 'vue';
 	width: 20px;
 	height: 20px;
 	background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.6659 20C12.8427 20 13.0123 19.9247 13.1373 19.7908C13.2623 19.6568 13.3325 19.4752 13.3325 19.2857C13.3325 19.0963 13.2623 18.9146 13.1373 18.7806C13.0123 18.6467 12.8427 18.5714 12.6659 18.5714H3.99976C3.29256 18.5714 2.61432 18.2704 2.11426 17.7346C1.61419 17.1988 1.33325 16.472 1.33325 15.7143V4.28571C1.33325 3.52795 1.61419 2.80123 2.11426 2.26541C2.61432 1.72959 3.29256 1.42857 3.99976 1.42857H12.6659C12.8427 1.42857 13.0123 1.35332 13.1373 1.21936C13.2623 1.08541 13.3325 0.903726 13.3325 0.714286C13.3325 0.524845 13.2623 0.343164 13.1373 0.20921C13.0123 0.075255 12.8427 0 12.6659 0H3.99976C2.93896 0 1.9216 0.451529 1.1715 1.25526C0.421402 2.05898 0 3.14907 0 4.28571V15.7143C0 16.8509 0.421402 17.941 1.1715 18.7447C1.9216 19.5485 2.93896 20 3.99976 20H12.6659ZM14.1938 4.49429C14.2557 4.42777 14.3293 4.37499 14.4103 4.33898C14.4913 4.30297 14.5781 4.28444 14.6658 4.28444C14.7535 4.28444 14.8403 4.30297 14.9213 4.33898C15.0023 4.37499 15.0758 4.42777 15.1378 4.49429L19.8042 9.49429C19.8662 9.56064 19.9155 9.63946 19.9491 9.72624C19.9827 9.81302 20 9.90605 20 10C20 10.094 19.9827 10.187 19.9491 10.2738C19.9155 10.3605 19.8662 10.4394 19.8042 10.5057L15.1378 15.5057C15.0758 15.5721 15.0022 15.6248 14.9212 15.6607C14.8402 15.6967 14.7534 15.7152 14.6658 15.7152C14.5781 15.7152 14.4913 15.6967 14.4104 15.6607C14.3294 15.6248 14.2558 15.5721 14.1938 15.5057C14.1318 15.4393 14.0827 15.3605 14.0491 15.2737C14.0156 15.1869 13.9983 15.0939 13.9983 15C13.9983 14.9061 14.0156 14.8131 14.0491 14.7263C14.0827 14.6395 14.1318 14.5607 14.1938 14.4943L17.7229 10.7143H5.99964C5.82284 10.7143 5.65328 10.639 5.52827 10.5051C5.40325 10.3711 5.33302 10.1894 5.33302 10C5.33302 9.81056 5.40325 9.62888 5.52827 9.49492C5.65328 9.36097 5.82284 9.28571 5.99964 9.28571H17.7229L14.1938 5.50571C14.1317 5.43936 14.0825 5.36054 14.0489 5.27376C14.0153 5.18698 13.998 5.09395 13.998 5C13.998 4.90605 14.0153 4.81302 14.0489 4.72624C14.0825 4.63946 14.1317 4.56064 14.1938 4.49429Z' fill='black'/%3E%3C/svg%3E%0A");
+	cursor: pointer;
 }
 
 /* 추방 확인 모달 */
@@ -1043,5 +1014,9 @@ import { computed, reactive } from 'vue';
 	line-height: 26px;
 	margin-left: 25px;
 	cursor: pointer;
+}
+
+.v-dialog:deep{
+	font-size: 14px;
 }
 </style>
