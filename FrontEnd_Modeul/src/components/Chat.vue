@@ -31,7 +31,7 @@
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
 						<div class="chat-side-list-user-icon"> <img @click="modalHandler"
-								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
+								src="../../images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
 					</div>
 				</div>
 				<div class="chat-side-bottom">
@@ -74,10 +74,10 @@
 		</div>
 
 			<div class="chat-input-wrap">
-				<div class="cal-btn"><img src="../../public/images/member/stuff/cal-btn.svg"></div>
+				<div class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
-					<div class="submit-btn"><img src="../../public/images/member/stuff/chat-submit-btn.svg"></div>
+					<div class="submit-btn"><img src="../../images/member/stuff/chat-submit-btn.svg"></div>
 				</div>
 			</div>
 

@@ -104,6 +104,7 @@
     animation: slide1 1s ease-in-out infinite;
     margin-left: 9px;
     color: #000;
+    transition: 0.3s;
 }
 @keyframes slide1 {
   0%,
@@ -128,6 +129,10 @@
     line-height: 13.86px;
     border: none;
     color: #F1F2F2;
+    transition: 0.3s;
+}
+.btn-1:hover , .btn-2:hover, .btn-3:hover , .btn-4:hover{
+  background: #7299BE;
 }
 /* sign-up */
 .btn-3{
@@ -141,6 +146,7 @@
     /* border: none; */
     border: solid 1px #253232;
     cursor: pointer;
+    transition: 0.3s;
 }
 .btn-4{
     width: 270px;
@@ -155,6 +161,7 @@
     /* border: solid 1px #253232; */
     cursor: pointer;
     font-weight: bold;
+    transition: 0.3s;
 }
 
 
