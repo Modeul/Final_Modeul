@@ -271,7 +271,7 @@ export default {
 			.then(result => {
 				console.log(result);
 				this.openModal = !this.openModal;
-				this.loadParticipationListInfo();
+				this.loadParticipationList();
 				this.dialog=true;
 
 			// ** 소켓 끊어주기 추가
