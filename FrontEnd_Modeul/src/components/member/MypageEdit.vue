@@ -12,7 +12,7 @@
                 <label for="file">
                 <div class="edit-btn">
                     <input type="file" class="d-none" id="file" @change="changeImg">
-                    <img src="/public/images/member/stuff/mypageEditIcon.svg">
+                    <img src="/images/member/stuff/mypageEditIcon.svg">
                 </div>
                 </label>
             </form>
@@ -290,11 +290,11 @@ export default {
         line-height: 40px;
         color: white;
         text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
     }
     .btn-save:hover{
         background: #7299BE;
-        transition: 0.3s;
-        transform: scale(1.1);
     }
     .btn-change{
         position: absolute;
@@ -313,7 +313,6 @@ export default {
         transform: translate(-50%, -50%);
     }
     .btn-change:active{
-        transform: scale(1.1);
         background: #7299BE;
         transition: 0.3s;
     }

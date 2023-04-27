@@ -21,6 +21,7 @@ public class MailServiceImpl implements MailService {
     JavaMailSender emailsender; // Bean 등록해둔 MailConfig를 autowired 해준다.
 
     private String ePw; // 인증번호
+    private String tempPwd; // 임시 비밀번호
 
     // 메일 내용 작성
     @Override
@@ -105,5 +106,82 @@ public class MailServiceImpl implements MailService {
         }
 
         return ePw; // 메일로 보냈던 인증 코드를 서버로 변환
+    }
+
+    @Override
+    public MimeMessage createMessage2(String to) throws MessagingException, UnsupportedEncodingException {
+        System.out.println("보내는 대상 : " + to);
+        System.out.println("임시 비밀 번호 : " + tempPwd);
+
+        MimeMessage message = emailsender.createMimeMessage();
+
+        message.addRecipients(RecipientType.TO, to);// 보내는 대상
+        message.setSubject("Mo_deul 임시 비밀번호 입니다.");// 제목
+
+        String msgg = "";
+        msgg += "<div style='margin:100px;'>";
+        msgg += "<h1> 안녕하세요</h1>";
+        msgg += "<h1> Mo_deul 입니다</h1>";
+        msgg += "<br>";
+        msgg += "<p>아래 임시 비밀번호를 비밀번호 변경 창으로 돌아가 입력해주세요<p>";
+        msgg += "<br>";
+        msgg += "<p>감사합니다!<p>";
+        msgg += "<br>";
+        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
+        msgg += "<h3 style='color:blue;'>임시 비밀번호 입니다.</h3>";
+        msgg += "<div style='font-size:130%'>";
+        msgg += "CODE : <strong>";
+        msgg += tempPwd + "</strong><div><br/> "; // 메일에 임시 비밀번호 넣기
+        msgg += "</div>";
+        message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
+        // 보내는 사람의 이메일 주소, 보내는 사람 이름
+        message.setFrom(new InternetAddress("modeulprj@naver.com", "Modeul_Admin"));// 보내는 사람
+
+        return message;
+
+    }
+
+    @Override
+    public String createTempPwd() {
+        StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 8; i++) { // 인증코드 : 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+
+            switch (index) {
+                case 0:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+
+                case 1:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    // A~Z
+                    break;
+
+                case 2:
+                    key.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+            }
+        }
+        return key.toString();
+    }
+
+    @Override
+    public String sendTempPwdMessage(String to) throws Exception {
+
+        tempPwd = createKey(); // 랜덤 비밀번호 생성
+
+        MimeMessage message = createMessage2(to); // 메일 발송
+        try {
+            emailsender.send(message);
+        } catch (MailException es) {
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+
+        return tempPwd; // 메일로 보냈던 임시 비밀번호를 서버로 변환
     }
 }

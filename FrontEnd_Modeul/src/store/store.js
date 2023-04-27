@@ -6,7 +6,6 @@ const store = createStore({
 		loadingStatus: false,
 		host : '',
 		// host : 'http://' + window.location.host
-		stompClient: ''
 	},
 	mutations
 })

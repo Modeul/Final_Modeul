@@ -2,7 +2,7 @@
     <div class="canvas">
         <router-link to="/member/stuff/list">
             <header class="header">
-                <img src="/public/images/member/stuff/mypage-logo.svg">
+                <img src="/images/member/stuff/mypage-logo.svg">
             </header>
         </router-link>
         <section>
@@ -11,40 +11,42 @@
                     <img class="profile-img" :src="'/images/member/'+loginInfo.image">
                 </div>
                 <router-link to="/member/mypage/edit" class="edit-btn">
-                    <img src="/public/images/member/stuff/mp-edit-btn.svg">
+                    <img src="/images/member/stuff/mp-edit-btn.svg">
                 </router-link>
                 <div class="profile-name">{{ loginInfo.nickname }}</div>
-                <div class="star">
-                    <img src="/public/images/member/stuff/star.svg">
+                <!-- <div class="star">
+                    <img src="/images/member/stuff/star.svg">
                     <span class="star-avg">5.0</span>
-                </div>
+                </div> -->
             </div>
 
             <ul class="mypage-list">
                 <li>
-                    <img src="/public/images/member/stuff/write.svg">
+                    <img src="/images/member/stuff/write.svg">
                     <span>작성 글 목록</span>
                 </li>
-                <router-link to = "participation/list">
+                <router-link to="/member/participation/list">
                     <li>
-                        <img src="/public/images/member/stuff/cart.svg">
+                        <img src="/images/member/stuff/cart.svg">
                         <span>참여 딜 목록</span>
                     </li>
                 </router-link>
+                    <li>
+                        <img src="/images/member/stuff/heart_plus.svg">
+                        <span>관심목록</span>
+                    </li>
+                <router-link to="/member/mypage/changepwd">
+                    <li>
+                        <img src="/images/member/stuff/password-icon.svg">
+                        <span>비밀번호 변경</span>
+                    </li>
+                </router-link>
                 <li>
-                    <img src="/public/images/member/stuff/heart_plus.svg">
-                    <span>관심목록</span>
-                </li>
-                <li>
-                    <img src="/public/images/member/stuff/password-icon.svg">
-                    <span>비밀번호 변경</span>
-                </li>
-                <li>
-                    <img src="/public/images/member/stuff/logout.svg">
+                    <img src="/images/member/stuff/logout.svg">
                     <span @click="modalHandler2">로그아웃</span>
                 </li>
                 <li>
-                    <img src="/public/images/member/stuff/out.svg">
+                    <img src="/images/member/stuff/out.svg">
                     <span @click="modalHandler">탈퇴하기</span>
                 </li>
             </ul>
