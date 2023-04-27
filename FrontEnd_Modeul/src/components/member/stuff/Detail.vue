@@ -85,6 +85,7 @@ export default {
 					console.log(result);
 					this.loadParticipationList();
 					this.isParticipated = !this.isParticipated;
+					this.dialog=true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -116,6 +117,7 @@ export default {
 					console.log(result);
 					this.loadParticipationList();
 					this.isParticipated = !this.isParticipated;
+					this.dialog=true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -319,17 +321,23 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button class="detail-join-button" v-if="!isParticipated"
-						@click="[dialog = true, participationHandler()]">
-						참여하기
+					<button
+						class="detail-join-button"
+						v-if="!isParticipated"
+						@click="participationHandler"
+					>
+					<!-- @click="[dialog=true, participationHandler()]" -->
+					참여하기
 					</button>
 
 					<div class="join-button-wrap">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button"
-							v-if="isParticipated">채팅하기</router-link>
-						<button class="detail-cancel-button" v-if="isParticipated"
-							@click="[dialog = true, cancelParticipationHandler()]">
-							참여취소
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
+						<button
+							class="detail-cancel-button"
+							v-if="isParticipated"
+							@click="cancelParticipationHandler"
+						>
+						참여취소
 						</button>
 					</div>
 				</div>
@@ -337,11 +345,11 @@ export default {
 
 				<v-dialog v-model="dialog" width="auto" v-if="isParticipated">
 					<v-card>
-						<v-card-text>
+						<v-card-text class="participationcard">
 							참여되었습니다.
 						</v-card-text>
 						<v-card-actions>
-							<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -385,8 +393,16 @@ export default {
 .v-img__img--contain {
 	object-fit: cover;
 }
+
+/* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
+개발자모드에서 보여지는 css 계층의 값 변경 가능*/
+
+.v-dialog::v-deep{
+	font-size: 14px;
+}
 </style>
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
+
 </style>
