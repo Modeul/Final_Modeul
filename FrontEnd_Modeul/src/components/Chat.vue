@@ -58,20 +58,18 @@
 
 		<div class="chat-canvas">
 
-
-	
 			<div v-for="m in messageView">
-			<div class="chat-line-wrap" v-if="!(m.type=='ENTER')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
-				<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
-				<div class="chat-box">
-					<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
-					<div class="chat-content-wrap">
-						<p class="chat-content">{{ m.content }}</p>
-						<p class="chat-time">{{ m.sendDate }}</p>
+				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
+					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
+					<div class="chat-box">
+						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
+						<div class="chat-content-wrap">
+							<p class="chat-content">{{ m.content }}</p>
+							<p class="chat-time">{{ m.sendDate }}</p>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
 			<div class="chat-input-wrap">
 				<div class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
@@ -109,10 +107,8 @@ export default {
 				title: "여러가지 나눔",
 				participantCount: "12"
 			},
-			memberInfo:'',
-			messageView: [
-
-			],
+			memberInfo: '',
+			messageView: [],
 		}
 	},
 	computed: {
@@ -130,18 +126,18 @@ export default {
 				const date = new dayjs().locale('ko').format("A hh:mm");
 
 				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
+				// 로그인을 통해 얻은 정보로 대체
 				const chatMessage = {
+					type: 'TALK',
 					stuffId: this.$route.params.stuffId,
-					memberId: this.$route.params.memberId,
-					sender: this.memberInfo.memberNickname,
+					memberId: this.memberInfo.id,
+					sender: this.memberInfo.nickname,
+					memberImage: this.memberInfo.image,
 					sendDate: date,
 					content: this.message,
-					type: 'TALK',
-					memberImage: this.memberInfo.memberImage
 				};
 
-
-				this.myUserId = this.memberInfo.memberId;
+				this.myUserId = this.memberInfo.id;
 
 				this.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
 			}
@@ -175,13 +171,14 @@ export default {
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
+					// 로그인 구현 이후 로그인으로 얻은 정보로 대체
 					this.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
-							"type": 'ENTER',
-							"stuffId": this.$route.params.stuffId,
-							"memberId": this.$route.params.memberId,
-							"sender": this.memberInfo.memberNickname,
-							"memberImage": this.memberInfo.memberImage
+							type: 'ENTER',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+							sender: this.memberInfo.nickname,
+							memberImage: this.memberInfo.image,
 						})
 					)
 				});
@@ -189,7 +186,7 @@ export default {
 		goback() {
 			this.$router.go(-1);
 		},
-		loadParticipationListInfo() {
+		loadParticipationList() {
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -198,13 +195,10 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo() {
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}/${this.$route.params.memberId}`)
-				.then(response => response.json())
-				.then(data => {
-					this.memberInfo = data.memberInfo;
-				})
-				.catch(error => console.log('error', error));
+		async loadParticipant() {
+			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
+			const data = await response.json();
+			this.memberInfo = data;
 		},
 		deleteUser() {
 
@@ -215,11 +209,11 @@ export default {
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
-					"type": 'ENTER',
-					"stuffId": this.$route.params.stuffId,
-					"memberId": this.$route.params.memberId,
-					"sender": this.memberInfo.memberNickname,
-					"memberImage": this.memberInfo.memberImage
+					type: 'ENTER',
+					stuffId: this.$route.params.stuffId,
+					memberId: this.memberInfo.id,
+					sender: this.memberInfo.nickname,
+					memberImage: this.memberInfo.image
 				})
 			);
 		}
@@ -228,29 +222,42 @@ export default {
 		this.unLoadEvent()
 	},
 	created() {
-		this.loadParticipationListInfo();
-		this.loadParticipantInfo();
+		this.loadParticipationList();
+		this.loadParticipant();
 		this.stompConnect();
 		this.connect();
 	},
-	updated(){
+	updated() {
 	},
 	mounted() {
 		window.addEventListener('beforeunload', this.unLoadEvent);
+		setTimeout(() => {
+			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+		}, 500);
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
-	}
+	},
+	computed: {
+		chatLength: function () {
+			return this.messageView.length;
+		}
+	},
+	watch: {
+		chatLength: function () {
+			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+		}
+	},
 }
 </script>
 <style scoped>
-.canvas,
-.v-app-bar {
+.canvas .v-app-bar {
 	min-width: 320px;
 }
 
 .chat-canvas {
 	margin-top: 64px;
+	padding-bottom: 78px;
 }
 
 .v-app-bar .chat-title {
