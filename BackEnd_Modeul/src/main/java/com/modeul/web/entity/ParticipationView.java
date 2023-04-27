@@ -21,4 +21,5 @@ public class ParticipationView extends Participation {
     private Long categoryId;
     private String categoryName;
     private String imageName;
+    private int participantCount;
 }

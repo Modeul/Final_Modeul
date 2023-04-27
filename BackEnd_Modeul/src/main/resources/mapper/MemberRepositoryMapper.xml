@@ -4,14 +4,35 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.modeul.web.repository.MemberRepository">
+
+<resultMap id="MemberResultMap" type="Member">
+	<result property="regDate" column="reg_date" />
+</resultMap>
+
 <!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
   <insert id="insert" parameterType="Member">
     insert into member(uid,pwd,name,email,nickname)
     values(#{uid},#{pwd},#{name},#{email},#{nickname})
   </insert>
+
+	<select id="getbyId" resultMap="MemberResultMap">
+	  select *
+	  	from member
+	  where
+	  	id = #{id}
+  </select>
+  
   
    <select id="getbyUid" resultType="String">
 	  select uid
+	  from
+	  member
+	  where
+	  uid = #{uid}
+  </select>
+
+   <select id="getPwdByUid" resultType="Member">
+	  select *
 	  from
 	  member
 	  where
@@ -33,4 +54,45 @@
 	  where
 	  nickname = #{nickname}
   </select>
+
+	<update id="update" parameterType="Member">
+		update member
+		<set>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			<if test="phone != null">
+				phone = #{phone},
+			</if>
+			<if test="nickname != null">
+				nickname = #{nickname},
+			</if>
+			<if test="level != null">
+				level = #{level}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="delete" parameterType="Member">
+		update member
+		set pwd = '',
+			uid = '',
+			name = '',
+			email = '',
+			address = '',
+			nickname = '',
+			level = '1'
+		where id=#{id}
+	</update>
+	
 </mapper>

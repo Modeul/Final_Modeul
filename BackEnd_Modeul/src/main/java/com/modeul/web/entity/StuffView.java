@@ -19,7 +19,9 @@ public class StuffView extends Stuff {
 	private Long memberId;
 	private Long categoryId;
 	
-	// 카테고리 이름이 필요하네..
 	private String categoryName;
 	private String imageName;
+
+	private int participantCount;
+	
 }

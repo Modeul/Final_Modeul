@@ -1,4 +1,6 @@
 import * as types from './mutation_types';
+import Stomp from 'webstomp-client';
+import SockJS from 'sockjs-client';
 
 export default{
     [types.LOADING_STATUS](state, loadingStatus){
@@ -10,5 +12,5 @@ export default{
 				hostName = "http://localhost:8080";
 			}
 			return state.host = hostName
-		}
+		},
 }

@@ -27,8 +27,10 @@ public interface ParticipationRepository {
     int delete(Long stuffId, Long memberId);
 
     /* 공구상품별 참여 멤버 집계 */
-    Long findMemberCountBystuffId(Long stuffId);
+    Integer findMemberCountBystuffId(Long stuffId);
 
     /* 멤버별 참여 목록 수 집계 */
-    Long findStuffCountBymemberId(Long memberId);
+    Integer findStuffCountBymemberId(Long memberId);
+
+    ParticipationMemberView findMemberBystuffIdmemberId(Long stuffId, Long memberId);
 }

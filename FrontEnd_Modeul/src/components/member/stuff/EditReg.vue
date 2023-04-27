@@ -7,9 +7,8 @@ export default {
 		return {
 			isNext: false,
 			categoryList: [],
-			file: [],
+			files: [],
 			url: '',
-			imageURL: '',
 			stuffView: '',
 			stuff: '',
 			category: '',
@@ -17,6 +16,7 @@ export default {
 			imageList: '',
 
 			valiError: "",
+			changed: false,
 			openModal: false,
 
 		}
@@ -124,11 +124,20 @@ export default {
 
 		// 썸네일 조작
 		uploadImage(e) {
-			this.file = e.target.files;
-			console.log(this.file);
-			this.url = URL.createObjectURL(this.file[0]);
-			console.log(this.url);
-			this.imageURL = this.url;
+			this.files = e.target.files;
+			
+			if (this.files.length > 6) {
+				this.valiError = "이미지는 최대 6개까지 선택할 수 있습니다.";
+				this.openModal = true;
+				return;
+			}
+
+			this.changed = true;
+			this.imageList = [];
+
+			for (let file of this.files) {
+				this.imageList.push(URL.createObjectURL(file));
+			}
 		},
 
 		load() {
@@ -232,12 +241,12 @@ export default {
 					<!-- 이미지 업로드  -->
 					<div class="file-box">
 						<label for="file">
-							<div class="btn-file"></div>
+							<div class="btn-file">{{ imageList.length }}/6</div>
 							<div class="btn-uploaded-files" v-for="img in imageList">
-								<img class="uploaded-files" :src="'/images/member/stuff/' + img.name">
+								<img class="uploaded-files" :src="changed ? img : '/images/member/stuff/' + img.name">
 							</div>
 						</label>
-						<!-- <input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage"> -->
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->

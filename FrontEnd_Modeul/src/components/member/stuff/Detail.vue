@@ -12,11 +12,18 @@ export default {
 			stuff: {},
 			category: {},
 			imageList: '',
-			participationList:[],
-			memberCount:''
+			participantList:[],
+			memberCount:'',
+			isParticipated:'',
+			isParticipationChecked:'',
+			dialog: false
 		};
 	},
 	methods: {
+		/* 뒤로가기 : 이전페이지로 이동 */
+		goback(){
+          this.$router.go(-1);    
+      	},
 		/* 모달 이벤트 */
 		modalHandler() {
 			this.openModal = !this.openModal;
@@ -52,7 +59,7 @@ export default {
 		},
 
 		/* 공구상품 글에 참여!! */
-		participationStuff() {
+		participationHandler() {
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -75,10 +82,11 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
+					this.isParticipated = !this.isParticipated;
 				})
 				.catch(error => console.log('error', error));
 		},
-		// 참여 인원 추가하면 참여 멤버 실시간 업데이트하기 
+		/* 참여 인원 추가하면 참여 멤버 실시간 업데이트하기 */
 		loadParticipationList(){
 			var requestOptions = {
 				method: 'GET',
@@ -87,9 +95,25 @@ export default {
 			fetch(`${this.$store.state.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
 			.then(response => response.json())
 			.then(data => {
-				this.participationList = data.list;
+				this.participantList = data.list;
 				this.memberCount = data.memberCount;
-				console.log(this.participationList);
+				console.log(this.participantList);
+			})
+			.catch(error => console.log('error', error));
+		},
+		/* 공구상품 항목의 참여 취소 요청 */
+		cancelParticipationHandler(){
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
+			.then(response => response.text())
+			.then(result => {
+				console.log(result);
+				this.loadParticipationList();
+				this.isParticipated = !this.isParticipated;
 			})
 			.catch(error => console.log('error', error));
 		}
@@ -105,7 +129,7 @@ export default {
 				this.stuff = data.stuff;
 				this.category = data.category;
 				this.imageList = data.imageList;
-				this.participationList = data.participationList;
+				this.participantList = data.participantList;
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.$store.commit('LOADING_STATUS', false);
@@ -122,7 +146,7 @@ export default {
 	<!-- detail : flex-container -->
 <div class="detail">
 		<header class="detail-header">
-			<router-link to="list" class="icon icon-back">뒤로가기</router-link>
+			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
 			<!-- 수정/삭제 모달 버튼 -->
 			<i @click="modalHandler" class="icon-edit"></i>
@@ -161,10 +185,8 @@ export default {
 			<div class="detail-main">
 				<!-- detail-img : detail-main - item1 -->
 
-
-
 				<div class="detail-img">
-					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
+					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%" >
 						<v-carousel-item v-for="img in imageList"
 							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
@@ -184,9 +206,9 @@ export default {
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
 					<!-- <div class="d-fl">
-								              <div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-								              <div class="ed-text" @click="deleteStuff">삭제</div>
-								            </div> -->
+						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
+						<div class="ed-text" @click="deleteStuff">삭제</div>
+					</div> -->
 					<div class="detail-price">{{ stuff.price }}원</div>
 
 				</section>
@@ -224,8 +246,8 @@ export default {
 			<div class="detail-join-title">참여중인 사람</div>
 			<div class="detail-join-wrap">
 				<v-sheet max-width="240">
-					<v-slide-group show-arrows="false">
-						<v-slide-group-item v-for="m in participationList" :key="m" v-slot="{ isSelected, toggle }">
+					<v-slide-group>
+						<v-slide-group-item v-for="m in participantList" :key="m" v-slot="{ isSelected, toggle }">
 							<button>
 								<img :src="'/images/member/' + m.memberImage">
 							</button>
@@ -233,9 +255,59 @@ export default {
 					</v-slide-group>
 					
 				</v-sheet>
-				<button class="detail-join-button" @click="participationStuff">
+
+				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
+				<div class="detail-join-button-wrap">
+					<button
+						class="detail-join-button"
+						v-if="!isParticipated"
+						@click="[dialog=true, participationHandler()]"
+					>
 					참여하기
-				</button>
+					</button>
+
+					<div class="join-button-wrap">
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
+						<button
+							class="detail-cancel-button"
+							v-if="isParticipated"
+							@click="[dialog=true, cancelParticipationHandler()]"
+						>
+						참여취소
+						</button>
+					</div>
+				</div>
+				
+
+				<v-dialog
+					v-model="dialog"
+					width="auto"
+					v-if="isParticipated"
+				>
+					<v-card>
+						<v-card-text>
+							참여되었습니다.
+						</v-card-text>
+						<v-card-actions>
+						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+
+				<v-dialog
+					v-model="dialog"
+					width="auto"
+					v-if="!isParticipated"
+				>
+					<v-card>
+						<v-card-text>
+							취소되었습니다.
+						</v-card-text>
+						<v-card-actions>
+						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
 			</div>
 		</section>
 	</div>
@@ -255,13 +327,12 @@ export default {
 	border-radius: 50%;
 }
 
-/* .v-slide-group__prev, .v-slide-group__next{
-	min-width: 18px !important;
-	width: 18px;
-} */
-
 .participation{
 	display: flex;
 	justify-content:space-around;
 }
+.v-img__img--contain{
+	object-fit: cover;
+}
+
 </style>

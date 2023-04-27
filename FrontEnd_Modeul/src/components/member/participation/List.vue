@@ -44,7 +44,7 @@
 							(p.deadlineState == 2)? 'hour-left' : 'minute-left' ">{{ p.dDay }}</div>
 							<div class="li-subj">{{ p.stuffTitle }}</div>
 							<div class="li-member">
-								<span class="li-member-limit"> 1</span>
+								<span class="li-member-limit"> {{ p.participantCount }}</span>
 								/ {{ p.stuffNumPeople }} 명
 							</div>
 						</div>
@@ -70,6 +70,7 @@ export default {
             participationList:[],
 			categoryId:'',
 			stuffCount:'',
+			memberCount:'',
 			//listCount:''
         }
     },

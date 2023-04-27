@@ -2,6 +2,11 @@
 import Loader from './components/common/loader.vue';
 
 export default {
+	data() {
+		return {
+			massageView: []
+		}
+	},
 	components: {
 		Loader
 	},
@@ -10,9 +15,11 @@ export default {
 			this.$store.commit('initHost');
 		}
 	},
+	created() {
+ 	},
 	mounted() {
 		this.initHost();
-	}
+	},
 }
 </script>
 <template>

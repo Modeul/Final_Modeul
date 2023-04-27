@@ -1,40 +1,160 @@
 <template>
     <div class="mypage">
         <div class="header">
-            <div class="back"></div>
+            <router-link to="/member/mypage" class="back"></router-link>
             <div class="title">프로필 수정</div>
         </div>
         <div class="profile-pic">
             <div class="profile-img">
-                <img>
+                <img class="profile-img" :src="'/images/member/'+loginInfo.image">
             </div>
-            <div class="edit-btn">
-                <img src="/public/images/member/stuff/mypageEditIcon.svg">
-            </div>
+            <form @submit="uploadImg" method="post" enctype="multipart/form-data" ref="form">
+                <label for="file">
+                <div class="edit-btn">
+                    <input type="file" class="d-none" id="file" @change="changeImg">
+                    <img src="/images/member/stuff/mypageEditIcon.svg">
+                </div>
+                </label>
+            </form>
         </div>
         <div class="mypage-input">
             <div class="input-field">
                 <div class="uid-icon"></div>
-                <span class="text">uid</span>
+                <span class="text">{{ loginInfo.uid }}</span>
             </div>
             <div class="input-field">
                 <div class="email-icon"></div>
-                <span class="text">uid</span>
+                <span class="text">{{ loginInfo.email }}</span>
             </div>
-            <div class="input-field">
+            <div>
+            <div v-if="!this.nicknamebtn" class="input-field">
                 <div class="nickname-icon"></div>
-                <span class="text">uid</span>
+				<div class="text" type="text">
+                    {{ loginInfo.nickname }}
+                    <input 
+                        @click.prevent="active"
+                        class="btn-change"
+                        id="btn-auth"
+                        type="button"
+                        value="변경"
+                        />
+                </div>
+	
             </div>
-            <div class="email"></div>
-            <div class="nickname"></div>
+            <div v-if="this.nicknamebtn" class="input-field">
+                <div class="nickname-icon"></div>
+				<input class="text" type="text" v-model="loginInfo.nickname">
+                    <input
+                        @click.prevent="checkNicknameDupl"
+                        class="btn-change"
+                        id="btn-auth"
+                        type="button"
+                        value="확인"
+                        />
+            </div>
+            <span class="error-txt">{{this.ErrorMsg}}</span>
         </div>
-        <div class="btn-save">저장하기</div>
+        </div>
+        <div @click.prevent="submit" class="btn-save">저장하기</div>
     </div>
 </template>
 <script>
 export default {
-    
+    data() {
+        return {
+            myMemberId:"110",
+            ErrorMsg:"",
+            nicknameDupl:"",
+            nicknamebtn:false,
+			loginInfo : "",
+            file: [],
+        };
+    },
+    methods: {
+        submit(){
+            this.ErrorMsg = "";
+            if (!this.loginInfo.nickname) {
+                this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
+                this.nicknamebtn = false;
+            } else if (!this.nicknameDupl) {
+                this.ErrorMsg = "중복 된 닉네임입니다.";
+            } else if (this.loginInfo.nickname.length < 2 || this.loginInfo.nickname.length > 20) {
+                this.ErrorMsg = "닉네임을 2글자 이상 입력해주세요.";
+            }
+            if(this.ErrorMsg){
+                console.log("에러메시지 존재");
+                return false;
+            }
+            if(!this.ErrorMsg){
+
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                var raw = JSON.stringify({
+                    "id": this.loginInfo.id,
+                    "nickname": this.loginInfo.nickname
+                });
+
+                var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+                };
+
+                fetch(`${this.$store.state.host}/api/member/update`, requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+                this.$router.replace('/member/mypage');
+            }
+        },
+        active(){
+            this.nicknamebtn = !this.nicknamebtn;
+        },
+            // 닉네임 중복 검사
+        checkNicknameDupl() {
+        console.log("변경요청 닉네임 : "+this.loginInfo.nickname);
+        console.log("중복검사실행");
+        this.nicknameDupl = "";
+        this.ErrorMsg= "";
+        fetch(
+            `${this.$store.state.host}/api/signup/checkNickname?nickname=${this.loginInfo.nickname}`
+        )
+            .then((response) => response.text())
+            .then((result) => {
+                console.log(result);
+            if (result == "false") this.nicknameDupl = false;
+            else this.nicknameDupl = true;
+
+            if (!this.nicknameDupl) {
+                this.nicknamebtn = false;
+                this.ErrorMsg = "중복된 닉네임 입니다.";
+            } else {
+                this.nicknamebtn = true;
+            }
+            })
+            .catch((error) => console.log("error", error));
+        },
+        uploadImg(){
+
+        },
+        changeImg(e){
+            this.file = e.target.files;
+            console.log(e.target.files);
+            this.loginInfo.image = this.file[0].name;
+        },
+    },
+	mounted() {
+		fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
+				.then(response => response.json())
+				.then(data => {
+					this.loginInfo = data;
+					console.log(data);
+				})
+	},
 }
+
 </script>
 <style>
     .mypage{
@@ -110,10 +230,19 @@ export default {
     }
     .mypage-input .input-field{
         display: flex;
+        position: relative;
         align-items: center;
         width: 300px;
         height: 45px;
         border: 1px solid #D5D5D5;
+        border-radius: 10px;
+    }
+    .mypage-input .input-field-2{
+        display: flex;
+        align-items: center;
+        width: 300px;
+        height: 45px;
+        border: 1px solid #7299BE;
         border-radius: 10px;
     }
     .mypage-input .uid-icon{
@@ -161,5 +290,35 @@ export default {
         line-height: 40px;
         color: white;
         text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-save:hover{
+        background: #7299BE;
+    }
+    .btn-change{
+        position: absolute;
+        top: 50%;
+        right: -3%;
+        width: 40px;
+        height: 25px;
+        border: solid 1px #253232;
+        border-radius: 5px;
+        background-color: #FFFFFF;
+        font-size: 10px;
+        line-height: 13px;
+        color: rgba(0, 0, 0, 0.7);
+        cursor: pointer;
+
+        transform: translate(-50%, -50%);
+    }
+    .btn-change:active{
+        background: #7299BE;
+        transition: 0.3s;
+    }
+    .error-txt{
+        font-size: 12px;
+        color: red;
+        margin-left: 8px;
     }
 </style>

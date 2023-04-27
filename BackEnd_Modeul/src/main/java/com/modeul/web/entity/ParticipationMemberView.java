@@ -1,5 +1,7 @@
 package com.modeul.web.entity;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,8 @@ import lombok.ToString;
 public class ParticipationMemberView {
     private Long stuffId;
     private Long memberId;
+    private LocalDateTime participationDate;
     private String memberNickname;
+    private String memberEmail;
     private String memberImage;
 }
