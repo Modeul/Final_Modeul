@@ -10,6 +10,8 @@ public interface MemberService {
 	
 	Boolean checkUid(String uid);
 
+	String checkPwd(Member member);
+
 	Boolean checkEmail(String email);
 
 	Boolean checkNickname(String nickname);

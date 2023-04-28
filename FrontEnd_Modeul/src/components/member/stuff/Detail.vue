@@ -5,25 +5,28 @@ import 'dayjs/locale/ko';
 export default {
 	data() {
 		return {
-			memberId:2,
-			stuffId:1,
+			showMap: true,
+			mapStatus: true,
+			memberId: 2,
+			stuffId: 1,
 			openModal: false,
 			openModal2: false,
 			stuff: {},
 			category: {},
 			imageList: '',
-			participantList:[],
-			memberCount:'',
-			isParticipated:'',
-			isParticipationChecked:'',
-			dialog: false
+			participantList: [],
+			memberCount: '',
+			isParticipated: '',
+			isCheckParticipation:'',
+			dialog: false,
+			participantInfo:{},
 		};
 	},
 	methods: {
 		/* 뒤로가기 : 이전페이지로 이동 */
-		goback(){
-          this.$router.go(-1);    
-      	},
+		goback() {
+			this.$router.go(-1);
+		},
 		/* 모달 이벤트 */
 		modalHandler() {
 			this.openModal = !this.openModal;
@@ -65,8 +68,8 @@ export default {
 
 			var raw = JSON.stringify({
 				// memberid:this.stuff.memberId,
-				memberId:this.memberId,
-				stuffId:this.stuff.id,
+				memberId: this.memberId,
+				stuffId: this.stuff.id,
 				// stuffId:this.stuffId
 			});
 
@@ -82,44 +85,124 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
-					this.isParticipated = !this.isParticipated;
+					this.isCheckParticipation = !this.isCheckParticipation;
+					this.dialog=true;
 				})
 				.catch(error => console.log('error', error));
 		},
 		/* 참여 인원 추가하면 참여 멤버 실시간 업데이트하기 */
-		loadParticipationList(){
+		loadParticipationList() {
 			var requestOptions = {
 				method: 'GET',
 				redirect: 'follow'
 			};
 			fetch(`${this.$store.state.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
-			.then(response => response.json())
-			.then(data => {
-				this.participantList = data.list;
-				this.memberCount = data.memberCount;
-				console.log(this.participantList);
-			})
-			.catch(error => console.log('error', error));
+				.then(response => response.json())
+				.then(data => {
+					this.participantList = data.list;
+					this.memberCount = data.memberCount;
+					console.log(this.participantList);
+				})
+				.catch(error => console.log('error', error));
+		},
+		loadParticipantInfo(){
+			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
+				.then(response => response.json())
+				.then(data => {
+					this.participantInfo = data.memberInfo;
+					console.log(this.participantInfo);
+				})
+				.catch(error => console.log('error', error));
+		},
+		// 참여버튼 참여한지에 따라 초기값 설정
+		checkParticipation(){
+			for(let p of this.participantList){
+				console.log("p.memberId: " + p.memberId+'\n');
+				if(p.memberId === this.participantInfo.memberId){
+					this.isCheckParticipation = !this.isCheckParticipation;
+					this.isParticipated = !this.isParticipated;
+				}
+			}
+			console.log("this.participantInfo.memberId: " + this.participantInfo[this.participantInfo.memberId]);
 		},
 		/* 공구상품 항목의 참여 취소 요청 */
-		cancelParticipationHandler(){
+		cancelParticipationHandler() {
 			var requestOptions = {
 				method: 'DELETE',
 				redirect: 'follow'
 			};
 
 			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
-			.then(response => response.text())
-			.then(result => {
-				console.log(result);
-				this.loadParticipationList();
-				this.isParticipated = !this.isParticipated;
-			})
-			.catch(error => console.log('error', error));
-		}
+				.then(response => response.text())
+				.then(result => {
+					console.log(result);
+					this.loadParticipationList();
+					this.isCheckParticipation = !this.isCheckParticipation;
+					this.dialog=true;
+				})
+				.catch(error => console.log('error', error));
+		},
+		drawMap() {
+			const mapContainer = document.getElementById('map');
+
+			let coords = new daum.maps.LatLng(this.stuff.coordY, this.stuff.coordX);
+			let mapOption = {
+				center: coords,
+				level: 5
+			};
+
+			let map = new daum.maps.Map(mapContainer, mapOption);
+
+			let content = `<div class="map-content">
+				<div class="map-content-items">${this.stuff.place}</div>
+				<div class="map-content-items">
+					<a href="https://map.kakao.com/link/map/${this.stuff.place},${this.stuff.coordY},${this.stuff.coordX}"target="_blank">큰 지도</a>
+				</div>
+				<div class="map-content-items">
+				<a href="https://map.kakao.com/link/to/${this.stuff.place},${this.stuff.coordY},${this.stuff.coordX}"target="_blank">길 찾기</a>
+			</div>
+			</div>`;
+
+
+			var customOverlay = new kakao.maps.CustomOverlay({
+				position: coords,
+				content: content
+			});
+
+
+			map.relayout();
+			map.setCenter(coords);
+			customOverlay.setMap(map);
+		},
+
+		toggleMap() {
+			console.log(this.stuff.croodX);
+			let map = document.querySelector("#map");
+			if (this.showMap) {
+				map.style.height = '300px';
+				this.showMap = !this.showMap;
+
+				if (this.mapStatus) {
+					setTimeout(() => {
+						this.drawMap();
+						this.mapStatus = false;
+					}, 500);
+				}
+
+
+			} else {
+				map.style.height = 0;
+				this.showMap = !this.showMap;
+			}
+
+		},
 	},
 	computed: {
 
+	},
+	created() {
+		this.loadParticipationList();
+		this.loadParticipantInfo();
 	},
 	async mounted() {
 		this.$store.commit('LOADING_STATUS', true);
@@ -136,15 +219,15 @@ export default {
 			})
 			.catch((error) => console.log("error", error));
 		this.$store.commit('LOADING_STATUS', false);
-		
-		this.loadParticipationList();
+
+		this.checkParticipation();
 	},
 };
 </script>
 
 <template>
 	<!-- detail : flex-container -->
-<div class="detail">
+	<div class="detail">
 		<header class="detail-header">
 			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
@@ -153,22 +236,22 @@ export default {
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
 				<div class="icon-edit2">
-				<div class="d-fl-al fl-dir-col">
-					<router-link :to="'./edit/' + stuff.id">
-						<div class="icon-edit3"></div>
-					</router-link>
-					<div @click="modalHandler2" class="icon-edit4">
+					<div class="d-fl-al fl-dir-col">
+						<router-link :to="'./edit/' + stuff.id">
+							<div class="icon-edit3"></div>
+						</router-link>
+						<div @click="modalHandler2" class="icon-edit4">
 
+						</div>
 					</div>
 				</div>
-			</div>
-			<!-- 취소 확인 모달 -->
-			<div v-if="openModal2" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-					<div class="delete-box-2">
-						<div @click="deleteStuff" class="delete-box-3">삭제</div>
-						<div @click="modalHandler2" class="delete-box-4">취소</div>
+				<!-- 취소 확인 모달 -->
+				<div v-if="openModal2" class="black-bg">
+					<div class="delete-box">
+						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+						<div class="delete-box-2">
+							<div @click="deleteStuff" class="delete-box-3">삭제</div>
+							<div @click="modalHandler2" class="delete-box-4">취소</div>
 						</div>
 					</div>
 				</div>
@@ -186,7 +269,7 @@ export default {
 				<!-- detail-img : detail-main - item1 -->
 
 				<div class="detail-img">
-					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%" >
+					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
 						<v-carousel-item v-for="img in imageList"
 							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
@@ -229,6 +312,11 @@ export default {
 					</div>
 
 				</section>
+				<section class="canvas map">
+					<div @click="toggleMap" v-if="showMap">지도 열기</div>
+					<div @click="toggleMap" v-else>지도 닫기</div>
+					<div id="map"></div>
+				</section>
 				<!-- detail-writing : detail-main - item4 -->
 				<section class="canvas detail-writing">
 					<h1 class="d-none">writing</h1>
@@ -253,58 +341,49 @@ export default {
 							</button>
 						</v-slide-group-item>
 					</v-slide-group>
-					
+
 				</v-sheet>
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
 					<button
 						class="detail-join-button"
-						v-if="!isParticipated"
-						@click="[dialog=true, participationHandler()]"
+						v-if="!isCheckParticipation"
+						@click="participationHandler"
 					>
 					참여하기
 					</button>
 
-					<div class="join-button-wrap">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button" v-if="isParticipated">채팅하기</router-link>
+					<div class="join-button-wrap" v-if="isCheckParticipation">
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button">채팅하기</router-link>
 						<button
 							class="detail-cancel-button"
-							v-if="isParticipated"
-							@click="[dialog=true, cancelParticipationHandler()]"
+							@click="cancelParticipationHandler"
 						>
 						참여취소
 						</button>
 					</div>
 				</div>
-				
 
-				<v-dialog
-					v-model="dialog"
-					width="auto"
-					v-if="isParticipated"
-				>
+
+				<v-dialog v-model="dialog" width="auto" v-if="isCheckParticipation">
 					<v-card>
-						<v-card-text>
+						<v-card-text class="participationcard">
 							참여되었습니다.
 						</v-card-text>
 						<v-card-actions>
-						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+						<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
 
-				<v-dialog
-					v-model="dialog"
-					width="auto"
-					v-if="!isParticipated"
-				>
+				<v-dialog v-model="dialog" width="auto" v-if="!isCheckParticipation">
 					<v-card>
 						<v-card-text>
 							취소되었습니다.
 						</v-card-text>
 						<v-card-actions>
-						<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
+							<v-btn color="#63A0C2" block @click="dialog = false">닫기</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -316,23 +395,37 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
 
+
 .v-slide-group button {
 	box-sizing: border-box;
 	padding: 16px;
 	width: 52px;
 }
+
 .v-slide-group img {
 	width: 36px;
 	height: 36px;
 	border-radius: 50%;
 }
 
-.participation{
+.participation {
 	display: flex;
-	justify-content:space-around;
+	justify-content: space-around;
 }
-.v-img__img--contain{
+
+.v-img__img--contain {
 	object-fit: cover;
 }
+
+/* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
+개발자모드에서 보여지는 css 계층의 값 변경 가능*/
+
+.v-dialog:deep{
+	font-size: 14px;
+}
+</style>
+
+<style>
+@import "/css/component/member/stuff/map-content.css";
 
 </style>
