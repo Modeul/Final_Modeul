@@ -58,4 +58,13 @@ public class MemberController {
 		System.out.println("임시 비밀번호 : " + tempPwd);
 		return tempPwd;
 	}
+
+	@PostMapping("checkpwd")
+	public Boolean checkPwd(@RequestBody Member member) {
+
+		if (memberService.checkPwd(member) == "ok")
+			return true;
+		else 
+			return false;
+	}
 }
