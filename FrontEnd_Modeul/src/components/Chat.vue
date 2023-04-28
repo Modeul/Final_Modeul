@@ -15,7 +15,7 @@
 		<div class="delete-box">
 			<div class="delete-box-1">정말로 나가시겠습니까?</div>
 			<div class="delete-box-2">
-				<div @click="disconnect" class="delete-box-3">나가기</div>
+				<div @click="exitchatRoom" class="delete-box-3">나가기</div>
 				<div @click="modalLeaveCloseHandler" class="delete-box-4">취소</div>
 			</div>
 		</div>
@@ -84,7 +84,7 @@
 		<div class="chat-canvas">
 
 			<div v-for="m in messageView">
-				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
+				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER' || m.type == 'LEAVE')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
 					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
 					<div class="chat-box">
 						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
@@ -215,33 +215,41 @@ export default {
 					)
 				});
 		},
-		disconnect(){		
-			var requestOptions = {
-				method: 'DELETE',
-				redirect: 'follow'
-			};
+        exitchatRoom(){     
+            var requestOptions = {
+                method: 'DELETE',
+                redirect: 'follow'
+            };
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
-			.then(response => response.text())
-			.then(result => {
-				console.log(result);
-				// ** 소켓 끊어주기 추가
+            fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log(result);
 
-				// this.stompClient.disconnect(
-				// 	{},
-				// 	frame => {
-				// 		// 콜백함수 추가!!
-				// 		this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
-						
-				// 		// 소켓 연결 끊기 성공!
-				// 		this.connected = false;
-				// 		console.log('소켓 연결 끊기 성공!', frame);
-				// });
-				this.$router.go(-1);
+                this.stompClient.send('/pub/chat/exitUser',
+                    JSON.stringify({
+                        type: 'LEAVE',
+                        stuffId: this.$route.params.stuffId,
+                        memberId: this.memberInfo.id,
+                        sender: this.memberInfo.nickname,
+                        memberImage: this.memberInfo.image,
+                    })
+                )
 
-			})
-			.catch(error => console.log('error', error));
-		},
+                // ** 소켓 끊어주기 추가
+                this.stompClient.disconnect((frame) => {
+
+                        this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+
+                        // 소켓 연결 끊기 성공!
+                        this.connected = false;
+                        this.$router.go(-1);
+                        console.log('소켓 연결 끊기 성공!', frame);
+                });
+                
+            })
+            .catch(error => console.log('error', error));
+        },
 		goback() {
 			this.$router.go(-1);
 		},
@@ -259,56 +267,54 @@ export default {
 			const data = await response.json();
 			this.memberInfo = data;
 		},
-		banishUserHandler() {
-			
-			var requestOptions = {
-				method: 'DELETE',
-				redirect: 'follow'
-			};
+        banishUserHandler() {
+            
+            var requestOptions = {
+                method: 'DELETE',
+                redirect: 'follow'
+            };
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
-			.then(response => response.text())
-			.then(result => {
-				console.log(result);
-				this.openModal = !this.openModal;
-				this.loadParticipationList();
-				this.dialog=true;
+            fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log(result);
+                this.openModal = !this.openModal;
+                this.loadParticipationList();
+                this.dialog=true;
 
-			// ** 소켓 끊어주기 추가
+            // ** 소켓 끊어주기 추가
 
-			// 	this.stompClient.send('/pub/chat/banishUser',
-			// 	JSON.stringify({
-			// 		"type": 'BANISH',
-			// 		"stuffId": this.$route.params.stuffId,
-			// 		"memberId": this.banishUserId,
-			// 		"sender": this.banishUser.nickname,
-			// 		"memberImage": this.banishUser.image
-			// 	})
-			// );
+                this.stompClient.send('/pub/chat/exitUser',
+                JSON.stringify({
+                    "type": 'LEAVE',
+                    "stuffId": this.$route.params.stuffId,
+                    "memberId": this.banishUserId,
+                    "sender": this.banishUser.nickname,
+                    "memberImage": this.banishUser.image
+                })
+            );
 
-				// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
-				// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
-				/* 
-				if(this.banishUser.id === this.$route.params.memberId){
-					this.$router.go(0);
-					this.stompClient.disconnect(
-						{},
-						frame => {
-							this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
-							
-							// 소켓 연결 끊기 성공!
-							this.connected = false;
-							console.log('소켓 연결 끊기 성공!', frame);
+                // 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
+                // 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
+                
+                // if(this.banishUser.id === this.$route.params.memberId){
+                //  this.$router.go(0);
+                //  this.stompClient.disconnect((frame) => {
+                //          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+                            
+                //          // 소켓 연결 끊기 성공!
+                //          this.connected = false;
+                //          console.log('소켓 연결 끊기 성공!', frame);
 
-							// 강퇴된 그 사람이 뒤로가기 되기
-							
-					});
-					this.$router.go(-1);
-				}
-				*/
-			})
-			.catch(error => console.log('error', error));
-		},
+                //          // 강퇴된 그 사람이 뒤로가기 되기
+                            
+                //  });
+                //  this.$router.go(-1);
+                // }
+            
+            })
+            .catch(error => console.log('error', error));
+        },
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
 			this.banishUser.id = user.memberId;
@@ -329,7 +335,7 @@ export default {
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
-					type: 'ENTER',
+					type: 'LEAVE',
 					stuffId: this.$route.params.stuffId,
 					memberId: this.memberInfo.id,
 					sender: this.memberInfo.nickname,
