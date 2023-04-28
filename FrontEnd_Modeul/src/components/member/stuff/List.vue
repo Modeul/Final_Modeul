@@ -10,7 +10,7 @@ export default {
 			list: [],
 			categoryList: [],
 			categoryId:'',
-			listCount:''
+			listCount:'',
 		};
 	},
 	computed: {

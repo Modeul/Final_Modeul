@@ -179,7 +179,7 @@ public class StuffController {
 		
 		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
 		List<Category> categoryList = categoryService.getList();
-		Long listCount = service.getListCount(categoryId, page);
+		Long listCount = crawlingservice.getListCount(categoryId, page);
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("crawlingList", crawlingList);
 		// dataList.put("list", list);

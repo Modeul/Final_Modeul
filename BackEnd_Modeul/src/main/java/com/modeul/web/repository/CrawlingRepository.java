@@ -18,6 +18,6 @@ public interface CrawlingRepository {
 								Integer size, 
 								Integer offset);
 
-
+	Long getCountList(Long categoryId);
 
 }

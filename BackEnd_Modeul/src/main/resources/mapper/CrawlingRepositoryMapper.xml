@@ -26,6 +26,9 @@
 			<if test="categoryId != null">
 				and category_id = #{categoryId}
 			</if>
+			<!-- <if test="size != null and offset != null">
+				limit ${size} offset ${offset}
+			</if> -->
 		</trim>
 		<!-- <if test="orderField != null and orderDir != null">
 			order by ${orderField} ${orderDir}		 -->
@@ -36,6 +39,15 @@
 		<!-- <if test="size != null and offset != null">
 			limit ${size} offset ${offset}
 		</if> -->
+	</select>
+
+	<select id="getCountList" resultType="Long">
+		select count(id)
+		from
+		crawling
+		<if test="categoryId != null">
+			where category_id = #{categoryId}
+		</if>
 	</select>
 
 

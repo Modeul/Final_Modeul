@@ -17,7 +17,7 @@ public class CrawlingServiceImpl implements CrawlingService {
     // 조회용
     @Override
     public List<Crawling> getViewAll() {
-        return repository.findAll(null, null, null);
+        return repository.findAll(null, 10, 0);
     }
 
     @Override
@@ -34,4 +34,12 @@ public class CrawlingServiceImpl implements CrawlingService {
 		
 	// 	return repository.findAll(null, categoryId, null, null, size, offset);
 	// }
+
+    @Override
+	public Long getListCount(Long categoryId, int page) {
+		
+		Long countList = repository.getCountList(categoryId) - (page * 7);
+		Long result = countList <= 0 ? 0 : countList;
+		return result;
+	}
 }
