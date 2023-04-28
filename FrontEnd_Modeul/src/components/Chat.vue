@@ -109,33 +109,33 @@
 
 
 	<v-navigation-drawer style="height: 80%;"  v-model="calDrawer" location="bottom" temporary>
-        <section class="cal">
+        <section class="calc-default">
             <h1 class="d-none">calculate</h1>
             <header class="cal-header">
                 <h1 class="d-none">title</h1>
                 <router-link to="list" class="icon cal-back">뒤로가기</router-link>
                 <div>정산하기</div>
             </header>
-			<form @submit.prevent="submitResult" method="post">
+			<form method="post">
 				<section class="cal-contents">
 					<h1 class="d-none">memberPrice</h1>
-					<div v-for="member in memberPriceList" class="cal-members" :key="member.id">
+					<div>
 						<div class="chat-user-img">
-							<img :src="'/images/member/stuff/'+ member.value[0]">
+							<img>
 						</div>
 						<div>
-							{{ member.key }}
+							
 						</div>
 						<div class="cal-member-price">
 							<span>
-								<input type="text" v-model.number="member.value[1]" > 
+								<input type="text"> 
 							</span>
 								원
 						</div>
 					</div>
 					<div class="cal-sum">
 						<label>합계:</label>
-						<span>{{ this.total }}</span>
+						<span></span>
 						<span>원</span>
 					</div>
 				</section>
@@ -152,7 +152,7 @@
                         정확한 값을 입력하세요.
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="#63A0C2" block @click="errDialog = false">확인</v-btn>
+                        <v-btn color="#63A0C2">확인</v-btn>
                     </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -165,38 +165,38 @@
                     persistent
                     width="auto"
                     >
-                    <v-card class="confirmDialog">
-                        <div>
-                            <v-card-title class="dialog-title">
-                                채팅방 전송
-                            </v-card-title>
-                        </div>
-                        <div>
-                            <v-card-text class="confirmDialog-member" v-for="r in calResult">
-                                {{ r.nic }}님:  {{ r.price }}원
-                            </v-card-text>
-                            <div>
-                                총 {{ this.sum }}원
-                            </div>
-                        </div>
-                        <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn 
-                            color="#63A0C2"
-                            variant="text"
-                            @click="confirmDialog = false"
-                        >
-                            취소
-                        </v-btn>
-                        <v-btn
-                            color="#63A0C2"
-                            variant="text"
-                            @click="confirmDialog = false"
-                        >
-                            확인
-                        </v-btn>
-                        </v-card-actions>
-                    </v-card>
+						<v-card class="confirmDialog">
+							<div>
+								<v-card-title class="dialog-title">
+									채팅방 전송
+								</v-card-title>
+							</div>
+							<div>
+								<v-card-text class="confirmDialog-member">
+									
+								</v-card-text>
+								<div>
+									총 원
+								</div>
+							</div>
+							<v-card-actions>
+								<v-spacer></v-spacer>
+								<v-btn 
+									color="#63A0C2"
+									variant="text"
+									
+								>
+									취소
+								</v-btn>
+								<v-btn
+									color="#63A0C2"
+									variant="text"
+									
+								>
+									확인
+								</v-btn>
+							</v-card-actions>
+						</v-card>
                     </v-dialog>
                 </v-row>
             </div>
@@ -212,14 +212,9 @@ import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 
 export default {
+
 	data() {
 		return {
-			priceList: [],
-			 // 정산
-			sum2: 0,
-            calResultMsg: "우리 정산해요\n",
-            errDialog: false,
-            confirmDialog: false,
             calDrawer: null,
 
 			userName: "",
@@ -250,26 +245,6 @@ export default {
 	},
 	
 	methods: {
-		
-		// total(){
-		// 	this.memberPriceList.forEach(obj=>this.priceList.push(obj.value[1]));
-		// 	this.sum = this.a.reduce((p,c)=>p+c,0);
-		// },
-
-		// memberPriceMap(){
-		// 	return this.participantList.map((m)=> {
-		// 		return {key: m.memberNickname, value: [m.memberImage, 0]}
-		// 	})
-		// },
-		
-        // savePrice(index){
-		// 	console.log(this.memberPriceList);
-		// 	this.total();
-		// 	console.log(this.a);
-		// 	console.log(this.sum);
-			
-        // },
-       
         submitResult(){
             // calResultMsg생성
             for(let i=0; i<this.calResult.length; i++){
@@ -540,23 +515,6 @@ export default {
 		chatLength: function () {
 			return this.messageView.length;
 		},
-		memberPriceList: function(){
-			return this.participantList.map((m)=> {
-				
-				return {key: m.memberNickname, value: [m.memberImage, 0]}
-			})
-		},
-		total: function(){
-			console.log(this.memberPriceList);
-			console.log(this.priceList);
-			this.memberPriceList.forEach(obj=>this.priceList.push(obj.value[1]));
-			this.sum2 = this.priceList.reduce((p,c)=>p+c,0);
-			console.log(this.sum2);
-			console.log(this.priceList);
-
-			return this.priceList.reduce((p,c)=>p+c,0);
-		},
-		
 	},
 	watch: {
 		chatLength: function () {
@@ -569,7 +527,7 @@ export default {
 </script>
 
 <style scoped>
-.cal {
+.calc-default {
     display: flex;
     flex-direction: column;
     align-items: center;
