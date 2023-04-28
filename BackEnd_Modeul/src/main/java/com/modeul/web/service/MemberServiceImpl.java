@@ -71,6 +71,10 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int updateMember(Member member) {
+		if (member.getPwd() != null) {
+			String encodedPassword = passwordEncoder.encode(member.getPwd());
+			member.setPwd(encodedPassword);
+		}
 
 		return repository.update(member);
 	}
