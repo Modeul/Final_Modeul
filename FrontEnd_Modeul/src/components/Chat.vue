@@ -118,27 +118,27 @@
             </header>
 			<form @submit.prevent="submitResult" method="post">
 				<section class="cal-contents">
-        <h1 class="d-none">memberPrice</h1>
-        <div v-for="member in memberPriceMap" class="cal-members" :key="member.id">
-            <div class="chat-user-img">
-                <img :src="'/images/member/stuff/'+member.value[0]">
-            </div>
-            <div>
-                {{ member.key }}
-            </div>
-            <div class="cal-member-price">
-                <span>
-					<input type="text" v-model.number="member.value[1]" @blur="savePrice(index)" > 
-                </span>
-                    원
-            </div>
-        </div>
-		<div class="cal-sum">
-			<label>합계:</label>
-			<span>{{ total }}</span>
-			<span>원</span>
-		</div>
-    </section>
+					<h1 class="d-none">memberPrice</h1>
+					<div v-for="member in memberPriceList" class="cal-members" :key="member.id">
+						<div class="chat-user-img">
+							<img :src="'/images/member/stuff/'+ member.value[0]">
+						</div>
+						<div>
+							{{ member.key }}
+						</div>
+						<div class="cal-member-price">
+							<span>
+								<input type="text" v-model.number="member.value[1]" > 
+							</span>
+								원
+						</div>
+					</div>
+					<div class="cal-sum">
+						<label>합계:</label>
+						<span>{{ this.total }}</span>
+						<span>원</span>
+					</div>
+				</section>
 			</form>
 
             <div>
@@ -214,10 +214,9 @@ import SockJS from 'sockjs-client';
 export default {
 	data() {
 		return {
-			a: [],
+			priceList: [],
 			 // 정산
-			sum: 0,
-			// data: 0,
+			sum2: 0,
             calResultMsg: "우리 정산해요\n",
             errDialog: false,
             confirmDialog: false,
@@ -249,37 +248,28 @@ export default {
 			openLeaveModal:false,
 		}
 	},
-	computed: {
-		memberPriceMap(){
-			return this.participantList.map((m)=> {
-				return {key: m.memberNickname, value: [m.memberImage, 0]}
-			})
-		},
-		
-	},
+	
 	methods: {
 		
-		total(){
-			this.memberPriceMap.forEach(obj=>this.a.push(obj.value[1]));
-			this.sum = this.a.reduce((p,c)=>p+c,0);
-		},
+		// total(){
+		// 	this.memberPriceList.forEach(obj=>this.priceList.push(obj.value[1]));
+		// 	this.sum = this.a.reduce((p,c)=>p+c,0);
+		// },
 
-		memberPriceMap(){
-			return this.participantList.map((m)=> {
-				return {key: m.memberNickname, value: [m.memberImage, 0]}
-			})
-		},
+		// memberPriceMap(){
+		// 	return this.participantList.map((m)=> {
+		// 		return {key: m.memberNickname, value: [m.memberImage, 0]}
+		// 	})
+		// },
 		
-        savePrice(index){
-			console.log(this.memberPriceMap);
-			this.total();
-			console.log(this.a);
-			console.log(this.sum);
+        // savePrice(index){
+		// 	console.log(this.memberPriceList);
+		// 	this.total();
+		// 	console.log(this.a);
+		// 	console.log(this.sum);
 			
-        },
-        sumPrice(e){
-            this.sum = this.sum + parseInt(e.target.value,10);
-        },
+        // },
+       
         submitResult(){
             // calResultMsg생성
             for(let i=0; i<this.calResult.length; i++){
@@ -535,6 +525,7 @@ export default {
 		this.connect();
 	},
 	updated() {
+		
 	},
 	mounted() {
 		window.addEventListener('beforeunload', this.unLoadEvent);
@@ -548,7 +539,24 @@ export default {
 	computed: {
 		chatLength: function () {
 			return this.messageView.length;
-		}
+		},
+		memberPriceList: function(){
+			return this.participantList.map((m)=> {
+				
+				return {key: m.memberNickname, value: [m.memberImage, 0]}
+			})
+		},
+		total: function(){
+			console.log(this.memberPriceList);
+			console.log(this.priceList);
+			this.memberPriceList.forEach(obj=>this.priceList.push(obj.value[1]));
+			this.sum2 = this.priceList.reduce((p,c)=>p+c,0);
+			console.log(this.sum2);
+			console.log(this.priceList);
+
+			return this.priceList.reduce((p,c)=>p+c,0);
+		},
+		
 	},
 	watch: {
 		chatLength: function () {
