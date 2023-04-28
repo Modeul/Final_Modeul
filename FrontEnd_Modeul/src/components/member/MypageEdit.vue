@@ -302,7 +302,7 @@ export default {
         right: -3%;
         width: 40px;
         height: 25px;
-        border: solid 1px #253232;
+        border: solid 1px #D5D5D5;
         border-radius: 5px;
         background-color: #FFFFFF;
         font-size: 10px;
