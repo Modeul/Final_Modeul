@@ -16,6 +16,9 @@ export default {
 		}
 	},
 	methods: {
+		goback() {
+			this.$router.go(-1);
+		},
         searchInput(e){
 			this.page = 1;
 			e.preventDefault();
@@ -103,7 +106,7 @@ export default {
         <!-- 검색창 들어가는 부분 -->
         <header class="d-fl-al">
                 <div>
-                    <router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+                    <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
                 </div>
 
                 <div class="search-container">

@@ -14,6 +14,9 @@ export default {
 	computed: {
 	},
 	methods: {
+		goback() {
+			this.$router.go(-1);
+		},
 		categoryHandler(e){	
 			this.page=1;
 			this.categoryId = e.target.value;
@@ -63,7 +66,7 @@ export default {
 </style>
 <template>
 	<div>
-        <router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+        <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
     </div>
 	<section class="canvas p-rel b-rad-2">
 		        <!-- 검색창 들어가는 부분 -->
