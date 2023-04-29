@@ -63,7 +63,7 @@
 					</div>
 				</div>
 				<div class="chat-side-bottom">
-					<div class="chat-side-bottom-icon" @click="modalLeaveHandler()"></div>
+					<div class="chat-side-bottom-icon" v-if="!banishAuthority" @click="modalLeaveHandler()"></div>
 				</div>
 			</div>
 
