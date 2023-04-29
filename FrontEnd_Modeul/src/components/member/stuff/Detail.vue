@@ -19,6 +19,9 @@ export default {
 			isCheckParticipation:'',
 			dialog: false,
 			participantInfo:{},
+			memberInfo:'',
+			stuffAuthority:false,
+			stuffView:'',
 		};
 	},
 	methods: {
@@ -122,6 +125,13 @@ export default {
 				}
 			}
 		},
+		checkStuffLeader(){
+			console.log(this.stuffView.memberId);
+			console.log(this.memberInfo.id);
+			if(this.stuffView.memberId === this.memberInfo.id){
+				this.stuffAuthority = !this.stuffAuthority;
+			}
+		},
 		/* 공구상품 항목의 참여 취소 요청 */
 		cancelParticipationHandler() {
 			var requestOptions = {
@@ -193,11 +203,18 @@ export default {
 			}
 
 		},
+		async loadParticipant() {
+			const response = await fetch(`${this.$store.state.host}/api/member/${this.memberId}`);
+			const data = await response.json();
+			this.memberInfo = data;
+			console.log("this.memberInfo:"+ this.memberInfo.id);
+		},
 	},
 	computed: {
 
 	},
 	created() {
+		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
 	},
@@ -212,12 +229,14 @@ export default {
 				this.participantList = data.participantList;
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
+				this.stuffView = data.stuffView;
 				this.$store.commit('LOADING_STATUS', false);
 			})
 			.catch((error) => console.log("error", error));
 		this.$store.commit('LOADING_STATUS', false);
 
 		this.checkParticipation();
+		this.checkStuffLeader();
 	},
 };
 </script>
@@ -229,7 +248,7 @@ export default {
 			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
 			<!-- 수정/삭제 모달 버튼 -->
-			<i @click="modalHandler" class="icon-edit"></i>
+			<i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i>
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
 				<div class="icon-edit2">
@@ -356,6 +375,7 @@ export default {
 						<button
 							class="detail-cancel-button"
 							@click="cancelParticipationHandler"
+							v-if="!stuffAuthority"
 						>
 						참여취소
 						</button>

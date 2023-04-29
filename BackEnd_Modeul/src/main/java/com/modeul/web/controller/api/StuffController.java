@@ -90,6 +90,7 @@ public class StuffController {
 
 		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
 		int memberCount = participationService.getMemberCountBystuffId(stuff.getId());
+		StuffView stuffView = service.getViewById(id);
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff", stuff);
@@ -97,6 +98,7 @@ public class StuffController {
 		data.put("imageList", imageList);
 		data.put("participantList", participantList);
 		data.put("memberCount", memberCount);
+		data.put("stuffView", stuffView);
 
 		return data;
 	}
