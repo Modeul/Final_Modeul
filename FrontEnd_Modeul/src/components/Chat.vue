@@ -45,7 +45,7 @@
 						<div class="chat-side-date">개설일 {{ chat.regDate }}</div>
 					</div>
 					<div class="chat-side-top-right">
-						<div class="chat-side-top-icon"></div>
+						<div class="chat-side-top-icon" v-if="banishAuthority" @click="showBanishHandler"></div>
 					</div>
 				</div>
 				<div class="chat-side-list-wrap">
@@ -55,8 +55,8 @@
 							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon"> <img @click="modalBanishHandler(user)"
-								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
+						<div class="chat-side-list-user-icon"> <img @click="modalBanishHandler(user)" :class="{'d-none':!showBanish}"
+							src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼"></div>
 					</div>
 				</div>
 				<div class="chat-side-bottom">
@@ -130,7 +130,8 @@ export default {
 			participantList: '',
 			chat: {
 				title: "여러가지 나눔",
-				participantCount: "12"
+				participantCount: "12",
+				regDate: ''
 			},
 			memberInfo:'',
 			messageView: [],
@@ -141,6 +142,8 @@ export default {
 				image:''
 			},
 			openLeaveModal:false,
+			banishAuthority:false,
+			showBanish:false,
 		}
 	},
 	computed: {
@@ -258,7 +261,6 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.participantList = dataList.memberList;
-					this.chat = dataList.stuffView;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -266,6 +268,13 @@ export default {
 			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
+			console.log("this.memberInfo:"+ this.memberInfo.id);
+		},
+		checkStuffLeader(){
+			// 방장에게 추방 권한
+			if(this.chat.memberId === this.memberInfo.id){
+				this.banishAuthority = !this.banishAuthority;
+			}
 		},
         banishUserHandler() {
             
@@ -282,17 +291,7 @@ export default {
                 this.loadParticipationList();
                 this.dialog=true;
 
-            // ** 소켓 끊어주기 추가
-
-                this.stompClient.send('/pub/chat/exitUser',
-                JSON.stringify({
-                    "type": 'LEAVE',
-                    "stuffId": this.$route.params.stuffId,
-                    "memberId": this.banishUserId,
-                    "sender": this.banishUser.nickname,
-                    "memberImage": this.banishUser.image
-                })
-            );
+           		// ** 소켓 끊어주기 추가
 
                 // 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
                 // 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
@@ -342,24 +341,44 @@ export default {
 					memberImage: this.memberInfo.image
 				})
 			);
+		},
+		formatChatRegDate() {
+			const chatRegDateObj = dayjs(this.chat.regDate).locale('ko');
+			this.chat.regDate = chatRegDateObj.format("YYYY. M. D.");
+		},
+		showBanishHandler(){
+			this.showBanish=!this.showBanish;
 		}
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent()
 	},
 	created() {
-		this.loadParticipationList();
-		this.loadParticipant();
 		this.stompConnect();
 		this.connect();
+		this.loadParticipant();
 	},
 	updated() {
 	},
-	mounted() {
+	async mounted() {
+		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.participantList = dataList.memberList;
+					this.chat = dataList.stuffView;
+					this.formatChatRegDate();
+					console.log(this.participantList);
+					console.log("this.participantList.memberId: "+this.participantList[0].memberId);
+					console.log("this.chat.memberId:"+ this.chat.memberId);
+				})
+				.catch(error => console.log('error', error));
+
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
 			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		}, 100);
+
+		this.checkStuffLeader();
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -557,6 +576,10 @@ export default {
 	line-height: 23px;
 	align-items: center;
 	color: #222222;
+	width: 160px;
+	overflow:hidden; 	
+	white-space:nowrap;
+	text-overflow:ellipsis; 
 }
 
 .chat-side-people {

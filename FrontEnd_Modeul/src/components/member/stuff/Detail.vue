@@ -16,7 +16,6 @@ export default {
 			imageList: '',
 			participantList: [],
 			memberCount: '',
-			isParticipated: '',
 			isCheckParticipation:'',
 			dialog: false,
 			participantInfo:{},
@@ -120,10 +119,8 @@ export default {
 				console.log("p.memberId: " + p.memberId+'\n');
 				if(p.memberId === this.participantInfo.memberId){
 					this.isCheckParticipation = !this.isCheckParticipation;
-					this.isParticipated = !this.isParticipated;
 				}
 			}
-			console.log("this.participantInfo.memberId: " + this.participantInfo[this.participantInfo.memberId]);
 		},
 		/* 공구상품 항목의 참여 취소 요청 */
 		cancelParticipationHandler() {
