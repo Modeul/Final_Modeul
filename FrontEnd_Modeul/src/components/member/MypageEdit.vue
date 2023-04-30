@@ -11,7 +11,7 @@
             <form @submit="uploadImg" method="post" enctype="multipart/form-data" ref="form">
                 <label for="file">
                 <div class="edit-btn">
-                    <input type="file" class="d-none" id="file" @change="changeImg">
+                    <input type="file" class="d-none" id="file" name="imgs" @change.prevent="uploadImg">
                     <img src="/images/member/stuff/mypageEditIcon.svg">
                 </div>
                 </label>
@@ -62,7 +62,7 @@
 export default {
     data() {
         return {
-            myMemberId:"110",
+            myMemberId:"123",
             ErrorMsg:"",
             nicknameDupl:"",
             nicknamebtn:false,
@@ -136,8 +136,25 @@ export default {
             })
             .catch((error) => console.log("error", error));
         },
-        uploadImg(){
+        async uploadImg(e){
+            this.file = e.target.files;
+            console.log(e.target.files);
+            this.loginInfo.image = this.file[0].name;
 
+            var formData = new FormData(this.$refs.form);
+                formData.append('id', this.myMemberId);
+
+            var requestOptions = {
+					method: 'POST',
+					body: formData,
+					redirect: 'follow'
+				};
+				await fetch(`${this.$store.state.host}/api/member/updateImage`, requestOptions)
+					.then(response => response.text())
+					.then(result => console.log(result))
+					.catch(error => console.log('error', error));
+
+				// this.$router.push('/member/mypage/edit')
         },
         changeImg(e){
             this.file = e.target.files;
