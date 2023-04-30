@@ -43,6 +43,12 @@ public class MemberController {
 		return memberService.updateMember(member);
 	}
 
+	@PutMapping("updatePwd")
+	public int editMemberPwd(@RequestBody Member member){
+
+		return memberService.changePwdByUid(member);
+	}
+
 	@PutMapping("delete")
 	public int deleteMember(@RequestBody Member member){
 
@@ -66,5 +72,21 @@ public class MemberController {
 			return true;
 		else 
 			return false;
+	}
+
+	@GetMapping("checkUid")
+	public Boolean checkUid (String uid) {
+
+		Boolean chk = memberService.checkUid(uid);
+		
+		return chk;
+	}
+
+	@PostMapping("checkEmail")
+	public Boolean checkEmailByUid (@RequestBody Member member){
+
+		Boolean chk = memberService.checkEmailByUid(member);
+		
+		return chk;
 	}
 }

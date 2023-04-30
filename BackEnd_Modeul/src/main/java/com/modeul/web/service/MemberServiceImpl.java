@@ -17,6 +17,14 @@ public class MemberServiceImpl implements MemberService {
 	private PasswordEncoder passwordEncoder;
 
 	@Override
+	public int changePwdByUid(Member member) {
+		String encodedPassword = passwordEncoder.encode(member.getPwd());
+		member.setPwd(encodedPassword);
+
+		return repository.updatePwd(member);
+	}
+
+	@Override
 	public int addMember(Member member) {
 		String encodedPassword = passwordEncoder.encode(member.getPwd());
 		member.setPwd(encodedPassword);
@@ -88,6 +96,14 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void updateImg(Member member) {
 		
+	}
+
+	@Override
+	public Boolean checkEmailByUid(Member member) {
+		String UserEmail = repository.getEmailByUid(member);
+		Boolean result = UserEmail.equals(member.getEmail());
+
+		return result;
 	}
 
 

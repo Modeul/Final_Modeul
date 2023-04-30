@@ -7,6 +7,8 @@ public interface MemberService {
 	String login(Member member);
 
 	int addMember(Member member);
+
+	int changePwdByUid(Member member);
 	
 	Boolean checkUid(String uid);
 
@@ -23,6 +25,8 @@ public interface MemberService {
 	int deleteMember(Member member);
 
 	void updateImg(Member member);
+
+	Boolean checkEmailByUid(Member member);
 	
 }
 
