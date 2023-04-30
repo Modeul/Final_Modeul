@@ -57,12 +57,13 @@ public class StuffController {
 	@GetMapping("/stuffs")
 	public Map<String, Object> getList(@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "p", defaultValue = "1") int page,
-			@RequestParam(name = "c", required = false) Long categoryId) {
-
+			@RequestParam(name = "c", required = false) Long categoryId,
+			@RequestParam(name = "id", required = false) Long memberId
+			) {
 		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page);
-		List<StuffView> list = service.getRecentViewList(categoryId, page);
+		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId);
 		List<Category> categoryList = categoryService.getList();
-		Long listCount = service.getListCount(categoryId, page);
+		Long listCount = service.getListCount(categoryId, page, memberId);
 
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("queryList", queryList);
@@ -188,8 +189,7 @@ public class StuffController {
 	@GetMapping("/stuff/crawlinglist")
 	public Map<String,Object> getCrawlingList(
 			@RequestParam(name="p", defaultValue = "1") int page,		
-			@RequestParam(name="c", required=false) Long categoryId
-			){
+			@RequestParam(name="c", required=false) Long categoryId) {
 		
 		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
 		List<Category> categoryList = categoryService.getList();

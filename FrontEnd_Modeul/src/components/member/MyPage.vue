@@ -19,12 +19,13 @@
                     <span class="star-avg">5.0</span>
                 </div> -->
             </div>
-
             <ul class="mypage-list">
+                <router-link to="/member/mypage/myreglist">
                 <li>
                     <img src="/images/member/stuff/write.svg">
                     <span>작성 글 목록</span>
                 </li>
+                </router-link>
                 <router-link to="/member/participation/list">
                     <li>
                         <img src="/images/member/stuff/cart.svg">

@@ -21,7 +21,9 @@ public interface StuffRepository {
 								String orderField, 
 								String orderDir,
 								Integer size, 
-								Integer offset);
+								Integer offset,
+								Long memberId
+								);
 
 	Stuff findbyId(Long id);
 	
@@ -43,7 +45,7 @@ public interface StuffRepository {
 	/* 공구상픔 이미지 등록 */
 	int uploadImage(Image image);
 
-	Long getCountList(Long categoryId);
+	Long getCountList(Long categoryId, Long memberId);
 
 	/* 공구상품 수정 */
 	int update(Stuff stuff);	

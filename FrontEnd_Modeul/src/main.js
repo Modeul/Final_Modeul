@@ -30,6 +30,7 @@ import ChangePwd from "./components/member/ChangePwd.vue";
 
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
+import MyRegList from "./components/member/stuff/MyRegList.vue";
 import Detail from "./components/member/stuff/Detail.vue";
 import Reg from "./components/member/stuff/Reg.vue";
 import EditReg from "./components/member/stuff/EditReg.vue";
@@ -66,6 +67,7 @@ const routes = [
       { path: "mypage", component: MyPage },
       { path: "mypage/edit", component: MypageEdit },
       { path: "mypage/changepwd", component: ChangePwd },
+      { path: "mypage/myreglist", component: MyRegList },
       { path: "stuff/list", component: List },
       { path: "stuff/:id", component: Detail },
       { path: "stuff/reg", component: Reg },
