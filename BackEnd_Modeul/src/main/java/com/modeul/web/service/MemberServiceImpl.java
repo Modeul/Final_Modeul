@@ -1,10 +1,18 @@
 package com.modeul.web.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Member;
+import com.modeul.web.entity.MemberImage;
 import com.modeul.web.repository.MemberRepository;
 
 @Service
@@ -90,8 +98,46 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void updateImg(Member member) {
+	public void updateImg(List<MultipartFile> imgs) {
+	
+		if(imgs.get(0).getOriginalFilename().equals("")){
+			return;
+		}
+		String currentDir = System.getProperty("user.dir");
 		
+		String realPath = "../FrontEnd_Modeul/images/member";
+
+		File savePath = new File(currentDir, realPath);
+
+		
+		if (!savePath.exists())
+			savePath.mkdirs();
+
+		String uuid = UUID.randomUUID().toString();
+
+		imgs.forEach(img -> {
+			String uploadFileName = img.getOriginalFilename();
+			String uid = img.toString();
+			System.out.println("#################");
+			System.out.println(uid);
+			
+			uploadFileName = uuid + "_" + uploadFileName;
+
+			MemberImage image = MemberImage.builder()
+				.name(uploadFileName)
+				// .id("123")
+				.build();
+
+			repository.updateImg(image);
+
+			try {
+				img.transferTo(new File(savePath, uploadFileName));
+			} catch (IllegalStateException | IOException e) {
+				e.printStackTrace();
+			}
+		});
+
+
 	}
 
 

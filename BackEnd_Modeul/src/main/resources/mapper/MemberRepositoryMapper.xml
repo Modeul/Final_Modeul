@@ -83,6 +83,12 @@
 		where id=#{id}
 	</update>
 
+	<update id="updateImg" parameterType="Image">
+		update member
+		set image = #{name}
+		where id = #{id}
+	</update>
+
 	<update id="delete" parameterType="Member">
 		update member
 		set pwd = '',
