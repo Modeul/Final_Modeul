@@ -94,11 +94,9 @@ public class MemberController {
 	}
 
 	@PostMapping("updateImage")
-	public String updateImage(List<MultipartFile> imgs){
+	public String updateImage(@RequestParam("id") long id, List<MultipartFile> imgs){
 
-		System.out.println("imgs : " + imgs);
-
-		memberService.updateImg(imgs);
+		memberService.updateImg(id, imgs);
 
 		return "ok";
 	}
