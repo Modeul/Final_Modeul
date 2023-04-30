@@ -106,18 +106,17 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void updateImg(List<MultipartFile> imgs) {
-	
-		if(imgs.get(0).getOriginalFilename().equals("")){
+	public void updateImg(long id, List<MultipartFile> imgs) {
+
+		if (imgs.get(0).getOriginalFilename().equals("")) {
 			return;
 		}
 		String currentDir = System.getProperty("user.dir");
-		
+
 		String realPath = "../FrontEnd_Modeul/images/member";
 
 		File savePath = new File(currentDir, realPath);
 
-		
 		if (!savePath.exists())
 			savePath.mkdirs();
 
@@ -125,16 +124,13 @@ public class MemberServiceImpl implements MemberService {
 
 		imgs.forEach(img -> {
 			String uploadFileName = img.getOriginalFilename();
-			String uid = img.toString();
-			System.out.println("#################");
-			System.out.println(uid);
-			
+
 			uploadFileName = uuid + "_" + uploadFileName;
 
 			MemberImage image = MemberImage.builder()
-				.name(uploadFileName)
-				// .id("123")
-				.build();
+					.name(uploadFileName)
+					.id(id)
+					.build();
 
 			repository.updateImg(image);
 
@@ -144,8 +140,6 @@ public class MemberServiceImpl implements MemberService {
 				e.printStackTrace();
 			}
 		});
-
-
 	}
 
 	@Override

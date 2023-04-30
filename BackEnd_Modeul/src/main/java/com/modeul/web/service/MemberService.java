@@ -28,7 +28,7 @@ public interface MemberService {
 
 	int deleteMember(Member member);
 
-	void updateImg(List<MultipartFile> imgs);
+	void updateImg(long id, List<MultipartFile> imgs);
 
 	Boolean checkEmailByUid(Member member);
 	
