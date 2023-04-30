@@ -11,7 +11,7 @@
             <div class="input-box" @input="checkUid">
                 <div class="input-field" >
                     <div class="id-icon"></div>
-                    <input class="txt" type="text" v-model="uid" autofocus>
+                    <input class="txt" type="text" v-model="uid" placeholder="아이디를 입력해주세요." autofocus>
                     <div v-if="this.uidBtn==null" class="btn-null"></div>
                     <div v-if="this.uidBtn==true" class="btn-check"></div>
                     <div v-if="this.uidBtn==false" class="btn-x"></div>
@@ -22,7 +22,7 @@
             <div class="input-box" @input="checkEmail">
                 <div class="input-field">
                     <div class="email-icon"></div>
-                    <input class="txt" type="text" v-model="email">
+                    <input class="txt" type="text" placeholder="이메일을 입력해주세요." v-model="email">
                     <!-- <div class="btn-x"></div> -->
                     <div v-if="this.emailBtn==false" class="btn-x"></div>
                     <button v-if="this.emailBtn==true" class="btn-change" @click.prevent="sendEmailTmp">전송</button>
@@ -34,7 +34,7 @@
             <div class="input-box" @input="checkEmailConfirm">
                 <div class="input-field">
                     <div class="email-check-icon"></div>
-                    <input class="txt" type="text" v-model="emailCodeChk">
+                    <input class="txt" type="text" placeholder="인증 코드를 입력해주세요." v-model="emailCodeChk">
                     <div v-if="this.emailChkBtn==false" class="btn-x"></div>
                     <button v-if="this.emailChkBtn==true" class="btn-change" @click.prevent="[modalHandler(),sendTempPwd(),updatePwd()]">확인</button>
                 </div>
