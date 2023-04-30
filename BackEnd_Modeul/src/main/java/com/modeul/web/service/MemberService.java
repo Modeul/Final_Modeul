@@ -1,5 +1,9 @@
 package com.modeul.web.service;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.modeul.web.entity.Member;
 
 public interface MemberService {
@@ -7,6 +11,8 @@ public interface MemberService {
 	String login(Member member);
 
 	int addMember(Member member);
+
+	int changePwdByUid(Member member);
 	
 	Boolean checkUid(String uid);
 
@@ -22,7 +28,9 @@ public interface MemberService {
 
 	int deleteMember(Member member);
 
-	void updateImg(Member member);
+	void updateImg(long id, List<MultipartFile> imgs);
+
+	Boolean checkEmailByUid(Member member);
 	
 }
 

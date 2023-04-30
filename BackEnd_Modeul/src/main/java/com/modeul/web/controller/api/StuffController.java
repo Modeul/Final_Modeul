@@ -21,11 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.modeul.web.entity.Category;
+import com.modeul.web.entity.Crawling;
 import com.modeul.web.entity.Image;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
+import com.modeul.web.service.CrawlingService;
 import com.modeul.web.service.ImageService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
@@ -47,16 +49,21 @@ public class StuffController {
 	@Autowired
 	private ParticipationService participationService;
 
+	@Autowired
+	private CrawlingService crawlingservice;
+
+
 	// 반환 타입 주의!
 	@GetMapping("/stuffs")
 	public Map<String, Object> getList(@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "p", defaultValue = "1") int page,
-			@RequestParam(name = "c", required = false) Long categoryId) {
-
+			@RequestParam(name = "c", required = false) Long categoryId,
+			@RequestParam(name = "id", required = false) Long memberId
+			) {
 		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page);
-		List<StuffView> list = service.getRecentViewList(categoryId, page);
+		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId);
 		List<Category> categoryList = categoryService.getList();
-		Long listCount = service.getListCount(categoryId, page);
+		Long listCount = service.getListCount(categoryId, page, memberId);
 
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("queryList", queryList);
@@ -84,6 +91,7 @@ public class StuffController {
 
 		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
 		int memberCount = participationService.getMemberCountBystuffId(stuff.getId());
+		StuffView stuffView = service.getViewById(id);
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff", stuff);
@@ -91,6 +99,7 @@ public class StuffController {
 		data.put("imageList", imageList);
 		data.put("participantList", participantList);
 		data.put("memberCount", memberCount);
+		data.put("stuffView", stuffView);
 
 		return data;
 	}
@@ -167,10 +176,31 @@ public class StuffController {
 
 	}
 
-	@DeleteMapping("/stuff/{id}")
-	public String deleteStuff(@PathVariable("id") Long id) {
+		@DeleteMapping("/stuff/{id}")
+			public String deleteStuff(
+				@PathVariable("id") Long id){
+					service.deleteStuff(id);
+			return "stuff del:";      
+   		}
+
+// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 크롤링 컨트롤러 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+	//  get ,   insert  , delete
+	@GetMapping("/stuff/crawlinglist")
+	public Map<String,Object> getCrawlingList(
+			@RequestParam(name="p", defaultValue = "1") int page,		
+			@RequestParam(name="c", required=false) Long categoryId) {
 		
-		service.deleteStuff(id);
-		return "stuff del:";
+		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
+		List<Category> categoryList = categoryService.getList();
+		Long listCount = crawlingservice.getListCount(categoryId, page);
+		Map<String, Object> dataList = new HashMap<>();
+		dataList.put("crawlingList", crawlingList);
+		// dataList.put("list", list);
+		dataList.put("categoryList", categoryList);
+		dataList.put("listCount", listCount);
+
+		return dataList;
 	}
+
 }

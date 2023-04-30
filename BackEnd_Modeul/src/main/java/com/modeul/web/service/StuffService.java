@@ -18,15 +18,18 @@ public interface StuffService {
 	List<StuffView> getViewAll(String query, int page);	// 검색용
 	List<StuffView> getViewAll(Long categoryId, int page);	// 카테고리별 페이지 조회용
 	List<StuffView> getViewAll(String query, Long categoryId, int page);	// 카테고리별 검색용 
+	List<StuffView> getViewAll(String query, Long categoryId, int page, Long memberId);
 
 	List<StuffView> getRecentViewList(Long categoryId, int page);
+	List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId);
 	List<StuffView> getRecentViewList(String query, Long categoryId, int page);
+	List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId);
 	
 	Stuff getById(Long id);
 	StuffView getViewById(Long id);
 
 	Long getListCount(Long categoryId, int page);
-
+	Long getListCount(Long categoryId, int page, Long memberId);
 
 	int editStuff(Stuff stuff);
 

@@ -175,13 +175,16 @@ main {
     display: flex;
     justify-content: flex-end;
     width: 200px;
+    height: 73px;
 }
 .join-button-wrap{
   display: flex;
   flex-direction: column;
-  align-content: space-around;
+  justify-content: space-around;
+  
 }
 .detail-join-button {
+    align-self: center;
     width: 62px;
     height: 28px;
     border-radius: 7px;

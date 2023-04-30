@@ -11,6 +11,7 @@ export default {
 			categoryList: [],
 			categoryId:'',
 			listCount:'',
+			myMemberId:'2',
 		};
 	},
 	computed: {
@@ -20,7 +21,7 @@ export default {
 			this.page=1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -35,7 +36,7 @@ export default {
 			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -112,11 +113,7 @@ export default {
 <template>
 	<section class="canvas p-rel b-rad-2">
 		<header class="d-fl-al header-jc">
-			<select class="selectbox-set" onchange="if(this.value) location.href=(this.value);">
-				<option value="">신수동</option>
-				<option value="">신설동</option>
-				<option value="/member/stuff/gps">GPS설정</option>
-			</select>
+			내가 쓴 게시글
 
 		<div>
 				<!-- <a class="icon icon-menu">메뉴</a> -->

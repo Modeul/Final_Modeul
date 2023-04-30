@@ -19,12 +19,13 @@
                     <span class="star-avg">5.0</span>
                 </div> -->
             </div>
-
             <ul class="mypage-list">
+                <router-link to="/member/mypage/myreglist">
                 <li>
                     <img src="/images/member/stuff/write.svg">
                     <span>작성 글 목록</span>
                 </li>
+                </router-link>
                 <router-link to="/member/participation/list">
                     <li>
                         <img src="/images/member/stuff/cart.svg">
@@ -77,7 +78,7 @@
     export default{
         data(){
             return{
-                myMemberId : 118,
+                myMemberId : 110,
 			    loginInfo : '',
                 openModal : false,
                 openModal2 : false,
@@ -90,7 +91,7 @@
                 myHeaders.append("Content-Type", "application/json");
 
                 var raw = JSON.stringify({
-                "id": 118
+                "id": 110
                 });
 
                 var requestOptions = {

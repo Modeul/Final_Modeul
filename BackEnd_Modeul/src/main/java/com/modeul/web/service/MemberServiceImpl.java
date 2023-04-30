@@ -1,10 +1,19 @@
 package com.modeul.web.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Member;
+import com.modeul.web.entity.MemberImage;
 import com.modeul.web.repository.MemberRepository;
 
 @Service
@@ -15,6 +24,14 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Override
+	public int changePwdByUid(Member member) {
+		String encodedPassword = passwordEncoder.encode(member.getPwd());
+		member.setPwd(encodedPassword);
+
+		return repository.updatePwd(member);
+	}
 
 	@Override
 	public int addMember(Member member) {
@@ -71,6 +88,10 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int updateMember(Member member) {
+		if (member.getPwd() != null) {
+			String encodedPassword = passwordEncoder.encode(member.getPwd());
+			member.setPwd(encodedPassword);
+		}
 
 		return repository.update(member);
 	}
@@ -85,9 +106,50 @@ public class MemberServiceImpl implements MemberService {
 		return repository.delete(member);
 	}
 
+	@Transactional
 	@Override
-	public void updateImg(Member member) {
-		
+	public void updateImg(long id, List<MultipartFile> imgs) {
+
+		if (imgs.get(0).getOriginalFilename().equals("")) {
+			return;
+		}
+		String currentDir = System.getProperty("user.dir");
+
+		String realPath = "../FrontEnd_Modeul/images/member";
+
+		File savePath = new File(currentDir, realPath);
+
+		if (!savePath.exists())
+			savePath.mkdirs();
+
+		String uuid = UUID.randomUUID().toString();
+
+		imgs.forEach(img -> {
+			String uploadFileName = img.getOriginalFilename();
+
+			uploadFileName = uuid + "_" + uploadFileName;
+
+			MemberImage image = MemberImage.builder()
+					.name(uploadFileName)
+					.id(id)
+					.build();
+
+			repository.updateImg(image);
+
+			try {
+				img.transferTo(new File(savePath, uploadFileName));
+			} catch (IllegalStateException | IOException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	@Override
+	public Boolean checkEmailByUid(Member member) {
+		String UserEmail = repository.getEmailByUid(member);
+		Boolean result = UserEmail.equals(member.getEmail());
+
+		return result;
 	}
 
 

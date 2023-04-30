@@ -55,6 +55,14 @@
 	  nickname = #{nickname}
   </select>
 
+   <select id="getEmailByUid" resultType="String">
+	  select email
+	  from
+	  member
+	  where
+	  uid = #{uid}
+  </select>
+
 	<update id="update" parameterType="Member">
 		update member
 		<set>
@@ -81,6 +89,22 @@
 			</if>
 		</set>
 		where id=#{id}
+	</update>
+
+	<update id="updatePwd" parameterType="Member">
+		update member
+		<set>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+		</set>
+		where uid=#{uid}
+	</update>
+
+	<update id="updateImg" parameterType="Image">
+		update member
+		set image = #{name}
+		where id = #{id}
 	</update>
 
 	<update id="delete" parameterType="Member">
