@@ -8,33 +8,37 @@
         <!-- input section -->
         <section class="input-sec">
             <!-- id -->
-            <div class="input-box">
-                <div class="input-field">
+            <div class="input-box" @input="checkUid">
+                <div class="input-field" >
                     <div class="id-icon"></div>
-                    <input class="txt" type="text" autofocus>
-                    <div class="btn-check"></div>
+                    <input class="txt" type="text" v-model="uid" autofocus>
+                    <div v-if="this.uidBtn==null" class="btn-null"></div>
+                    <div v-if="this.uidBtn==true" class="btn-check"></div>
+                    <div v-if="this.uidBtn==false" class="btn-x"></div>
                 </div>
-                <div class="error-txt">kjhgfd</div>
+                <div class="error-txt">{{errorUid}}</div>
             </div>
             <!-- email -->
-            <div class="input-box">
+            <div class="input-box" @input="checkEmail">
                 <div class="input-field">
                     <div class="email-icon"></div>
-                    <input class="txt" type="text">
+                    <input class="txt" type="text" v-model="email">
                     <!-- <div class="btn-x"></div> -->
-                    <button class="btn-change">전송</button>
+                    <div v-if="this.emailBtn==false" class="btn-x"></div>
+                    <button v-if="this.emailBtn==true" class="btn-change" @click.prevent="sendEmailTmp">전송</button>
                 </div>
-                <div class="error-txt">kjhgfd</div>
+                <div class="error-txt">{{errorEmail}}</div>
             </div>
             
             <!-- email check -->
-            <div class="input-box">
+            <div class="input-box" @input="checkEmailConfirm">
                 <div class="input-field">
                     <div class="email-check-icon"></div>
-                    <input class="txt" type="text">
-                    <button class="btn-change" @click.prevent="modalHandler">확인</button>
+                    <input class="txt" type="text" v-model="emailCodeChk">
+                    <div v-if="this.emailChkBtn==false" class="btn-x"></div>
+                    <button v-if="this.emailChkBtn==true" class="btn-change" @click.prevent="[modalHandler(),sendTempPwd(),updatePwd()]">확인</button>
                 </div>
-                <div class="error-txt">kjhgfd</div> 
+                <div class="error-txt">{{emailcodeError}}</div> 
             </div>
             
         </section>
@@ -44,7 +48,6 @@
                 <div class="modal-txt">입력하신 이메일 주소로<br>
                 임시 비밀번호가 발송되었습니다.</div>
                 <button @click.prevent="modalHandler" class="modal-btn">확인</button>
-                
             </div>
 	    </div>
     </div>
@@ -53,24 +56,47 @@
 export default{
     data(){
         return{
-            myMemberId: '103',
-            loginInfo: '',
             openModal: false,
-            name:"",
-            newpwd:"",
-            checkpwd:"",
-            tempPwd:"",
-            checkTemp:"",
-            checkReal:"",
-            emailconfirm:"",
-            errorMsg:"",
+            emailcode:"",
+            errorUid:"",
+            errorEmail:"",
             pwdError:"",
+            emailcodeError:"",
+            uid:"",
+            email:"",
+            uidBtn:null,
+            emailBtn:null,
+            emailChkBtn:null,
+            emailCodeChk:"",
+            tempPwd:""
         };
     },
     methods:{
         modalHandler() {
 			this.openModal = !this.openModal;
 		},
+        updatePwd(){
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                "uid": this.uid,
+                "pwd": this.tempPwd
+            });
+
+            var requestOptions = {
+                method: 'PUT',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("http://localhost:8080/api/member/updatePwd", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        },
+        //임시 비밀번호 발송
         sendTempPwd(){
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
@@ -81,7 +107,7 @@ export default{
             redirect: 'follow'
             };
 
-            fetch(`${this.$store.state.host}/api/member/sendTempPwd?email=${this.loginInfo.email}`, requestOptions)
+            fetch(`${this.$store.state.host}/api/member/sendTempPwd?email=${this.email}`, requestOptions)
             .then(response => response.text())
             .then((result) => {
                 this.tempPwd = result;
@@ -89,58 +115,97 @@ export default{
             })
             .catch(error => console.log('error', error));
         },
-        checkTempPwd(){
-            if(this.emailconfirm == this.tempPwd){
-                this.checkTemp = true;
-                this.errorMsg = "";
-                console.log("임시비밀번호 일치");
-                // this.dialog=true;
-            }
-            else{
-                this.checkTemp = false;
-                this.errorMsg = "임시 비밀번호가 잘못되었습니다";
-                console.log("임시비밀번호 틀림");
+        //email 인증번호 보내기
+        sendEmailTmp() {
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                redirect: "follow",
+            };
+            fetch(
+                `${this.$store.state.host}/api/signup/mailConfirm?email=${this.email}`, requestOptions
+            )
+                .then((response) => response.text())
+                .then((code) => {
+                    this.emailcode = code;
+                    console.log("emailcode : " + this.emailcode);
+                })
+                .catch((error) => console.log("error", error));
+
+            this.emailconfirmbtn = true;
+        },
+        //email 인증번호 확인
+        checkEmailConfirm() {
+            if (this.emailCodeChk == this.emailcode) {
+                this.emailChkBtn = true;
+                this.emailcodeError = "";
+                // this.emailcodeError = "인증번호 확인 완료";
+            } else {
+                this.emailChkBtn = false;
+                this.emailcodeError = "인증번호가 잘못되었습니다.";
             }
         },
-        checkRealPwd(){
-            if(this.newpwd == this.checkpwd){
-                this.checkReal = true;
-                this.pwdError = "";
-                // this.dialog=false;
-            }
-            else{
-                this.checkReal = false;
-                this.pwdError = "비밀번호가 일치하지 않습니다.";
-            }
+        //Uid db 체크
+        checkUid(){
+            this.uidBtn = null;
+
+            var requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            };
+
+            fetch(`http://localhost:8080/api/member/checkUid?uid=${this.uid}`, requestOptions)
+                .then(response => response.text())
+                .then(result => 
+                    {
+                        // uid db에 존재
+                        if (result == "false") {
+                            this.uidBtn = true;
+                            this.errorUid = "";
+                        }
+                        else {
+                            this.uidBtn = false;
+                            this.errorUid = "아이디를 확인하세요.";
+                        }
+                    })
+                .catch(error => console.log('error', error));
         },
-        isValidPwd() {
-            this.pwdError = "";
-            // 비밀번호는 8자 이상이어야 합니다.
-            if (this.newpwd.length < 8) {
-                this.pwdError = "올바른 비밀번호를 입력해주세요.(8자 이상 영어+숫자)";
-                return false;
-            }
+        //Email 체크
+        checkEmail(){
+            this.ebtn = null;
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
-            // 비밀번호는 영문자와 숫자를 반드시 포함해야 합니다.
-            const hasLetter = /[a-zA-Z]/.test(this.newpwd.pwd);
-            const hasNumber = /\d/.test(this.newpwd.pwd);
-            if (!hasLetter || !hasNumber) {
-                this.pwdError = "비밀번호는 영문자와 숫자를 반드시 포함해야 합니다.";
-                return false;
-            }
+            var raw = JSON.stringify({
+                "uid": this.uid,
+                "email": this.email
+            });
 
-            // 모든 검증을 통과한 경우 유효한 비밀번호입니다.
-            this.pwdError = "";
-            return true;
-        }
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("http://localhost:8080/api/member/checkEmail", requestOptions)
+                .then(response => response.text())
+                .then(result => {
+                    if(result=="false"){
+                        this.emailBtn=false;
+                        this.errorEmail = "이메일을 확인하세요.";
+                    }else{
+                        this.emailBtn=true;
+                        this.errorEmail = "";
+                    }
+                })
+                .catch(error => console.log('error', error));
+        },
     },
     mounted(){
-        fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
-                .then(response => response.json())
-                .then(data => {
-                    this.loginInfo = data;
-                    console.log(data);
-                })
     }
 }
 

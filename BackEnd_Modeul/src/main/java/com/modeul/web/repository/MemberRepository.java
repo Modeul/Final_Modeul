@@ -22,5 +22,9 @@ public interface MemberRepository {
 
 	int update(Member member);
 
+	int updatePwd(Member member);
+
     int delete(Member member);
+
+	String getEmailByUid(Member member);
 }
