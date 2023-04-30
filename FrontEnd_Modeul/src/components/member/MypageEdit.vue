@@ -81,7 +81,7 @@
 export default {
     data() {
         return {
-            myMemberId:"123",
+            myMemberId:"110",
             ErrorMsg:"",
             nicknameDupl:"",
             nicknamebtn:false,

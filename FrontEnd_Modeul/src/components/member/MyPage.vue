@@ -78,7 +78,7 @@
     export default{
         data(){
             return{
-                myMemberId : 118,
+                myMemberId : 110,
 			    loginInfo : '',
                 openModal : false,
                 openModal2 : false,
@@ -91,7 +91,7 @@
                 myHeaders.append("Content-Type", "application/json");
 
                 var raw = JSON.stringify({
-                "id": 118
+                "id": 110
                 });
 
                 var requestOptions = {
