@@ -1,5 +1,7 @@
 package com.modeul.web.controller.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.modeul.web.entity.Member;
 import com.modeul.web.service.MailService;
@@ -43,6 +46,12 @@ public class MemberController {
 		return memberService.updateMember(member);
 	}
 
+	@PutMapping("updatePwd")
+	public int editMemberPwd(@RequestBody Member member){
+
+		return memberService.changePwdByUid(member);
+	}
+
 	@PutMapping("delete")
 	public int deleteMember(@RequestBody Member member){
 
@@ -66,5 +75,29 @@ public class MemberController {
 			return true;
 		else 
 			return false;
+	}
+
+	@GetMapping("checkUid")
+	public Boolean checkUid (String uid) {
+
+		Boolean chk = memberService.checkUid(uid);
+		
+		return chk;
+	}
+
+	@PostMapping("checkEmail")
+	public Boolean checkEmailByUid (@RequestBody Member member){
+
+		Boolean chk = memberService.checkEmailByUid(member);
+		
+		return chk;
+	}
+
+	@PostMapping("updateImage")
+	public String updateImage(@RequestParam("id") long id, List<MultipartFile> imgs){
+
+		memberService.updateImg(id, imgs);
+
+		return "ok";
 	}
 }

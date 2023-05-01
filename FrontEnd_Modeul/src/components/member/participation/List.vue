@@ -1,7 +1,7 @@
 <template>
     <section class="canvas">
         <header>
-            <router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+            <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
         </header>
 
         <nav>
@@ -75,6 +75,9 @@ export default {
         }
     },
     methods:{
+		goback() {
+			this.$router.go(-1);
+		},
         categoryHandler(e){	
 			this.page=1;
 			this.categoryId = e.target.value;
