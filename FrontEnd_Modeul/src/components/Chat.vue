@@ -381,8 +381,8 @@ export default {
 
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
-			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		}, 100);
+			window.scrollTo({ top: document.body.scrollHeight });
+		}, 50);
 
 		this.checkStuffLeader();
 	},
