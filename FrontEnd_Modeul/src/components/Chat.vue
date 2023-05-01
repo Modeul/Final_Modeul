@@ -111,8 +111,8 @@
 	</div>
 
 	<v-navigation-drawer style="height: 80%; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom" temporary>
-		<section class="calc">
-			<h1 class="d-none">calculate</h1>
+		<!-- <section class="calc">
+			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
                 <router-link to="list" class="icon calc-back">뒤로가기</router-link>
                 <div class="calc-header-title">정산하기</div>
@@ -149,8 +149,31 @@
 					</div>
 				</section>
 				<button type="submit" class="calc-button">정산하기</button>
-
 			</form>
+
+
+		</section> -->
+		<section class="calc-result">
+			<h1 class="d-none">정산 결과</h1>
+			<header class="result-header">
+				<div>정산결과</div>
+				<button>삭제하기</button>
+			</header>
+			<section class="result-contents">
+				<h1 class=d-none>결과 내용</h1>
+				<div class="calc-members">
+					<div class="chat-user-img">
+						<img :src="'/images/member/stuff/'">
+					</div>
+					<div class="calc-members-nic"></div>
+					<div class="calc-member-price">
+						<input type="text"> 원
+					</div>
+				</div>
+				<div	> </div>
+			</section>
+			
+			
 
 		</section>
 	</v-navigation-drawer>
@@ -646,6 +669,80 @@ export default {
             order: 2;
             flex-grow: 0;
         }
+
+.calc-result {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 24px 24px;
+    position: relative;
+    height: 635px;
+    width: 100%;
+     
+    background: #fff;
+}
+	.result-header{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 0px 10px;
+
+		width: 338px;
+		height: 79px;
+
+		flex: none;
+		order: 0;
+		flex-grow: 0;
+		/* margin: -24px 0px; */
+	}
+	.result-header div:first-child {
+		width: 318px;
+		height: 47px;
+		text-align: center;
+		padding: 12px;
+
+		flex: none;
+		order: 0;
+		flex-grow: 0;
+	}
+	.result-header button:nth-child(2) {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		padding: 0px;
+		padding-bottom: 12px;
+
+		width: 338px;
+		height: 24px;
+
+		font-size: 12px;
+
+		flex: none;
+		order: 1;
+		flex-grow: 0;
+
+		border-bottom: 2px dotted #000;
+	} 
+
+	.result-contents{
+		display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 24px 0px;
+        overflow: auto;
+        width: 100%;
+        height: 531px;
+        flex: none;
+        order: 1;
+        flex-grow: 1;
+		border-bottom: 2px dotted #000;
+	}
+	.result-contents div:nth-child(3) {
+		/* border-bottom: 2px dotted #000; */
+	}
+
 
 .canvas,
 .v-app-bar {
