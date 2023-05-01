@@ -21,16 +21,13 @@
 		</div>
 	</div>
 
-	<v-dialog
-		v-model="dialog"
-		width="auto"
-	>
+	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
 				추방되었습니다.
 			</v-card-text>
 			<v-card-actions>
-			<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
+				<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -87,7 +84,7 @@
 		<div class="chat-canvas">
 
 			<div v-for="m in messageView">
-				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER' || m.type == 'LEAVE')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
+				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
 					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
 					<div class="chat-box">
 						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
@@ -96,6 +93,12 @@
 							<p class="chat-time">{{ m.sendDate }}</p>
 						</div>
 					</div>
+				</div>
+				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
+					<!-- <p class="chat-content">{{ m.content }}</p> -->
+				<!-- </div> -->
+				<div class="chat-line-wrap notice" v-else>
+					<p class="chat-content">{{ m.content }}</p>
 				</div>
 			</div>
 
@@ -136,13 +139,13 @@ export default {
 				participantCount: "12",
 				regDate: ''
 			},
-			memberInfo:'',
+			memberInfo: '',
 			messageView: [],
-			dialog:false,
-			banishUser:{
-				id:'',
-				nickname:'',
-				image:''
+			dialog: false,
+			banishUser: {
+				id: '',
+				nickname: '',
+				image: ''
 			},
 			openLeaveModal:false,
 			banishAuthority:false,
@@ -221,41 +224,41 @@ export default {
 					)
 				});
 		},
-        exitchatRoom(){     
-            var requestOptions = {
-                method: 'DELETE',
-                redirect: 'follow'
-            };
+		exitchatRoom() {
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
 
-            fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
-            .then(response => response.text())
-            .then(result => {
-                console.log(result);
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+				.then(response => response.text())
+				.then(result => {
+					console.log(result);
 
-                this.stompClient.send('/pub/chat/exitUser',
-                    JSON.stringify({
-                        type: 'LEAVE',
-                        stuffId: this.$route.params.stuffId,
-                        memberId: this.memberInfo.id,
-                        sender: this.memberInfo.nickname,
-                        memberImage: this.memberInfo.image,
-                    })
-                )
+					this.stompClient.send('/pub/chat/exitUser',
+						JSON.stringify({
+							type: 'LEAVE',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+							sender: this.memberInfo.nickname,
+							memberImage: this.memberInfo.image,
+						})
+					)
 
-                // ** 소켓 끊어주기 추가
-                this.stompClient.disconnect((frame) => {
+					// ** 소켓 끊어주기 추가
+					this.stompClient.disconnect((frame) => {
 
-                        this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+						this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
 
-                        // 소켓 연결 끊기 성공!
-                        this.connected = false;
-                        this.$router.go(-1);
-                        console.log('소켓 연결 끊기 성공!', frame);
-                });
-                
-            })
-            .catch(error => console.log('error', error));
-        },
+						// 소켓 연결 끊기 성공!
+						this.connected = false;
+						this.$router.go(-1);
+						console.log('소켓 연결 끊기 성공!', frame);
+					});
+
+				})
+				.catch(error => console.log('error', error));
+		},
 		goback() {
 			this.$router.go(-1);
 		},
@@ -279,51 +282,51 @@ export default {
 				this.banishAuthority = !this.banishAuthority;
 			}
 		},
-        banishUserHandler() {
-            
-            var requestOptions = {
-                method: 'DELETE',
-                redirect: 'follow'
-            };
+		banishUserHandler() {
 
-            fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
-            .then(response => response.text())
-            .then(result => {
-                console.log(result);
-                this.openModal = !this.openModal;
-                this.loadParticipationList();
-                this.dialog=true;
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
+				.then(response => response.text())
+				.then(result => {
+					console.log(result);
+					this.openModal = !this.openModal;
+					this.loadParticipationList();
+					this.dialog = true;
 
            		// ** 소켓 끊어주기 추가
 
-                // 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
-                // 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
-                
-                // if(this.banishUser.id === this.$route.params.memberId){
-                //  this.$router.go(0);
-                //  this.stompClient.disconnect((frame) => {
-                //          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
-                            
-                //          // 소켓 연결 끊기 성공!
-                //          this.connected = false;
-                //          console.log('소켓 연결 끊기 성공!', frame);
+					// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
+					// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
 
-                //          // 강퇴된 그 사람이 뒤로가기 되기
-                            
-                //  });
-                //  this.$router.go(-1);
-                // }
-            
-            })
-            .catch(error => console.log('error', error));
-        },
+					// if(this.banishUser.id === this.$route.params.memberId){
+					//  this.$router.go(0);
+					//  this.stompClient.disconnect((frame) => {
+					//          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+
+					//          // 소켓 연결 끊기 성공!
+					//          this.connected = false;
+					//          console.log('소켓 연결 끊기 성공!', frame);
+
+					//          // 강퇴된 그 사람이 뒤로가기 되기
+
+					//  });
+					//  this.$router.go(-1);
+					// }
+
+				})
+				.catch(error => console.log('error', error));
+		},
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
 			this.banishUser.id = user.memberId;
 			this.banishUser.nickname = user.memberNickname;
 			this.banishUser.image = user.memberImage;
-			console.log("banishUserId:" + this.banishUser.id); 
-			console.log("banishUserNickName:" + this.banishUser.nickname); 
+			console.log("banishUserId:" + this.banishUser.id);
+			console.log("banishUserNickName:" + this.banishUser.nickname);
 		},
 		modalBanishCloseHandler() {
 			this.openModal = !this.openModal;
@@ -425,6 +428,17 @@ export default {
 	width: 100%;
 	display: flex;
 	margin-top: 18px;
+}
+
+.chat-line-wrap.notice .chat-content {
+	margin: 0 auto;
+	border-radius: 12px 12px 12px 12px;
+	background-color: #f1f1f1;
+	font-size: 10px;
+	color: #848484;
+	padding: 6px 12px;
+	columns: #1A1A1A;
+	word-break: break-all;
 }
 
 .chat-line-wrap.mine {
@@ -788,7 +802,7 @@ export default {
 	cursor: pointer;
 }
 
-.v-dialog:deep{
+.v-dialog:deep {
 	font-size: 14px;
 }
 </style>
