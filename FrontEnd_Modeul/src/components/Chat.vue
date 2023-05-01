@@ -103,10 +103,11 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
+				<div class="cal-btn"><img src="/images/member/stuff/cal-btn.svg"></div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
-					<div class="submit-btn"><img src="../../images/member/stuff/chat-submit-btn.svg"></div>
+					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
+					</div>
 				</div>
 			</div>
 
@@ -127,12 +128,10 @@ export default {
 			message: "",
 			recvList: [],
 			myUserId: this.$route.params.memberId,
-			// stuffId: 449,
 			stuffId: '',
 			drawer: null,
 			openModal: false,
 			stompClient: '',
-
 			participantList: '',
 			chat: {
 				title: "여러가지 나눔",
@@ -154,7 +153,7 @@ export default {
 	},
 	computed: {
 	},
-	methods: {
+methods: {
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
 				console.log("send");
@@ -162,12 +161,17 @@ export default {
 				this.message = ''
 			}
 		},
+		sendClickHandler() {
+			if (this.message != '' && this.message.trim() != '') {
+				this.send()
+				this.message = ''
+			}
+		},
 		send() {
 			if (this.stompClient && this.stompClient.connected) {
+				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
 				const date = new dayjs().locale('ko').format("A hh:mm");
 
-				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
-				// 로그인을 통해 얻은 정보로 대체
 				const chatMessage = {
 					type: 'TALK',
 					stuffId: this.$route.params.stuffId,
@@ -195,24 +199,18 @@ export default {
 					// 소켓 연결 성공!
 					this.connected = true;
 
-					await fetch(`${this.$store.state.host}/api/chatlog?
-					stuffId=${this.$route.params.stuffId}&
-					memberId=${this.$route.params.memberId}`)
-						.then(response => response.text())
-						.then(result => {
-							this.messageView = JSON.parse(result)
-						})
-						.catch(error => console.log('error', error));
+					const response = await fetch(`${this.$store.state.host}/api/chatlog?
+					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
+					const result = await response.text();
+					this.messageView = JSON.parse(result)
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
-
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(JSON.parse(res.body));
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
-					// 로그인 구현 이후 로그인으로 얻은 정보로 대체
 					this.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
 							type: 'ENTER',
@@ -262,13 +260,11 @@ export default {
 		goback() {
 			this.$router.go(-1);
 		},
-		loadParticipationList() {
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
-				.then(response => response.json())
-				.then(dataList => {
-					this.participantList = dataList.memberList;
-				})
-				.catch(error => console.log('error', error));
+		async loadParticipationList() {
+			const response = await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+			const dataList = await response.json();
+			this.participantList = dataList.memberList;
+			this.chat = dataList.stuffView;
 		},
 		async loadParticipant() {
 			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
@@ -394,6 +390,7 @@ export default {
 			return this.messageView.length;
 		}
 	},
+	// computed: { chatLength: () => this.messageView.length },
 	watch: {
 		chatLength: function () {
 			setTimeout(() => {
@@ -534,7 +531,7 @@ export default {
 }
 
 .chat-input {
-	width: 90%;
+	width: calc(100% - 24px);
 	margin-left: 14px;
 	font-size: 14px;
 }
