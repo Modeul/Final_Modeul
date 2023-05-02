@@ -107,7 +107,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		async loadParticipantInfo(){
+		loadParticipantInfo(){
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
 				.then(response => response.json())
 				.then(data => {
