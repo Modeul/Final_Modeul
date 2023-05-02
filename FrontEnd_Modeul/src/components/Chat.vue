@@ -53,10 +53,10 @@
 									:src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon">
-							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
-								v-if="user.memberId !== this.chat.memberId"
-								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
+						<div class="chat-side-list-user-icon"> 
+							<img @click="modalBanishHandler(user)" :class="{'d-none':!showBanish}" 
+								v-if="user.memberId!==this.chat.memberId"
+								src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
 				</div>

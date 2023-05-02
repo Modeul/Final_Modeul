@@ -9,8 +9,8 @@ export default {
 			page: '',
 			list: [],
 			categoryList: [],
-			categoryId: '',
-			listCount: '',
+			categoryId:'',
+			listCount:'',
 		};
 	},
 	computed: {
@@ -124,11 +124,16 @@ export default {
 }
 </script>
 
-<style scoped>
-@import url(/css/component/member/stuff/component-list.css);
-</style>
 <template>
-	<section class="canvas p-rel b-rad-2">
+	<!-- <v-carousel cycle width="1024" hide-delimiter-background show-arrows="hover">
+		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/docks.jpg" cover></v-carousel-item>
+
+		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg" cover></v-carousel-item>
+
+		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-carousel-item>
+	</v-carousel> -->
+
+	<section class="canvas">
 		<header class="d-fl-al header-jc">
 			<select class="selectbox-set" onchange="if(this.value) location.href=(this.value);">
 				<option value="">신수동</option>
@@ -191,19 +196,20 @@ export default {
 
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
+
 			<div class="stuff-list" v-for="stuff in list">
 				<router-link :to="'./' + stuff.id">
 					<div class="d-gr li-gr m-t-13px list-cl">
 						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 						<div class="li-pic b-rad-1">
-							<img v-if="stuff.imageName != null" class="listview-image"
-								:src="'/images/member/stuff/' + stuff.imageName" alt="img">
-							<img v-else-if="stuff.categoryId == '1'" class="listview-image"
-								src="/images/member/stuff/category1.svg" alt="img">
-							<img v-else-if="stuff.categoryId == '2'" class="listview-image"
-								src="/images/member/stuff/category2.svg" alt="img">
-							<img v-else-if="stuff.categoryId == '3'" class="listview-image"
-								src="/images/member/stuff/category3.svg" alt="img">
+							<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName"
+								alt="img">
+							<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
+								alt="img">
+							<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
+								alt="img">
+							<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
+								alt="img">
 							<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 						</div>
 						<div class="li-categ-place">

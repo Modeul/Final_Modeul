@@ -23,7 +23,7 @@ main {
   width: 100%;
 }
 .detail-header{
-  width: 360px;
+  width: 100%;
   position: relative;
 }
 
@@ -34,9 +34,13 @@ main {
   width: 100%;
 }
 .detail-img {
-  height: 200px;
+  height: 50vw;
+	/* height: 200px; */
   width: 100%;
-  transition: 0.3s;
+	background-color: #f3f3f3;
+  /* transition: 0.3s; */
+	display: flex;
+	flex-direction: column;
 }
 
 .detail-img > img:first-child {
@@ -108,7 +112,7 @@ main {
   border-radius: 8px;
 
   
-  width: 320px;
+  /* width: 320px; */
   height: 90px;
 
   padding: 12px 16px;
@@ -134,7 +138,7 @@ main {
 .detail-writing {
     /* height: 180px; */
     height: auto;
-    width: 320px;
+    /* width: 320px; */
     margin-top: 13px;
     margin-bottom: 150px;
 }
@@ -155,12 +159,13 @@ main {
   justify-content: stretch;
   position: fixed;
   bottom: 0;
-  width: 360px;
+  width: 100%;
   margin: 0 auto;
   box-shadow: rgb(0 0 0 / 12%) 0px -6px 6px -6px;
   padding: 13px 20px 22px 20px;
   box-sizing: border-box;
   z-index: 5;
+	height: 110px;
 }
 
 .detail-join-title {
@@ -169,12 +174,13 @@ main {
 .detail-join-wrap{
     display: flex;
     align-items: center;
-    justify-content: space-around;
+		width: 100%;
+    justify-content: space-between;
 }
 .detail-join-button-wrap {
     display: flex;
     justify-content: flex-end;
-    width: 200px;
+    width: 62px;
     height: 73px;
 }
 .join-button-wrap{
@@ -407,8 +413,11 @@ transition: 0.5s;
   cursor: pointer;
 }
 .noImg{
-  height:100%;
-  background-image: url(../../../../images/member/stuff/noimg.svg);
+  height: 200px;
+	width: 360px;
+	margin: auto;
+	box-sizing: border-box;
+  background-image: url(/images/member/stuff/noimg.svg);
 }
 
 #map {

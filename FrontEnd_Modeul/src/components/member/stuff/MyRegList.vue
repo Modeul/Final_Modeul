@@ -171,7 +171,7 @@ export default {
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
 			<div class="stuff-list" v-for="stuff in list">
-				<router-link :to="'./' + stuff.id">
+				<router-link :to="'../stuff/' + stuff.id">
 						<div class="d-gr li-gr m-t-13px list-cl">
 							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
