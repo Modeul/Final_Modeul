@@ -201,26 +201,23 @@ public class StuffServiceImpl implements StuffService {
 			return 0;
 		}
 
+		// 경로 설정
+		String currentDir = System.getProperty("user.dir");
+		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
+		File savePath = new File(currentDir, realPath);
+
 		// 이미지 정보 얻어오기
 		List<Image> images = repository.findImagebyId(stuff.getId());
 
-		if (images.isEmpty())
-			return 0;
-
-		String currentDir = System.getProperty("user.dir");
-
-		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
-
-		File savePath = new File(currentDir, realPath);
-
 		// 이미지 삭제
-		repository.deleteImage(stuff.getId());
+		if (!images.isEmpty()) {
+			repository.deleteImage(stuff.getId());
 
-		images.forEach(image -> {
-			File file = new File(savePath, image.getName());
-			file.delete();
-		});
-
+			images.forEach(image -> {
+				File file = new File(savePath, image.getName());
+				file.delete();
+			});
+		}
 
 		// uuid 추가
 		String uuid = UUID.randomUUID().toString();
