@@ -674,7 +674,7 @@ export default {
 			margin-top: 36px;
 			gap: 16px;
 
-			width: 279px;
+			width: 270px;
 			height: 48px;
 			font-size: 25px;
 			font-weight: 600;;
