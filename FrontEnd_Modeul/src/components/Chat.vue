@@ -33,7 +33,7 @@
 	</v-dialog>
 
 	<div class="canvas">
-		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1008;">
+		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1200;">
 			<div class="chat-side">
 				<div class="chat-side-top">
 					<div class="chat-side-top-left">
@@ -102,7 +102,7 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
+				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
 				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
 						src="/images/member/stuff/cal-result-btn.svg">
@@ -117,6 +117,88 @@
 		</div>
 	</div>
 
+	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+		temporary>
+		<section class="calc">
+			<h1 class="d-none">정산하기</h1>
+			<header class="calc-header">
+				<router-link to="list" class="icon calc-back">뒤로가기</router-link>
+				<div class="calc-header-title">정산하기</div>
+			</header>
+
+			<form class="calc-contents" method="post">
+				<section class="calc-method-btn calc-member-line">
+					<h1 class="d-none">정산 방법</h1>
+					<div>
+						<a class="btn-division"></a>
+						<span>1/N하기</span>
+					</div>
+					<div></div>
+					<div>
+						<a class="btn-writing"></a>
+						<span>직접 입력</span>
+					</div>
+					<div class="calc-member-line"> </div>
+				</section>
+				<section class="calc-total">
+					<h1 class="d-none">합계</h1>
+					<input type="text">원
+				</section>
+
+				<div class="calc-members-title">참여 인원</div>
+
+				<div class="calc-members">
+					<div v-for="user in participantList" class="calc-member-div">
+						<div class="chat-user-img">
+							<img :src="'/images/member/' + user.memberImage">
+						</div>
+						<div class="calc-members-nic">{{ user.memberNickname }}</div>
+
+						<div class="calc-member-price">
+							<input type="text" placeholder="0" dir="rtl"> 원
+						</div>
+					</div>
+				</div>
+
+
+				<!-- <section class="calc-total">
+					<h1 class="d-none">합계</h1>
+					<div>
+						<label>합계:</label>
+						<span></span>
+						<span>원</span>
+					</div>
+				</section> -->
+				<button type="submit" class="calc-button">정산하기</button>
+			</form>
+
+
+		</section>
+
+		<!-- <section class="calc-result">
+			<h1 class="d-none">정산 결과</h1>
+			<header class="result-header">
+				<div>정산결과</div>
+				<button>삭제하기</button>
+			</header>
+			<section class="result-contents">
+				<h1 class=d-none>결과 내용</h1>
+				<div class="calc-members">
+					<div class="chat-user-img">
+						<img :src="'/images/member/stuff/'">
+					</div>
+					<div class="calc-members-nic"></div>
+					<div class="calc-member-price">
+						<input type="text"> 원
+					</div>
+				</div>
+				<div	> </div>
+			</section>
+			
+			
+
+		</section> -->
+	</v-navigation-drawer>
 
 	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
 		<section class="calc-result-default">
@@ -220,8 +302,10 @@ export default {
 	},
 
 	methods: {
-		openDutchResult() {
-			this.confirmDialog = true;
+		memberPriceList() {
+			return this.participantList.map((m) => {
+				return { key: m.memberNickname, value: price }
+			})
 		},
 
 		sendMessage(e) {
@@ -476,43 +560,44 @@ export default {
 </script>
 
 <style scoped>
-.calc-default {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+.calc {
+	/* display: flex; */
+	/* flex-direction: column; */
+	/* align-items: center; */
 	padding: 0px 24px 24px;
-
 	position: relative;
-	height: 626px;
-	width: 100%;
+	/* height: 635px; */
+	width: 375px;
+	align-self: center;
+	margin: auto;
 
 	background: #F1F2F2;
+	border-radius: 30px 30px 0px 0px;
 }
 
-.cal-header {
+.calc-header {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
-	justify-content: center;
-
-	/* width: 327px;
-        height: 71px; */
-
-	flex: none;
-	order: 0;
-	flex-grow: 0;
+	justify-content: start;
+	/* justify-content: space-between; */
+	/* padding: 12px 40px; */
+	gap: 100px;
+	width: 327px;
+	height: 71px;
+	/* flex: none; */
+	/* order: 0; */
+	/* flex-grow: 0; */
 }
 
-.cal-header div {
+.calc-header-title {
 	color: #222222;
 	font-weight: 700;
-	/* margin-left: 18px; */
+	margin-left: 18px;
 }
 
-.cal-back {
+.calc-back {
 	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
-	/* position: absolute; */
-	/* top: 18px;
-            left: 19px;*/
 
 	width: 16px;
 	height: 16px;
@@ -520,106 +605,196 @@ export default {
 	z-index: 9;
 }
 
-.confirmDialog {
-	font-weight: 500;
-	padding-right: 24px;
-	text-align: end;
-	font-size: 16px;
-}
 
-.confirmDialog-member {
-	display: flex;
-	margin-left: 20px;
-	padding: 3px;
-}
-
-
-.cal-contents {
+.calc-contents {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 28px 24px 0px;
-	overflow: auto;
-	/* gap: 24px; */
+	padding: 8px 24px 0px;
+	/* overflow: auto; */
 
-	/* width: 327px; */
-	width: 100%;
+	width: 327px;
 	height: 531px;
-
+	/* height: 80%; */
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
-
-	flex: none;
-	order: 1;
-	flex-grow: 1;
+	/* flex: none; */
+	/* order: 1; */
+	/* flex-grow: 1; */
 }
 
-.cal-members {
+.btn-writing {
+	width: 20px;
+	height: 20px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' d='M17 4a2.121 2.121 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zM9.5 17.5h8m-2-11l1 1'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.btn-division {
+	width: 20px;
+	height: 20px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.calc-method-btn {
 	display: flex;
 	flex-direction: row;
+	justify-content: center;
 	align-items: center;
-	padding: 20px 0px;
-	/* gap: 12px; */
+	padding: 10px 0px;
+	gap: 1px;
 
-	/* width: 239px; */
-	height: 70px;
-	width: 100%;
+	width: 279px;
+	height: 56px;
 
 	flex: none;
 	order: 0;
 	flex-grow: 0;
 }
 
-.cal-members div:nth-child(2) {
-	flex-grow: 1;
-	margin: 0 10px;
-	font-size: 12px;
-}
-
-.cal-member-price {
-	position: relative;
-	right: 4px;
-
-	font-size: 12px;
-	font-weight: 700;
-	color: #222;
-}
-
-.cal-member-price input {
-	width: 50px;
-}
-
-.cal-sum {
+.calc-method-btn>div:nth-child(2) {
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
-	justify-content: end;
-	padding: 20px 0px;
-	margin-right: 10%;
-	gap: 20px;
+	justify-content: center;
+	align-items: center;
+	padding: 0px 10px;
 
-	width: 239px;
-	height: 60px;
+	width: 50%;
+	/* width: 138px; */
+	height: 32px;
+	font-size: 14px;
 
-	background: #FFFFFF;
-	font-size: 12px;
-	font-weight: 700;
-	color: #222;
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
+
+.calc-method-btn>div:nth-child(3) {
+	border-left: solid #D9D9D9;
+	height: 32px;
+}
+
+.calc-method-btn>div:nth-child(4) {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 0px;
+
+	width: 50%;
+	height: 32px;
+	font-size: 14px;
 
 	flex: none;
 	order: 1;
 	flex-grow: 0;
 }
 
-.cal-button {
+.calc-members {
+	/* display: flex; */
+	/* flex-direction: column; */
+	align-items: center;
+	/* padding: 20px 0px; */
+	width: 100%;
+	/* flex: none; */
+	order: 4;
+	/* flex-grow: 0; */
+}
+
+.calc-member-div{
+	display: flex;
+	flex-direction: row;
+	margin-top: 4px;
+}
+
+.calc-members-nic {
+	flex-grow: 1;
+	margin: auto;
+	margin-left: 10px;
+	font-size: 12px;
+}
+
+.calc-member-price {
+	position: relative;
+	right: 4px;
+
+	font-size: 12px;
+	font-weight: 700;
+	color: #222;
+
+	margin: auto;
+}
+
+input::placeholder { 
+	text-align: right; 
+}
+
+.calc-member-price input {
+	width: 70px;
+	text-align: right;
+}
+
+.calc-member-line {
+	width: 295px;
+	border-bottom: 2px solid #D9D9D9;
+	padding: 0;
+	margin: 0;
+}
+
+.calc-members-title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	/* padding: 12px 16px 0px; */
+	margin-top: 28px;
+	gap: 16px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #8A8787;
+
+	width: 279px;
+	height: 28px;
+
+	flex: none;
+	order: 3;
+	flex-grow: 0;
+}
+
+
+.calc-total {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: flex-start;
+	margin-top: 36px;
+	gap: 16px;
+
+	width: 270px;
+	height: 48px;
+	font-size: 25px;
+	font-weight: 600;
+	;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+
+	border-bottom: 2px solid #222;
+}
+
+.calc-total input {
+	width: 235px;
+	text-align: right;
+}
+
+.calc-button {
 	width: 136px;
 	height: 45px;
 
-	/* position: absolute;
-            left: 119.5px;
-            right: 119.5px;
-            top: 514px;
-            bottom: 90.6px; */
+	position: absolute;
+	left: 119.5px;
+	right: 119.5px;
+	top: 514px;
+	bottom: 90.6px;
 
 	border-radius: 10px;
 
@@ -1058,6 +1233,13 @@ export default {
 	height: 38px;
 	object-fit: cover;
 	border-radius: 50%;
+	overflow: hidden;
+	margin-top: 5px;
+}
+
+.chat-user-img img{
+	width: 100%;
+	height: 100%;
 }
 
 .chat-user-nickname {

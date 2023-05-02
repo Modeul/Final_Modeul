@@ -52,6 +52,23 @@
                 </li>
             </ul>
         </section>
+        <nav class="navi-bar d-fl-jf">
+			<div class="navi-icon">
+				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+			</div>
+			<div>
+				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
+			</div>
+		</nav>
     </div>
     <!-- 회원탈퇴 재확인 모달 -->
     <div v-if="openModal" class="black-bg">
@@ -128,6 +145,7 @@
     }
 </script>
 <style scoped>
+    @import "/css/component/member/stuff/component-list.css";
     .canvas{
         margin: 0 auto;
         width: 320px;

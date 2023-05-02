@@ -17,6 +17,8 @@ public interface MemberRepository {
 
 	Member getPwdByUid(String uid);
 
+	String getByName(String name);
+
 	String getByEmail(String email);
 
 	String getByNickname(String nickname);
@@ -30,4 +32,8 @@ public interface MemberRepository {
 	String getEmailByUid(Member member);
 
 	void updateImg(MemberImage memberImage);
+
+	String getEmailByName(Member member);
+
+	String getUid(String name,String email);
 }

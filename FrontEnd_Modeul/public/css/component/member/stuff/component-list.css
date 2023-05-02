@@ -347,9 +347,9 @@ input[id="menuicon"]:checked+label+div {
 	border-radius: 50%;
 	text-align: center;
 	line-height: 30px;
-	position: fixed;
-	right: 30px;
-	bottom: 30px;
+	/* position: fixed;
+	right: 20px;
+	bottom: 50px; */
 	cursor: pointer;
 }
 

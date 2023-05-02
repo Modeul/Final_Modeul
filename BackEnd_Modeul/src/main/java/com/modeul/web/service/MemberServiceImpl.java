@@ -71,6 +71,14 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public Boolean checkName(String name) {
+		String getName = repository.getByName(name);
+		Boolean result = (getName != null) ? true : false;
+
+		return result;
+	}
+
+	@Override
 	public Boolean checkEmail(String email) {
 		String getEmail = repository.getByEmail(email);
 		Boolean result = (getEmail != null) ? false : true;
@@ -150,6 +158,21 @@ public class MemberServiceImpl implements MemberService {
 		Boolean result = UserEmail.equals(member.getEmail());
 
 		return result;
+	}
+
+	@Override
+	public Boolean checkEmailByName(Member member) {
+		String UserEmail = repository.getEmailByName(member);
+		Boolean result = UserEmail.equals(member.getEmail());
+
+		return result;
+	}
+
+	@Override
+	public String findUid(String name,String email) {
+		String uid = repository.getUid(name,email);
+		
+		return uid;
 	}
 
 
