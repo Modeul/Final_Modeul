@@ -142,59 +142,28 @@
 				</section>
 				<section class="calc-total">
 					<h1 class="d-none">합계</h1>
-					<input type="text">원
+					<input type="text" v-model.number="totalPrice" @input="chipinHandler">원
 				</section>
 
 				<div class="calc-members-title">참여 인원</div>
-
-				<div class="calc-members">
-						<div class="chat-user-img">
-							<img :src="'/images/member/stuff/'">
-						</div>
-						<div class="calc-members-nic"></div>
-						<div class="calc-member-price">
-							<input type="text"> 원
-						</div>
-					</div>
 				
-
-				<!-- <section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div>
-						<label>합계:</label>
-						<span></span>
-						<span>원</span>
+					<div v-for="member in participantList" class="calc-members">
+						<div class="calc-member-img">
+							<img class="calc-member-img" :src="'/images/member/stuff/' + member.memberImage">
+						</div>
+						<div class="calc-members-nic"> {{ member.memberNickname }}</div>
+						<div class="calc-member-price">
+							<span>{{ chipinResult }}</span>원
+						</div>
 					</div>
-				</section> -->
+	
+				
 				<button type="submit" class="calc-button">정산하기</button>
 			</form>
 
 
 		</section>
 
-		<!-- <section class="calc-result">
-			<h1 class="d-none">정산 결과</h1>
-			<header class="result-header">
-				<div>정산결과</div>
-				<button>삭제하기</button>
-			</header>
-			<section class="result-contents">
-				<h1 class=d-none>결과 내용</h1>
-				<div class="calc-members">
-					<div class="chat-user-img">
-						<img :src="'/images/member/stuff/'">
-					</div>
-					<div class="calc-members-nic"></div>
-					<div class="calc-member-price">
-						<input type="text"> 원
-					</div>
-				</div>
-				<div	> </div>
-			</section>
-			
-			
-
-		</section> -->
 	</v-navigation-drawer>
 
 	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
@@ -298,14 +267,17 @@ export default {
 			openLeaveModal: false,
 			banishAuthority: false,
 			showBanish: false,
+
+			chipinResult: 0,
 		}
 	},
 
 	methods: {
-		memberPriceList(){
-			return this.participantList.map((m)=> {
-				return {key: m.memberNickname, value: price }
-			})
+		chipinHandler(){
+			console.log(this.totalPrice)
+			this.chipinResult = (this.totalPrice/this.participantList.length).toFixed(2);
+			return this.chipinResult;
+
 		},
 
 		sendMessage(e) {
@@ -545,6 +517,7 @@ export default {
 		chatLength: function () {
 			return this.messageView.length;
 		},
+		
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
@@ -688,6 +661,13 @@ export default {
             order: 4;
             flex-grow: 0;
         }
+			.calc-member-img {
+
+				width: 24px;
+				height: 24px;
+				object-fit: cover;
+
+			}
             .calc-members-nic {
                 flex-grow: 1;
                 margin: 0 10px;
@@ -700,6 +680,9 @@ export default {
                 font-size: 12px;
                 font-weight: 700;
                 color: #222;
+
+				
+				
             }
             .calc-member-price input{
                 width: 50px;
@@ -751,6 +734,7 @@ export default {
         }
 		.calc-total input {
 			width: 275px;
+			right: 0px;
 		}
 			
         .calc-button {
