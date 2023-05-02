@@ -23,6 +23,7 @@ import Signup from "./components/Signup.vue";
 import Login from "./components/Login.vue";
 import Chat from "./components/Chat.vue";
 import FindPwd from "./components/FindPwd.vue";
+import FindId from "./components/FindId.vue";
 
 import MyPage from "./components/member/MyPage.vue";
 import MypageEdit from "./components/member/MypageEdit.vue";
@@ -56,6 +57,7 @@ const routes = [
       { path: "index", component: Index },
       { path: "login", component: Login },
       { path: "login/findpwd", component: FindPwd },
+      { path: "login/findid", component: FindId },
       { path: "signup", component: Signup },
       { path: "chat/:stuffId/:memberId", component: Chat }
     ]

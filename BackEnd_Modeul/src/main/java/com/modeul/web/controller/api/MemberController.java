@@ -40,6 +40,12 @@ public class MemberController {
 		return memberService.getMember(id);
 	}
 
+	@GetMapping("findUid")
+	public String findUid(String name, String email){
+		String uid = memberService.findUid(name,email);
+		return uid;
+	}
+
 	@PutMapping("update")
 	public int editMember(@RequestBody Member member){
 
@@ -85,10 +91,26 @@ public class MemberController {
 		return chk;
 	}
 
+	@GetMapping("checkName")
+	public Boolean checkName (String name) {
+
+		Boolean chk = memberService.checkName(name);
+		
+		return chk;
+	}
+
 	@PostMapping("checkEmail")
 	public Boolean checkEmailByUid (@RequestBody Member member){
 
 		Boolean chk = memberService.checkEmailByUid(member);
+		
+		return chk;
+	}
+
+	@PostMapping("checkEmailByName")
+	public Boolean checkEmailByName (@RequestBody Member member){
+
+		Boolean chk = memberService.checkEmailByName(member);
 		
 		return chk;
 	}

@@ -16,6 +16,8 @@ public interface MemberService {
 	
 	Boolean checkUid(String uid);
 
+	Boolean checkName(String name);
+
 	String checkPwd(Member member);
 
 	Boolean checkEmail(String email);
@@ -31,6 +33,10 @@ public interface MemberService {
 	void updateImg(long id, List<MultipartFile> imgs);
 
 	Boolean checkEmailByUid(Member member);
+
+	Boolean checkEmailByName(Member member);
+
+    String findUid(String name,String email);
 	
 }
 
