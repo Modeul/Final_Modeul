@@ -49,14 +49,12 @@
 					<!-- 유저 1명 -->
 					<div v-for="user in participantList" class="chat-side-list-user">
 						<div class="chat-side-list-user-info">
-							<div class="chat-user-img"><img class="chat-user-img"
-									:src="'/images/member/' + user.memberImage"></div>
+							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon"> 
-							<img @click="modalBanishHandler(user)" :class="{'d-none':!showBanish}" 
-								v-if="user.memberId!==this.chat.memberId"
-								src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
+						<div class="chat-side-list-user-icon">
+							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
+								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
 				</div>
@@ -96,7 +94,7 @@
 					</div>
 				</div>
 				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
-					<!-- <p class="chat-content">{{ m.content }}</p> -->
+				<!-- <p class="chat-content">{{ m.content }}</p> -->
 				<!-- </div> -->
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
@@ -104,9 +102,10 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg">
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img src="../../images/member/stuff/cal-result-btn.svg">
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
+						src="/images/member/stuff/cal-result-btn.svg">
 				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
@@ -191,7 +190,7 @@ export default {
 	data() {
 		return {
 			calDrawer: null,
-			isCheckCalResult:null,
+			isCheckCalResult: null,
 			userName: "",
 			message: "",
 			recvList: [],
@@ -273,7 +272,8 @@ export default {
 					const response = await fetch(`${this.$store.state.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
 					const result = await response.text();
-					this.messageView = JSON.parse(result)
+					if (result != '')
+						this.messageView = JSON.parse(result)
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
@@ -420,7 +420,7 @@ export default {
 		showBanishHandler() {
 			this.showBanish = !this.showBanish;
 		},
-		calResultCheckHandler(){
+		calResultCheckHandler() {
 			this.isCheckCalResult = !this.isCheckCalResult;
 		}
 	},
@@ -454,6 +454,7 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
+
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -644,7 +645,7 @@ export default {
 	background: #f5f1f1;
 }
 
-.cal-result-main{
+.cal-result-main {
 	display: flex;
 	flex-direction: column;
 	align-self: center;
@@ -1179,4 +1180,5 @@ export default {
 
 .v-dialog:deep {
 	font-size: 14px;
-}</style>
+}
+</style>

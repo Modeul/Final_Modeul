@@ -9,8 +9,8 @@ export default {
 			page: '',
 			list: [],
 			categoryList: [],
-			categoryId:'',
-			listCount:'',
+			categoryId: '',
+			listCount: '',
 		};
 	},
 	computed: {
@@ -125,13 +125,31 @@ export default {
 </script>
 
 <template>
-	<!-- <v-carousel cycle width="1024" hide-delimiter-background show-arrows="hover">
-		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/docks.jpg" cover></v-carousel-item>
-
-		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg" cover></v-carousel-item>
-
-		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-carousel-item>
-	</v-carousel> -->
+	<div class="pc-header-wrap">
+		<div class="header-menu">
+			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<div class="login"><router-link to="/login">로그인</router-link></div>
+		</div>
+		<div class="pc-header">
+			<div class="logo-moduel header-logo"></div>
+			<div class="search-container">
+				<div class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요.">
+					<h1 class="icon search-dodbogi">돋보기</h1>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn-heart"></div>
+				<div class="btn-location"></div>
+			</div>
+		</div>
+	</div>
+	<div class="pc-carousel">
+		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
+			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
+			<v-carousel-item src="https://gcdn.market09.kr/data/banner/1682557050291.jpg"></v-carousel-item>
+		</v-carousel>
+	</div>
 
 	<section class="canvas">
 		<header class="d-fl-al header-jc">
@@ -197,43 +215,46 @@ export default {
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
 
-			<div class="stuff-list" v-for="stuff in list">
-				<router-link :to="'./' + stuff.id">
-					<div class="d-gr li-gr m-t-13px list-cl">
-						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
-						<div class="li-pic b-rad-1">
-							<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName"
-								alt="img">
-							<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
-								alt="img">
-							<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
-								alt="img">
-							<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
-								alt="img">
-							<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
-						</div>
-						<div class="li-categ-place">
-							<span class="li-categ-place-categoryName">
-								{{ stuff.categoryName }}
-							</span>
-							<span class="li-categ-place-p">
-								{{ stuff.place }}
-							</span>
-						</div>
-						<div class="li-dday" :class="(stuff.deadlineState == 0) ? 'expired' :
-							(stuff.deadlineState == 1) ? 'day-left' :
-								(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
-						<div class="li-subj">{{ stuff.title }}</div>
-						<div class="li-member">
-							<span class="li-member-limit"> {{ stuff.participantCount }} </span>
-							/ {{ stuff.numPeople }} 명
-						</div>
-						<!-- <div class="li-place">{{ stuff.place }}</div> -->
-						<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
+			<div class="list-wrap">
 
-						<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
-					</div>
-				</router-link>
+				<div class="stuff-list" v-for="stuff in list">
+					<router-link :to="'./' + stuff.id">
+						<div class="d-gr li-gr m-t-13px list-cl">
+							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
+							<div class="li-pic b-rad-1">
+								<img v-if="stuff.imageName != null" class="listview-image"
+									:src="'/images/member/stuff/' + stuff.imageName" alt="img">
+								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
+									alt="img">
+								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
+									alt="img">
+								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
+									alt="img">
+								<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+							</div>
+							<div class="li-categ-place">
+								<span class="li-categ-place-categoryName">
+									{{ stuff.categoryName }}
+								</span>
+								<span class="li-categ-place-p">
+									{{ stuff.place }}
+								</span>
+							</div>
+							<div class="li-dday" :class="(stuff.deadlineState == 0) ? 'expired' :
+								(stuff.deadlineState == 1) ? 'day-left' :
+									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+							<div class="li-subj">{{ stuff.title }}</div>
+							<div class="li-member">
+								<span class="li-member-limit"> {{ stuff.participantCount }} </span>
+								/ {{ stuff.numPeople }} 명
+							</div>
+							<!-- <div class="li-place">{{ stuff.place }}</div> -->
+							<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
+
+							<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
+						</div>
+					</router-link>
+				</div>
 			</div>
 
 			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->

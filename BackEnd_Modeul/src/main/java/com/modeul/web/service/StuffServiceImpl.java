@@ -26,6 +26,8 @@ public class StuffServiceImpl implements StuffService {
 	@Autowired
 	private ParticipationRepository participationRepository;
 
+	static int pageSize = 8;
+
 	// 공구상품 목록 조회용
 	@Override
 	public List<StuffView> getViewAll() {
@@ -148,21 +150,21 @@ public class StuffServiceImpl implements StuffService {
 	@Override
 	public List<StuffView> getRecentViewList(Long categoryId, int page) {
 
-		int size = page * 7;
+		int size = page * pageSize;
 		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, null);
 	}
 
 	@Override
 	public List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId) {
 
-		int size = page * 7;
+		int size = page * pageSize;
 		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, memberId);
 	}
 
 	@Override
 	public Long getListCount(Long categoryId, int page) {
 
-		Long countList = repository.getCountList(categoryId, null) - (page * 7);
+		Long countList = repository.getCountList(categoryId, null) - (page * pageSize);
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
@@ -170,20 +172,20 @@ public class StuffServiceImpl implements StuffService {
 	@Override
 	public Long getListCount(Long categoryId, int page, Long memberId) {
 
-		Long countList = repository.getCountList(categoryId, memberId) - (page * 7);
+		Long countList = repository.getCountList(categoryId, memberId) - (page * pageSize);
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
 
 	@Override
 	public List<StuffView> getRecentViewList(String query, Long categoryId, int page) {
-		int size = page * 7;
+		int size = page * pageSize;
 		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, null);
 	}
 
 	@Override
 	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId) {
-		int size = page * 7;
+		int size = page * pageSize;
 		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId);
 	}
 

@@ -35,7 +35,7 @@ main {
 }
 .detail-img {
   height: 50vw;
-	/* height: 200px; */
+	min-height: 200px;
   width: 100%;
 	background-color: #f3f3f3;
   /* transition: 0.3s; */
