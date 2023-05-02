@@ -20,25 +20,13 @@
 		select *
 		from crawling
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<!-- <if test="query != null">
+			<if test="query != null">
 				title like '%${query}%'
-			</if> -->
-			<if test="categoryId != null">
-				and category_id = #{categoryId}
 			</if>
-			<!-- <if test="size != null and offset != null">
-				limit ${size} offset ${offset}
-			</if> -->
 		</trim>
-		<!-- <if test="orderField != null and orderDir != null">
-			order by ${orderField} ${orderDir}		 -->
-				<!-- orderField랑 orderDir, limit, offset 
-				값 필수라서 trim 안함 -->
-		<!-- </if> -->
-
-		<!-- <if test="size != null and offset != null">
+		<if test="size != null and offset != null">
 			limit ${size} offset ${offset}
-		</if> -->
+		</if>
 	</select>
 
 	<select id="getCountList" resultType="Long">
@@ -50,5 +38,9 @@
 		</if>
 	</select>
 
-
+	<select id="findCategory" resultMap="crawlingResultMap">
+		SELECT DISTINCT category_id
+		FROM crawling
+	</select>
+	
 </mapper>

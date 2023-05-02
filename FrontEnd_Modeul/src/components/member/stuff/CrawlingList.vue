@@ -8,27 +8,41 @@ export default {
 			list: [],
 			categoryList: [],
 			categoryId:'',
-			listCount:''
+			queryList:[]
 		};
 	},
 	computed: {
 	},
 	methods: {
+		searchInput(e){
+			this.page = 1;
+			e.preventDefault();
+            this.query = e.target.value;
+			console.log(this.query);
+			fetch(`${this.$store.state.host}/api/stuff/crawlinglist?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = dataList.queryList;
+					this.listCount = dataList.listCount;
+					console.log(this.list)
+				}).catch(error => console.log('error', error));
+        },
 		goback() {
 			this.$router.go(-1);
 		},
-		categoryHandler(e){	
-			this.page=1;
-			this.categoryId = e.target.value;
-			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuff/crawlinglist?p=${this.page}&c=${this.categoryId}`)
-				.then(response => response.json())
-				.then(dataList => {
-					this.list = dataList.crawlingList;
-					this.listCount = dataList.listCount;
-					this.categoryList = dataList.categoryList;
-					// console.log(this.list)
-				}).catch(error => console.log('error', error));
+		categoryHandler(e){
+			console.log(e.target.attrs);
+			// this.page=1;
+			// this.categoryId = e.target.value;
+			// console.log(this.categoryId);
+			// fetch(`${this.$store.state.host}/api/stuff/crawlinglist?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			// 	.then(response => response.json())
+			// 	.then(dataList => {
+			// 		this.list = dataList.crawlingList;
+			// 		this.listCount = dataList.listCount;
+			// 		this.categoryList = dataList.categoryList;
+			// 		// console.log(this.list)
+			// 	}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
 
@@ -36,17 +50,19 @@ export default {
 			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
 			console.log(this.page , this.categoryId);
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuff/crawlinglist?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.$store.state.host}/api/stuff/crawlinglist?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = dataList.crawlingList;
+					if (this.query == null)
+						this.list = dataList.crawlingList;
+					else this.list = dataList.queryList;
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
+					this.$store.commit('LOADING_STATUS', false);
 					console.log(dataList);
-						this.$store.commit('LOADING_STATUS', false);
 				})
 				.catch(error => console.log('error', error));
 				
@@ -82,15 +98,16 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<!-- <button class="header-categ" @click="categoryHandler" name="c">전체</button> -->
-					<button class="header-categ">전체</button>
+					<button class="header-categ" @click="categoryHandler">전체</button>
+					<!-- <button class="header-categ">전체</button> -->
 				</div>
 
-				<!-- <div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
-				</div> -->
-				<div>
-					<button class="header-categ" > 쿠팡 </button>
+				<div v-for="c in categoryList">
+					<button class="header-categ" @click="categoryHandler" name="c" :value="c.categoryId">
+						<span v-if="c.categoryId == 1">쿠팡</span>
+						<span v-if="c.categoryId == 2">네이버</span>
+						<span v-if="c.categoryId == 3">GS프레시몰</span>
+					</button>
 				</div>
 			</div>
 		</nav>
@@ -98,9 +115,8 @@ export default {
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
 			<div class="stuff-list" v-for="stuff in list">
-				<a :href="stuff.contenturl">
+				<a :href="stuff.contenturl" target="_blank">
 						<div class="d-gr li-gr m-t-13px list-cl">
-							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
 								<img class="listview-image" :src="stuff.imgurl" alt="img">
 							</div>
@@ -108,23 +124,16 @@ export default {
 								<span class="li-categ-place-categoryName">
 									쿠팡
 								</span>
-								<!-- <span class="li-categ-place-p">
-									{{ stuff.place }}
-								</span> -->
 							</div>
-							<!-- <div class="li-dday">{{ stuff.price }}</div> -->
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
 								<span class="li-member-limit"> {{ stuff.price }}₩</span>
 							</div>
-							<!-- <div class="li-place">{{ stuff.place }}</div> -->
-							<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
-							<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
 						</div>
 					</a>
 			</div>
 
-			<button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button>
+			<button class="btn-next more-list" @click="addListHandler"> 더보기</button>
 			<router-link to="/member/stuff/reg">
 				<div class="reg-stuff"></div>
 			</router-link>
