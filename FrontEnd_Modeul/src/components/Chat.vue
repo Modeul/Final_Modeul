@@ -55,7 +55,7 @@
 						<div class="chat-side-list-user-icon"> 
 							<img @click="modalBanishHandler(user)" :class="{'d-none':!showBanish}" 
 								v-if="user.memberId!==this.chat.memberId"
-								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
+								src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
 				</div>

@@ -9,15 +9,15 @@ export default {
 			page: '',
 			list: [],
 			categoryList: [],
-			categoryId:'',
-			listCount:'',
+			categoryId: '',
+			listCount: '',
 		};
 	},
 	computed: {
 	},
 	methods: {
-		categoryHandler(e){	
-			this.page=1;
+		categoryHandler(e) {
+			this.page = 1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
 			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
@@ -45,10 +45,10 @@ export default {
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
 					console.log(dataList);
-						this.$store.commit('LOADING_STATUS', false);
+					this.$store.commit('LOADING_STATUS', false);
 				})
 				.catch(error => console.log('error', error));
-				
+
 		},
 		formatDateList(list) {
 			if (list == null)
@@ -70,26 +70,26 @@ export default {
 				// 3: 1시간 내 마감 -> (1시간 내 마감)  // 빨강?
 
 				item.dDay = dayjs().diff(deadlineObj, 'day');
-				if (parseInt(item.dDay) < 0){
+				if (parseInt(item.dDay) < 0) {
 					item.dDay = 'D' + item.dDay;
 					item.deadlineState = 1;
 				}
 				else if (parseInt(item.dDay) == 0) {
 					item.dDay = deadlineObj.diff(dayjs(), 'hours')
-					if (parseInt(item.dDay) > 0){
+					if (parseInt(item.dDay) > 0) {
 						item.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
 						item.deadlineState = 2;
 					}
-					else if (parseInt(item.dDay) == 0){
+					else if (parseInt(item.dDay) == 0) {
 						item.dDay = '1시간 내 마감';
 						item.deadlineState = 3;
 					}
-					else{
+					else {
 						item.dDay = '마감';
 						item.deadlineState = 0;
 					}
 				}
-				else{
+				else {
 					item.dDay = '마감';
 					item.deadlineState = 0;
 				}
@@ -106,11 +106,16 @@ export default {
 }
 </script>
 
-<style scoped>
-@import url(/css/component/member/stuff/component-list.css);
-</style>
 <template>
-	<section class="canvas p-rel b-rad-2">
+	<!-- <v-carousel cycle width="1024" hide-delimiter-background show-arrows="hover">
+		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/docks.jpg" cover></v-carousel-item>
+
+		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg" cover></v-carousel-item>
+
+		<v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-carousel-item>
+	</v-carousel> -->
+
+	<section class="canvas">
 		<header class="d-fl-al header-jc">
 			<select class="selectbox-set" onchange="if(this.value) location.href=(this.value);">
 				<option value="">신수동</option>
@@ -118,7 +123,7 @@ export default {
 				<option value="/member/stuff/gps">GPS설정</option>
 			</select>
 
-		<div>
+			<div>
 				<!-- <a class="icon icon-menu">메뉴</a> -->
 				<a class="icon icon-alarm">알림</a>
 				<a class="icon">
@@ -173,40 +178,44 @@ export default {
 
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
+
 			<div class="stuff-list" v-for="stuff in list">
 				<router-link :to="'./' + stuff.id">
-						<div class="d-gr li-gr m-t-13px list-cl">
-							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
-							<div class="li-pic b-rad-1">
-								<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName" alt="img">
-								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg" alt="img">
-								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg" alt="img">
-								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg" alt="img">
-								<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
-							</div>
-							<div class="li-categ-place">
-								<span class="li-categ-place-categoryName">
-									{{ stuff.categoryName }}
-								</span>
-								<span class="li-categ-place-p">
-									{{ stuff.place }}
-								</span>
-							</div>
-							<div class="li-dday"
-							:class="(stuff.deadlineState == 0)? 'expired' : 
-							(stuff.deadlineState == 1)? 'day-left' : 
-							(stuff.deadlineState == 2)? 'hour-left' : 'minute-left' ">{{ stuff.dDay }}</div>
-							<div class="li-subj">{{ stuff.title }}</div>
-							<div class="li-member">
-								<span class="li-member-limit"> {{ stuff.participantCount }} </span>
-								/ {{ stuff.numPeople }} 명
-							</div>
-							<!-- <div class="li-place">{{ stuff.place }}</div> -->
-							<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
-
-							<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
+					<div class="d-gr li-gr m-t-13px list-cl">
+						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
+						<div class="li-pic b-rad-1">
+							<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName"
+								alt="img">
+							<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
+								alt="img">
+							<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
+								alt="img">
+							<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
+								alt="img">
+							<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 						</div>
-					</router-link>
+						<div class="li-categ-place">
+							<span class="li-categ-place-categoryName">
+								{{ stuff.categoryName }}
+							</span>
+							<span class="li-categ-place-p">
+								{{ stuff.place }}
+							</span>
+						</div>
+						<div class="li-dday" :class="(stuff.deadlineState == 0) ? 'expired' :
+							(stuff.deadlineState == 1) ? 'day-left' :
+								(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+						<div class="li-subj">{{ stuff.title }}</div>
+						<div class="li-member">
+							<span class="li-member-limit"> {{ stuff.participantCount }} </span>
+							/ {{ stuff.numPeople }} 명
+						</div>
+						<!-- <div class="li-place">{{ stuff.place }}</div> -->
+						<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
+
+						<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
+					</div>
+				</router-link>
 			</div>
 
 			<button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button>

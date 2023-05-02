@@ -199,7 +199,7 @@ export default {
         flex-direction: column;
         align-items: center;
         padding: 0;
-        
+				margin: 0 auto;
         position: relative;
         width: 360px;
         height: 740px;
