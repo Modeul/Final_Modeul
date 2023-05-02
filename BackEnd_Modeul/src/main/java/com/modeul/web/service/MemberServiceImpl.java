@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Member;
-import com.modeul.web.entity.MemberImage;
 import com.modeul.web.repository.MemberRepository;
 
 @Service
@@ -123,7 +121,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		String currentDir = System.getProperty("user.dir");
 
-		String realPath = "../FrontEnd_Modeul/images/member";
+		String realPath = "BackEnd_Modeul/src/main/resources/static/images/member";
 
 		File savePath = new File(currentDir, realPath);
 
@@ -137,12 +135,12 @@ public class MemberServiceImpl implements MemberService {
 
 			uploadFileName = uuid + "_" + uploadFileName;
 
-			MemberImage image = MemberImage.builder()
-					.name(uploadFileName)
+			Member member = Member.builder()
+					.image(uploadFileName)
 					.id(id)
 					.build();
 
-			repository.updateImg(image);
+			repository.updateImg(member);
 
 			try {
 				img.transferTo(new File(savePath, uploadFileName));

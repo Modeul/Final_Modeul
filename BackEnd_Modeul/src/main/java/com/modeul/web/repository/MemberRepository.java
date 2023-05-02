@@ -2,8 +2,8 @@ package com.modeul.web.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Member;
-import com.modeul.web.entity.MemberImage;
 
 @Mapper
 public interface MemberRepository {
@@ -31,7 +31,7 @@ public interface MemberRepository {
 
 	String getEmailByUid(Member member);
 
-	void updateImg(MemberImage memberImage);
+	void updateImg(Member member);
 
 	String getEmailByName(Member member);
 
