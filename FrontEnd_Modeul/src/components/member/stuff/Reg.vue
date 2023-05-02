@@ -317,6 +317,11 @@ export default {
 				return;
 			}
 
+			// 취소 버튼을 눌렀을 때 이미지 초기화 방지
+			if (this.files.length <= 0) {
+				return;
+			}
+
 			this.imageList = [];
 
 			for (let file of this.files) {

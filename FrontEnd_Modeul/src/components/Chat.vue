@@ -21,16 +21,13 @@
 		</div>
 	</div>
 
-	<v-dialog
-		v-model="dialog"
-		width="auto"
-	>
+	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
 				추방되었습니다.
 			</v-card-text>
 			<v-card-actions>
-			<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
+				<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -52,12 +49,13 @@
 					<!-- 유저 1명 -->
 					<div v-for="user in participantList" class="chat-side-list-user">
 						<div class="chat-side-list-user-info">
-							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
+							<div class="chat-user-img"><img class="chat-user-img"
+									:src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon"> 
-							<img @click="modalBanishHandler(user)" :class="{'d-none':!showBanish}" 
-								v-if="user.memberId!==this.chat.memberId"
+						<div class="chat-side-list-user-icon">
+							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
+								v-if="user.memberId !== this.chat.memberId"
 								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
@@ -70,7 +68,7 @@
 
 		</v-navigation-drawer>
 
-		<v-app-bar height="80" density="compact" flat absolute>
+		<v-app-bar height="80" density="compact" flat>
 
 			<template v-slot:prepend>
 				<v-btn icon="mdi-arrow-left" @click="goback"></v-btn>
@@ -87,7 +85,7 @@
 		<div class="chat-canvas">
 
 			<div v-for="m in messageView">
-				<div class="chat-line-wrap" v-if="!(m.type == 'ENTER' || m.type == 'LEAVE')" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
+				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
 					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
 					<div class="chat-box">
 						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
@@ -97,13 +95,23 @@
 						</div>
 					</div>
 				</div>
+				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
+					<!-- <p class="chat-content">{{ m.content }}</p> -->
+				<!-- </div> -->
+				<div class="chat-line-wrap notice" v-else>
+					<p class="chat-content">{{ m.content }}</p>
+				</div>
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click.stop="calDrawer = !calDrawer" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg"></div>
+				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg">
+				</div>
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img src="../../images/member/stuff/cal-result-btn.svg">
+				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
-					<div class="submit-btn"><img src="../../images/member/stuff/chat-submit-btn.svg"></div>
+					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
+					</div>
 				</div>
 			</div>
 
@@ -189,6 +197,65 @@
 		</section> -->
 	</v-navigation-drawer>
 
+	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
+        <section class="calc-result-default">
+            <h1 class="d-none">calculate</h1>
+            <section class="cal-result-main">
+                <header class="cal-result-header">
+                    <h1 class="d-none">title</h1>
+                    <div class="cal-result-title">정산결과</div>
+                    <div class="cal-result-del">삭제하기</div>
+                </header>
+
+                <main class="cal-result-user-list">
+                    <div class="cal-user">
+                        <div class="cal-user-img">
+                            <img src="/images/member/chatid113.svg" alt="사용자1">
+                        </div>
+                        <div class="cal-user-name">
+                            그럴 수박! 에
+                        </div>
+                        <div class="cal-user-self-result">
+                            333,333원
+                        </div>
+                    </div>
+
+                    <div class="cal-user">
+                        <div class="cal-user-img">
+                            <img src="/images/member/chatid110.svg" alt="사용자2">
+                        </div>
+                        <div class="cal-user-name">
+                            화난 식빵
+                        </div>
+                        <div class="cal-user-self-result">
+                            333,333원
+                        </div>
+                    </div>
+
+                    <div class="cal-user">
+                        <div class="cal-user-img">
+                            <img src="/images/member/chatid111.svg" alt="사용자3">
+                        </div>
+                        <div class="cal-user-name">
+                            아보카도 도레미
+                        </div>
+                        <div class="cal-user-self-result">
+                            333,333원
+                        </div>
+                    </div>
+                </main>
+                <div class="cal-result-check-form">
+                    <div class="cal-result-sum">
+                        합계: 999,999원
+                    </div>
+                    <div>
+                        <button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+                    </div>
+                </div>
+            </section>
+
+        </section>
+    </v-navigation-drawer>
 
 
 
@@ -204,38 +271,36 @@ export default {
 
 	data() {
 		return {
-            calDrawer: null,
-
+			calDrawer: null,
+			isCheckCalResult:null,
 			userName: "",
 			message: "",
 			recvList: [],
 			myUserId: this.$route.params.memberId,
-			// stuffId: 449,
 			stuffId: '',
 			drawer: null,
 			openModal: false,
 			stompClient: '',
-
 			participantList: '',
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12",
 				regDate: ''
 			},
-			memberInfo:'',
+			memberInfo: '',
 			messageView: [],
-			dialog:false,
-			banishUser:{
-				id:'',
-				nickname:'',
-				image:''
+			dialog: false,
+			banishUser: {
+				id: '',
+				nickname: '',
+				image: ''
 			},
-			openLeaveModal:false,
-			banishAuthority:false,
-			showBanish:false,
+			openLeaveModal: false,
+			banishAuthority: false,
+			showBanish: false,
 		}
 	},
-	
+
 	methods: {
 		memberPriceList(){
 			return this.participantList.map((m)=> {
@@ -250,12 +315,17 @@ export default {
 				this.message = ''
 			}
 		},
+		sendClickHandler() {
+			if (this.message != '' && this.message.trim() != '') {
+				this.send()
+				this.message = ''
+			}
+		},
 		send() {
 			if (this.stompClient && this.stompClient.connected) {
+				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
 				const date = new dayjs().locale('ko').format("A hh:mm");
 
-				// 여기에 entity값에 맞게 DB에서 값을 가져와서 심어주기만 하면 된다.
-				// 로그인을 통해 얻은 정보로 대체
 				const chatMessage = {
 					type: 'TALK',
 					stuffId: this.$route.params.stuffId,
@@ -283,24 +353,18 @@ export default {
 					// 소켓 연결 성공!
 					this.connected = true;
 
-					await fetch(`${this.$store.state.host}/api/chatlog?
-					stuffId=${this.$route.params.stuffId}&
-					memberId=${this.$route.params.memberId}`)
-						.then(response => response.text())
-						.then(result => {
-							this.messageView = JSON.parse(result)
-						})
-						.catch(error => console.log('error', error));
+					const response = await fetch(`${this.$store.state.host}/api/chatlog?
+					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
+					const result = await response.text();
+					this.messageView = JSON.parse(result)
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
-
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(JSON.parse(res.body));
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
-					// 로그인 구현 이후 로그인으로 얻은 정보로 대체
 					this.stompClient.send('/pub/chat/enterUser',
 						JSON.stringify({
 							type: 'ENTER',
@@ -312,109 +376,105 @@ export default {
 					)
 				});
 		},
-        exitchatRoom(){     
-            var requestOptions = {
-                method: 'DELETE',
-                redirect: 'follow'
-            };
+		exitchatRoom() {
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
 
-            fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
-            .then(response => response.text())
-            .then(result => {
-                console.log(result);
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+				.then(response => response.text())
+				.then(result => {
+					console.log(result);
 
-                this.stompClient.send('/pub/chat/exitUser',
-                    JSON.stringify({
-                        type: 'LEAVE',
-                        stuffId: this.$route.params.stuffId,
-                        memberId: this.memberInfo.id,
-                        sender: this.memberInfo.nickname,
-                        memberImage: this.memberInfo.image,
-                    })
-                )
+					this.stompClient.send('/pub/chat/exitUser',
+						JSON.stringify({
+							type: 'LEAVE',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+							sender: this.memberInfo.nickname,
+							memberImage: this.memberInfo.image,
+						})
+					)
 
-                // ** 소켓 끊어주기 추가
-                this.stompClient.disconnect((frame) => {
+					// ** 소켓 끊어주기 추가
+					this.stompClient.disconnect((frame) => {
 
-                        this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+						this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
 
-                        // 소켓 연결 끊기 성공!
-                        this.connected = false;
-                        this.$router.go(-1);
-                        console.log('소켓 연결 끊기 성공!', frame);
-                });
-                
-            })
-            .catch(error => console.log('error', error));
-        },
+						// 소켓 연결 끊기 성공!
+						this.connected = false;
+						this.$router.go(-1);
+						console.log('소켓 연결 끊기 성공!', frame);
+					});
+
+				})
+				.catch(error => console.log('error', error));
+		},
 		goback() {
 			this.$router.go(-1);
 		},
-		loadParticipationList() {
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
-				.then(response => response.json())
-				.then(dataList => {
-					this.participantList = dataList.memberList;
-				})
-				.catch(error => console.log('error', error));
+		async loadParticipationList() {
+			const response = await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+			const dataList = await response.json();
+			this.participantList = dataList.memberList;
+			this.chat = dataList.stuffView;
 		},
 		async loadParticipant() {
 			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:"+ this.memberInfo.id);
+			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			// 방장에게 추방 권한
-			if(this.chat.memberId === this.memberInfo.id){
+			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
 			}
 		},
-        banishUserHandler() {
-            
-            var requestOptions = {
-                method: 'DELETE',
-                redirect: 'follow'
-            };
+		banishUserHandler() {
 
-            fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
-            .then(response => response.text())
-            .then(result => {
-                console.log(result);
-                this.openModal = !this.openModal;
-                this.loadParticipationList();
-                this.dialog=true;
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
 
-           		// ** 소켓 끊어주기 추가
+			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
+				.then(response => response.text())
+				.then(result => {
+					console.log(result);
+					this.openModal = !this.openModal;
+					this.loadParticipationList();
+					this.dialog = true;
 
-                // 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
-                // 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
-                
-                // if(this.banishUser.id === this.$route.params.memberId){
-                //  this.$router.go(0);
-                //  this.stompClient.disconnect((frame) => {
-                //          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
-                            
-                //          // 소켓 연결 끊기 성공!
-                //          this.connected = false;
-                //          console.log('소켓 연결 끊기 성공!', frame);
+					// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
+					// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
 
-                //          // 강퇴된 그 사람이 뒤로가기 되기
-                            
-                //  });
-                //  this.$router.go(-1);
-                // }
-            
-            })
-            .catch(error => console.log('error', error));
-        },
+					// if(this.banishUser.id === this.$route.params.memberId){
+					//  this.$router.go(0);
+					//  this.stompClient.disconnect((frame) => {
+					//          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
+
+					//          // 소켓 연결 끊기 성공!
+					//          this.connected = false;
+					//          console.log('소켓 연결 끊기 성공!', frame);
+
+					//          // 강퇴된 그 사람이 뒤로가기 되기
+
+					//  });
+					//  this.$router.go(-1);
+					// }
+
+				})
+				.catch(error => console.log('error', error));
+		},
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
 			this.banishUser.id = user.memberId;
 			this.banishUser.nickname = user.memberNickname;
 			this.banishUser.image = user.memberImage;
-			console.log("banishUserId:" + this.banishUser.id); 
-			console.log("banishUserNickName:" + this.banishUser.nickname); 
+			console.log("banishUserId:" + this.banishUser.id);
+			console.log("banishUserNickName:" + this.banishUser.nickname);
 		},
 		modalBanishCloseHandler() {
 			this.openModal = !this.openModal;
@@ -440,8 +500,11 @@ export default {
 			const chatRegDateObj = dayjs(this.chat.regDate).locale('ko');
 			this.chat.regDate = chatRegDateObj.format("YYYY. M. D.");
 		},
-		showBanishHandler(){
-			this.showBanish=!this.showBanish;
+		showBanishHandler() {
+			this.showBanish = !this.showBanish;
+		},
+		calResultCheckHandler(){
+			this.isCheckCalResult = !this.isCheckCalResult;
 		}
 	},
 	beforeRouteLeave() {
@@ -453,25 +516,25 @@ export default {
 		this.loadParticipant();
 	},
 	updated() {
-		
+
 	},
 	async mounted() {
 		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
-				.then(response => response.json())
-				.then(dataList => {
-					this.participantList = dataList.memberList;
-					this.chat = dataList.stuffView;
-					this.formatChatRegDate();
-					console.log(this.participantList);
-					console.log("this.participantList.memberId: "+this.participantList[0].memberId);
-					console.log("this.chat.memberId:"+ this.chat.memberId);
-				})
-				.catch(error => console.log('error', error));
+			.then(response => response.json())
+			.then(dataList => {
+				this.participantList = dataList.memberList;
+				this.chat = dataList.stuffView;
+				this.formatChatRegDate();
+				console.log(this.participantList);
+				console.log("this.participantList.memberId: " + this.participantList[0].memberId);
+				console.log("this.chat.memberId:" + this.chat.memberId);
+			})
+			.catch(error => console.log('error', error));
 
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
-			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		}, 100);
+			window.scrollTo({ top: document.body.scrollHeight });
+		}, 50);
 
 		this.checkStuffLeader();
 	},
@@ -483,6 +546,7 @@ export default {
 			return this.messageView.length;
 		},
 	},
+	// computed: { chatLength: () => this.messageView.length },
 	watch: {
 		chatLength: function () {
 			setTimeout(() => {
@@ -711,8 +775,151 @@ export default {
             flex-grow: 0;
         }
 
+		.calc-result-default {
+	display: flex;
+	flex-direction: column;
 
-	
+
+	position: relative;
+	height: 740px;
+	/* width: 375px; */
+	width: 100%;
+	background: #f5f1f1;
+}
+
+.cal-result-main{
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	padding: 0px 24px 0px;
+	overflow: auto;
+
+	width: 375px;
+	height: 531px;
+	background: #fff;
+	border-radius: 30px 30px 10px 10px;
+	flex: none;
+	order: 1;
+	flex-grow: 1;
+}
+
+.cal-result-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	width: 327px;
+	height: 74px;
+
+}
+
+.cal-result-title {
+	color: #222222;
+	font-weight: 700;
+	font-size: 18px;
+	height: 37px;
+	margin-top: 18px;
+}
+
+.cal-result-del {
+	width: 327px;
+	height: 37px;
+
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-end;
+	padding-bottom: 11px;
+
+	font-size: 12px;
+	color: #8A8787;
+	cursor: pointer;
+}
+
+.cal-result-user-list {
+	width: 327px;
+	height: 140px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	border-image-slice: 200 100;
+	border-image-width: 1px;
+	border-image-repeat: repeat;
+}
+
+.cal-user {
+	display: flex;
+	justify-content: center;
+	margin-top: 15px;
+
+}
+
+.cal-user-img {
+	width: 24px;
+	height: 24px;
+	margin-left: 4px;
+}
+
+.cal-user img {
+	width: 100%;
+	height: 100%;
+}
+
+.cal-user-name {
+	width: 120px;
+	height: 24px;
+	font-size: 14px;
+	color: #333333;
+	margin-left: 11px;
+}
+
+.cal-user-self-result {
+	width: 111px;
+	font-size: 14px;
+	color: #333333;
+	margin-left: 56px;
+	text-align: right;
+	padding-right: 8px;
+}
+
+
+.cal-result-check-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	background-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+}
+
+.cal-result-sum {
+	width: 327px;
+	display: flex;
+	justify-content: flex-end;
+	font-size: 14px;
+	margin-top: 18px;
+
+}
+
+
+.cal-result-check-btn {
+	background-color: #63A0C2;
+	width: 136px;
+	height: 45px;
+	border-radius: 5px;
+	color: #FFFFFF;
+	font-size: 14px;
+	font-weight: bold;
+	margin-top: 286px;
+
+
+}
 
 .canvas,
 .v-app-bar {
@@ -739,6 +946,17 @@ export default {
 	width: 100%;
 	display: flex;
 	margin-top: 18px;
+}
+
+.chat-line-wrap.notice .chat-content {
+	margin: 0 auto;
+	border-radius: 12px 12px 12px 12px;
+	background-color: #f1f1f1;
+	font-size: 10px;
+	color: #848484;
+	padding: 6px 12px;
+	columns: #1A1A1A;
+	word-break: break-all;
 }
 
 .chat-line-wrap.mine {
@@ -834,7 +1052,7 @@ export default {
 }
 
 .chat-input {
-	width: 90%;
+	width: calc(100% - 24px);
 	margin-left: 14px;
 	font-size: 14px;
 }
@@ -894,9 +1112,9 @@ export default {
 	align-items: center;
 	color: #222222;
 	width: 160px;
-	overflow:hidden; 	
-	white-space:nowrap;
-	text-overflow:ellipsis; 
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .chat-side-people {
@@ -1102,7 +1320,6 @@ export default {
 	cursor: pointer;
 }
 
-.v-dialog:deep{
+.v-dialog:deep {
 	font-size: 14px;
-}
-</style>
+}</style>

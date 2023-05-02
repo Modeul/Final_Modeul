@@ -75,7 +75,8 @@ const routes = [
       { path: "stuff/listsearch", component: ListSearch },
       { path: "stuff/crawlinglist", component: CrawlingList },
       { path: "stuff/gps", component: Gps },
-      { path: "participation/list", component: ParticipationList }
+      { path: "participation/list", component: ParticipationList },
+			
     ]
   },
   {
