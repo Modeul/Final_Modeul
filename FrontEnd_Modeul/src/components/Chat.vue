@@ -36,7 +36,7 @@
 	</v-dialog>
 
 	<div class="canvas">
-		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1006;">
+		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1008;">
 			<div class="chat-side">
 				<div class="chat-side-top">
 					<div class="chat-side-top-left">
@@ -110,50 +110,61 @@
 		</div>
 	</div>
 
-	<v-navigation-drawer style="height: 80%; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom" temporary>
-		<!-- <section class="calc">
+	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom" temporary>
+		<section class="calc">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
                 <router-link to="list" class="icon calc-back">뒤로가기</router-link>
                 <div class="calc-header-title">정산하기</div>
             </header>
 
-			<form class="calc-contents" method="post">
-				<section class="calc-method-btn">
+			<form class="calc-contents" method="post" >
+				<section class="calc-method-btn calc-member-line">
 					<h1 class="d-none">정산 방법</h1>
 					<div>
-						1/N하기
+						<a class="btn-division"></a>
+						<span>1/N하기</span>
 					</div>
 					<div></div>
 					<div>
-						직접 입력
+						<a class="btn-writing"></a>
+						<span>직접 입력</span>
 					</div>
-					<div></div>
-				</section>
-				<section class="calc-members">
-					<h1 class="d-none">정산 인원</h1>
-					<div class="chat-user-img">
-						<img :src="'/images/member/stuff/'">
-					</div>
-					<div class="calc-members-nic"></div>
-					<div class="calc-member-price">
-						<input type="text"> 원
-					</div>
+					<div class="calc-member-line"> </div>
 				</section>
 				<section class="calc-total">
+					<h1 class="d-none">합계</h1>
+					<input type="text">원
+				</section>
+
+				<div class="calc-members-title">참여 인원</div>
+
+				<div class="calc-members">
+						<div class="chat-user-img">
+							<img :src="'/images/member/stuff/'">
+						</div>
+						<div class="calc-members-nic"></div>
+						<div class="calc-member-price">
+							<input type="text"> 원
+						</div>
+					</div>
+				
+
+				<!-- <section class="calc-total">
 					<h1 class="d-none">합계</h1>
 					<div>
 						<label>합계:</label>
 						<span></span>
 						<span>원</span>
 					</div>
-				</section>
+				</section> -->
 				<button type="submit" class="calc-button">정산하기</button>
 			</form>
 
 
-		</section> -->
-		<section class="calc-result">
+		</section>
+
+		<!-- <section class="calc-result">
 			<h1 class="d-none">정산 결과</h1>
 			<header class="result-header">
 				<div>정산결과</div>
@@ -175,7 +186,7 @@
 			
 			
 
-		</section>
+		</section> -->
 	</v-navigation-drawer>
 
 
@@ -486,12 +497,14 @@ export default {
 .calc {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
     padding: 0px 24px 24px;
     position: relative;
     height: 635px;
-    width: 100%;
-     
+    width: 375px;
+	align-self: center;
+	margin: auto;
+
     background: #F1F2F2;
 	border-radius: 30px 30px 0px 0px;
 }
@@ -523,18 +536,6 @@ export default {
         }
 
     
-        .confirmDialog {
-            font-weight: 500;
-            padding-right: 24px;
-            text-align: end;
-            font-size: 16px;
-        }
-        .confirmDialog-member {
-            display: flex;
-            margin-left: 20px;
-            padding: 3px;
-        }
-    
     .calc-contents {
         display: flex;
         flex-direction: column;
@@ -542,7 +543,7 @@ export default {
         padding: 8px 24px 0px;
         overflow: auto;
 
-        width: 100%;
+        width: 327px;
         height: 531px;
 		/* height: 80%; */
         background: #fff;
@@ -551,6 +552,16 @@ export default {
         order: 1;
         flex-grow: 1;
     }   
+	.btn-writing {
+		width: 20px;
+		height: 20px;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' d='M17 4a2.121 2.121 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zM9.5 17.5h8m-2-11l1 1'%3E%3C/path%3E%3C/svg%3E");
+	}
+	.btn-division {
+		width: 20px;
+		height: 20px;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
+	}
 		.calc-method-btn {
 			display: flex;
 			flex-direction: row;
@@ -610,7 +621,7 @@ export default {
             height: 70px;
             width: 100%;
             flex: none;
-            order: 0;
+            order: 4;
             flex-grow: 0;
         }
             .calc-members-nic {
@@ -629,25 +640,55 @@ export default {
             .calc-member-price input{
                 width: 50px;
             }
+			.calc-member-line {
+				width: 295px;
+				border-bottom: 2px solid #D9D9D9;
+				padding: 0;
+				margin: 0;
+			}
+			.calc-members-title {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				/* padding: 12px 16px 0px; */
+				margin-top: 28px;
+				gap: 16px;
+				font-size: 12px;
+				font-weight: 700;
+				color: #8A8787; 
+
+				width: 279px;
+				height: 28px;
+
+				flex: none;
+				order: 3;
+				flex-grow: 0;
+			}
+
         
         .calc-total {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: end;
-            padding: 20px 0px;
-            /* margin-right: 10%; */
-            gap: 20px;
-            width: 239px;
-            height: 60px;
-            background: #FFFFFF;
-            font-size: 12px;
-            font-weight: 700;
-            color: #222;
-            flex: none;
-            order: 1;
-            flex-grow: 0;
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+			align-items: flex-start;
+			margin-top: 36px;
+			gap: 16px;
+
+			width: 279px;
+			height: 48px;
+			font-size: 25px;
+			font-weight: 600;;
+
+			flex: none;
+			order: 2;
+			flex-grow: 0;
+
+			border-bottom: 2px solid #222;
         }
+		.calc-total input {
+			width: 275px;
+		}
+			
         .calc-button {
             width: 136px;
             height: 45px;
@@ -670,79 +711,8 @@ export default {
             flex-grow: 0;
         }
 
-.calc-result {
-	display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px 24px 24px;
-    position: relative;
-    height: 635px;
-    width: 100%;
-     
-    background: #fff;
-}
-	.result-header{
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 0px 10px;
 
-		width: 338px;
-		height: 79px;
-
-		flex: none;
-		order: 0;
-		flex-grow: 0;
-		/* margin: -24px 0px; */
-	}
-	.result-header div:first-child {
-		width: 318px;
-		height: 47px;
-		text-align: center;
-		padding: 12px;
-
-		flex: none;
-		order: 0;
-		flex-grow: 0;
-	}
-	.result-header button:nth-child(2) {
-		display: flex;
-		flex-direction: row;
-		justify-content: flex-end;
-		align-items: center;
-		padding: 0px;
-		padding-bottom: 12px;
-
-		width: 338px;
-		height: 24px;
-
-		font-size: 12px;
-
-		flex: none;
-		order: 1;
-		flex-grow: 0;
-
-		border-bottom: 2px dotted #000;
-	} 
-
-	.result-contents{
-		display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 8px 24px 0px;
-        overflow: auto;
-        width: 100%;
-        height: 531px;
-        flex: none;
-        order: 1;
-        flex-grow: 1;
-		border-bottom: 2px dotted #000;
-	}
-	.result-contents div:nth-child(3) {
-		/* border-bottom: 2px dotted #000; */
-	}
-
+	
 
 .canvas,
 .v-app-bar {
