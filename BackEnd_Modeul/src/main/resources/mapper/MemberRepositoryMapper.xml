@@ -127,7 +127,7 @@
 
 	<update id="updateImg" parameterType="Image">
 		update member
-		set image = #{image}
+		set image = #{name}
 		where id = #{id}
 	</update>
 
