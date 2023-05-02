@@ -33,7 +33,7 @@
 	</v-dialog>
 
 	<div class="canvas">
-		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1008;">
+		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1200;">
 			<div class="chat-side">
 				<div class="chat-side-top">
 					<div class="chat-side-top-left">
@@ -68,7 +68,7 @@
 
 		</v-navigation-drawer>
 
-		<v-app-bar height="80" density="compact" flat>
+		<v-app-bar height="80" density="compact" flat >
 
 			<template v-slot:prepend>
 				<v-btn icon="mdi-arrow-left" @click="goback"></v-btn>
