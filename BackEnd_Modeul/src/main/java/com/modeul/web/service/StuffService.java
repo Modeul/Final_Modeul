@@ -31,7 +31,7 @@ public interface StuffService {
 	Long getListCount(Long categoryId, int page);
 	Long getListCount(Long categoryId, int page, Long memberId);
 
-	int editStuff(Stuff stuff);
+	int editStuff(Stuff stuff, List<MultipartFile> imgs);
 
 	void deleteStuff(Long id);
 

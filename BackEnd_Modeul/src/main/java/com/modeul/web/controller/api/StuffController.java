@@ -120,22 +120,7 @@ public class StuffController {
 
 	/* 공구상품 정보 수정 */
 	@PutMapping("/stuff/update/{id}")
-	public String editStuff(
-		@RequestBody MultipartFile[] imgs,			
-		MultipartHttpServletRequest request,
-		@PathVariable("id") Long id,		
-		@RequestParam(name = "title") String title,			
-		@RequestParam(name = "place") String place,			
-		@RequestParam(name = "numPeople") String numPeople, 			
-		@RequestParam(name = "categoryId") Long categoryId,			
-		@RequestParam(name = "deadline") LocalDateTime deadline,			
-		@RequestParam(name = "price") String price,			
-		@RequestParam(name = "url") String url,			
-		@RequestParam(name = "content") String content,
-		@RequestParam(name = "coordX") String coordX,
-		  @RequestParam(name = "coordY") String coordY) throws IllegalStateException, IOException {
-
-			List<Image> imageList = new ArrayList<Image>(); 		// 파일 여러 개 받기	
+	public String editStuff(Stuff stuff, List<MultipartFile> imgs) {
 			
 		/* 수정시 이미지 처리 무시 -> 1차 이후 활용 */
 		/*
@@ -165,12 +150,8 @@ public class StuffController {
 				imageList.add(image);		
 			} 		
 	 */
-			Stuff stuff = new Stuff(title, place, numPeople, deadline, price, url, content, imageList, categoryId, id, coordX, coordY);		
-			stuff.setImageList(imageList); 		
-			System.out.println(stuff);		
 	
-			int updateCount = service.editStuff(stuff);
-			System.out.println(updateCount);	
+			int updateCount = service.editStuff(stuff, imgs);
 	
 			return "ok";
 
