@@ -170,18 +170,19 @@ public class StuffController {
 	@GetMapping("/stuff/crawlinglist")
 	public Map<String,Object> getCrawlingList(
 			@RequestParam(name = "q", required = false) String query,
-			@RequestParam(name="p", defaultValue = "1") int page,		
-			@RequestParam(name="c", required=false) Long categoryId) {
+			@RequestParam(name="p", defaultValue = "1") int page,
+			@RequestParam(name="c", required=false) Long categoryId,
+			@RequestParam(name="cname", required=false) String categoryName) {
 		
 		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
 		List<Crawling> queryList = crawlingservice.getViewAll(query , page , categoryId);
-		List<Crawling> categoryList = crawlingservice.getCategoryNameList(page , categoryId);
+		List<Crawling> categoryList = crawlingservice.getCategoryNameList(page , categoryName);
 		Long listCount = crawlingservice.getListCount(categoryId, page);
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("crawlingList", crawlingList);
 		dataList.put("queryList", queryList);
 		dataList.put("listCount", listCount);
-		// dataList.put("categoryList", categoryList);
+		dataList.put("categoryList", categoryList);
 
 		return dataList;
 	}

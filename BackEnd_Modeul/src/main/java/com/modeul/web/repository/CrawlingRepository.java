@@ -24,6 +24,7 @@ public interface CrawlingRepository {
     List<Crawling> findCategory(String query,
 								Long categoryId, 
 								Integer size, 
-								Integer offset);
+								Integer offset,
+								String categoryName);
 
 }

@@ -31,7 +31,7 @@ export default {
 			this.$router.go(-1);
 		},
 		categoryHandler(e){
-			console.log(e.target.attrs);
+			console.log(e.target.value);
 			// this.page=1;
 			// this.categoryId = e.target.value;
 			// console.log(this.categoryId);
@@ -103,11 +103,7 @@ export default {
 				</div>
 
 				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.categoryId">
-						<span v-if="c.categoryId == 1">쿠팡</span>
-						<span v-if="c.categoryId == 2">네이버</span>
-						<span v-if="c.categoryId == 3">GS프레시몰</span>
-					</button>
+					<button class="header-categ" @click="categoryHandler" name="cid" :value="c.categoryId">{{ c.categoryName }}</button>
 				</div>
 			</div>
 		</nav>
@@ -117,12 +113,13 @@ export default {
 			<div class="stuff-list" v-for="stuff in list">
 				<a :href="stuff.contenturl" target="_blank">
 						<div class="d-gr li-gr m-t-13px list-cl">
+							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
 								<img class="listview-image" :src="stuff.imgurl" alt="img">
 							</div>
 							<div class="li-categ-place">
 								<span class="li-categ-place-categoryName">
-									쿠팡
+									{{stuff.categoryName}}
 								</span>
 							</div>
 							<div class="li-subj">{{ stuff.title }}</div>

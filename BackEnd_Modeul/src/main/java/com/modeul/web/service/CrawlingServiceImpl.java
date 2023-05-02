@@ -42,9 +42,9 @@ public class CrawlingServiceImpl implements CrawlingService {
     }
 
     @Override
-    public List<Crawling> getCategoryNameList(int page, Long categoryId) {
+    public List<Crawling> getCategoryNameList(int page, String categoryName) {
         int size = page * 7;
-        return repository.findCategory(null, categoryId, size, 0);
+        return repository.findCategory(null, null, size, 0, categoryName);
     }
 
 
