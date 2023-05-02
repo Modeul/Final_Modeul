@@ -275,6 +275,8 @@
 .table-admin {
 	border: 1px solid transparent;
 	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
 }
 
 

@@ -74,7 +74,7 @@
             <span class="error-txt">{{this.ErrorMsg}}</span>
         </div>
         </div>
-        <div @click.prevent="submit" class="btn-save">저장하기</div>
+        <div v-if="this.nicknamebtn" @click.prevent="submit" class="btn-save">저장하기</div>
     </div>
 </template>
 <script>
@@ -98,7 +98,7 @@ export default {
                 this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
                 this.nicknamebtn = false;
             } else if (!this.nicknameDupl) {
-                this.ErrorMsg = "중복 된 닉네임입니다.";
+                this.ErrorMsg = "중복된 닉네임입니다.";
             } else if (this.loginInfo.nickname.length < 2 || this.loginInfo.nickname.length > 20) {
                 this.ErrorMsg = "닉네임을 2글자 이상 입력해주세요.";
             }
