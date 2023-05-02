@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.modeul.web.entity.Category;
+import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
@@ -117,4 +118,11 @@ public class ParticipationController {
         return data;
     }
     
+    @PostMapping("/aa")
+    public String putCalResultMsg(@RequestBody Message message){
+
+        participationService.saveCalResultMsg(message);
+
+        return "ok";
+   }
 }

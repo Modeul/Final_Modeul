@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
@@ -33,4 +34,6 @@ public interface ParticipationRepository {
     Integer findStuffCountBymemberId(Long memberId);
 
     ParticipationMemberView findMemberBystuffIdmemberId(Long stuffId, Long memberId);
+
+    void putCalResultMsg(Message message);
 }

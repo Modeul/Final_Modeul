@@ -33,7 +33,7 @@
 	</v-dialog>
 
 	<div class="canvas">
-		<v-navigation-drawer v-model="drawer" temporary location="right" width="268">
+		<v-navigation-drawer v-model="drawer" temporary location="right" width="268" style="z-index: 1008;">
 			<div class="chat-side">
 				<div class="chat-side-top">
 					<div class="chat-side-top-left">
@@ -49,12 +49,13 @@
 					<!-- 유저 1명 -->
 					<div v-for="user in participantList" class="chat-side-list-user">
 						<div class="chat-side-list-user-info">
-							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
+							<div class="chat-user-img"><img class="chat-user-img"
+									:src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
-						<div class="chat-side-list-user-icon"> 
-							<img @click="modalBanishHandler(user)" :class="{'d-none':!showBanish}" 
-								v-if="user.memberId!==this.chat.memberId"
+						<div class="chat-side-list-user-icon">
+							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
+								v-if="user.memberId !== this.chat.memberId"
 								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
@@ -103,7 +104,10 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div class="cal-btn"><img src="/images/member/stuff/cal-btn.svg"></div>
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg">
+				</div>
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img src="../../images/member/stuff/cal-result-btn.svg">
+				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
@@ -113,6 +117,67 @@
 
 		</div>
 	</div>
+
+
+	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
+		<section class="calc-result-default">
+			<h1 class="d-none">calculate</h1>
+			<section class="cal-result-main">
+				<header class="cal-result-header">
+					<h1 class="d-none">title</h1>
+					<div class="cal-result-title">정산결과</div>
+					<div class="cal-result-del">삭제하기</div>
+				</header>
+
+				<main class="cal-result-user-list">
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/chatid113.svg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							333,333원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/chatid110.svg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							333,333원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/chatid111.svg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							333,333원
+						</div>
+					</div>
+				</main>
+				<div class="cal-result-check-form">
+					<div class="cal-result-sum">
+						합계: 999,999원
+					</div>
+					<div>
+						<button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+					</div>
+				</div>
+			</section>
+
+		</section>
+	</v-navigation-drawer>
 </template>
 
 <script>
@@ -122,8 +187,11 @@ import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 
 export default {
+
 	data() {
 		return {
+			calDrawer: null,
+			isCheckCalResult:null,
 			userName: "",
 			message: "",
 			recvList: [],
@@ -146,14 +214,17 @@ export default {
 				nickname: '',
 				image: ''
 			},
-			openLeaveModal:false,
-			banishAuthority:false,
-			showBanish:false,
+			openLeaveModal: false,
+			banishAuthority: false,
+			showBanish: false,
 		}
 	},
-	computed: {
-	},
-methods: {
+
+	methods: {
+		openDutchResult() {
+			this.confirmDialog = true;
+		},
+
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
 				console.log("send");
@@ -270,11 +341,11 @@ methods: {
 			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:"+ this.memberInfo.id);
+			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			// 방장에게 추방 권한
-			if(this.chat.memberId === this.memberInfo.id){
+			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
 			}
 		},
@@ -292,8 +363,6 @@ methods: {
 					this.openModal = !this.openModal;
 					this.loadParticipationList();
 					this.dialog = true;
-
-           		// ** 소켓 끊어주기 추가
 
 					// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
 					// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
@@ -348,8 +417,11 @@ methods: {
 			const chatRegDateObj = dayjs(this.chat.regDate).locale('ko');
 			this.chat.regDate = chatRegDateObj.format("YYYY. M. D.");
 		},
-		showBanishHandler(){
-			this.showBanish=!this.showBanish;
+		showBanishHandler() {
+			this.showBanish = !this.showBanish;
+		},
+		calResultCheckHandler(){
+			this.isCheckCalResult = !this.isCheckCalResult;
 		}
 	},
 	beforeRouteLeave() {
@@ -361,19 +433,20 @@ methods: {
 		this.loadParticipant();
 	},
 	updated() {
+
 	},
 	async mounted() {
 		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
-				.then(response => response.json())
-				.then(dataList => {
-					this.participantList = dataList.memberList;
-					this.chat = dataList.stuffView;
-					this.formatChatRegDate();
-					console.log(this.participantList);
-					console.log("this.participantList.memberId: "+this.participantList[0].memberId);
-					console.log("this.chat.memberId:"+ this.chat.memberId);
-				})
-				.catch(error => console.log('error', error));
+			.then(response => response.json())
+			.then(dataList => {
+				this.participantList = dataList.memberList;
+				this.chat = dataList.stuffView;
+				this.formatChatRegDate();
+				console.log(this.participantList);
+				console.log("this.participantList.memberId: " + this.participantList[0].memberId);
+				console.log("this.chat.memberId:" + this.chat.memberId);
+			})
+			.catch(error => console.log('error', error));
 
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
@@ -388,7 +461,7 @@ methods: {
 	computed: {
 		chatLength: function () {
 			return this.messageView.length;
-		}
+		},
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
@@ -400,8 +473,313 @@ methods: {
 	},
 }
 </script>
+
 <style scoped>
-.canvas .v-app-bar {
+.calc-default {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0px 24px 24px;
+
+	position: relative;
+	height: 626px;
+	width: 100%;
+
+	background: #F1F2F2;
+}
+
+.cal-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	/* width: 327px;
+        height: 71px; */
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
+
+.cal-header div {
+	color: #222222;
+	font-weight: 700;
+	/* margin-left: 18px; */
+}
+
+.cal-back {
+	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
+	/* position: absolute; */
+	/* top: 18px;
+            left: 19px;*/
+
+	width: 16px;
+	height: 16px;
+
+	z-index: 9;
+}
+
+.confirmDialog {
+	font-weight: 500;
+	padding-right: 24px;
+	text-align: end;
+	font-size: 16px;
+}
+
+.confirmDialog-member {
+	display: flex;
+	margin-left: 20px;
+	padding: 3px;
+}
+
+
+.cal-contents {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 28px 24px 0px;
+	overflow: auto;
+	/* gap: 24px; */
+
+	/* width: 327px; */
+	width: 100%;
+	height: 531px;
+
+	background: #fff;
+	border-radius: 30px 30px 10px 10px;
+
+	flex: none;
+	order: 1;
+	flex-grow: 1;
+}
+
+.cal-members {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 20px 0px;
+	/* gap: 12px; */
+
+	/* width: 239px; */
+	height: 70px;
+	width: 100%;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
+
+.cal-members div:nth-child(2) {
+	flex-grow: 1;
+	margin: 0 10px;
+	font-size: 12px;
+}
+
+.cal-member-price {
+	position: relative;
+	right: 4px;
+
+	font-size: 12px;
+	font-weight: 700;
+	color: #222;
+}
+
+.cal-member-price input {
+	width: 50px;
+}
+
+.cal-sum {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	justify-content: end;
+	padding: 20px 0px;
+	margin-right: 10%;
+	gap: 20px;
+
+	width: 239px;
+	height: 60px;
+
+	background: #FFFFFF;
+	font-size: 12px;
+	font-weight: 700;
+	color: #222;
+
+	flex: none;
+	order: 1;
+	flex-grow: 0;
+}
+
+.cal-button {
+	width: 136px;
+	height: 45px;
+
+	/* position: absolute;
+            left: 119.5px;
+            right: 119.5px;
+            top: 514px;
+            bottom: 90.6px; */
+
+	border-radius: 10px;
+
+	background: #63A0C2;
+	font-size: 12px;
+	color: #fff;
+	font-weight: 700;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+}
+
+.calc-result-default {
+	display: flex;
+	flex-direction: column;
+
+
+	position: relative;
+	height: 740px;
+	/* width: 375px; */
+	width: 100%;
+	background: #f5f1f1;
+}
+
+.cal-result-main{
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	padding: 0px 24px 0px;
+	overflow: auto;
+
+	width: 375px;
+	height: 531px;
+	background: #fff;
+	border-radius: 30px 30px 10px 10px;
+	flex: none;
+	order: 1;
+	flex-grow: 1;
+}
+
+.cal-result-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	width: 327px;
+	height: 74px;
+
+}
+
+.cal-result-title {
+	color: #222222;
+	font-weight: 700;
+	font-size: 18px;
+	height: 37px;
+	margin-top: 18px;
+}
+
+.cal-result-del {
+	width: 327px;
+	height: 37px;
+
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-end;
+	padding-bottom: 11px;
+
+	font-size: 12px;
+	color: #8A8787;
+	cursor: pointer;
+}
+
+.cal-result-user-list {
+	width: 327px;
+	height: 140px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	border-image-slice: 200 100;
+	border-image-width: 1px;
+	border-image-repeat: repeat;
+}
+
+.cal-user {
+	display: flex;
+	justify-content: center;
+	margin-top: 15px;
+
+}
+
+.cal-user-img {
+	width: 24px;
+	height: 24px;
+	margin-left: 4px;
+}
+
+.cal-user img {
+	width: 100%;
+	height: 100%;
+}
+
+.cal-user-name {
+	width: 120px;
+	height: 24px;
+	font-size: 14px;
+	color: #333333;
+	margin-left: 11px;
+}
+
+.cal-user-self-result {
+	width: 111px;
+	font-size: 14px;
+	color: #333333;
+	margin-left: 56px;
+	text-align: right;
+	padding-right: 8px;
+}
+
+
+.cal-result-check-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	background-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+}
+
+.cal-result-sum {
+	width: 327px;
+	display: flex;
+	justify-content: flex-end;
+	font-size: 14px;
+	margin-top: 18px;
+
+}
+
+
+.cal-result-check-btn {
+	background-color: #63A0C2;
+	width: 136px;
+	height: 45px;
+	border-radius: 5px;
+	color: #FFFFFF;
+	font-size: 14px;
+	font-weight: bold;
+	margin-top: 286px;
+
+
+}
+
+.canvas,
+.v-app-bar {
 	min-width: 320px;
 }
 
@@ -591,9 +969,9 @@ methods: {
 	align-items: center;
 	color: #222222;
 	width: 160px;
-	overflow:hidden; 	
-	white-space:nowrap;
-	text-overflow:ellipsis; 
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .chat-side-people {
@@ -801,5 +1179,4 @@ methods: {
 
 .v-dialog:deep {
 	font-size: 14px;
-}
-</style>
+}</style>

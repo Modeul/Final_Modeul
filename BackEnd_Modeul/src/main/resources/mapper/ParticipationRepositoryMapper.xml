@@ -98,5 +98,10 @@
     group by member_id;
   </select>
 
+	<insert id="putCalResultMsg" parameterType="Message">
+		insert into message(sender,content, participation_id)
+		values(#{sender}, #{content},#{participationId})
+	</insert>
+
 
 </mapper>

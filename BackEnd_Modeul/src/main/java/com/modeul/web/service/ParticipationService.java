@@ -2,6 +2,7 @@ package com.modeul.web.service;
 
 import java.util.List;
 
+import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
@@ -22,4 +23,6 @@ public interface ParticipationService {
     int getStuffCountBymemberId(Long memberId);
 
     ParticipationMemberView getMemberBystuffIdmemberId(Long stuffId, Long memberId);
+
+    void saveCalResultMsg(Message message);
 }
