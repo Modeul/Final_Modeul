@@ -233,24 +233,24 @@ export default {
 			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
 				<div class="reg-stuff"></div>
-			</router-link>
+			</router-link> 
 		</main>
 
-		<nav class="navi-bar d-fl-jf" style="display: none;">
-			<div>
-				<router-link to="/member/stuff/list" class="icon icon-home m-notop">home</router-link>
+		<nav class="navi-bar d-fl-jf">
+			<div class="navi-icon">
+				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
 			</div>
 			<div>
-				<router-link to="/member/stuff/listsearch" class="icon icon-search m-notop">search</router-link>
+				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
 			</div>
-			<div>
-				<router-link to="/member/stuff/reg" class="icon icon-post m-notop">post+</router-link>
+			<div class="navi-icon">
+				<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
 			</div>
-			<div>
-				<router-link to="/member/participation/list" class="icon icon-chat m-notop">chat</router-link>
-			</div>
-			<div>
-				<a class="icon icon-info m-notop">mypage</a>
+			<div class="navi-icon">
+				<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
 			</div>
 		</nav>
 	</section>

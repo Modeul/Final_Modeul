@@ -33,7 +33,9 @@
             <!-- 아이디찾기 ~ 플렉스 -->
             <div class="find-container">
                 <div class="find-box">
-                    <span class="find-text">아이디 찾기</span>
+                    <router-link to="/login/findid">
+                        <span class="find-text">아이디 찾기</span>
+                    </router-link>
                     <span class="find-text2">|</span>
                     <router-link to="/login/findpwd">
                         <span class="find-text">비밀번호 찾기</span>
