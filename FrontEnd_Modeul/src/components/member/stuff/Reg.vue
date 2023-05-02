@@ -184,7 +184,7 @@ export default {
 				categoryId: 1,
 				deadline: '',
 				price: '',
-				url: '1',
+				url: '',
 				content: '',
 				imageList: [
 					{
@@ -298,12 +298,12 @@ export default {
 					redirect: 'follow'
 				};
 
-				fetch(`${this.$store.state.host}/api/stuff/upload`, requestOptions)
+				await fetch(`${this.$store.state.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
 
-				this.$router.push('/member/stuff/list')
+				this.$router.replace('/member/stuff/list')
 			}
 		},
 
