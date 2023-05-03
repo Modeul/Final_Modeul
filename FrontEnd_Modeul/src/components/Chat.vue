@@ -83,7 +83,6 @@
 		</v-app-bar>
 
 		<div class="chat-canvas">
-
 			<div v-for="m in messageView">
 				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
 					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
@@ -132,8 +131,8 @@
 				<section class="calc-method-btn calc-member-line">
 					<h1 class="d-none">정산 방법</h1>
 					<div>
-						<a class="btn-division"></a>
-						<span>1/N하기</span>
+						<a :class="(method === false) ? 'color-btn-chipin' : 'btn-chipin'"></a>
+						<span :style="(method === false) ? { color: '#63A0C2'} : {}">1/N하기</span>
 					</div>
 					<div></div>
 					<div>
@@ -142,10 +141,11 @@
 					</div>
 					<div class="calc-member-line"> </div>
 				</section>
-				<section class="calc-total">
-					<h1 class="d-none">합계</h1>
+				
+				<div :class="(method === false) ? 'calc-input-total' : ''">
 					<input type="text" v-model.number="totalPrice" @input="chipinHandler">원
-				</section>
+				</div>
+				
 
 				<div class="calc-members-title">참여 인원</div>
 
@@ -157,21 +157,27 @@
 						<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
 						<div class="calc-member-price">
-							<input type="text" placeholder="0" dir="rtl"> 원
+							<div :class="method === false ? 'calc-member-span-price' : ''">
+								<span placeholder="0" dir="rtl">{{ chipinResult }}</span>원
+							</div> 
 						</div>
 					</div>
 				</div>
-
-
-				<!-- <section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div>
-						<label>합계:</label>
-						<span></span>
-						<span>원</span>
+				<!-- <div v-for="user in participantList" class="calc-member-div">
+					<div class="chat-user-img">
+						<img :src="'/images/member/' + user.memberImage">
 					</div>
-				</section> -->
-				<button type="submit" class="calc-button">정산하기</button>
+					<div class="calc-members-nic">{{ user.memberNickname }}</div>
+					
+					<div :class="method === false ? 'calc-member-span-price' : ''">
+						<span placeholder="0" dir="rtl">{{ chipinResult }}</span>원
+						<input type="text" v-model.number="mp.value1" >원
+					</div> 
+				</div> -->
+				<!-- <div @click="blurHandler">aa</div> -->
+
+				
+				<button  type="submit" class="calc-button">정산하기</button>
 			</form>
 
 
@@ -278,16 +284,29 @@ export default {
 			banishAuthority: false,
 			showBanish: false,
 
+			method: false,
 			chipinResult: 0,
+			totalPriceComma: '',
+			totalPriceAlert: '',
+
+			memberPrice: 0
+			// memberPriceList: [{'key'}]
+			
+			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
 		}
 	},
 
 	methods: {
-		memberPriceList() {
-			return this.participantList.map((m) => {
-				return { key: m.memberNickname, value: price }
-			})
+		blurHandler(){
+			console.log(this.memberPriceList);
 		},
+
+		chipinHandler(){
+            console.log(this.totalPrice)
+            this.chipinResult = ((this.totalPrice/this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+            return this.chipinResult;
+
+        },
 
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
@@ -526,6 +545,14 @@ export default {
 		chatLength: function () {
 			return this.messageView.length;
 		},
+		// memberPriceList: function() {
+		// 	return this.participantList.map((m)=> {
+				
+		// 		return {key: m.memberNickname, value1: this.memberPrice, value2: m.memberImage}
+		// 	})
+		// }
+
+
 		
 	},
 	// computed: { chatLength: () => this.messageView.length },
@@ -534,6 +561,13 @@ export default {
 			setTimeout(() => {
 				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 			}, 50);
+		},
+		// totalPriceComma: function(){
+		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
+		// }
+		totalPriceAlert: function() {
+			if(this.totalPrice > 999999)
+				return console.log("over");
 		}
 	},
 }
@@ -609,12 +643,18 @@ export default {
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' d='M17 4a2.121 2.121 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zM9.5 17.5h8m-2-11l1 1'%3E%3C/path%3E%3C/svg%3E");
 }
 
-.btn-division {
+.btn-chipin {
 	width: 20px;
 	height: 20px;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
 }
+.color-btn-chipin {
+	width: 20px;
+	height: 20px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
+	filter: invert(62%) sepia(10%) saturate(1733%) hue-rotate(157deg) brightness(96%) contrast(80%);
 
+}
 .calc-method-btn {
 	display: flex;
 	flex-direction: row;
@@ -629,6 +669,8 @@ export default {
 	flex: none;
 	order: 0;
 	flex-grow: 0;
+
+	font-weight: 700;
 }
 
 .calc-method-btn>div:nth-child(2) {
@@ -693,13 +735,13 @@ export default {
 	font-size: 12px;
 }
 
-.calc-member-price {
+.calc-member-span-price {
 	position: relative;
 	right: 4px;
 
 	font-size: 12px;
 	font-weight: 700;
-	color: #222;
+	color: #8A8787;
 
 	margin: auto;
 }
@@ -740,7 +782,7 @@ input::placeholder {
 }
 
 
-.calc-total {
+.calc-input-total {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
@@ -752,7 +794,6 @@ input::placeholder {
 	height: 48px;
 	font-size: 25px;
 	font-weight: 600;
-	;
 
 	flex: none;
 	order: 2;
@@ -761,10 +802,12 @@ input::placeholder {
 	border-bottom: 2px solid #222;
 }
 
-.calc-total input {
+.calc-input-total input {
 	width: 235px;
+	font-size: 25px;
 	text-align: right;
 }
+
 
 .calc-button {
 	width: 136px;
