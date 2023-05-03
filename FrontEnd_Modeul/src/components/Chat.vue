@@ -144,7 +144,9 @@
 				</section>
 				<section class="calc-total">
 					<h1 class="d-none">합계</h1>
-					<input type="text">원
+					<!-- <input type="text">원 -->
+					<div v-if="false"><input type="text"> 원</div>
+					<div v-if="true">{{ total }}</div>
 				</section>
 
 				<div class="calc-members-title">참여 인원</div>
@@ -157,11 +159,10 @@
 						<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
 						<div class="calc-member-price">
-							<input type="text" placeholder="0" dir="rtl"> 원
+							<input type="text" v-model=price[user.memberId] maxlength="8"> 원
 						</div>
 					</div>
 				</div>
-
 
 				<!-- <section class="calc-total">
 					<h1 class="d-none">합계</h1>
@@ -171,7 +172,7 @@
 						<span>원</span>
 					</div>
 				</section> -->
-				<button type="submit" class="calc-button">정산하기</button>
+				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
 			</form>
 
 
@@ -284,6 +285,8 @@ export default {
 			openModal: false,
 			stompClient: '',
 			participantList: '',
+			price: {},
+			total: '',
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12",
@@ -507,6 +510,24 @@ export default {
 		},
 		calResultCheckHandler() {
 			this.isCheckCalResult = !this.isCheckCalResult;
+		},
+		inputCheck(event) {
+			console.log(event);
+			const regExp = /[^0-9]*/g;
+			const ele = event.target;
+			if (regExp.test(ele.value)) {
+				ele.value = ele.value.replace(regExp, '');
+			}
+
+			// if (
+			// 	!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
+			// 	(isNaN(Number(event.key)) || event.code === 'Space')
+			// )
+			// 	event.preventDefault();
+
+		},
+		calculate() {
+			console.log(this.price);
 		}
 	},
 	beforeRouteLeave() {
@@ -547,6 +568,13 @@ export default {
 		chatLength: function () {
 			return this.messageView.length;
 		},
+		total: function () {
+			let total = (Object.values(this.price).reduce((accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue), 0));
+			if (isNaN(total))
+				return "숫자만 입력해 주세요."
+			else
+				return total + " 원";
+		}
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
@@ -695,12 +723,18 @@ export default {
 	align-items: center;
 	/* padding: 20px 0px; */
 	width: 100%;
+	height: 230px;
 	/* flex: none; */
 	order: 4;
 	/* flex-grow: 0; */
+	overflow: scroll;
 }
 
-.calc-member-div{
+.calc-members::-webkit-scrollbar {
+  display: none;
+}
+
+.calc-member-div {
 	display: flex;
 	flex-direction: row;
 	margin-top: 4px;
@@ -724,8 +758,8 @@ export default {
 	margin: auto;
 }
 
-input::placeholder { 
-	text-align: right; 
+input::placeholder {
+	text-align: right;
 }
 
 .calc-member-price input {
@@ -1237,7 +1271,7 @@ input::placeholder {
 	margin-top: 5px;
 }
 
-.chat-user-img img{
+.chat-user-img img {
 	width: 100%;
 	height: 100%;
 }
