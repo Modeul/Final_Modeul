@@ -20,11 +20,8 @@
 }
 
 .search-container-admin-sr {
-    display: flex;
-    justify-content: center;
-    border-radius: 10px;
-  
-    width: 37.5%;            /* 여기 수정 */
+    margin: auto;
+    width: 300px;            /* 여기 수정 */
 }
 
 .search-container-admin1 {
@@ -86,22 +83,28 @@ table tbody tr.bg td {
   flex-direction: column;
   border: 2px solid #D1D5DB;
   border-radius: 10px;
-  width: 1050px;
 }
-
-
 .admin-categ-table{
   display: flex;
   flex-direction: column;
-  width: 1050px;
-  margin:auto;
+  width: 70%;
+  margin: auto;
+
 }
 .table-head{
   display: flex;
-  width: 1050px;
+  justify-content: space-between;
+  font-size: 12px;
 }
 .table-body{
   display: flex;
   flex-direction: column;
-  width: 1050px;
+  height: fit-content;
+  font-size: 10px;
+  text-align: left;
+  padding: 0;
+}
+.search-box{
+  width: 70%;
+  margin: auto;
 }
