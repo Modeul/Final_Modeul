@@ -114,13 +114,11 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 
 	<!-- ** 정산 입력 폼 모달 ** -->
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
-		temporary>
+	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom" temporary>
 		<section class="calc">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
@@ -128,7 +126,7 @@
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post">
+			<!-- <form class="calc-contents" method="post">
 				<section class="calc-method-btn calc-member-line">
 					<h1 class="d-none">정산 방법</h1>
 					<div :class="{ 'calc-btn-color': calcSwitch }">
@@ -144,15 +142,12 @@
 				</section>
 				<section class="calc-total">
 					<h1 class="d-none">합계</h1>
-					<!-- <input type="text">원 -->
 					<div v-if="calcSwitch" class="calc-input-total">
 						<input type="text" v-model.number="totalPrice" @input="chipinHandler"
 							placeholder="총가격을 입력해 주세요.">원
 					</div>
 				</section>
-
 				<div class="calc-members-title">참여 인원</div>
-
 				<div class="calc-members">
 					<div v-for="user in participantList" class="calc-member-div">
 						<div class="chat-user-img">
@@ -167,49 +162,44 @@
 							</span>
 						</div>
 					</div>
-
 				</div>
-
 				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span v-if="totalText">합계</span>{{ total }}</div>
-
-				<!-- <section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div>
-						<label>합계:</label>
-						<span></span>
-						<span>원</span>
-					</div>
-				</section> -->
 				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
-			</form>
+			</form> -->
 
-
-		</section>
-
-		<!-- <section class="calc-result">
-			<h1 class="d-none">정산 결과</h1>
-			<header class="result-header">
-				<div>정산결과</div>
-				<button>삭제하기</button>
-			</header>
-			<section class="result-contents">
-				<h1 class=d-none>결과 내용</h1>
-				<div class="calc-members">
-					<div class="chat-user-img">
-						<img :src="'/images/member/' + user.memberImage">
+			<form class="calc-contents">
+				
+				<div class="account-title">
+					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>	
+					<span>계좌 정보를</span><br>
+					<span>입력해주세요.</span>
+				</div>
+				<div class="account-input">
+					<v-select
+						v-model="selectBank"
+						font-size="20px"
+						label="은행 선택"
+						:items="banks"
+						variant="underlined"
+						>
+					</v-select>
+					<v-text-field 
+						label="계좌번호" 
+						variant="underlined"
+						>
+					</v-text-field>
+					<!-- <input class="account-input-box" pl> -->
+				</div>
+				<div class="account-recent">
+					<div>최근 등록 계좌</div>
+					<div>
+						2343242423423
 					</div>
-					<div class="calc-members-nic">{{ user.memberNickname }}</div>
-					
-					<div :class="method === false ? 'calc-member-span-price' : ''">
-						<span placeholder="0" dir="rtl">{{ chipinResult }}</span>원
-						<input type="text" v-model.number="mp.value1" >원
-					</div> 
-				</div> -->
-		<!-- <div @click="blurHandler">aa</div> -->
+				</div>
+				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
 
-
-
-
+			</form>
+		</section>
 	</v-navigation-drawer>
 
 	<!-- ** 정산 결과 모달 ** -->
@@ -404,10 +394,18 @@ export default {
 			totalPriceComma: '',
 			totalPriceAlert: '',
 			totalText: true,
-			memberPrice: 0
+			memberPrice: 0,
 			// memberPriceList: [{'key'}]
 
 			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
+		
+			
+			banks: ['국민은행', '기업은행'
+			
+			// { state: 'Nebraska', abbr: 'NE' },
+			// { state: 'California', abbr: 'CA' },
+			// { state: 'New York', abbr: 'NY' },
+			],
 		}
 	},
 
@@ -738,9 +736,9 @@ export default {
 	gap: 100px;
 	width: 327px;
 	height: 71px;
-	/* flex: none; */
-	/* order: 0; */
-	/* flex-grow: 0; */
+	flex: none;
+	order: 0;
+	flex-grow: 0;
 }
 
 .calc-header-title {
@@ -760,10 +758,11 @@ export default {
 
 
 .calc-contents {
-	/* display: flex; */
-	/* flex-direction: column; */
-	align-items: center;
-	padding: 8px 24px 0px;
+	
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 0px 24px 0px;
 	/* overflow: auto; */
 
 	width: 327px;
@@ -771,9 +770,63 @@ export default {
 	/* height: 80%; */
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
-	/* flex: none; */
-	/* order: 1; */
-	/* flex-grow: 1; */
+	flex: none;
+	order: 1;
+	flex-grow: 1;
+}
+/* .calc-account {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 0px;
+
+	width: 279px;
+	height: 92px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+} */
+
+.account-title {
+	font-weight: 600;
+	font-size: 20px;
+	padding-top: 32px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
+.account-title-leader {
+	color: #63A0C2;
+}
+.account-input {
+	flex: none;
+	order: 1;
+	flex-grow: 0;
+
+	padding-top: 28px;
+}
+	.account-input-box {
+		width: 236px;
+		height: 48px;
+		background: #FFFFFF;
+		border: 1px solid #888888;
+		border-radius: 10px;
+		margin-bottom: 8px;
+	}
+.account-recent {
+	padding: 16px 4px;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+}
+.account-recent>div:first-child{
+	font-size: 14px;
+	font-weight: 700;
+	color:#63A0C2;
 }
 
 .btn-writing {
