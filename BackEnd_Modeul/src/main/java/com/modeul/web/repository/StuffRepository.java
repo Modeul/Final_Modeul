@@ -22,7 +22,8 @@ public interface StuffRepository {
 								String orderDir,
 								Integer size, 
 								Integer offset,
-								Long memberId
+								Long memberId,
+								String dongCode
 								);
 
 	Stuff findbyId(Long id);

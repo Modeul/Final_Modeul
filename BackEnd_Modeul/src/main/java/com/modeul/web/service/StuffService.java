@@ -21,9 +21,9 @@ public interface StuffService {
 	List<StuffView> getViewAll(String query, Long categoryId, int page, Long memberId);
 
 	List<StuffView> getRecentViewList(Long categoryId, int page);
-	List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId);
-	List<StuffView> getRecentViewList(String query, Long categoryId, int page);
-	List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId);
+	List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId, String dongCode);
+	List<StuffView> getRecentViewList(String query, Long categoryId, int page, String dongCode);
+	List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId, String dongCode);
 	
 	Stuff getById(Long id);
 	StuffView getViewById(Long id);

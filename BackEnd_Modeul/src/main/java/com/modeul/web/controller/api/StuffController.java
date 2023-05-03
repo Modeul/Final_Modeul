@@ -58,11 +58,15 @@ public class StuffController {
 	public Map<String, Object> getList(@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "p", defaultValue = "1") int page,
 			@RequestParam(name = "c", required = false) Long categoryId,
-			@RequestParam(name = "id", required = false) Long memberId
+			@RequestParam(name = "id", required = false) Long memberId,
+			@RequestParam(name = "dc", required = false) String dongCode
 			) {
-		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page);
-		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId);
+		System.out.println("동코드"+dongCode);
+		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
+		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId, dongCode); 
 		List<Category> categoryList = categoryService.getList();
+		
+		
 		Long listCount = service.getListCount(categoryId, page, memberId);
 
 		Map<String, Object> dataList = new HashMap<>();
