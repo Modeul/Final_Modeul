@@ -32,7 +32,7 @@ public class StuffServiceImpl implements StuffService {
 	@Override
 	public List<StuffView> getViewAll() {
 
-		return repository.findViewAll("", null, null, null, 10, 0, null);
+		return repository.findViewAll(null, null, "reg_date", "desc", null, null, null);
 	}
 
 	@Override
