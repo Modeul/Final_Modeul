@@ -83,7 +83,6 @@
 		</v-app-bar>
 
 		<div class="chat-canvas">
-
 			<div v-for="m in messageView">
 				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
 					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
@@ -131,22 +130,24 @@
 			<form class="calc-contents" method="post">
 				<section class="calc-method-btn calc-member-line">
 					<h1 class="d-none">정산 방법</h1>
-					<div>
-						<a class="btn-division"></a>
-						<span>1/N하기</span>
+					<div :class="{ 'calc-btn-color': calcSwitch }">
+						<a class="btn-chipin"></a>
+						<span @click="calc1n" class="calc-btn">1/N하기</span>
 					</div>
 					<div></div>
-					<div>
+					<div :class="{ 'calc-btn-color': !calcSwitch }">
 						<a class="btn-writing"></a>
-						<span>직접 입력</span>
+						<span @click="calcdir" class="calc-btn">직접 입력</span>
 					</div>
 					<div class="calc-member-line"> </div>
 				</section>
 				<section class="calc-total">
 					<h1 class="d-none">합계</h1>
 					<!-- <input type="text">원 -->
-					<div v-if="false"><input type="text"> 원</div>
-					<div v-if="true">{{ total }}</div>
+					<div v-if="calcSwitch" class="calc-input-total">
+						<input type="text" v-model.number="totalPrice" @input="chipinHandler"
+							placeholder="총가격을 입력해 주세요.">원
+					</div>
 				</section>
 
 				<div class="calc-members-title">참여 인원</div>
@@ -159,10 +160,17 @@
 						<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
 						<div class="calc-member-price">
-							<input type="text" v-model=price[user.memberId] maxlength="8"> 원
+							<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
+							<span v-if="!calcSwitch" class="calc-member-span-price">
+								<input type="text" v-model=price[user.memberId] maxlength="8" placeholder="0"> 원
+							</span>
 						</div>
 					</div>
+
 				</div>
+
+				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="totalText">합계</span><span>{{ total }}</span></div>
+
 
 				<!-- <section class="calc-total">
 					<h1 class="d-none">합계</h1>
@@ -188,19 +196,20 @@
 				<h1 class=d-none>결과 내용</h1>
 				<div class="calc-members">
 					<div class="chat-user-img">
-						<img :src="'/images/member/stuff/'">
+						<img :src="'/images/member/' + user.memberImage">
 					</div>
-					<div class="calc-members-nic"></div>
-					<div class="calc-member-price">
-						<input type="text"> 원
-					</div>
-				</div>
-				<div	> </div>
-			</section>
-			
-			
+					<div class="calc-members-nic">{{ user.memberNickname }}</div>
+					
+					<div :class="method === false ? 'calc-member-span-price' : ''">
+						<span placeholder="0" dir="rtl">{{ chipinResult }}</span>원
+						<input type="text" v-model.number="mp.value1" >원
+					</div> 
+				</div> -->
+		<!-- <div @click="blurHandler">aa</div> -->
 
-		</section> -->
+
+
+
 	</v-navigation-drawer>
 
 	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
@@ -303,14 +312,28 @@ export default {
 			openLeaveModal: false,
 			banishAuthority: false,
 			showBanish: false,
+
+			calcSwitch: true,
+			chipinResult: 0,
+			totalPriceComma: '',
+			totalPriceAlert: '',
+			totalText: true,
+			memberPrice: 0
+			// memberPriceList: [{'key'}]
+
+			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
 		}
 	},
 
 	methods: {
-		memberPriceList() {
-			return this.participantList.map((m) => {
-				return { key: m.memberNickname, value: price }
-			})
+		blurHandler() {
+			console.log(this.memberPriceList);
+		},
+
+		chipinHandler() {
+			console.log(this.totalPrice)
+			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+			return this.chipinResult;
 		},
 
 		sendMessage(e) {
@@ -512,19 +535,24 @@ export default {
 			this.isCheckCalResult = !this.isCheckCalResult;
 		},
 		inputCheck(event) {
-			console.log(event);
-			const regExp = /[^0-9]*/g;
-			const ele = event.target;
-			if (regExp.test(ele.value)) {
-				ele.value = ele.value.replace(regExp, '');
-			}
+			// console.log(event);
+			// const regExp = /[^0-9]*/g;
+			// const ele = event.target;
+			// if (regExp.test(ele.value)) {
+			// 	ele.value = ele.value.replace(regExp, '');
+			// }
 
 			// if (
 			// 	!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
 			// 	(isNaN(Number(event.key)) || event.code === 'Space')
 			// )
 			// 	event.preventDefault();
-
+		},
+		calc1n() {
+			this.calcSwitch = true;
+		},
+		calcdir() {
+			this.calcSwitch = false;
 		},
 		calculate() {
 			console.log(this.price);
@@ -570,10 +598,14 @@ export default {
 		},
 		total: function () {
 			let total = (Object.values(this.price).reduce((accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue), 0));
-			if (isNaN(total))
+			if (isNaN(total)) {
+				this.totalText = false;
 				return "숫자만 입력해 주세요."
-			else
+			}
+			else{
+				this.totalText = true;
 				return total + " 원";
+			}
 		}
 	},
 	// computed: { chatLength: () => this.messageView.length },
@@ -582,6 +614,13 @@ export default {
 			setTimeout(() => {
 				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 			}, 50);
+		},
+		// totalPriceComma: function(){
+		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
+		// }
+		totalPriceAlert: function () {
+			if (this.totalPrice > 999999)
+				return console.log("over");
 		}
 	},
 }
@@ -635,8 +674,8 @@ export default {
 
 
 .calc-contents {
-	display: flex;
-	flex-direction: column;
+	/* display: flex; */
+	/* flex-direction: column; */
 	align-items: center;
 	padding: 8px 24px 0px;
 	/* overflow: auto; */
@@ -657,10 +696,19 @@ export default {
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' d='M17 4a2.121 2.121 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zM9.5 17.5h8m-2-11l1 1'%3E%3C/path%3E%3C/svg%3E");
 }
 
-.btn-division {
+.btn-chipin {
 	width: 20px;
 	height: 20px;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.calc-btn:hover {
+	cursor: pointer;
+}
+
+.calc-btn-color {
+	filter: invert(62%) sepia(10%) saturate(1733%) hue-rotate(157deg) brightness(96%) contrast(80%);
+	color: #63A0C2;
 }
 
 .calc-method-btn {
@@ -677,6 +725,8 @@ export default {
 	flex: none;
 	order: 0;
 	flex-grow: 0;
+
+	font-weight: 700;
 }
 
 .calc-method-btn>div:nth-child(2) {
@@ -731,7 +781,7 @@ export default {
 }
 
 .calc-members::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .calc-member-div {
@@ -747,19 +797,23 @@ export default {
 	font-size: 12px;
 }
 
-.calc-member-price {
+.calc-member-span-price {
 	position: relative;
 	right: 4px;
 
 	font-size: 12px;
 	font-weight: 700;
-	color: #222;
+	color: #8A8787;
 
 	margin: auto;
 }
 
 input::placeholder {
 	text-align: right;
+}
+
+.calc-member-price {
+	margin: auto;
 }
 
 .calc-member-price input {
@@ -794,19 +848,20 @@ input::placeholder {
 }
 
 
-.calc-total {
+.calc-input-total {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-end;
-	align-items: flex-start;
+	justify-content: space-between;
+	/* align-items: flex-start; */
+	align-items: center;
 	margin-top: 36px;
-	gap: 16px;
+	
+	/* gap: 4px; */
 
 	width: 270px;
 	height: 48px;
-	font-size: 25px;
+	font-size: 18px;
 	font-weight: 600;
-	;
 
 	flex: none;
 	order: 2;
@@ -815,8 +870,9 @@ input::placeholder {
 	border-bottom: 2px solid #222;
 }
 
-.calc-total input {
-	width: 235px;
+.calc-input-total input {
+	width: 245px;
+	font-size: 18px;
 	text-align: right;
 }
 
