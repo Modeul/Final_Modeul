@@ -16,6 +16,7 @@
 		<result property="memberId" column="member_id" />
 		<result property="coordX" column="coord_x" />
 		<result property="coordY" column="coord_y" />
+		<result property="dongCode" column="dong_code" />
 	</resultMap>
 	<!-- StuffView는 원래 알던 개념 db 칼럼명과 일치시켜서 그 칼럼의 데이터 이용하게 한다. 그리고 StuffView 
 		이런 식으로 덩어리로 인자를 사용하면 resultMap으로 세부 칼럼들을 매핑 시켜줘야 한다. -->
@@ -29,6 +30,7 @@
 		<result property="participantCount" column="participation_count" />
 		<result property="coordX" column="coord_x" />
 		<result property="coordY" column="coord_y" />
+		<result property="dongCode" column="dong_code" />
 	</resultMap>
 	
 	<resultMap id="ImageResultMap" type="Image">
@@ -64,6 +66,9 @@
 			<if test="memberId != null">
 				and member_id = #{memberId}
 			</if>
+			<if test="dongCode != null">
+				and dong_code = #{dongCode}
+			</if>
 		</trim>
 		<if test="orderField != null and orderDir != null">
 			order by ${orderField} ${orderDir}
@@ -75,6 +80,26 @@
 			limit ${size} offset ${offset}
 		</if>
 	</select>
+	
+	<select id="findViewBy" resultMap="stuffViewResultMap">
+		select *
+		from stuff_view
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="query != null">
+				title like '%${query}%'
+			</if>
+		</trim>
+		<if test="orderField != null and orderDir != null">
+			order by ${orderField} ${orderDir}
+			<!-- orderField랑 orderDir, limit, offset 
+				값 필수라서 trim 안함 -->
+		</if>
+
+		<if test="size != null and offset != null">
+			limit ${size} offset ${offset}
+		</if>
+	</select>
+
 
 	<select id="getCountList" resultType="Long" parameterType="StuffView">
 		select count(id)
@@ -99,8 +124,8 @@
 	<!-- 공구상품글 등록  -->
 	<insert id="insert" parameterType="Stuff">
 		insert into stuff(title, place, num_people, deadline, price, url,
-		content, category_id, coord_x, coord_y)
-		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId}, #{coordX}, #{coordY})
+		content, category_id, coord_x, coord_y, dong_code)
+		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId}, #{coordX}, #{coordY}, #{dongCode})
 		<selectKey resultType="long" keyProperty="id" order="AFTER">
 
 			select last_insert_id()
@@ -117,7 +142,7 @@
 	<!-- 상품 정보 수정, 나중에 categoryId 추가하기!! -->
 	<update id="update" parameterType="Stuff">
 		update stuff set title = #{title}, place = #{place}, num_people = #{numPeople}, deadline = #{deadline}, price = #{price}, 
-		url = #{url}, content = #{content}, category_id = #{categoryId}, coord_x = #{coordX}, coord_y = #{coordY}
+		url = #{url}, content = #{content}, category_id = #{categoryId}, coord_x = #{coordX}, coord_y = #{coordY}, dong_code = #{dongCode}
 		where id = #{id}
 	</update>
 

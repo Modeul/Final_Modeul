@@ -7,6 +7,8 @@ export default {
 	data() {
 		return {
 			page: '',
+			dongCode: '',
+			dongName: '',
 			list: [],
 			categoryList: [],
 			categoryId: '',
@@ -20,7 +22,7 @@ export default {
 			this.page = 1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -30,12 +32,11 @@ export default {
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
-
 			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -104,11 +105,49 @@ export default {
 			return resultList;
 		},
 
+		onChage(v) {
+			if (v.target.value === 'cur') {
+				this.getDongInfo();
+			} else {
+				this.dongCode = '';
+				this.dongName = '';
+				this.addListHandler();
+			}
+
+
+		},
+
+		getDongInfo() {
+
+			const geocoder = new kakao.maps.services.Geocoder();
+			const watchID = navigator.geolocation.getCurrentPosition((position) => {
+				let lat = position.coords.latitude;
+				let lng = position.coords.longitude;
+
+				geocoder.coord2Address(lng, lat, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.dongName = result[0].address.region_3depth_name;
+					}
+				});
+				geocoder.coord2RegionCode(lng, lat, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.dongCode = result[0].code;
+
+						this.addListHandler();
+					}
+				});
+
+			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+		},
+
 	},
 	mounted() {
 		this.page = 0;
 		this.addListHandler();
 		this.scrollCheck();
+		// this.getDongInfo();
 
 		document.addEventListener("scroll", (e) => {
 
@@ -130,11 +169,12 @@ export default {
 <template>
 	<section class="canvas p-rel b-rad-2">
 		<header class="d-fl-al header-jc">
-			<select class="selectbox-set" onchange="if(this.value) location.href=(this.value);">
-				<option value="">신수동</option>
+			<select class="selectbox-set" @change="onChage($event)">
+				<option value="" default>전체</option>
 				<option value="">신설동</option>
-				<option value="/member/stuff/gps">GPS설정</option>
+				<option value="cur">현재위치</option>
 			</select>
+			<div> {{ dongName }}</div>
 
 			<div>
 				<!-- <a class="icon icon-menu">메뉴</a> -->

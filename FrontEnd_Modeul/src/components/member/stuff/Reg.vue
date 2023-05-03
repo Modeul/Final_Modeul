@@ -128,10 +128,10 @@
 						<input type="text" class="input-field" name="price" id="price" v-model="stuff.price">
 					</div>
 
-					<div class="select-box">
+					<div class="select-box" @click.prevent="postCode" >
 						<label for="place" class="input-field-txt">장소</label>
-						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place"
-							@click="postCode">
+						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" hidden>
+						<div  class="input-field">{{ stuff.place }}</div>
 					</div>
 					<div class="select-box toggle-map" v-if="mapNav">
 						<div  v-if="showMap" @click="toggleMap">지도 열기</div>
@@ -140,6 +140,7 @@
 					<div id="map"></div>
 					<input type="text" class="input-field" name="coordX" v-show="false" v-model="stuff.coordX">
 					<input type="text" class="input-field" name="coordY" v-show="false" v-model="stuff.coordY">
+					<input type="text" class="input-field" name="dongCode" v-show="false" v-model="stuff.dongCode">
 
 					<div class="select-box">
 						<label for="url" class="input-field-txt">링크</label>
@@ -186,6 +187,7 @@ export default {
 				price: '',
 				url: '1',
 				content: '',
+				dongCode:'',
 				imageList: [
 					{
 						"id": '',
@@ -370,6 +372,8 @@ export default {
 				oncomplete: (data) => {
 
 					this.stuff.place = data.address;
+					this.stuff.dongCode = data.bcode;
+					console.log(this.stuff.place);
 
 					geocoder.addressSearch(data.address, (results, status) => {
 
