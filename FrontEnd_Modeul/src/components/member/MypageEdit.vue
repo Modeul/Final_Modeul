@@ -29,7 +29,7 @@
             </div>
             <form @submit="uploadImg" method="post" enctype="multipart/form-data" ref="form">
                 <label for="file">
-                <div class="edit-btn">
+                <div class="edit-btn2">
                     <input type="file" class="d-none" id="file" name="imgs" @change.prevent="uploadImg">
                     <img src="/images/member/stuff/mypageEditIcon.svg">
                 </div>
@@ -242,12 +242,13 @@ export default {
         border-radius: 50%;
         background-color: antiquewhite;
     }
-    .edit-btn{
+    .edit-btn2{
         width: 36px;
         height: 36px;
         border-radius: 50%;
         position: absolute;
-        top: 183px;
+        right: 167px;
+        top: 186px;
         cursor: pointer;
     }
     .edit-btn:hover{

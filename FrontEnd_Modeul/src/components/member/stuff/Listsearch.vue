@@ -16,9 +16,6 @@ export default {
 		}
 	},
 	methods: {
-		goback() {
-			this.$router.go(-1);
-		},
         searchInput(e){
 			this.page = 1;
 			e.preventDefault();
@@ -97,16 +94,21 @@ export default {
 }
 </script>
 <style scoped>
-@import url(/css/component/member/stuff/component-list.css);
-@import url(/css/component/member/stuff/component-list-search.css);
+@import "/css/component/member/stuff/component-list.css";
+@import "/css/component/member/stuff/component-list-search.css";
+.search-header{
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
 </style>
 <template>
     <section class="canvas b-rad-2">
 
         <!-- 검색창 들어가는 부분 -->
-        <header class="d-fl-al">
+        <header class="search-header">
                 <div>
-                    <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
+                    <router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
                 </div>
 
                 <div class="search-container">
@@ -153,10 +155,23 @@ export default {
 		
 
 			<button class="btn-next more-list" @click="addListHandler"> 더보기 </button>
-			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff">
+			<nav class="navi-bar d-fl-jf">
+				<div class="navi-icon">
+					<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 				</div>
-			</router-link>
+				<div class="navi-icon">
+					<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				</div>
+				<div>
+					<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
+				</div>
+				<div class="navi-icon">
+					<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
+				</div>
+				<div class="navi-icon">
+					<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
+				</div>
+			</nav>
 		</main>
     </section>
 </template>

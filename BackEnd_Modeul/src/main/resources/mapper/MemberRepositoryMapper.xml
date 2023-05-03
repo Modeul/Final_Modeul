@@ -22,6 +22,14 @@
 	  	id = #{id}
   </select>
   
+  <select id="getUid" resultType="String">
+  	select uid 
+	from member 
+	where 
+	name=#{name} 
+	and 
+	email=#{email}
+  </select>
   
    <select id="getbyUid" resultType="String">
 	  select uid
@@ -46,6 +54,14 @@
 	  where
 	  email = #{email}
   </select>
+
+	<select id="getByName" resultType="String">
+		select name
+		from
+		member
+		where
+		name = #{name}
+  	</select>
   
   <select id="getByNickname" resultType="String">
 	  select nickname
@@ -61,6 +77,14 @@
 	  member
 	  where
 	  uid = #{uid}
+  </select>
+
+  <select id="getEmailByName" resultType="String">
+	  select email
+	  from
+	  member
+	  where
+	  name = #{name}
   </select>
 
 	<update id="update" parameterType="Member">

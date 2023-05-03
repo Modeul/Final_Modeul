@@ -130,23 +130,7 @@ export default {
 			</router-link>
 		</main>
 
-		<nav class="navi-bar d-fl-jf" style="display: none;">
-			<div>
-				<router-link to="/member/stuff/list" class="icon icon-home m-notop">home</router-link>
-			</div>
-			<div>
-				<router-link to="/member/stuff/listsearch" class="icon icon-search m-notop">search</router-link>
-			</div>
-			<div>
-				<router-link to="/member/stuff/reg" class="icon icon-post m-notop">post+</router-link>
-			</div>
-			<div>
-				<router-link to="/member/participation/list" class="icon icon-chat m-notop">chat</router-link>
-			</div>
-			<div>
-				<a class="icon icon-info m-notop">mypage</a>
-			</div>
-		</nav>
+		
 	</section>
 </template>
 

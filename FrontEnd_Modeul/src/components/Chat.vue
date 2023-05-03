@@ -141,11 +141,14 @@
 					</div>
 					<div class="calc-member-line"> </div>
 				</section>
-				
-				<div :class="(method === false) ? 'calc-input-total' : ''">
-					<input type="text" v-model.number="totalPrice" @input="chipinHandler">원
-				</div>
-				
+				<section class="calc-total">
+					<h1 class="d-none">합계</h1>
+					<!-- <input type="text">원 -->
+					<div :class="(method === false) ? 'calc-input-total' : ''">
+						<input type="text" v-model.number="totalPrice" @input="chipinHandler">원
+					</div>
+					<div v-if="true">{{ total }}</div>
+				</section>
 
 				<div class="calc-members-title">참여 인원</div>
 
@@ -157,13 +160,37 @@
 						<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
 						<div class="calc-member-price">
+							<input type="text" v-model=price[user.memberId] maxlength="8"> 원
 							<div :class="method === false ? 'calc-member-span-price' : ''">
 								<span placeholder="0" dir="rtl">{{ chipinResult }}</span>원
-							</div> 
+							</div>
 						</div>
 					</div>
 				</div>
-				<!-- <div v-for="user in participantList" class="calc-member-div">
+
+				<!-- <section class="calc-total">
+					<h1 class="d-none">합계</h1>
+					<div>
+						<label>합계:</label>
+						<span></span>
+						<span>원</span>
+					</div>
+				</section> -->
+				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
+			</form>
+
+
+		</section>
+
+		<!-- <section class="calc-result">
+			<h1 class="d-none">정산 결과</h1>
+			<header class="result-header">
+				<div>정산결과</div>
+				<button>삭제하기</button>
+			</header>
+			<section class="result-contents">
+				<h1 class=d-none>결과 내용</h1>
+				<div class="calc-members">
 					<div class="chat-user-img">
 						<img :src="'/images/member/' + user.memberImage">
 					</div>
@@ -177,11 +204,7 @@
 				<!-- <div @click="blurHandler">aa</div> -->
 
 				
-				<button  type="submit" class="calc-button">정산하기</button>
-			</form>
-
-
-		</section>
+	
 
 	</v-navigation-drawer>
 
@@ -267,6 +290,8 @@ export default {
 			openModal: false,
 			stompClient: '',
 			participantList: '',
+			price: {},
+			total: '',
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12",
@@ -505,6 +530,24 @@ export default {
 		},
 		calResultCheckHandler() {
 			this.isCheckCalResult = !this.isCheckCalResult;
+		},
+		inputCheck(event) {
+			console.log(event);
+			const regExp = /[^0-9]*/g;
+			const ele = event.target;
+			if (regExp.test(ele.value)) {
+				ele.value = ele.value.replace(regExp, '');
+			}
+
+			// if (
+			// 	!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
+			// 	(isNaN(Number(event.key)) || event.code === 'Space')
+			// )
+			// 	event.preventDefault();
+
+		},
+		calculate() {
+			console.log(this.price);
 		}
 	},
 	beforeRouteLeave() {
@@ -545,15 +588,6 @@ export default {
 		chatLength: function () {
 			return this.messageView.length;
 		},
-		// memberPriceList: function() {
-		// 	return this.participantList.map((m)=> {
-				
-		// 		return {key: m.memberNickname, value1: this.memberPrice, value2: m.memberImage}
-		// 	})
-		// }
-
-
-		
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
@@ -717,12 +751,18 @@ export default {
 	align-items: center;
 	/* padding: 20px 0px; */
 	width: 100%;
+	height: 230px;
 	/* flex: none; */
 	order: 4;
 	/* flex-grow: 0; */
+	overflow: scroll;
 }
 
-.calc-member-div{
+.calc-members::-webkit-scrollbar {
+  display: none;
+}
+
+.calc-member-div {
 	display: flex;
 	flex-direction: row;
 	margin-top: 4px;
@@ -746,8 +786,8 @@ export default {
 	margin: auto;
 }
 
-input::placeholder { 
-	text-align: right; 
+input::placeholder {
+	text-align: right;
 }
 
 .calc-member-price input {
@@ -1260,7 +1300,7 @@ input::placeholder {
 	margin-top: 5px;
 }
 
-.chat-user-img img{
+.chat-user-img img {
 	width: 100%;
 	height: 100%;
 }
