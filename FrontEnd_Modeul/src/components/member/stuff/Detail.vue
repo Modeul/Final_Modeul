@@ -349,7 +349,7 @@ export default {
 		<section class="canvas detail-join">
 			<div class="detail-join-title">참여중인 사람</div>
 			<div class="detail-join-wrap">
-				<v-sheet max-width="240">
+				<v-sheet>
 					<v-slide-group>
 						<v-slide-group-item v-for="m in participantList" :key="m" v-slot="{ isSelected, toggle }">
 							<button>
@@ -412,6 +412,9 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
 
+.detail {
+	margin: 0 auto;
+}
 
 .v-slide-group button {
 	box-sizing: border-box;
@@ -437,7 +440,7 @@ export default {
 /* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
 개발자모드에서 보여지는 css 계층의 값 변경 가능*/
 
-.v-dialog:deep{
+.v-dialog :deep{
 	font-size: 14px;
 }
 </style>
