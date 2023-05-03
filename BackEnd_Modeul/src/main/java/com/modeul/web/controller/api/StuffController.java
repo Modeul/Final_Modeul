@@ -58,11 +58,15 @@ public class StuffController {
 	public Map<String, Object> getList(@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "p", defaultValue = "1") int page,
 			@RequestParam(name = "c", required = false) Long categoryId,
-			@RequestParam(name = "id", required = false) Long memberId
+			@RequestParam(name = "id", required = false) Long memberId,
+			@RequestParam(name = "dc", required = false) String dongCode
 			) {
-		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page);
-		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId);
+		System.out.println("동코드"+dongCode);
+		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
+		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId, dongCode); 
 		List<Category> categoryList = categoryService.getList();
+		
+		
 		Long listCount = service.getListCount(categoryId, page, memberId);
 
 		Map<String, Object> dataList = new HashMap<>();
@@ -133,7 +137,8 @@ public class StuffController {
 		@RequestParam(name = "url") String url,			
 		@RequestParam(name = "content") String content,
 		@RequestParam(name = "coordX") String coordX,
-		  @RequestParam(name = "coordY") String coordY) throws IllegalStateException, IOException {
+		@RequestParam(name = "coordY") String coordY,
+		@RequestParam(name = "dongCode") String dongCode) throws IllegalStateException, IOException {
 
 			List<Image> imageList = new ArrayList<Image>(); 		// 파일 여러 개 받기	
 			
@@ -165,12 +170,12 @@ public class StuffController {
 				imageList.add(image);		
 			} 		
 	 */
-			Stuff stuff = new Stuff(title, place, numPeople, deadline, price, url, content, imageList, categoryId, id, coordX, coordY);		
+			Stuff stuff = new Stuff(title, place, numPeople, deadline, price, url, content, imageList, categoryId, id, coordX, coordY, dongCode);		
 			stuff.setImageList(imageList); 		
 			System.out.println(stuff);		
 	
 			int updateCount = service.editStuff(stuff);
-			System.out.println(updateCount);	
+			System.out.println(updateCount);
 	
 			return "ok";
 

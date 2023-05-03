@@ -33,6 +33,7 @@ public class Stuff {
 	private Long categoryId;
 	private String coordX;
 	private String coordY;
+	private String dongCode;
 	
 	// 이미지 파일 업로드 용!
 	private List<Image> imageList;
@@ -40,7 +41,7 @@ public class Stuff {
 	// insert용
 	public Stuff(String title, String place, String numPeople, 
 			LocalDateTime deadline, String price, String url,
-			String content, Long categoryId, List<Image> imageList,String coordX, String coordY) {
+			String content, Long categoryId, List<Image> imageList,String coordX, String coordY, String dongCode) {
 		
 		this.title = title;
 		this.place = place;
@@ -53,12 +54,13 @@ public class Stuff {
 		this.imageList = imageList;
 		this.coordX = coordX;
 		this.coordY = coordY;
+		this.dongCode = dongCode;
 	}
 	
 	// update용
 	public Stuff(String title, String place, String numPeople, 
 	LocalDateTime deadline, String price, String url,
-	String content, List<Image> imageList, Long categoryId, Long id, String coordX, String coordY) {
+	String content, List<Image> imageList, Long categoryId, Long id, String coordX, String coordY, String dongCode) {
 	
 	this.title = title;
 	this.place = place;
@@ -72,5 +74,6 @@ public class Stuff {
 	this.id = id;
 	this.coordX = coordX;
 	this.coordY = coordY;
+	this.dongCode = dongCode;
 }
 }

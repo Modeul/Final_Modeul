@@ -31,7 +31,7 @@ public class StuffServiceImpl implements StuffService {
 	@Override
 	public List<StuffView> getViewAll() {
 		
-		return repository.findViewAll("", null, null, null, 10, 0, null);
+		return repository.findViewAll("", null, null, null, 10, 0, null,null);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class StuffServiceImpl implements StuffService {
 		int size = 10;
 		int offset = (page-1)*10;
 		
-		return repository.findViewAll("", null, null, null, size, offset, null);
+		return repository.findViewAll("", null, null, null, size, offset, null,null);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class StuffServiceImpl implements StuffService {
 		int size = 10;
 		int offset = (page-1)*10;
 		
-		return repository.findViewAll(query, null, null, null, size, offset, null);
+		return repository.findViewAll(query, null, null, null, size, offset, null,null);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class StuffServiceImpl implements StuffService {
 		int size = 10;
 		int offset = (page-1)*10;
 		
-		return repository.findViewAll(null, categoryId, null, null, size, offset, null);
+		return repository.findViewAll(null, categoryId, null, null, size, offset, null,null);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class StuffServiceImpl implements StuffService {
 		int size = 10;
 		int offset = (page-1)*10;
 		
-		return repository.findViewAll(query, categoryId, null, null, size, offset, null);
+		return repository.findViewAll(query, categoryId, null, null, size, offset, null ,null);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class StuffServiceImpl implements StuffService {
 		int size = 10;
 		int offset = (page-1)*10;
 		
-		return repository.findViewAll(query, categoryId, null, null, size, offset, memberId);
+		return repository.findViewAll(query, categoryId, null, null, size, offset, memberId ,null);
 	}
 	
 	// 공구상품 글 등록용, 트랜잭션 처리!
@@ -150,14 +150,18 @@ public class StuffServiceImpl implements StuffService {
 	public List<StuffView> getRecentViewList(Long categoryId, int page) {
 		
 		int size = page * 7;
-		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, null);
+		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, null, null);
 	}
 	@Override
-	public List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId) {
-		
+	public List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId, String dongCode) {
+
 		int size = page * 7;
-		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, memberId);
+		if (dongCode == "") {
+			dongCode = null;
+		}
+		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, memberId, dongCode);
 	}
+	
 
 	@Override
 	public Long getListCount(Long categoryId, int page) {
@@ -175,16 +179,20 @@ public class StuffServiceImpl implements StuffService {
 		return result;
 	}
 
+
 	@Override
-	public List<StuffView> getRecentViewList(String query, Long categoryId, int page) {
+	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId, String dongCode) {
 			int size = page * 7;
-		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, null);
+		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId, dongCode);
 	}
+	
 	@Override
-	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId) {
+	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, String dongCode) {
 			int size = page * 7;
-		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId);
+		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, null, dongCode);
 	}
+	
+
 
 
 	/* 공구상품 정보 수정 */
@@ -228,5 +236,7 @@ public class StuffServiceImpl implements StuffService {
 			file.delete();
 		});
    	}
+
+
 
 }
