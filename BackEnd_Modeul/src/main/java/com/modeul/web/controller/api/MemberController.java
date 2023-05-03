@@ -1,8 +1,12 @@
 package com.modeul.web.controller.api;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,10 +33,25 @@ public class MemberController {
 	@Autowired
 	MailService mailService;
 
+	// @PostMapping("login")
+	// public String login(@RequestBody Member member) {
+	// 	String result = memberService.login(member);
+	// 	return result;
+	// }
+
 	@PostMapping("login")
-	public String login(@RequestBody Member member) {
-		String result = memberService.login(member);
-		return result;
+	public ResponseEntity<Map<String, Object>> login(@RequestBody Member member) {
+		Map<String, Object> dto = new HashMap<>();
+        dto.put("result", null);
+
+        // 이 정보를 서비스 레이어에서 전달 해 줘야 한다.
+        if (memberService.isValid(member)){
+			String uid = member.getUid();
+            Member loginMember = memberService.getMemberByUid(uid);
+            dto.put("result", loginMember);
+        }
+
+		return new ResponseEntity<Map<String, Object>>(dto, HttpStatus.OK);
 	}
 
 	@GetMapping("{id}")

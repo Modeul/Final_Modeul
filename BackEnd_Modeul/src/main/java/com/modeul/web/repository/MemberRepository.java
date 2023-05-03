@@ -31,7 +31,7 @@ public interface MemberRepository {
 
 	int updatePwd(Member member);
 
-  int delete(Member member);
+	int delete(Member member);
 
 	String getEmailByUid(Member member);
 

@@ -10,6 +10,10 @@ public interface MemberService {
 
 	String login(Member member);
 
+	Boolean isValid(Member member);
+
+	Member getMemberByUid(String uid);
+
 	int addMember(Member member);
 
 	int changePwdByUid(Member member);
