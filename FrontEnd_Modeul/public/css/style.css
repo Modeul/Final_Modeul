@@ -657,7 +657,7 @@ input:focus {
     bottom: 0;
     right: 50%;
     transform: translateX(50%);
-    width: 360px;
+    width: 100%;
     background-color: rgb(255, 255, 255);
     display: flex;
     justify-content: space-around;
