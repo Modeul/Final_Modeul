@@ -169,8 +169,7 @@
 
 				</div>
 
-				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="totalText">합계</span>{{ total }}</div>
-
+				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span v-if="totalText">합계</span>{{ total }}</div>
 
 				<!-- <section class="calc-total">
 					<h1 class="d-none">합계</h1>
