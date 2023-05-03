@@ -118,6 +118,7 @@
 		</div>
 	</div>
 
+	<!-- ** 정산 입력 폼 모달 ** -->
 	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 		<section class="calc">
@@ -211,17 +212,21 @@
 
 	</v-navigation-drawer>
 
-	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
+	<!-- ** 정산 결과 모달 ** -->
+	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult" location="bottom" temporary>
 		<section class="calc-result-default">
 			<h1 class="d-none">calculate</h1>
+			
 			<section class="cal-result-main">
+
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del">삭제하기</div>
+					<div class="cal-result-del"><span>삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
+					<h1 class="d-none">main</h1>
 					<div class="cal-user">
 						<div class="cal-user-img">
 							<img src="/images/member/chatid113.svg" alt="사용자1">
@@ -230,11 +235,11 @@
 							그럴 수박! 에
 						</div>
 						<div class="cal-user-self-result">
-							333,333원
+							111,111원
 						</div>
 					</div>
 
-					<div class="cal-user">
+					 <div class="cal-user">
 						<div class="cal-user-img">
 							<img src="/images/member/chatid110.svg" alt="사용자2">
 						</div>
@@ -242,7 +247,7 @@
 							화난 식빵
 						</div>
 						<div class="cal-user-self-result">
-							333,333원
+							111,111원
 						</div>
 					</div>
 
@@ -254,18 +259,100 @@
 							아보카도 도레미
 						</div>
 						<div class="cal-user-self-result">
-							333,333원
+							111,111원
 						</div>
 					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div> 
 				</main>
-				<div class="cal-result-check-form">
-					<div class="cal-result-sum">
-						합계: 999,999원
+
+				<section class="cal-result-sum">
+					<h1 class="d-none">sum</h1>
+					<div>
+						합계
 					</div>
 					<div>
-						<button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+						666,666원
 					</div>
-				</div>
+				</section>
+
+				<section class="cal-result-account-form">
+					<h1 class="d-none">account</h1>
+					
+					<div class="cal-result-account-all">
+						<a class="icon-bank-security">은행명</a>
+						<div class="cal-leader-account">
+							하나 32589046473333
+						</div>
+						<a class="icon-account-paste">복사하기</a>
+					</div>
+
+					<div class="cal-leader-name">
+						한땡땡
+					</div>
+
+				</section>
+
+				<section class="cal-result-check-form">
+					<h1 class="d-none">check</h1>
+					<button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+				</section>
+
 			</section>
 
 		</section>
@@ -903,10 +990,11 @@ input::placeholder {
 
 
 	position: relative;
-	height: 740px;
+	height: 635px;
 	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
+	border-radius: 30px 30px 0px 0px;
 }
 
 .cal-result-main {
@@ -917,7 +1005,7 @@ input::placeholder {
 	overflow: auto;
 
 	width: 375px;
-	height: 531px;
+	height: 635px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
 	flex: none;
@@ -929,7 +1017,7 @@ input::placeholder {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	/* justify-content: center; */
 
 	width: 327px;
 	height: 74px;
@@ -940,55 +1028,71 @@ input::placeholder {
 	color: #222222;
 	font-weight: 700;
 	font-size: 18px;
-	height: 37px;
-	margin-top: 18px;
+	padding-top: 28px;
 }
 
 .cal-result-del {
 	width: 327px;
-	height: 37px;
-
+	
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
-	padding-bottom: 11px;
+
+	padding: 7px 8px 0px 0px;
 
 	font-size: 12px;
 	color: #8A8787;
-	cursor: pointer;
+	
 }
+	.cal-result-del span{
+		cursor: pointer;
+	}
 
 .cal-result-user-list {
 	width: 327px;
-	height: 140px;
+	height: 210px;
 
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 
 	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
 	border-image-slice: 200 100;
 	border-image-width: 1px;
 	border-image-repeat: repeat;
+
+	margin-top: 11px;
+	padding-bottom: 9px;
+	overflow: auto;
+	overscroll-behavior-y: none;
+	scroll-behavior: smooth;
+	-ms-overflow-style: none; /* 익스플로러, 앳지 */
+    scrollbar-width: none; /* 파이어폭스 */
+	
+}
+.cal-result-user-list::-webkit-scrollbar{
+	display: none; /* 크롬, 사파리, 오페라 */
 }
 
 .cal-user {
 	display: flex;
 	justify-content: center;
-	margin-top: 15px;
+	margin-top: 9px;
 
 }
 
 .cal-user-img {
 	width: 24px;
 	height: 24px;
-	margin-left: 4px;
+	margin-left: 5px;
 }
 
 .cal-user img {
 	width: 100%;
 	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+	overflow: hidden;
 }
 
 .cal-user-name {
@@ -1005,30 +1109,90 @@ input::placeholder {
 	color: #333333;
 	margin-left: 56px;
 	text-align: right;
-	padding-right: 8px;
+	padding-right: 7px;
 }
 
+
+.cal-result-sum {
+	width: 327px;
+	height: 48px;
+
+	display: flex;
+	justify-content: space-between;
+
+	margin-top: 18px;
+	padding: 0px 7px 18px 4px;
+	
+	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	border-image-slice: 0 0 200 0;
+	border-image-width: 1px;
+	border-image-repeat: repeat;
+
+	font-size: 14px;
+	color: #222222;
+	font-weight: bold;
+}
+
+.cal-result-account-form{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 73px;
+}
+
+.cal-result-account-all{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+}
+
+.icon-bank-security{
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
+
+	width: 12px;
+	height: 14px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+	margin-right: 5px;
+}
+
+.icon-account-paste{
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='14' height='18' viewBox='0 0 14 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 2.6V12.2C4 12.6243 4.15804 13.0313 4.43934 13.3314C4.72064 13.6314 5.10218 13.8 5.5 13.8H11.5C11.8978 13.8 12.2794 13.6314 12.5607 13.3314C12.842 13.0313 13 12.6243 13 12.2V5.1936C13 4.98045 12.96 4.76945 12.8825 4.573C12.805 4.37654 12.6914 4.19859 12.5485 4.0496L10.0623 1.456C9.78202 1.16373 9.40568 1.00005 9.01375 1H5.5C5.10218 1 4.72064 1.16857 4.43934 1.46863C4.15804 1.76869 4 2.17565 4 2.6Z' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 13.8V15.4C10 15.8243 9.84196 16.2313 9.56066 16.5314C9.27936 16.8314 8.89782 17 8.5 17H2.5C2.10218 17 1.72064 16.8314 1.43934 16.5314C1.15804 16.2313 1 15.8243 1 15.4V6.6C1 6.17565 1.15804 5.76869 1.43934 5.46863C1.72064 5.16857 2.10218 5 2.5 5H4' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+	width: 12px;
+	height: 16px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+
+	cursor: pointer;
+	margin-left: 5px;
+}
+
+.cal-leader-account{
+	font-size: 16px;
+}
+
+.cal-leader-name{
+	margin-top: 21px;
+	font-size: 16px;
+}
 
 .cal-result-check-form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
-	background-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-size: cover;
+	margin-top: 60px;
 }
-
-.cal-result-sum {
-	width: 327px;
-	display: flex;
-	justify-content: flex-end;
-	font-size: 14px;
-	margin-top: 18px;
-
-}
-
 
 .cal-result-check-btn {
 	background-color: #63A0C2;
@@ -1038,9 +1202,6 @@ input::placeholder {
 	color: #FFFFFF;
 	font-size: 14px;
 	font-weight: bold;
-	margin-top: 286px;
-
-
 }
 
 .canvas,
@@ -1051,6 +1212,7 @@ input::placeholder {
 .chat-canvas {
 	margin-top: 64px;
 	padding-bottom: 78px;
+	
 }
 
 .v-app-bar .chat-title {
