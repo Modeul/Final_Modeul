@@ -175,5 +175,11 @@ public class MemberServiceImpl implements MemberService {
 		return uid;
 	}
 
+	@Override
+	public List<Member> getMemberList() {
+
+		return repository.findAll();
+	}
+
 
 }

@@ -3,6 +3,7 @@ package com.modeul.web.controller.api;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,7 +59,7 @@ public class MemberController {
 		return memberService.changePwdByUid(member);
 	}
 
-	@PutMapping("delete")
+	@DeleteMapping("delete")
 	public int deleteMember(@RequestBody Member member){
 
 		return memberService.deleteMember(member);
@@ -121,5 +122,11 @@ public class MemberController {
 		memberService.updateImg(id, imgs);
 
 		return "ok";
+	}
+
+	@GetMapping("list")
+	public List<Member> getMemberList(){
+
+		return memberService.getMemberList();
 	}
 }
