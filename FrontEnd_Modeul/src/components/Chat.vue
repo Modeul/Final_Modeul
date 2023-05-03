@@ -802,6 +802,7 @@ export default {
 	color: #63A0C2;
 }
 .account-input {
+	align-self: center;
 	flex: none;
 	order: 1;
 	flex-grow: 0;
@@ -1666,5 +1667,9 @@ input::placeholder {
 
 .v-dialog:deep {
 	font-size: 14px;
+}
+
+.v-select:deep {
+	width: 280px;
 }
 </style>
