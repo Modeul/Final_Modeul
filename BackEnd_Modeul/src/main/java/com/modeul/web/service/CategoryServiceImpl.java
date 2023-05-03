@@ -29,6 +29,21 @@ public class CategoryServiceImpl implements CategoryService {
 	public Category getById(Long categoryId) {
 		return repository.findById(categoryId);
 	}
-	
 
+	@Override
+	public int addCategory(Category category) {
+		// repository.insert(category);
+		return repository.insert(category);
+	}
+	
+	@Override
+	public int updateCategory(Category category) {
+		return repository.update(category);
+		
+	}
+
+	@Override
+	public int delCategory(Long id) {
+		return repository.delete(id);
+	}
 }
