@@ -12,9 +12,9 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>아이디</th>
-                            <th>이름</th>
-                            <th></th>
+                            <th style="width: 200px;  min-width: 200px;">아이디</th>
+                            <th style="width: 200px;  min-width: 200px;">이름</th>
+                            <th style="width: 200px;  min-width: 200px;"></th>
                         </tr>
                     </thead>
                     <tbody>
