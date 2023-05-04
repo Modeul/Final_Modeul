@@ -6,7 +6,8 @@ export default {
 	data() {
 		return {
 			page: '',
-			list: [],
+			listOrigin: '',
+			list: '',
 			openModal: null,
 			openModal2: null,
 			deleteValid: null,
@@ -22,7 +23,7 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
-					console.log(dataList);
+					this.listOrigin = dataList;
 					this.$store.commit('LOADING_STATUS', false);
 				})
 				.catch(error => console.log('error', error));
@@ -51,6 +52,10 @@ export default {
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
+		queryHandler(e) {
+			this.query = e.target.value
+			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query)|| stuff.content.includes(this.query));
+		}
 	},
 
 	mounted() {
@@ -69,7 +74,7 @@ export default {
 			<div class="search-container-admin-sr">
 				<form action="" class="d-fl d-b-none search-form1" method="get">
 					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="검색어 입력">
+					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="제목이나 내용으로 검색" :value="query" @input="queryHandler">
 				</form>
 			</div>
 		</div>
