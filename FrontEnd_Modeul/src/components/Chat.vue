@@ -114,7 +114,6 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 
@@ -124,93 +123,80 @@
 		<section class="calc">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
-				<router-link to="list" class="icon calc-back">뒤로가기</router-link>
+				<router-link to="list" class="icon calc-back" @click="dnoneHandler">뒤로가기</router-link>
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post" @submit.prevent="calculate">
-				<section class="calc-method-btn calc-member-line">
-					<h1 class="d-none">정산 방법</h1>
-					<div :class="{ 'calc-btn-color': calcSwitch }">
-						<a class="btn-chipin"></a>
-						<span @click="calc1n" class="calc-btn">1/N하기</span>
-					</div>
-					<div></div>
-					<div :class="{ 'calc-btn-color': !calcSwitch }">
-						<a class="btn-writing"></a>
-						<span @click="calcdir" class="calc-btn">직접 입력</span>
-					</div>
-					<div class="calc-member-line"> </div>
-				</section>
-				<section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<!-- <input type="text">원 -->
-					<div v-if="calcSwitch" class="calc-input-total">
-						<input type="text" v-model.number="totalPrice" @input="chipinHandler" placeholder="총금액을 입력해 주세요.">원
-					</div>
-				</section>
-
-				<div class="calc-members-title">참여 인원</div>
-
-				<div class="calc-members">
-					<div v-for="user in participantList" class="calc-member-div">
-						<div class="chat-user-img">
-							<img :src="'/images/member/' + user.memberImage">
+			<form class="calc-contents" method="post" :class="{ 'd-none': !isNextCalc }" @submit.prevent="calculate">
+				<div>
+					<section class="calc-method-btn calc-member-line">
+						<h1 class="d-none">정산 방법</h1>
+						<div :class="{ 'calc-btn-color': calcSwitch }">
+							<a class="btn-chipin"></a>
+							<span @click="calc1n" class="calc-btn">1/N하기</span>
 						</div>
-						<div class="calc-members-nic">{{ user.memberNickname }}</div>
+						<div></div>
+						<div :class="{ 'calc-btn-color': !calcSwitch }">
+							<a class="btn-writing"></a>
+							<span @click="calcdir" class="calc-btn">직접 입력</span>
+						</div>
+						<div class="calc-member-line"> </div>
+					</section>
+					<section class="calc-total">
+						<h1 class="d-none">합계</h1>
+						<div v-if="calcSwitch" class="calc-input-total">
+							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
+								placeholder="총금액을 입력해 주세요.">원
+						</div>
+					</section>
+					<div class="calc-members-title">참여 인원</div>
+					<div class="calc-members">
+						<div v-for="user in participantList" class="calc-member-div">
+							<div class="chat-user-img">
+								<img :src="'/images/member/' + user.memberImage">
+							</div>
+							<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
-						<div class="calc-member-price">
-							<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
-							<span v-if="!calcSwitch" class="calc-member-span-price">
-								<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
+							<div class="calc-member-price">
+								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
+								<span v-if="!calcSwitch" class="calc-member-span-price">
+									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
 									placeholder="금액 입력" @keydown="inputCheck"> 원
-							</span>
+								</span>
+							</div>
 						</div>
 					</div>
-
+					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
+							v-if="totalText">합계</span>{{ total }}</div>
+					<button type="submit" class="calc-button">정산하기</button>
 				</div>
-
-				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
-						v-if="totalText">합계</span>{{ total }}</div>
-
-				<!-- <section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div>
-						<label>합계:</label>
-						<span></span>
-						<span>원</span>
-					</div>
-				</section> -->
-				<button type="submit" class="calc-button">정산하기</button>
 			</form>
 
+			<div class="calc-contents" :class="{ 'd-none': isNextCalc }">
 
-		</section>
-
-		<!-- <section class="calc-result">
-			<h1 class="d-none">정산 결과</h1>
-			<header class="result-header">
-				<div>정산결과</div>
-				<button>삭제하기</button>
-			</header>
-			<section class="result-contents">
-				<h1 class=d-none>결과 내용</h1>
-				<div class="calc-members">
-					<div class="chat-user-img">
-						<img :src="'/images/member/' + user.memberImage">
+				<div class="account-title">
+					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span>계좌 정보를</span><br>
+					<span>입력해주세요.</span>
+				</div>
+				<div class="account-input">
+					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
+						style="width: 260px;">
+					</v-select>
+					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
+					</v-text-field>
+					<!-- <input class="account-input-box" pl> -->
+				</div>
+				<div class="account-recent">
+					<div>최근 등록 계좌</div>
+					<div>
+						2343242423423
 					</div>
-					<div class="calc-members-nic">{{ user.memberNickname }}</div>
-					
-					<div :class="method === false ? 'calc-member-span-price' : ''">
-						<span placeholder="0" dir="rtl">{{ chipinResult }}</span>원
-						<input type="text" v-model.number="mp.value1" >원
-					</div> 
-				</div> -->
-		<!-- <div @click="blurHandler">aa</div> -->
+				</div>
+				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">등록하기</button>
 
-
-
-
+			</div>
+		</section>
 	</v-navigation-drawer>
 
 	<!-- ** 정산 결과 모달 ** -->
@@ -220,6 +206,7 @@
 			<h1 class="d-none">calculate</h1>
 
 			<section class="cal-result-main">
+
 
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
@@ -319,6 +306,64 @@
 						</div>
 						<div class="cal-user-self-result">
 							111,111원
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
 						</div>
 					</div>
 				</main>
@@ -356,7 +401,6 @@
 				</section>
 
 			</section>
-
 		</section>
 	</v-navigation-drawer>
 </template>
@@ -406,10 +450,19 @@ export default {
 			totalPriceComma: '',
 			totalPriceAlert: '',
 			totalText: true,
-			memberPrice: 0
+			memberPrice: 0,
 			// memberPriceList: [{'key'}]
 
 			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
+
+
+			banks: ['국민은행', '기업은행'
+
+				// { state: 'Nebraska', abbr: 'NE' },
+				// { state: 'California', abbr: 'CA' },
+				// { state: 'New York', abbr: 'NY' },
+			],
+			isNextCalc: false,
 		}
 	},
 
@@ -649,6 +702,9 @@ export default {
 					console.log(result);
 				})
 				.catch(error => console.log('error', error));
+		},
+		dnoneHandler(){
+			this.isNextCalc = !this.isNextCalc;
 		}
 	},
 	beforeRouteLeave() {
@@ -760,9 +816,9 @@ export default {
 	gap: 100px;
 	width: 327px;
 	height: 71px;
-	/* flex: none; */
-	/* order: 0; */
-	/* flex-grow: 0; */
+	flex: none;
+	order: 0;
+	flex-grow: 0;
 }
 
 .calc-header-title {
@@ -782,10 +838,11 @@ export default {
 
 
 .calc-contents {
-	/* display: flex; */
-	/* flex-direction: column; */
-	align-items: center;
-	padding: 8px 24px 0px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 0px 24px 0px;
 	/* overflow: auto; */
 
 	width: 327px;
@@ -793,9 +850,74 @@ export default {
 	/* height: 80%; */
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
-	/* flex: none; */
-	/* order: 1; */
-	/* flex-grow: 1; */
+	flex: none;
+	order: 1;
+	flex-grow: 1;
+}
+
+/* .calc-account {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 0px;
+
+	width: 279px;
+	height: 92px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+} */
+
+.account-title {
+	font-weight: 600;
+	font-size: 20px;
+	padding-top: 32px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
+
+.account-title-leader {
+	color: #63A0C2;
+}
+
+.account-input {
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	justify-content: center;
+
+	flex: none;
+	order: 1;
+	flex-grow: 0;
+
+	padding-top: 28px;
+}
+
+.account-input-box {
+	width: 236px;
+	height: 48px;
+	background: #FFFFFF;
+	border: 1px solid #888888;
+	border-radius: 10px;
+	margin-bottom: 8px;
+}
+
+.account-recent {
+	padding: 16px 4px;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+}
+
+.account-recent>div:first-child {
+	font-size: 14px;
+	font-weight: 700;
+	color: #63A0C2;
 }
 
 .btn-writing {
@@ -1013,9 +1135,11 @@ input::placeholder {
 
 	position: relative;
 	height: 635px;
+	height: 635px;
 	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
+	border-radius: 30px 30px 0px 0px;
 	border-radius: 30px 30px 0px 0px;
 }
 
@@ -1027,6 +1151,7 @@ input::placeholder {
 	overflow: auto;
 
 	width: 375px;
+	height: 635px;
 	height: 635px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
@@ -1040,6 +1165,7 @@ input::placeholder {
 	flex-direction: column;
 	align-items: center;
 	/* justify-content: center; */
+	/* justify-content: center; */
 
 	width: 327px;
 	height: 74px;
@@ -1051,6 +1177,7 @@ input::placeholder {
 	font-weight: 700;
 	font-size: 18px;
 	padding-top: 28px;
+	padding-top: 28px;
 }
 
 .cal-result-del {
@@ -1059,6 +1186,8 @@ input::placeholder {
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
+
+	padding: 7px 8px 0px 0px;
 
 	padding: 7px 8px 0px 0px;
 
@@ -1073,6 +1202,7 @@ input::placeholder {
 
 .cal-result-user-list {
 	width: 327px;
+	height: 210px;
 	height: 210px;
 
 	display: flex;
@@ -1105,6 +1235,7 @@ input::placeholder {
 	display: flex;
 	justify-content: center;
 	margin-top: 9px;
+	margin-top: 9px;
 
 }
 
@@ -1112,11 +1243,15 @@ input::placeholder {
 	width: 24px;
 	height: 24px;
 	margin-left: 5px;
+	margin-left: 5px;
 }
 
 .cal-user img {
 	width: 100%;
 	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+	overflow: hidden;
 	object-fit: cover;
 	border-radius: 50%;
 	overflow: hidden;
@@ -1136,6 +1271,7 @@ input::placeholder {
 	color: #333333;
 	margin-left: 56px;
 	text-align: right;
+	padding-right: 7px;
 	padding-right: 7px;
 }
 
@@ -1177,7 +1313,17 @@ input::placeholder {
 .icon-bank-security {
 	background-repeat: no-repeat;
 	background-position: center;
+	background-position: center;
 	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
+
+	width: 12px;
+	height: 14px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+	margin-right: 5px;
 	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
 
 	width: 12px;
@@ -1197,6 +1343,12 @@ input::placeholder {
 	width: 12px;
 	height: 16px;
 
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+
+	cursor: pointer;
+	margin-left: 5px;
 	display: inline-block;
 	overflow: hidden;
 	text-indent: -999px;
