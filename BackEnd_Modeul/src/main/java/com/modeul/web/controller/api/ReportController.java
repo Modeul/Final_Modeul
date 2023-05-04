@@ -3,24 +3,39 @@ package com.modeul.web.controller.api;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.modeul.web.entity.report;
+import com.modeul.web.entity.ReportStuff;
 import com.modeul.web.service.ReportService;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("api/reports")
 public class ReportController {
-	
+
 	@Autowired
 	ReportService service;
-	
-	@GetMapping("/report/lists")
-	public List<report> getList(@RequestParam(name = "progress") String progress){
+
+	@GetMapping("/stuff")
+	public List<ReportStuff> getReportedStuffList() {
+		List<ReportStuff> list = service.getReportedStuffList(); 
+		return list;
+	}
+
+	@PostMapping("/stuff")
+	public String regStuffReport(@RequestBody ReportStuff reportStuff) {
 		
-		return null;
+		return service.regReportedStuff(reportStuff);
+
+	}
+
+	@DeleteMapping("/stuff")
+	public String updateStuffReport(Integer id) {
+
+		return service.deleteReportedStuff(id);
 	}
 }

@@ -5,22 +5,32 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.modeul.web.entity.report;
-import com.modeul.web.repository.ReportRepository;
+import com.modeul.web.entity.ReportStuff;
+import com.modeul.web.repository.ReportStuffRepository;
 @Service
 public class ReportServiceimpl implements ReportService {
 
 	@Autowired
-	ReportRepository repository;
+	ReportStuffRepository repository;
+
+
 	@Override
-	public List<report> getListByProgress(char progress) {
-		
-		return repository.findByProgress(progress);
+	public List<ReportStuff> getReportedStuffList() {
+		return repository.findAll();
 	}
 	@Override
-	public List<report> getList() {
-		
-		return repository.findAll();
+	public String regReportedStuff(ReportStuff reportStuff) {
+		int resp = repository.insert(reportStuff);
+
+		String result =  (resp != 1) ? "ERROR" : "OK";
+		return result;
+	}
+	@Override
+	public String deleteReportedStuff(Integer id) {
+		int resp = repository.delete(id);
+
+		String result =  (resp != 1) ? "ERROR" : "OK";
+		return result;
 	}
 
 }
