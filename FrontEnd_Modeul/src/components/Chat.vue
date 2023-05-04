@@ -147,6 +147,7 @@
 						<div v-if="calcSwitch" class="calc-input-total">
 							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
 								placeholder="총금액을 입력해 주세요.">원
+								
 						</div>
 					</section>
 					<div class="calc-members-title">참여 인원</div>
@@ -173,9 +174,8 @@
 			</form>
 
 			<div class="calc-contents" :class="{ 'd-none': isNextCalc }">
-
 				<div class="account-title">
-					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span class="account-title-leader">{{ leaderNic }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
@@ -183,7 +183,7 @@
 					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
 						style="width: 260px;">
 					</v-select>
-					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
+					<v-text-field v-model=accountNum pattern="[0-9]*" required label="계좌번호" variant="underlined" style="width: 260px;">
 					</v-text-field>
 					<!-- <input class="account-input-box" pl> -->
 				</div>
@@ -193,8 +193,8 @@
 						2343242423423
 					</div>
 				</div>
+				<div @click.prvent="AA">aa</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">등록하기</button>
-
 			</div>
 		</section>
 	</v-navigation-drawer>
@@ -454,19 +454,20 @@ export default {
 			// memberPriceList: [{'key'}]
 
 			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
-
-
-			banks: ['국민은행', '기업은행'
-
-				// { state: 'Nebraska', abbr: 'NE' },
-				// { state: 'California', abbr: 'CA' },
-				// { state: 'New York', abbr: 'NY' },
-			],
+			banks: ['국민은행', '기업은행'],
 			isNextCalc: false,
+
+			leader: {},
 		}
 	},
 
 	methods: {
+		AA() {
+			console.log(this.selectBank);
+			console.log(this.accountNum);
+			console.log(this.leader.nic);
+			console.log(this.leader.id)	
+		},
 		blurHandler() {
 			console.log(this.memberPriceList);
 		},
@@ -474,6 +475,7 @@ export default {
 		chipinHandler() {
 			console.log(this.totalPrice)
 			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+
 			return this.chipinResult;
 		},
 
@@ -600,6 +602,9 @@ export default {
 			// 방장에게 추방 권한
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
+
+				this.leader.nic = this.memberInfo.nickname;
+				this.leader.id = this.memberInfo.id;
 			}
 		},
 		banishUserHandler() {
@@ -705,6 +710,8 @@ export default {
 		},
 		dnoneHandler() {
 			this.isNextCalc = !this.isNextCalc;
+			
+			
 		}
 	},
 	beforeRouteLeave() {
@@ -714,6 +721,8 @@ export default {
 		this.stompConnect();
 		this.connect();
 		this.loadParticipant();
+		
+		
 	},
 	updated() {
 
@@ -762,7 +771,13 @@ export default {
 				this.totalText = true;
 				return total.toLocaleString() + " 원";
 			}
+		},
+
+		leaderNic: function() {
+
+			return this.leader.nic;
 		}
+	
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
