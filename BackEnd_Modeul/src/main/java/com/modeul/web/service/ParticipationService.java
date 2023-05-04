@@ -1,6 +1,7 @@
 package com.modeul.web.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
@@ -25,4 +26,6 @@ public interface ParticipationService {
     ParticipationMemberView getMemberBystuffIdmemberId(Long stuffId, Long memberId);
 
     void saveCalResultMsg(Message message);
+
+    void calculatedAmount(Long stuffId, Map<Long, Integer> prices);
 }

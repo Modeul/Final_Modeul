@@ -49,12 +49,14 @@
 					<!-- 유저 1명 -->
 					<div v-for="user in participantList" class="chat-side-list-user">
 						<div class="chat-side-list-user-info">
-							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
+							<div class="chat-user-img"><img class="chat-user-img"
+									:src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
 						<div class="chat-side-list-user-icon">
 							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
-								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
+								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg"
+								alt="추방버튼">
 						</div>
 					</div>
 				</div>
@@ -126,7 +128,7 @@
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post">
+			<form class="calc-contents" method="post" @submit.prevent="calculate">
 				<section class="calc-method-btn calc-member-line">
 					<h1 class="d-none">정산 방법</h1>
 					<div :class="{ 'calc-btn-color': calcSwitch }">
@@ -144,8 +146,7 @@
 					<h1 class="d-none">합계</h1>
 					<!-- <input type="text">원 -->
 					<div v-if="calcSwitch" class="calc-input-total">
-						<input type="text" v-model.number="totalPrice" @input="chipinHandler"
-							placeholder="총가격을 입력해 주세요.">원
+						<input type="text" v-model.number="totalPrice" @input="chipinHandler" placeholder="총금액을 입력해 주세요.">원
 					</div>
 				</section>
 
@@ -161,14 +162,16 @@
 						<div class="calc-member-price">
 							<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 							<span v-if="!calcSwitch" class="calc-member-span-price">
-								<input type="text" v-model=price[user.memberId] maxlength="8" placeholder="0"> 원
+								<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
+									placeholder="금액 입력" @keydown="inputCheck"> 원
 							</span>
 						</div>
 					</div>
 
 				</div>
 
-				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span v-if="totalText">합계</span>{{ total }}</div>
+				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
+						v-if="totalText">합계</span>{{ total }}</div>
 
 				<!-- <section class="calc-total">
 					<h1 class="d-none">합계</h1>
@@ -178,7 +181,7 @@
 						<span>원</span>
 					</div>
 				</section> -->
-				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
+				<button type="submit" class="calc-button">정산하기</button>
 			</form>
 
 
@@ -211,10 +214,11 @@
 	</v-navigation-drawer>
 
 	<!-- ** 정산 결과 모달 ** -->
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult" location="bottom" temporary>
+	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult"
+		location="bottom" temporary>
 		<section class="calc-result-default">
 			<h1 class="d-none">calculate</h1>
-			
+
 			<section class="cal-result-main">
 
 				<header class="cal-result-header">
@@ -237,7 +241,7 @@
 						</div>
 					</div>
 
-					 <div class="cal-user">
+					<div class="cal-user">
 						<div class="cal-user-img">
 							<img src="/images/member/chatid110.svg" alt="사용자2">
 						</div>
@@ -316,7 +320,7 @@
 						<div class="cal-user-self-result">
 							111,111원
 						</div>
-					</div> 
+					</div>
 				</main>
 
 				<section class="cal-result-sum">
@@ -331,7 +335,7 @@
 
 				<section class="cal-result-account-form">
 					<h1 class="d-none">account</h1>
-					
+
 					<div class="cal-result-account-all">
 						<a class="icon-bank-security">은행명</a>
 						<div class="cal-leader-account">
@@ -379,7 +383,6 @@ export default {
 			stompClient: '',
 			participantList: '',
 			price: {},
-			total: '',
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12",
@@ -399,6 +402,7 @@ export default {
 
 			calcSwitch: true,
 			chipinResult: 0,
+			totalPrice: 0,
 			totalPriceComma: '',
 			totalPriceAlert: '',
 			totalText: true,
@@ -620,18 +624,11 @@ export default {
 			this.isCheckCalResult = !this.isCheckCalResult;
 		},
 		inputCheck(event) {
-			// console.log(event);
-			// const regExp = /[^0-9]*/g;
-			// const ele = event.target;
-			// if (regExp.test(ele.value)) {
-			// 	ele.value = ele.value.replace(regExp, '');
-			// }
-
-			// if (
-			// 	!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
-			// 	(isNaN(Number(event.key)) || event.code === 'Space')
-			// )
-			// 	event.preventDefault();
+			if (
+				!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
+				(isNaN(Number(event.key)) || event.code === 'Space')
+			)
+				event.preventDefault();
 		},
 		calc1n() {
 			this.calcSwitch = true;
@@ -640,7 +637,18 @@ export default {
 			this.calcSwitch = false;
 		},
 		calculate() {
-			console.log(this.price);
+			var requestOptions = {
+				method: 'PUT',
+				redirect: 'follow',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(this.price)
+			};
+
+			fetch(`${this.$store.state.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+				})
+				.catch(error => console.log('error', error));
 		}
 	},
 	beforeRouteLeave() {
@@ -683,14 +691,28 @@ export default {
 			return this.messageView.length;
 		},
 		total: function () {
-			let total = (Object.values(this.price).reduce((accumulator, currentValue) => parseInt(accumulator) + parseInt(currentValue), 0));
+
+			let total = Object.values(this.price).reduce((p, c) => {
+				if (c != parseInt(c)) {
+
+
+				}
+				else {
+					console.log("파싱 전 " + c);
+					console.log("파싱 후 " + parseInt(c));
+					return NaN;
+				}
+
+			}, 0);
+			// let parsedtotal = Object.values(this.price).reduce((p, c) => p + parseInt(c), 0);
+
 			if (isNaN(total)) {
 				this.totalText = false;
 				return "숫자만 입력해 주세요."
 			}
-			else{
+			else {
 				this.totalText = true;
-				return total + " 원";
+				return total.toLocaleString() + " 원";
 			}
 		}
 	},
@@ -941,7 +963,7 @@ input::placeholder {
 	/* align-items: flex-start; */
 	align-items: center;
 	margin-top: 36px;
-	
+
 	/* gap: 4px; */
 
 	width: 270px;
@@ -1033,7 +1055,7 @@ input::placeholder {
 
 .cal-result-del {
 	width: 327px;
-	
+
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
@@ -1042,11 +1064,12 @@ input::placeholder {
 
 	font-size: 12px;
 	color: #8A8787;
-	
+
 }
-	.cal-result-del span{
-		cursor: pointer;
-	}
+
+.cal-result-del span {
+	cursor: pointer;
+}
 
 .cal-result-user-list {
 	width: 327px;
@@ -1066,12 +1089,16 @@ input::placeholder {
 	overflow: auto;
 	overscroll-behavior-y: none;
 	scroll-behavior: smooth;
-	-ms-overflow-style: none; /* 익스플로러, 앳지 */
-    scrollbar-width: none; /* 파이어폭스 */
-	
+	-ms-overflow-style: none;
+	/* 익스플로러, 앳지 */
+	scrollbar-width: none;
+	/* 파이어폭스 */
+
 }
-.cal-result-user-list::-webkit-scrollbar{
-	display: none; /* 크롬, 사파리, 오페라 */
+
+.cal-result-user-list::-webkit-scrollbar {
+	display: none;
+	/* 크롬, 사파리, 오페라 */
 }
 
 .cal-user {
@@ -1122,7 +1149,7 @@ input::placeholder {
 
 	margin-top: 18px;
 	padding: 0px 7px 18px 4px;
-	
+
 	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
 	border-image-slice: 0 0 200 0;
 	border-image-width: 1px;
@@ -1133,21 +1160,21 @@ input::placeholder {
 	font-weight: bold;
 }
 
-.cal-result-account-form{
+.cal-result-account-form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	margin-top: 73px;
 }
 
-.cal-result-account-all{
+.cal-result-account-all {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	
+
 }
 
-.icon-bank-security{
+.icon-bank-security {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
@@ -1162,7 +1189,7 @@ input::placeholder {
 	margin-right: 5px;
 }
 
-.icon-account-paste{
+.icon-account-paste {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
@@ -1178,11 +1205,11 @@ input::placeholder {
 	margin-left: 5px;
 }
 
-.cal-leader-account{
+.cal-leader-account {
 	font-size: 16px;
 }
 
-.cal-leader-name{
+.cal-leader-name {
 	margin-top: 21px;
 	font-size: 16px;
 }
@@ -1212,7 +1239,7 @@ input::placeholder {
 .chat-canvas {
 	margin-top: 64px;
 	padding-bottom: 78px;
-	
+
 }
 
 .v-app-bar .chat-title {
