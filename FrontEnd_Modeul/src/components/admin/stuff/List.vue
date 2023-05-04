@@ -61,28 +61,11 @@ export default {
 
 <template>
 	<main>
-		<!-- 취소 확인 모달 -->
-		<div v-if="openModal" class="black-bg">
-			<div class="delete-box">
-				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-				<div class="delete-box-2">
-					<div @click="deleteStuff" class="delete-box-3">삭제</div>
-					<div @click="modalHandler" class="delete-box-4">취소</div>
-				</div>
-			</div>
-		</div>
-		<div v-if="openModal2" class="black-bg">
-			<div class="delete-box">
-				<div class="delete-box-1">삭제되었습니다.</div>
-				<div class="delete-box-2">
-					<div @click="modalHandler2" class="delete-box-5">확인</div>
-				</div>
-			</div>
-		</div>
-
 		<h1 class="d-none">물건 관리 목록</h1>
-
-		<div class="d-fl fl-dir-col al-fe search-box">
+		<div class="admin-header">
+			<span>게시글 관리</span>
+		</div>
+		<div class="admin-search-box">
 			<div class="search-container-admin-sr">
 				<form action="" class="d-fl d-b-none search-form1" method="get">
 					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
@@ -95,24 +78,43 @@ export default {
 			<table class="admin-categ-table">
 				<thead class="table-head">
 					<tr>
-						<th style="width: 200px; text-align:left;">글 제목</th>
-						<th style="width: 150px; text-align:left;">카테고리</th>
-						<th style="width: 200px; text-align:left;">장소</th>
-						<th style="width: 700px; text-align:left;">내용</th>
+						<th style="width: 230px;  min-width: 230px;">글 제목</th>
+						<th style="width: 150px;  min-width: 150px;">카테고리</th>
+						<th style="width: 200px;  min-width: 200px;">장소</th>
+						<th style="width: calc(100vw - 890px); min-width: 700px">내용</th>
+						<th style="width: 20px;   min-width: 20px;"></th>
 					</tr>
 				</thead>
 				<tbody class="table-body">
 					<tr v-for="s in list">
-						<td style="width: 200px; text-align:left;">{{ s.title }}</td>
-						<td style="width: 150px; text-align:left;">{{ s.categoryName }}</td>
-						<td style="width: 200px; text-align:left;">{{ s.place }}</td>
-						<td style="width: 700px; text-align:left;">{{ s.content }}</td>
-						<td><button @click="modalHandler" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</main>
+						<td style="width: 230px;  min-width: 230px;  ">{{ s.title }}</td>
+						<td style="width: 150px;  min-width: 150px;   ">{{ s.categoryName }}</td>
+							<td style="width: 200px;  min-width: 200px;  ">{{ s.place }}</td>
+							<td style="width: calc(100vw - 890px);  min-width: 700px; text-align:left;">{{ s.content }}</td>
+							<td style="width: 20px;   min-width: 20px;  text-align:left;"><button @click="modalHandler" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!-- 취소 확인 모달 -->
+			<div v-if="openModal" class="black-bg">
+				<div class="delete-box">
+					<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+					<div class="delete-box-2">
+						<div @click="deleteStuff" class="delete-box-3">삭제</div>
+						<div @click="modalHandler" class="delete-box-4">취소</div>
+					</div>
+				</div>
+			</div>
+			<div v-if="openModal2" class="black-bg">
+				<div class="delete-box">
+					<div class="delete-box-1">삭제되었습니다.</div>
+					<div class="delete-box-2">
+						<div @click="modalHandler2" class="delete-box-5">확인</div>
+					</div>
+				</div>
+			</div>
+		</main>
 </template>
 
 <style scoped>

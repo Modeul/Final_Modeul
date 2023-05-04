@@ -1,37 +1,13 @@
 <template>
-    <main class="list-admin-main d-fl fl-dir-col al-c">
+    <main>
         <h1 class="d-none">카테고리 관리 목록</h1>
-
-        <!-- 카테고리 삭제 모달 -->
-        <div v-if="openModal" class="black-bg">
-            <div class="delete-box">
-                <div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-                <div class="delete-box-2">
-                    <div @click="delCategory" class="delete-box-3">삭제</div>
-                    <div @click="modalHandler" class="delete-box-4">취소</div>
-                </div>
-            </div>
+        <div class="admin-header">
+            <span>카테고리 관리</span>
         </div>
-        <div v-if="openModal2" class="black-bg">
-            <div class="delete-box">
-                <div class="delete-box-1">삭제되었습니다.</div>
-                <div class="delete-box-2">
-                    <div @click="modalHandler2" class="delete-box-5">확인</div>
-                </div>
-            </div>
+        <div class="add-cate-box">
+            <button class="addCategory-show-btn" @click.prevent="showAddInput">카테고리 추가</button>
         </div>
-
-        <!-- 카테고리 저장 모달 -->
-        <div v-if="saveModal" class="black-bg">
-            <div class="delete-box">
-                <div class="delete-box-1">저장되었습니다.</div>
-                <div class="delete-box-2">
-                    <div @click="savemodalHandler" class="delete-box-5">확인</div>
-                </div>
-            </div>
-        </div>
-        <button class="addCategory-show-btn" @click.prevent="showAddInput">카테고리 추가</button>
-        <div class="tablebox-admin m-t-35px">
+        <div class="tablebox-admin">
             <div>
                 <table>
                     <thead>
@@ -73,6 +49,34 @@
             
         </div>
         
+        <!-- 카테고리 삭제 모달 -->
+        <div v-if="openModal" class="black-bg">
+            <div class="delete-box">
+                <div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+                <div class="delete-box-2">
+                    <div @click="delCategory" class="delete-box-3">삭제</div>
+                    <div @click="modalHandler" class="delete-box-4">취소</div>
+                </div>
+            </div>
+        </div>
+        <div v-if="openModal2" class="black-bg">
+            <div class="delete-box">
+                <div class="delete-box-1">삭제되었습니다.</div>
+                <div class="delete-box-2">
+                    <div @click="modalHandler2" class="delete-box-5">확인</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카테고리 저장 모달 -->
+        <div v-if="saveModal" class="black-bg">
+            <div class="delete-box">
+                <div class="delete-box-1">저장되었습니다.</div>
+                <div class="delete-box-2">
+                    <div @click="savemodalHandler" class="delete-box-5">확인</div>
+                </div>
+            </div>
+        </div>
     </main>
 </template>
 <script>
