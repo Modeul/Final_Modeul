@@ -4,12 +4,13 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.modeul.web.entity.report;
+import com.modeul.web.entity.ReportStuff;
 
 @Mapper
-public interface ReportRepository {
+public interface ReportStuffRepository {
 	
-	List<report> findByProgress(char progress);
-	List<report> findAll();
+	List<ReportStuff> findAll();
+	int insert(ReportStuff reportStuff);
+	int delete(Integer id);
 	
 }
