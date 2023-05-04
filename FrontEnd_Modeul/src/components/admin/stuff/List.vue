@@ -1,104 +1,215 @@
+<script>
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko'
+
+export default {
+	data() {
+		return {
+			page: '',
+			list: [],
+			openModal: null,
+			openModal2: null,
+			deleteValid: null,
+			deleteId: '',
+		}
+	},
+	methods: {
+		async addListHandler() {
+
+			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
+
+			await fetch(`${this.$store.state.host}/api/stuffAll`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = dataList;
+					console.log(dataList);
+					this.$store.commit('LOADING_STATUS', false);
+				})
+				.catch(error => console.log('error', error));
+
+		},
+		async deleteStuff() {
+			this.openModal = true;
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+			// this.$router.push("/member/stuff/list");
+			await fetch(`${this.$store.state.host}/api/stuff/${this.deleteId}`, requestOptions)
+				.then(response => response.text())
+				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+			console.log("삭제완료");
+			this.openModal = false;
+			this.addListHandler();
+			this.openModal2 = true;
+		},
+		modalHandler(e) {
+			this.deleteId = e.target.value;
+			this.openModal = !this.openModal;
+		},
+		modalHandler2() {
+			this.openModal2 = !this.openModal2;
+		},
+	},
+
+	mounted() {
+		this.addListHandler();
+	}
+}
+</script>
+
 <template>
+	<main>
+		<!-- 취소 확인 모달 -->
+		<div v-if="openModal" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+				<div class="delete-box-2">
+					<div @click="deleteStuff" class="delete-box-3">삭제</div>
+					<div @click="modalHandler" class="delete-box-4">취소</div>
+				</div>
+			</div>
+		</div>
+		<div v-if="openModal2" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">삭제되었습니다.</div>
+				<div class="delete-box-2">
+					<div @click="modalHandler2" class="delete-box-5">확인</div>
+				</div>
+			</div>
+		</div>
 
-    <main>
-        <h1 class="d-none">물건 관리 목록</h1>
-            
-            <div class="tablebox-admin m-l-250px m-t-138px">
-                <div class="d-fl fl-dir-col al-fe">
-                    <div class="search-container-admin-sr m-t-35px">
-                        <form action="" class="d-fl d-b-none search-form1" method="get">
-                            <h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-                            <input type="search" name="admin-list" class="search-input m-l-6px" placeholder="검색어 입력" onkeypress="search_result(event)">
-                        </form>
-                    </div>
-                </div>  
+		<h1 class="d-none">물건 관리 목록</h1>
 
-                <div class="admin-categ-table">
-                <table class="table-admin m-t-35px">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox"></th>  
-                            <th>사진</th>
-                            <th>글 제목</th>
-                            <th>카테고리</th>
-                            <th>장소</th>
-                            <th>인원</th>
-                            <th>URL</th>
-                            <th>장소</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="checkbox"></td>  
-                            <td>이미지1</td>
-                            <td>jhjhjh</td>
-                            <td>wosdsdk312</td>
-                            <td>홍길동</td>
-                            <td>wsdfk@naver.com</td>
-                            <td>신수동</td>
-                            <td>sdfsdf##@1</td>
-                            <td><a href="" class="icon-admin3 icon-delete">지우기 버튼</a></td>
-                        </tr>   
-                        <tr>
-                            <td><input type="checkbox"></td>  
-                            <td>이미지1</td>
-                            <td>jhjhjh</td>
-                            <td>wosdsdk312</td>
-                            <td>홍길동</td>
-                            <td>wsdfk@naver.com</td>
-                            <td>신수동</td>
-                            <td>sdfsdf##@1</td>
-                            <td><a href="" class="icon-admin3 icon-delete">지우기 버튼</a></td>
-                        </tr> 
-                        <tr>
-                            <td><input type="checkbox"></td>  
-                            <td>이미지1</td>
-                            <td>jhjhjh</td>
-                            <td>wosdsdk312</td>
-                            <td>홍길동</td>
-                            <td>wsdfk@naver.com</td>
-                            <td>신수동</td>
-                            <td>sdfsdf##@1</td>
-                            <td><a href="" class="icon-admin3 icon-delete">지우기 버튼</a></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>  
-                            <td>이미지1</td>
-                            <td>jhjhjh</td>
-                            <td>wosdsdk312</td>
-                            <td>홍길동</td>
-                            <td>wsdfk@naver.com</td>
-                            <td>신수동</td>
-                            <td>sdfsdf##@1</td>
-                            <td><a href="" class="icon-admin3 icon-delete">지우기 버튼</a></td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox"></td>  
-                            <td>이미지1</td>
-                            <td>jhjhjh</td>
-                            <td>wosdsdk312</td>
-                            <td>홍길동</td>
-                            <td>wsdfk@naver.com</td>
-                            <td>신수동</td>
-                            <td>sdfsdf##@1</td>
-                            <td><a href="" class="icon-admin3 icon-delete">지우기 버튼</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+		<div class="d-fl fl-dir-col al-fe search-box">
+			<div class="search-container-admin-sr">
+				<form action="" class="d-fl d-b-none search-form1" method="get">
+					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
+					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="검색어 입력">
+				</form>
+			</div>
+		</div>
 
-            <div class="d-fl-al fl-dir-col">
-                <div class="m-l-2 m-t-35px m-b-35px">
-                    <button class="btn-next">더보기</button>
-                </div>
-            </div>
-        </div>
-    </main>    
+		<div class="m-t-13">
+			<table class="admin-categ-table">
+				<thead class="table-head">
+					<tr>
+						<th style="width: 200px; text-align:left;">글 제목</th>
+						<th style="width: 150px; text-align:left;">카테고리</th>
+						<th style="width: 200px; text-align:left;">장소</th>
+						<th style="width: 700px; text-align:left;">내용</th>
+					</tr>
+				</thead>
+				<tbody class="table-body">
+					<tr v-for="s in list">
+						<td style="width: 200px; text-align:left;">{{ s.title }}</td>
+						<td style="width: 150px; text-align:left;">{{ s.categoryName }}</td>
+						<td style="width: 200px; text-align:left;">{{ s.place }}</td>
+						<td style="width: 700px; text-align:left;">{{ s.content }}</td>
+						<td><button @click="modalHandler" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
 </template>
 
 <style scoped>
-    @import "/css/component/component.css";
-    @import "/css/component/admin/component-admin.css";
-    @import "/css/component/admin/stuff/component-stuff-list.css";
+@import "/css/component/component.css";
+@import "/css/component/admin/component-admin.css";
+@import "/css/component/admin/stuff/component-stuff-list.css";
+
+
+.black-bg {
+	position: fixed;
+	background: rgba(0, 0, 0, 0.7);
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9;
+}
+
+.delete-box {
+	width: 253px;
+	height: 113px;
+	background: #FFFFFF;
+	border-radius: 10px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.delete-box-1 {
+	width: 135px;
+	height: 12px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 12px;
+	margin-top: 28px;
+}
+
+.delete-box-2 {
+	width: 180px;
+	height: 26px;
+	margin-top: 23px;
+	display: flex;
+	justify-content: center;
+}
+
+.delete-box-3 {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #E01616;
+	color: #E01616;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+}
+
+.delete-box-4 {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	margin-left: 25px;
+	cursor: pointer;
+}
+
+.delete-box-5 {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	margin: auto;
+	cursor: pointer;
+}
 </style>

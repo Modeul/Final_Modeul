@@ -49,14 +49,12 @@
 					<!-- 유저 1명 -->
 					<div v-for="user in participantList" class="chat-side-list-user">
 						<div class="chat-side-list-user-info">
-							<div class="chat-user-img"><img class="chat-user-img"
-									:src="'/images/member/' + user.memberImage"></div>
+							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
 						<div class="chat-side-list-user-icon">
 							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
-								v-if="user.memberId !== this.chat.memberId"
-								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
+								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
 				</div>
@@ -103,10 +101,10 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg">
+				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
 				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
-						src="../../images/member/stuff/cal-result-btn.svg">
+						src="/images/member/stuff/cal-result-btn.svg">
 				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
@@ -204,18 +202,24 @@
 
 	<!-- ** 정산 결과 모달 ** -->
 	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult" location="bottom" temporary>
+	<!-- ** 정산 결과 모달 ** -->
+	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult" location="bottom" temporary>
 		<section class="calc-result-default">
 			<h1 class="d-none">calculate</h1>
 			
+			
 			<section class="cal-result-main">
+
 
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
 					<div class="cal-result-del"><span>삭제하기</span></div>
+					<div class="cal-result-del"><span>삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
+					<h1 class="d-none">main</h1>
 					<h1 class="d-none">main</h1>
 					<div class="cal-user">
 						<div class="cal-user-img">
@@ -226,9 +230,11 @@
 						</div>
 						<div class="cal-user-self-result">
 							111,111원
+							111,111원
 						</div>
 					</div>
 
+					 <div class="cal-user">
 					 <div class="cal-user">
 						<div class="cal-user-img">
 							<img src="/images/member/chatid110.svg" alt="사용자2">
@@ -237,6 +243,7 @@
 							화난 식빵
 						</div>
 						<div class="cal-user-self-result">
+							111,111원
 							111,111원
 						</div>
 					</div>
@@ -307,7 +314,66 @@
 						</div>
 						<div class="cal-user-self-result">
 							111,111원
+							111,111원
 						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div> 
 					</div> 
 				</main>
 
@@ -315,8 +381,14 @@
 					<h1 class="d-none">sum</h1>
 					<div>
 						합계
+
+				<section class="cal-result-sum">
+					<h1 class="d-none">sum</h1>
+					<div>
+						합계
 					</div>
 					<div>
+						666,666원
 						666,666원
 					</div>
 				</section>
@@ -337,6 +409,31 @@
 					</div>
 
 				</section>
+				</section>
+
+				<section class="cal-result-account-form">
+					<h1 class="d-none">account</h1>
+					
+					<div class="cal-result-account-all">
+						<a class="icon-bank-security">은행명</a>
+						<div class="cal-leader-account">
+							하나 32589046473333
+						</div>
+						<a class="icon-account-paste">복사하기</a>
+					</div>
+
+					<div class="cal-leader-name">
+						한땡땡
+					</div>
+
+				</section>
+
+				<section class="cal-result-check-form">
+					<h1 class="d-none">check</h1>
+					<button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+				</section>
+
+			</section>
 
 				<section class="cal-result-check-form">
 					<h1 class="d-none">check</h1>
@@ -468,7 +565,8 @@ export default {
 					const response = await fetch(`${this.$store.state.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
 					const result = await response.text();
-					this.messageView = JSON.parse(result)
+					if (result != '')
+						this.messageView = JSON.parse(result)
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
@@ -672,6 +770,7 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
+
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -1044,9 +1143,11 @@ input::placeholder {
 
 	position: relative;
 	height: 635px;
+	height: 635px;
 	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
+	border-radius: 30px 30px 0px 0px;
 	border-radius: 30px 30px 0px 0px;
 }
 
@@ -1058,6 +1159,7 @@ input::placeholder {
 	overflow: auto;
 
 	width: 375px;
+	height: 635px;
 	height: 635px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
@@ -1071,6 +1173,7 @@ input::placeholder {
 	flex-direction: column;
 	align-items: center;
 	/* justify-content: center; */
+	/* justify-content: center; */
 
 	width: 327px;
 	height: 74px;
@@ -1082,14 +1185,18 @@ input::placeholder {
 	font-weight: 700;
 	font-size: 18px;
 	padding-top: 28px;
+	padding-top: 28px;
 }
 
 .cal-result-del {
 	width: 327px;
 	
+	
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
+
+	padding: 7px 8px 0px 0px;
 
 	padding: 7px 8px 0px 0px;
 
@@ -1100,9 +1207,15 @@ input::placeholder {
 	.cal-result-del span{
 		cursor: pointer;
 	}
+	
+}
+	.cal-result-del span{
+		cursor: pointer;
+	}
 
 .cal-result-user-list {
 	width: 327px;
+	height: 210px;
 	height: 210px;
 
 	display: flex;
@@ -1125,11 +1238,24 @@ input::placeholder {
 }
 .cal-result-user-list::-webkit-scrollbar{
 	display: none; /* 크롬, 사파리, 오페라 */
+
+	margin-top: 11px;
+	padding-bottom: 9px;
+	overflow: auto;
+	overscroll-behavior-y: none;
+	scroll-behavior: smooth;
+	-ms-overflow-style: none; /* 익스플로러, 앳지 */
+    scrollbar-width: none; /* 파이어폭스 */
+	
+}
+.cal-result-user-list::-webkit-scrollbar{
+	display: none; /* 크롬, 사파리, 오페라 */
 }
 
 .cal-user {
 	display: flex;
 	justify-content: center;
+	margin-top: 9px;
 	margin-top: 9px;
 
 }
@@ -1138,11 +1264,15 @@ input::placeholder {
 	width: 24px;
 	height: 24px;
 	margin-left: 5px;
+	margin-left: 5px;
 }
 
 .cal-user img {
 	width: 100%;
 	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+	overflow: hidden;
 	object-fit: cover;
 	border-radius: 50%;
 	overflow: hidden;
@@ -1163,9 +1293,31 @@ input::placeholder {
 	margin-left: 56px;
 	text-align: right;
 	padding-right: 7px;
+	padding-right: 7px;
 }
 
 
+.cal-result-sum {
+	width: 327px;
+	height: 48px;
+
+	display: flex;
+	justify-content: space-between;
+
+	margin-top: 18px;
+	padding: 0px 7px 18px 4px;
+	
+	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	border-image-slice: 0 0 200 0;
+	border-image-width: 1px;
+	border-image-repeat: repeat;
+
+	font-size: 14px;
+	color: #222222;
+	font-weight: bold;
+}
+
+.cal-result-account-form{
 .cal-result-sum {
 	width: 327px;
 	height: 48px;
@@ -1192,7 +1344,17 @@ input::placeholder {
 	align-items: center;
 	margin-top: 73px;
 }
+	margin-top: 73px;
+}
 
+.cal-result-account-all{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+}
+
+.icon-bank-security{
 .cal-result-account-all{
 	display: flex;
 	justify-content: center;
@@ -1203,7 +1365,17 @@ input::placeholder {
 .icon-bank-security{
 	background-repeat: no-repeat;
 	background-position: center;
+	background-position: center;
 	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
+
+	width: 12px;
+	height: 14px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+	margin-right: 5px;
 	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
 
 	width: 12px;
@@ -1222,7 +1394,20 @@ input::placeholder {
 	background-image: url("data:image/svg+xml,%3Csvg width='14' height='18' viewBox='0 0 14 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 2.6V12.2C4 12.6243 4.15804 13.0313 4.43934 13.3314C4.72064 13.6314 5.10218 13.8 5.5 13.8H11.5C11.8978 13.8 12.2794 13.6314 12.5607 13.3314C12.842 13.0313 13 12.6243 13 12.2V5.1936C13 4.98045 12.96 4.76945 12.8825 4.573C12.805 4.37654 12.6914 4.19859 12.5485 4.0496L10.0623 1.456C9.78202 1.16373 9.40568 1.00005 9.01375 1H5.5C5.10218 1 4.72064 1.16857 4.43934 1.46863C4.15804 1.76869 4 2.17565 4 2.6Z' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 13.8V15.4C10 15.8243 9.84196 16.2313 9.56066 16.5314C9.27936 16.8314 8.89782 17 8.5 17H2.5C2.10218 17 1.72064 16.8314 1.43934 16.5314C1.15804 16.2313 1 15.8243 1 15.4V6.6C1 6.17565 1.15804 5.76869 1.43934 5.46863C1.72064 5.16857 2.10218 5 2.5 5H4' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
 	width: 12px;
 	height: 16px;
+.icon-account-paste{
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='14' height='18' viewBox='0 0 14 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 2.6V12.2C4 12.6243 4.15804 13.0313 4.43934 13.3314C4.72064 13.6314 5.10218 13.8 5.5 13.8H11.5C11.8978 13.8 12.2794 13.6314 12.5607 13.3314C12.842 13.0313 13 12.6243 13 12.2V5.1936C13 4.98045 12.96 4.76945 12.8825 4.573C12.805 4.37654 12.6914 4.19859 12.5485 4.0496L10.0623 1.456C9.78202 1.16373 9.40568 1.00005 9.01375 1H5.5C5.10218 1 4.72064 1.16857 4.43934 1.46863C4.15804 1.76869 4 2.17565 4 2.6Z' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 13.8V15.4C10 15.8243 9.84196 16.2313 9.56066 16.5314C9.27936 16.8314 8.89782 17 8.5 17H2.5C2.10218 17 1.72064 16.8314 1.43934 16.5314C1.15804 16.2313 1 15.8243 1 15.4V6.6C1 6.17565 1.15804 5.76869 1.43934 5.46863C1.72064 5.16857 2.10218 5 2.5 5H4' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+	width: 12px;
+	height: 16px;
 
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+
+	cursor: pointer;
+	margin-left: 5px;
 	display: inline-block;
 	overflow: hidden;
 	text-indent: -999px;
@@ -1231,6 +1416,21 @@ input::placeholder {
 	margin-left: 5px;
 }
 
+.cal-leader-account{
+	font-size: 16px;
+}
+
+.cal-leader-name{
+	margin-top: 21px;
+	font-size: 16px;
+}
+
+.cal-result-check-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 60px;
+}
 .cal-leader-account{
 	font-size: 16px;
 }
@@ -1265,6 +1465,7 @@ input::placeholder {
 .chat-canvas {
 	margin-top: 64px;
 	padding-bottom: 78px;
+	
 	
 }
 

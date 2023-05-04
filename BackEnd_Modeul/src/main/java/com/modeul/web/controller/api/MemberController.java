@@ -1,8 +1,13 @@
 package com.modeul.web.controller.api;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,10 +33,25 @@ public class MemberController {
 	@Autowired
 	MailService mailService;
 
+	// @PostMapping("login")
+	// public String login(@RequestBody Member member) {
+	// 	String result = memberService.login(member);
+	// 	return result;
+	// }
+
 	@PostMapping("login")
-	public String login(@RequestBody Member member) {
-		String result = memberService.login(member);
-		return result;
+	public ResponseEntity<Map<String, Object>> login(@RequestBody Member member) {
+		Map<String, Object> dto = new HashMap<>();
+        dto.put("result", null);
+
+        // 이 정보를 서비스 레이어에서 전달 해 줘야 한다.
+        if (memberService.isValid(member)){
+			String uid = member.getUid();
+            Member loginMember = memberService.getMemberByUid(uid);
+            dto.put("result", loginMember);
+        }
+
+		return new ResponseEntity<Map<String, Object>>(dto, HttpStatus.OK);
 	}
 
 	@GetMapping("{id}")
@@ -58,7 +78,7 @@ public class MemberController {
 		return memberService.changePwdByUid(member);
 	}
 
-	@PutMapping("delete")
+	@DeleteMapping("delete")
 	public int deleteMember(@RequestBody Member member){
 
 		return memberService.deleteMember(member);
@@ -121,5 +141,11 @@ public class MemberController {
 		memberService.updateImg(id, imgs);
 
 		return "ok";
+	}
+
+	@GetMapping("list")
+	public List<Member> getMemberList(){
+
+		return memberService.getMemberList();
 	}
 }

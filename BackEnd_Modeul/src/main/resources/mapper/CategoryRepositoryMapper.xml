@@ -15,4 +15,21 @@
   	from category
   	where id=#{categoryId}
   </select>
+
+  <insert id="insert" parameterType="Category">
+    insert into category(id,name)
+    values(#{id},#{name})
+  </insert>
+
+  <update id="update" parameterType="Category">
+    update category
+		set name = #{name}
+		where id = #{id}
+  </update>
+
+  <delete id="delete" parameterType="Category">
+    delete from
+    category 
+    where id = ${id}
+  </delete>
 </mapper>
