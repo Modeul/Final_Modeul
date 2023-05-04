@@ -105,6 +105,9 @@
 			<div class="chat-input-wrap">
 				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
+						src="/images/member/stuff/cal-result-btn.svg">
+				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
@@ -115,12 +118,13 @@
 	</div>
 
 	<!-- ** 정산 입력 폼 모달 ** -->
-	<v-navigation-drawer style="height: 628px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
+
 		<section class="calc" :class="{ 'd-none': !isAccount }">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
-				<router-link to="list" class="icon calc-back">뒤로가기</router-link>
+				<div class="icon">뒤로가기</div>
 				<div class="calc-header-title">계좌입력</div>
 			</header>
 
@@ -157,65 +161,63 @@
 			</header>
 
 			<form class="calc-contents" method="post" @submit.prevent="calculate">
-				<section class="calc-method-btn calc-member-line">
-					<h1 class="d-none">정산 방법</h1>
-					<div :class="{ 'calc-btn-color': calcSwitch }">
-						<a class="btn-chipin"></a>
-						<span @click="calc1n" class="calc-btn">1/N하기</span>
-					</div>
-					<div></div>
-					<div :class="{ 'calc-btn-color': !calcSwitch }">
-						<a class="btn-writing"></a>
-						<span @click="calcdir" class="calc-btn">직접 입력</span>
-					</div>
-					<div class="calc-member-line"> </div>
-				</section>
-				<section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div v-if="calcSwitch" class="calc-input-total">
-						<input type="text" v-model.number="totalPrice" @input="chipinHandler" placeholder="총금액을 입력해 주세요.">원
-					</div>
-				</section>
-				<div class="calc-members-title">참여 인원</div>
-				<div class="calc-members">
-					<div v-for="user in participantList" class="calc-member-div">
-						<div class="chat-user-img">
-							<img :src="'/images/member/' + user.memberImage">
+				<div>
+					<section class="calc-method-btn calc-member-line">
+						<h1 class="d-none">정산 방법</h1>
+						<div :class="{ 'calc-btn-color': calcSwitch }">
+							<a class="btn-chipin"></a>
+							<span @click="calc1n" class="calc-btn">1/N하기</span>
 						</div>
-						<div class="calc-members-nic">{{ user.memberNickname }}</div>
+						<div></div>
+						<div :class="{ 'calc-btn-color': !calcSwitch }">
+							<a class="btn-writing"></a>
+							<span @click="calcdir" class="calc-btn">직접 입력</span>
+						</div>
+						<div class="calc-member-line"> </div>
+					</section>
+					<section class="calc-total">
+						<h1 class="d-none">합계</h1>
+						<div v-if="calcSwitch" class="calc-input-total">
+							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
+								placeholder="총금액을 입력해 주세요.">원
+						</div>
+					</section>
+					<div class="calc-members-title">참여 인원</div>
+					<div class="calc-members">
+						<div v-for="user in participantList" class="calc-member-div">
+							<div class="chat-user-img">
+								<img :src="'/images/member/' + user.memberImage">
+							</div>
+							<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
-						<div class="calc-member-price">
-							<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
-							<span v-if="!calcSwitch" class="calc-member-span-price">
-								<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
-									placeholder="금액 입력" @keydown="inputCheck"> 원
-							</span>
+							<div class="calc-member-price">
+								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
+								<span v-if="!calcSwitch" class="calc-member-span-price">
+									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
+										placeholder="금액 입력" @keydown="inputCheck"> 원
+								</span>
+							</div>
 						</div>
 					</div>
+					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
+							v-if="totalText">합계</span>{{ total }}</div>
+					<button type="submit" class="calc-button" @click.prevent="resultDnoneHandler">정산하기</button>
 				</div>
-				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
-						v-if="totalText">합계</span>{{ total }}</div>
-				<button type="submit" class="calc-button" @click.prevent="resultDnoneHandler">정산하기</button>
 			</form>
 		</section>
 
 		<!-- ** 정산 결과 모달 ** -->
-		<section class="calc" :class="{ 'd-none': !isCalcResult }">
+		<section class="calc-result-default" :class="{ 'd-none': !isCalcResult }">
 			<h1 class="d-none">calculate</h1>
 
-			<header class="calc-header">
-				<div class="icon"></div>
-				<div class="calc-header-title">정산결과</div>
-			</header>
-
-			<section class="calc-contents">
+			<section class="cal-result-main">
 
 
-				<!-- <header class="cal-result-header">
+				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
 					<div class="cal-result-del"><span>삭제하기</span></div>
-				</header> -->
+				</header>
 
 				<main class="cal-result-user-list">
 					<h1 class="d-none">main</h1>
@@ -406,8 +408,6 @@
 			</section>
 		</section>
 	</v-navigation-drawer>
-
-	
 </template>
 
 <script>
@@ -710,7 +710,7 @@ export default {
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
 		},
-		resultDnoneHandler(){
+		resultDnoneHandler() {
 			this.isCalc = !this.isCalc;
 			this.isCalcResult = !this.isCalcResult;
 		}
@@ -1052,10 +1052,9 @@ input::placeholder {
 }
 
 .calc-member-line {
-	
 	border-bottom: 2px solid #D9D9D9;
 	padding: 0;
-	
+	margin-top: 10px;
 }
 
 .calc-members-title {
@@ -1063,7 +1062,7 @@ input::placeholder {
 	flex-direction: row;
 	align-items: center;
 	/* padding: 12px 16px 0px; */
-	margin-top: 28px;
+	margin-top: 18px;
 	gap: 16px;
 	font-size: 12px;
 	font-weight: 700;
@@ -1084,7 +1083,7 @@ input::placeholder {
 	justify-content: space-between;
 	/* align-items: flex-start; */
 	align-items: center;
-	margin-top: 36px;
+	margin-top: 26px;
 
 	/* gap: 4px; */
 
@@ -1134,9 +1133,6 @@ input::placeholder {
 
 
 	position: relative;
-	height: 635px;
-	height: 635px;
-	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
 	border-radius: 30px 30px 0px 0px;
@@ -1150,9 +1146,7 @@ input::placeholder {
 	padding: 0px 24px 0px;
 	overflow: auto;
 
-	width: 375px;
-	height: 635px;
-	height: 635px;
+	height: 629px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
 	flex: none;
@@ -1511,6 +1505,7 @@ input::placeholder {
 	background: #FFFFFF;
 	border: 1px solid #333333;
 	border-radius: 30px;
+
 }
 
 .chat-input {
