@@ -120,52 +120,54 @@
 		<section class="calc">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
-				<router-link to="list" class="icon calc-back">뒤로가기</router-link>
+				<router-link to="list" class="icon calc-back" @click="dnoneHandler">뒤로가기</router-link>
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<!-- <form class="calc-contents" method="post">
-				<section class="calc-method-btn calc-member-line">
-					<h1 class="d-none">정산 방법</h1>
-					<div :class="{ 'calc-btn-color': calcSwitch }">
-						<a class="btn-chipin"></a>
-						<span @click="calc1n" class="calc-btn">1/N하기</span>
-					</div>
-					<div></div>
-					<div :class="{ 'calc-btn-color': !calcSwitch }">
-						<a class="btn-writing"></a>
-						<span @click="calcdir" class="calc-btn">직접 입력</span>
-					</div>
-					<div class="calc-member-line"> </div>
-				</section>
-				<section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div v-if="calcSwitch" class="calc-input-total">
-						<input type="text" v-model.number="totalPrice" @input="chipinHandler"
-							placeholder="총가격을 입력해 주세요.">원
-					</div>
-				</section>
-				<div class="calc-members-title">참여 인원</div>
-				<div class="calc-members">
-					<div v-for="user in participantList" class="calc-member-div">
-						<div class="chat-user-img">
-							<img :src="'/images/member/' + user.memberImage">
+			<form class="calc-contents" method="post" :class="{ 'd-none': !isNextCalc }">
+				<div>
+					<section class="calc-method-btn calc-member-line">
+						<h1 class="d-none">정산 방법</h1>
+						<div :class="{ 'calc-btn-color': calcSwitch }">
+							<a class="btn-chipin"></a>
+							<span @click="calc1n" class="calc-btn">1/N하기</span>
 						</div>
-						<div class="calc-members-nic">{{ user.memberNickname }}</div>
+						<div></div>
+						<div :class="{ 'calc-btn-color': !calcSwitch }">
+							<a class="btn-writing"></a>
+							<span @click="calcdir" class="calc-btn">직접 입력</span>
+						</div>
+						<div class="calc-member-line"> </div>
+					</section>
+					<section class="calc-total">
+						<h1 class="d-none">합계</h1>
+						<div v-if="calcSwitch" class="calc-input-total">
+							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
+								placeholder="총가격을 입력해 주세요.">원
+						</div>
+					</section>
+					<div class="calc-members-title">참여 인원</div>
+					<div class="calc-members">
+						<div v-for="user in participantList" class="calc-member-div">
+							<div class="chat-user-img">
+								<img :src="'/images/member/' + user.memberImage">
+							</div>
+							<div class="calc-members-nic">{{ user.memberNickname }}</div>
 
-						<div class="calc-member-price">
-							<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
-							<span v-if="!calcSwitch" class="calc-member-span-price">
-								<input type="text" v-model=price[user.memberId] maxlength="8" placeholder="0"> 원
-							</span>
+							<div class="calc-member-price">
+								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
+								<span v-if="!calcSwitch" class="calc-member-span-price">
+									<input type="text" v-model=price[user.memberId] maxlength="8" placeholder="0"> 원
+								</span>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span v-if="totalText">합계</span>{{ total }}</div>
-				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
-			</form> -->
+					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span v-if="totalText">합계</span>{{ total }}</div>
+					<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
+					</div>
+			</form>
 
-			<form class="calc-contents">
+			<div class="calc-contents" :class="{ 'd-none': isNextCalc }">
 				
 				<div class="account-title">
 					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>	
@@ -179,11 +181,13 @@
 						label="은행 선택"
 						:items="banks"
 						variant="underlined"
+						style="width: 260px;"
 						>
 					</v-select>
 					<v-text-field 
 						label="계좌번호" 
 						variant="underlined"
+						style="width: 260px;"
 						>
 					</v-text-field>
 					<!-- <input class="account-input-box" pl> -->
@@ -194,9 +198,9 @@
 						2343242423423
 					</div>
 				</div>
-				<button type="submit" class="calc-button" @click.prevent="calculate">정산하기</button>
+				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">등록하기</button>
 
-			</form>
+			</div>
 		</section>
 	</v-navigation-drawer>
 
@@ -464,6 +468,7 @@ export default {
 			// { state: 'California', abbr: 'CA' },
 			// { state: 'New York', abbr: 'NY' },
 			],
+			isNextCalc: false,
 		}
 	},
 
@@ -699,6 +704,9 @@ export default {
 		},
 		calculate() {
 			console.log(this.price);
+		},
+		dnoneHandler(){
+			this.isNextCalc = !this.isNextCalc;
 		}
 	},
 	beforeRouteLeave() {
@@ -862,6 +870,11 @@ export default {
 	color: #63A0C2;
 }
 .account-input {
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	justify-content: center;
+
 	flex: none;
 	order: 1;
 	flex-grow: 0;
