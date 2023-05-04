@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.modeul.web.repository.DutchRepository">
+
+    <resultMap id="DutchViewResultMap" type="DutchView">
+        <result property="memberId" column="member_id" />
+        <result property="stuffId" column="stuff_id" />
+        <result property="stuffTitle" column="stuff_title" />
+        <result property="stuffDeadline" column="stuff_deadline" />
+        <result property="stuffPrice" column="stuff_price" />
+        <result property="stuffManagerId" column="stuff_manager_id" />
+        <result property="stuffManagerNickname" column="stuff_manager_nickname" />
+        <result property="stuffManagerImage" column="stuff_manager_image" />
+        <!-- <result property="price" column="price" />
+        <result property="date" column="date" /> -->
+    </resultMap>
+
+    <select id="findViewBymemberId" resultMap="DutchViewResultMap">
+        select *
+        from dutch_view
+        where member_id = #{memberId}
+        <if test="orderField != null and orderDir != null">
+			order by ${orderField} ${orderDir}
+		</if>
+        <if test="size != null and offset != null">
+			limit ${size} offset ${offset}
+		</if>
+    </select>
+</mapper>
