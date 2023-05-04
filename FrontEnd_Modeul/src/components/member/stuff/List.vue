@@ -259,7 +259,7 @@ export default {
 
 			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff"></div>
+				<div class="reg-stuff d-none"></div>
 			</router-link> 
 		</main>
 
