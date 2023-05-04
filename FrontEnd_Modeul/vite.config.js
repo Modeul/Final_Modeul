@@ -11,10 +11,10 @@ export default defineConfig({
 			'@': fileURLToPath(new URL('./src', import.meta.url))
 		}
 	},
-	build: {
-		emptyOutDir: true,
-		outDir: "../BackEnd_Modeul/src/main/resources/static",
-	},
+	// build: {
+		// emptyOutDir: true,
+		// outDir: "../BackEnd_Modeul/src/main/resources/static",
+	// },
 	// server: {
   //   proxy: {
   //     "/api": "http://localhost:8080",

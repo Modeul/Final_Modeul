@@ -7,13 +7,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.modeul.web.entity.Member;
 
 public interface MemberService {
-	
+
 	String login(Member member);
+
+	Boolean isValid(Member member);
+
+	Member getMemberByUid(String uid);
 
 	int addMember(Member member);
 
 	int changePwdByUid(Member member);
-	
+
 	Boolean checkUid(String uid);
 
 	Boolean checkName(String name);
@@ -36,7 +40,8 @@ public interface MemberService {
 
 	Boolean checkEmailByName(Member member);
 
-    String findUid(String name,String email);
-	
-}
+	String findUid(String name, String email);
 
+	List<Member> getMemberList();
+
+}

@@ -1,9 +1,11 @@
 package com.modeul.web.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
@@ -64,9 +66,26 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public void saveCalResultMsg(Message message) {
-        
+
         repository.putCalResultMsg(message);
     }
 
-    
+    @Override
+    @Transactional
+    public void calculatedAmount(Long stuffId, Map<Long, Integer> prices) {
+
+        // System.out.println(prices.keySet());
+
+        for (Long key : prices.keySet()) {
+            Integer value = prices.get(key);
+            repository.insertCalculatedAmount(stuffId, key, value);
+        }
+
+        
+
+        // ((Object) prices).keySet().stream().forEach(System.out::println);
+
+        
+    }
+
 }

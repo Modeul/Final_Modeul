@@ -62,6 +62,7 @@ export default {
             uid: "",
             pwd: "",
             errormsg: "",
+            loginMember:{},
         }
     },
     methods: {
@@ -84,13 +85,15 @@ export default {
             };
 
             await fetch(`${this.$store.state.host}/api/member/login`, requestOptions)
-                .then(response => response.text())
+                .then(response => response.json())
                 .then(result => {
                     console.log(result);
-                    if (result)
-                        this.errormsg = result;
-                    else
+                    if (result.result == null)
+                        this.errormsg = "아이디 또는 비밀번호를 확인하세요";
+                    else{
+                        this.loginMember = result.result;
                         this.$router.push('/member/stuff/list');
+                    }
                 })
                 .catch(error => console.log('error', error));
         }

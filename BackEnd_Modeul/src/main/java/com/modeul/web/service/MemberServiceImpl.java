@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Member;
 import com.modeul.web.entity.MemberImage;
 import com.modeul.web.repository.MemberRepository;
@@ -51,6 +50,23 @@ public class MemberServiceImpl implements MemberService {
 			return "비밀번호가 일치하지 않습니다.";
 		}
 		return null;
+	}
+	
+	@Override
+	public Boolean isValid(Member member) {
+		Member loginMember = repository.getPwdByUid(member.getUid());
+		if (loginMember == null) {
+			return false;
+		}
+		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public Member getMemberByUid(String uid) {
+		return repository.getPwdByUid(uid);
 	}
 
 	@Override
@@ -173,6 +189,12 @@ public class MemberServiceImpl implements MemberService {
 		String uid = repository.getUid(name,email);
 		
 		return uid;
+	}
+
+	@Override
+	public List<Member> getMemberList() {
+
+		return repository.findAll();
 	}
 
 

@@ -81,16 +81,16 @@ const routes = [
 			
     ]
   },
+	{ path: "/admin/login", component: AdminLogin },
   {
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "login", component: AdminLogin },
       { path: "index", component: AdminIndex },
       { path: "member/list", component: MemberList },
       { path: "stuff/list", component: StuffList },
       { path: "category/list", component: CategoryList },
-      { path: "analytics/list", component: Analytics }
+      // { path: "analytics/list", component: Analytics }
     ]
   }
 ];
