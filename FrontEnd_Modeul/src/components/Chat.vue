@@ -161,7 +161,7 @@
 								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 								<span v-if="!calcSwitch" class="calc-member-span-price">
 									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
-									placeholder="금액 입력" @keydown="inputCheck"> 원
+										placeholder="금액 입력" @keydown="inputCheck"> 원
 								</span>
 							</div>
 						</div>
@@ -703,7 +703,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		dnoneHandler(){
+		dnoneHandler() {
 			this.isNextCalc = !this.isNextCalc;
 		}
 	},
@@ -747,20 +747,12 @@ export default {
 			return this.messageView.length;
 		},
 		total: function () {
-
 			let total = Object.values(this.price).reduce((p, c) => {
-				if (c != parseInt(c)) {
-
-
-				}
-				else {
-					console.log("파싱 전 " + c);
-					console.log("파싱 후 " + parseInt(c));
+				if(c == parseInt(c))
+					return parseInt(p) + parseInt(c)
+				else
 					return NaN;
-				}
-
 			}, 0);
-			// let parsedtotal = Object.values(this.price).reduce((p, c) => p + parseInt(c), 0);
 
 			if (isNaN(total)) {
 				this.totalText = false;
