@@ -28,7 +28,11 @@ export default {
 </template>
 
 <style scoped>
-.admin-main-wrap{
-	margin-left: 260px;
-}
+	section{
+		display: flex;
+		height: 100%;
+	}
+	.admin-main-wrap{
+		width: 100%;
+	}
 </style>

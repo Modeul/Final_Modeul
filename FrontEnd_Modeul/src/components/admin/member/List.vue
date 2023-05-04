@@ -81,6 +81,9 @@ export default {
 
 
 	<main>
+		<div class="admin-header">
+			<span>회원 관리</span>
+		</div>
 		<table>
 			<thead>
 				<tr>
@@ -97,17 +100,17 @@ export default {
 						EMAIL
 					</th>
 					<th>
-						탈퇴
+						
 					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-for="item in list" :key="item.name">
-					<td class="text-left">{{ item.uid }}</td>
-					<td class="text-left">{{ item.name }}</td>
-					<td class="text-left">{{ item.nickname }}</td>
-					<td class="text-left">{{ item.email }}</td>
-					<td> <button @click="deleteBtnHandler" :value="item.id">삭제</button> </td>
+					<td >{{ item.uid }}</td>
+					<td >{{ item.name }}</td>
+					<td >{{ item.nickname }}</td>
+					<td >{{ item.email }}</td>
+					<td> <button @click="deleteBtnHandler" :value="item.id" class="icon-admin3 icon-delete">삭제</button> </td>
 				</tr>
 			</tbody>
 		</table>
