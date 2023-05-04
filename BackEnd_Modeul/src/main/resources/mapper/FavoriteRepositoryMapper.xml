@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.modeul.web.repository.FavoriteRepository">
+
+	<resultMap id="FavoriteResultMap" type="Favorite">
+		<result property="memberId" column="member_id" />
+		<result property="stuffId" column="stuff_id" />
+	</resultMap>
+
+	<resultMap id="FavoriteViewResultMap" type="FavoriteView">
+		<result property="memberId" column="member_id" />
+		<result property="stuffId" column="stuff_id" />
+		<result property="stuffTitle" column="stuff_title" />
+		<result property="stuffPlace" column="stuff_place" />
+		<result property="stuffDeadline" column="stuff_deadline" />
+		<result property="favoriteDate" column="favorite_date" />
+		<result property="imageName" column="image_name" />
+	</resultMap>
+
+	<!-- 멤버아이디로 찜목록찾을거야 -->
+	<!-- <select id="findByMemberId" resultMap="FavoriteViewResultMap">
+		select * 
+		from favorite_view
+		where member_id = #{memberId}
+		order by favorite_date
+		<if test="size != null">
+			limit ${size} 
+		</if>
+		
+	</select> -->
+
+	<!-- <select id="findViewById" resultMap="FavoriteViewResultMap">
+		select * 
+		from favorite_view
+		where member_id = #{memberId}
+		order by favorite_date
+		
+		
+	</select> -->
+
+	<select id="findViewById" resultMap="FavoriteViewResultMap">
+		select * 
+		from favorite_view
+		where member_id = #{memberId}
+		<if test="categoryId != null">
+					and category_id = #{categoryId}
+		</if>
+		order by favorite_date
+		<if test="size != null and offset != null">
+				limit ${size} offset ${offset}
+			</if>
+	</select>
+
+	
+	<insert id="addList" parameterType="Favorite">
+		insert into favorite(member_id, stuff_id)
+			values(#{memberId}, #{stuffId})
+	</insert>
+
+	<delete id="deleteList" parameterType="Favorite">
+		delete from favorite
+		where stuff_id = #{stuffId} 
+		and member_id = #{memberId}
+	</delete>
+</mapper>

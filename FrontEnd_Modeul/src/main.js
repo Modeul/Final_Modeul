@@ -25,9 +25,10 @@ import Chat from "./components/Chat.vue";
 import FindPwd from "./components/FindPwd.vue";
 import FindId from "./components/FindId.vue";
 
-import MyPage from "./components/member/MyPage.vue";
-import MypageEdit from "./components/member/MypageEdit.vue";
-import ChangePwd from "./components/member/ChangePwd.vue";
+import MyPage from './components/member/MyPage.vue';
+import MypageEdit from './components/member/MypageEdit.vue';
+import ChangePwd from './components/member/ChangePwd.vue';
+import Favorite from './components/member/Favorite.vue';
 
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
@@ -69,6 +70,7 @@ const routes = [
       { path: "mypage", component: MyPage },
       { path: "mypage/edit", component: MypageEdit },
       { path: "mypage/changepwd", component: ChangePwd },
+			{ path: 'mypage/favorite', component: Favorite },
       { path: "mypage/myreglist", component: MyRegList },
       { path: "stuff/list", component: List },
       { path: "stuff/:id", component: Detail },
