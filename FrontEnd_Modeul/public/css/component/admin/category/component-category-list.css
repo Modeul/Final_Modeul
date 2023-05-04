@@ -15,20 +15,21 @@
   width: 100%;
 }
 .addCategory-show-btn{
-  font-size: 12px;
-  width: 90px;
+  font-size: 14px;
+  width: 100px;
   height: 30px;
   background-color: #63A0C2;
   color: #fff;
   font-weight: 500;
   border-radius: 5px;
   transition: 0.1s;
+  margin: 16px 0;
 }
 .addCategory-show-btn:hover{
   background-color: #7299BE;
 }
 .input{
-  width: 100%;
+  width: 60%;
   height: 26px;
   border: 0.8px solid #333;
   border-radius: 5px;
@@ -39,10 +40,10 @@
 }
 
 .input-id{
-  width: 30%;
+  width: 10%;
 }
 .save-btn{
-  width: 60%;
+  width: 70px;
   height: 28px;
   background-color: #efefef;
   font-size: 12px;
