@@ -151,14 +151,17 @@ public class StuffServiceImpl implements StuffService {
 	public List<StuffView> getRecentViewList(Long categoryId, int page) {
 
 		int size = page * pageSize;
-		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, null);
+		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, null, null);
 	}
 
 	@Override
 	public List<StuffView> getRecentViewList(Long categoryId, int page, Long memberId, String dongCode) {
 
 		int size = page * pageSize;
-		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, memberId);
+		if (dongCode == "") {
+			dongCode = null;
+		}
+		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, memberId, dongCode);
 	}
 	
 
@@ -182,13 +185,31 @@ public class StuffServiceImpl implements StuffService {
 	@Override
 	public List<StuffView> getRecentViewList(String query, Long categoryId, int page) {
 		int size = page * pageSize;
-		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, null);
+		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, null, null);
 	}
 	
 	@Override
 	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId) {
 		int size = page * pageSize;
-		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId);
+		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId, null);
+	}
+
+	@Override
+	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, String dongCode) {
+		int size = page * pageSize;
+		if (dongCode == "") {
+			dongCode = null;
+		}
+		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, null, dongCode);
+	}
+
+	@Override
+	public List<StuffView> getRecentViewList(String query, Long categoryId, int page, Long memberId, String dongCode) {
+		int size = page * pageSize;
+		if (dongCode == "") {
+			dongCode = null;
+		}
+		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId, dongCode);
 	}
 
 
