@@ -4,6 +4,7 @@ export default {
 		return {
 			list: '',
 			openModal: false,
+			openModal2: false,
 			selectedId: ''
 		}
 	},
@@ -39,13 +40,14 @@ export default {
 			const result = await response.json();
 
 			if (result == 1) {
-				alert("삭제완료!")
+				this.openModal = !this.openModal
+				this.openModal2 = !this.openModal2
+				this.load();
 			}
 			else {
 				alert("실패")
+				this.openModal = !this.openModal
 			}
-			this.openModal = !this.openModal
-			this.load();
 		}
 	},
 	mounted() {
@@ -64,6 +66,15 @@ export default {
 			<div class="delete-box-2">
 				<div @click="removeMember(e)" class="delete-box-3">삭제</div>
 				<div @click="deleteBtnHandler" class="delete-box-4">취소</div>
+			</div>
+		</div>
+	</div>
+
+	<div v-if="openModal2" class="black-bg">
+		<div class="delete-box">
+			<div class="delete-box-1">삭제되었습니다.</div>
+			<div class="delete-box-2">
+				<div @click="openModal2 = !openModal2" class="delete-box-5">확인</div>
 			</div>
 		</div>
 	</div>

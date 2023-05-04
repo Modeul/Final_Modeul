@@ -378,7 +378,9 @@ input[id="menuicon"]:checked+label+div {
 }
 
 @media (min-width: 768px) {
-
+	.navi-bar{
+		display: none;
+	}
 	.header-jc{
 		display: none;
 	}
