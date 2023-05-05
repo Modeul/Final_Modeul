@@ -29,5 +29,5 @@ public interface ParticipationService {
 
     void calculatedAmount(Long stuffId, Map<Long, Integer> prices);
 
-    void inputAccount(Long stuffId, int accountNum);
+    void inputAccount(Long stuffId, String account);
 }

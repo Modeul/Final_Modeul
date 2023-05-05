@@ -137,13 +137,14 @@ public class ParticipationController {
         return true;
     }
 
-    @PostMapping("account/{stuffId}/{accountNum}")
+    @PutMapping("/account/{stuffId}")
     public String inputAccount(
-            @PathVariable Long stuffId,
-            @PathVariable int accountNum) {
+            @PathVariable("stuffId") Long stuffId,
+            @RequestParam(name="ac") String account ) {
         
-        participationService.inputAccount(stuffId, accountNum);
+        participationService.inputAccount(stuffId, account);
 
-        return "ok";
+        return account;
     }
 }
+

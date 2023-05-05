@@ -108,11 +108,11 @@
     VALUES (#{stuffId}, #{memberId},#{price})
 	</insert>
 
-  <insert id="insertAccount" parameterType="map">
-    INSERT INTO participation(account)
-    VALUES (#{accountNum})
-    WHERE id = #{stuffId}
-	</insert>
+  <update id="insertAccount" parameterType="Participation">
+    UPDATE participation
+    SET account = #{account}
+    WHERE stuff_id = #{stuffId} 
+	</update>
 
 
 </mapper>

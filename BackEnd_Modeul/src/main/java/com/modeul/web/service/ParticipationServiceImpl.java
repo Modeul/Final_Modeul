@@ -1,5 +1,6 @@
 package com.modeul.web.service;
 
+import java.security.Key;
 import java.util.List;
 import java.util.Map;
 
@@ -89,9 +90,9 @@ public class ParticipationServiceImpl implements ParticipationService {
     }
 
     @Override
-    public void inputAccount(Long stuffId, int accountNum) {
-
-        repository.insertAccount(stuffId, accountNum);
+    public void inputAccount(Long stuffId, String account) {
+        
+        repository.insertAccount(stuffId, account);        
     }
 
 }
