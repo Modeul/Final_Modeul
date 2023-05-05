@@ -1249,6 +1249,8 @@ input::placeholder {
 	object-fit: cover;
 	border-radius: 50%;
 	overflow: hidden;
+	display: inline-block;
+	text-indent: -999px;
 }
 
 .cal-user-name {
