@@ -181,7 +181,7 @@
 				</div>
 				<div class="account-input">
 					<select required class="account-input-box" v-model="account.bank">
-						<option value="" disabled selected>은행 선택</option>
+						<option value="" selected>은행 선택</option>
 						<option v-for="bank in banks" v-text="bank"></option>
 					</select>
 					<input placeholder="계좌번호" class="account-input-box" v-model="account.accountNum" pattern="[0-9]*" required> 
@@ -189,10 +189,9 @@
 				<div class="account-recent">
 					<div>최근 등록 계좌</div>
 					<div>
-						2343242423423
+						{{ accountInfo }}
 					</div>
 				</div>
-				<div @click.prvent="AA">aa</div>
 				<button type="submit" class="calc-button">등록하기</button>
 			</form>
 		</section>
@@ -466,24 +465,7 @@ export default {
 	},
 
 	methods: {
-		AA() {
-			// this.accountInfo = this.account.bank + ':' + this.account.accountNum;
-			console.log(this.accountInfo);
-
-			this.accountInfo = this.account.bank + ":" + this.account.accountNum;
-
-			var requestOptions = {
-			method: 'PUT',
-			redirect: 'follow'
-			};
-
-			fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
-			.then(response => response.text())
-			.then(result => console.log(result))
-			.catch(error => console.log('error', error));
-			
-
-		},
+		
 		blurHandler() {
 			console.log(this.memberPriceList);
 		},
@@ -726,32 +708,20 @@ export default {
 		},
 		inputHandler() {
 
-			// this.accountInfo = this.account.bank + this.account.accountNum;
+			this.accountInfo = this.account.bank + this.account.accountNum;
 			
-			// var requestOptions = {
-			// method: 'PUT',
-			// redirect: 'follow',
-			// headers: { 'Content-Type': 'application/json' },
-			// body: JSON.stringify(this.account)
-			// };
+			var requestOptions = {
+			method: 'PUT',
+			redirect: 'follow'
+			};
 
-			// fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}/2`, requestOptions)
-			// .then(result => console.log(result))
-			// .catch(error => console.log('error', error));
+			fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log('error', error));
 
-			// this.isNextCalc = !this.isNextCalc;
+			this.isNextCalc = !this.isNextCalc;
 
-			// var requestOptions = {
-			// method: 'PUT',
-			// redirect: 'follow'
-			// };
-
-			// fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
-			// .then(response => response.text())
-			// .then(result => console.log(result))
-			// .catch(error => console.log('error', error));
-
-			
 		}
 	},
 	beforeRouteLeave() {
@@ -788,6 +758,20 @@ export default {
 		this.checkStuffLeader();
 
 		this.stuffId = this.$route.params.stuffId; 
+
+		// this.accountInfo = 
+		var requestOptions = {
+		method: 'GET',
+		redirect: 'follow'
+		};
+
+		fetch(`${this.$store.state.host}/api/account/${leaderNic}`, requestOptions)
+		.then(response => response.text())
+		.then(result => {
+			this.accountInfo = result;
+			console.log(result);
+		})
+		.catch(error => console.log('error', error));
 
 	},
 	beforeUnmount() {
@@ -966,15 +950,14 @@ select option[value=""][disabled] {
 }
 
 .account-recent {
-	padding: 16px 4px;
-
+	padding: 20px 4px;
+	font-size: 14px;
 	flex: none;
 	order: 2;
 	flex-grow: 0;
 }
 
 .account-recent>div:first-child {
-	font-size: 14px;
 	font-weight: 700;
 	color: #63A0C2;
 }
