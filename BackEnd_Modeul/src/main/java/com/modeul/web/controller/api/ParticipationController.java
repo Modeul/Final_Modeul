@@ -144,7 +144,15 @@ public class ParticipationController {
         
         participationService.inputAccount(stuffId, account);
 
-        return account;
+        return "ok";
     }
+
+    @GetMapping("account/{leaderId}")
+    public String getAccount(
+            @PathVariable Long leaderId){
+        
+        
+        return participationService.getAccount(leaderId);
+        }
 }
 

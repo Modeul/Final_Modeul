@@ -95,4 +95,10 @@ public class ParticipationServiceImpl implements ParticipationService {
         repository.insertAccount(stuffId, account);        
     }
 
+    @Override
+    public String getAccount(Long leaderId) {
+        
+        return repository.getAccount(leaderId);
+    }
+
 }

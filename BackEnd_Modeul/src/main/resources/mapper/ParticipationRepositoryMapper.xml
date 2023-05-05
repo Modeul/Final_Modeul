@@ -114,5 +114,12 @@
     WHERE stuff_id = #{stuffId} 
 	</update>
 
+  <select id="getAccount" resultType="String">
+    select account
+    from participation
+    <!-- where member_id = #{leaderId} -->
+    where stuff_id = #{leaderId}
+  </select>
+
 
 </mapper>

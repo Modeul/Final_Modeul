@@ -43,6 +43,6 @@ public interface ParticipationRepository {
 
     void insertAccount(@Param("stuffId") Long stuffId, String account);
 
-    
+    String getAccount(Long leaderId);
 
 }

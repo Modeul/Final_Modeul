@@ -30,4 +30,6 @@ public interface ParticipationService {
     void calculatedAmount(Long stuffId, Map<Long, Integer> prices);
 
     void inputAccount(Long stuffId, String account);
+
+    String getAccount(Long leaderId);
 }
