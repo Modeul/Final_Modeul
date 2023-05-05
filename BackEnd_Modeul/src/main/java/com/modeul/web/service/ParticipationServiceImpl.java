@@ -88,4 +88,10 @@ public class ParticipationServiceImpl implements ParticipationService {
         
     }
 
+    @Override
+    public void inputAccount(Long stuffId, int accountNum) {
+
+        repository.insertAccount(stuffId, accountNum);
+    }
+
 }

@@ -108,5 +108,11 @@
     VALUES (#{stuffId}, #{memberId},#{price})
 	</insert>
 
+  <insert id="insertAccount" parameterType="map">
+    INSERT INTO participation(account)
+    VALUES (#{accountNum})
+    WHERE id = #{stuffId}
+	</insert>
+
 
 </mapper>

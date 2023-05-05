@@ -136,4 +136,14 @@ public class ParticipationController {
         participationService.calculatedAmount(stuffId, prices);
         return true;
     }
+
+    @PostMapping("account/{stuffId}/{accountNum}")
+    public String inputAccount(
+            @PathVariable Long stuffId,
+            @PathVariable int accountNum) {
+        
+        participationService.inputAccount(stuffId, accountNum);
+
+        return "ok";
+    }
 }

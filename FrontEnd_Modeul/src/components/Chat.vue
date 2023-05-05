@@ -173,19 +173,18 @@
 				</div>
 			</form>
 
-			<div class="calc-contents" :class="{ 'd-none': isNextCalc }">
+			<form class="calc-contents" :class="{ 'd-none': isNextCalc }" method="put" @submit.prevent="inputHandler">
 				<div class="account-title">
 					<span class="account-title-leader">{{ leaderNic }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
 				<div class="account-input">
-					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
-						style="width: 260px;">
-					</v-select>
-					<v-text-field v-model=accountNum pattern="[0-9]*" required label="계좌번호" variant="underlined" style="width: 260px;">
-					</v-text-field>
-					<!-- <input class="account-input-box" pl> -->
+					<select required class="account-input-box" v-model="account.bank">
+						<option value="" disabled selected>은행 선택</option>
+						<option v-for="bank in banks" v-text="bank"></option>
+					</select>
+					<input placeholder="계좌번호" class="account-input-box" v-model="account.accountNum" pattern="[0-9]*" required> 
 				</div>
 				<div class="account-recent">
 					<div>최근 등록 계좌</div>
@@ -194,8 +193,8 @@
 					</div>
 				</div>
 				<div @click.prvent="AA">aa</div>
-				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">등록하기</button>
-			</div>
+				<button type="submit" class="calc-button">등록하기</button>
+			</form>
 		</section>
 	</v-navigation-drawer>
 
@@ -454,7 +453,12 @@ export default {
 			// memberPriceList: [{'key'}]
 
 			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
-			banks: ['국민은행', '기업은행'],
+			banks: ['농협','신한','IBK기업','하나','우리','국민','SC제일','대구','부산','광주','새마을금고','경남','전북','제주','산업','우체국','신협','수협','씨티'],
+			account: {
+				bank:'',
+				accountNum:''
+			},
+			accountInfo:'',
 			isNextCalc: false,
 
 			leader: {},
@@ -463,10 +467,22 @@ export default {
 
 	methods: {
 		AA() {
-			console.log(this.selectBank);
-			console.log(this.accountNum);
-			console.log(this.leader.nic);
-			console.log(this.leader.id)	
+			// this.accountInfo = this.account.bank + ':' + this.account.accountNum;
+			console.log(this.accountInfo);
+
+			this.accountInfo = this.account.bank + ":" + this.account.accountNum;
+
+			var requestOptions = {
+			method: 'PUT',
+			redirect: 'follow'
+			};
+
+			fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log('error', error));
+			
+
 		},
 		blurHandler() {
 			console.log(this.memberPriceList);
@@ -708,9 +724,33 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		dnoneHandler() {
-			this.isNextCalc = !this.isNextCalc;
+		inputHandler() {
+
+			// this.accountInfo = this.account.bank + this.account.accountNum;
 			
+			// var requestOptions = {
+			// method: 'PUT',
+			// redirect: 'follow',
+			// headers: { 'Content-Type': 'application/json' },
+			// body: JSON.stringify(this.account)
+			// };
+
+			// fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}/2`, requestOptions)
+			// .then(result => console.log(result))
+			// .catch(error => console.log('error', error));
+
+			// this.isNextCalc = !this.isNextCalc;
+
+			// var requestOptions = {
+			// method: 'PUT',
+			// redirect: 'follow'
+			// };
+
+			// fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
+			// .then(response => response.text())
+			// .then(result => console.log(result))
+			// .catch(error => console.log('error', error));
+
 			
 		}
 	},
@@ -746,6 +786,8 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
+
+		this.stuffId = this.$route.params.stuffId; 
 
 	},
 	beforeUnmount() {
@@ -905,12 +947,22 @@ export default {
 }
 
 .account-input-box {
-	width: 236px;
+	width: 272px;
 	height: 48px;
-	background: #FFFFFF;
 	border: 1px solid #888888;
+	color: #888888;
 	border-radius: 10px;
 	margin-bottom: 8px;
+	padding-left: 12px;
+}
+
+select option[value=""][disabled] {
+	display: none;
+}
+.account-input-box::-webkit-input-placeholder {
+  color: #888888;
+  font-size: 16px;
+  text-align:left;
 }
 
 .account-recent {

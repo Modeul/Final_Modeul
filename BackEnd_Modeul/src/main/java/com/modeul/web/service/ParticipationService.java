@@ -28,4 +28,6 @@ public interface ParticipationService {
     void saveCalResultMsg(Message message);
 
     void calculatedAmount(Long stuffId, Map<Long, Integer> prices);
+
+    void inputAccount(Long stuffId, int accountNum);
 }

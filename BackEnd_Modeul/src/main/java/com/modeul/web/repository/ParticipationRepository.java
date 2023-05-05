@@ -39,4 +39,7 @@ public interface ParticipationRepository {
     void putCalResultMsg(Message message);
 
     int insertCalculatedAmount(@Param("stuffId") Long stuffId, @Param("memberId") Long memberId, @Param("price") Integer price);
+
+    void insertAccount(Long stuffId, int accountNum);
+
 }
