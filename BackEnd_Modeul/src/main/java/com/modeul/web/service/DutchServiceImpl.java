@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.modeul.web.entity.DutchMemberView;
 import com.modeul.web.entity.DutchView;
 import com.modeul.web.repository.DutchRepository;
 
@@ -20,6 +21,11 @@ public class DutchServiceImpl implements DutchService {
         int size = page * 8;
 
         return repository.findViewBymemberId(memberId, "date", "desc", size, 0);
+    }
+
+    @Override
+    public List<DutchMemberView> getMemberViewBystuffId(Long stuffId) {
+        return repository.findMemberViewBystuffId(stuffId);
     }
     
 }

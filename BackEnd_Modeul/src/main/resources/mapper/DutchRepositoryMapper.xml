@@ -14,8 +14,14 @@
         <result property="stuffManagerId" column="stuff_manager_id" />
         <result property="stuffManagerNickname" column="stuff_manager_nickname" />
         <result property="stuffManagerImage" column="stuff_manager_image" />
-        <!-- <result property="price" column="price" />
-        <result property="date" column="date" /> -->
+    </resultMap>
+
+    <resultMap id="DutchMemberViewResultMap" type="DutchMemberView">
+        <result property="stuffId" column="stuff_id" />
+        <result property="memberId" column="member_id" />
+        <result property="memberNickname" column="member_nickname" />
+        <result property="memberImage" column="member_image" />
+        <result property="participationDate" column="participation_date" />
     </resultMap>
 
     <select id="findViewBymemberId" resultMap="DutchViewResultMap">
@@ -28,5 +34,12 @@
         <if test="size != null and offset != null">
 			limit ${size} offset ${offset}
 		</if>
+    </select>
+
+    <select id="findMemberViewBystuffId" resultMap="DutchMemberViewResultMap">
+      select * 
+      from dutch_member_view
+      where stuff_id = #{stuffId}
+      order by stuff_id, participation_date;
     </select>
 </mapper>
