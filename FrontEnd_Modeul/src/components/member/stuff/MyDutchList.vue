@@ -21,6 +21,7 @@ console.log(stuffId.value);
 
 let model = reactive({
     list: [],
+    months:[],
     memberList: [],
 });
 
@@ -39,6 +40,8 @@ async function load() {
 
     const dataList = await response.json(); // 여기 await 중요!
     model.list = formatDateList(dataList.list);
+    model.months = dataList.months;
+    console.log("model.months:"+model.months);
 }
 
 async function loadDutchMemberList() {
@@ -62,6 +65,7 @@ function formatDateList(list) {
         const deadlineObj = dayjs(item.stuffDeadline).locale('ko');
         const isToday = (deadlineObj.format('YYYY-MM-DD') == today) ? '오늘, ' : ''
         item.stuffDeadline = isToday + deadlineObj.format("M월 D일 (dd) HH시까지");
+        // item.month = new dayjs(item.date).locale('ko').format("M");
 
         item.dDay = dayjs().diff(deadlineObj, 'day');
         if (parseInt(item.dDay) < 0) {
@@ -106,6 +110,7 @@ async function sumDutchHandler() {
 
 function selectMonthHandler() {
     console.log(month.value);
+    load();
 }
 
 function showCalcResultHandler(d) {
@@ -118,7 +123,6 @@ function showCalcResultHandler(d) {
 
 onMounted(() => {
     load();
-    // sumDutchHandler();
 })
 
 </script>
@@ -133,7 +137,7 @@ onMounted(() => {
                 </div>
                 <div class="selectbox">
                     <select class="select-arrow" v-model="month" @change="selectMonthHandler">
-                        <option v-for="n in 12" :value="n">{{ n }}월</option>
+                        <option v-for="m in model.months" :value="m.month">{{ m.month }}월</option>
                     </select>
                 </div>
             </div>
@@ -699,4 +703,5 @@ select:focus {
     color: #FFFFFF;
     font-size: 14px;
     font-weight: bold;
-}</style>
+}
+</style>
