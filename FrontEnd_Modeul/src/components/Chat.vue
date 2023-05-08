@@ -145,10 +145,10 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
+							<input type="text" v-model.number="totalPrice" @keydown="inputCheck"
 								placeholder="총금액을 입력해 주세요.">원
-								
 						</div>
+							
 					</section>
 					<div class="calc-members-title">참여 인원</div>
 					<div class="calc-members">
@@ -164,8 +164,10 @@
 									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
 										placeholder="금액 입력" @keydown="inputCheck"> 원
 								</span>
+								
 							</div>
 						</div>
+						<span @click="AA">qw</span>
 					</div>
 					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
 							v-if="totalText">합계</span>{{ total }}</div>
@@ -465,17 +467,19 @@ export default {
 	},
 
 	methods: {
-		
+		AA(){
+			console.log(this.price);
+		},
 		blurHandler() {
 			console.log(this.memberPriceList);
 		},
 
-		chipinHandler() {
-			console.log(this.totalPrice)
-			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+		// chipinHandler() {
+		// 	this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 
-			return this.chipinResult;
-		},
+
+		// 	return this.chipinResult;
+		// },
 
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
@@ -693,6 +697,7 @@ export default {
 			this.calcSwitch = false;
 		},
 		calculate() {
+			if(calcSwitch){
 			var requestOptions = {
 				method: 'PUT',
 				redirect: 'follow',
@@ -705,6 +710,10 @@ export default {
 					console.log(result);
 				})
 				.catch(error => console.log('error', error));
+			}
+			else {
+
+			}
 		},
 		inputHandler() {
 
@@ -798,9 +807,14 @@ export default {
 				return total.toLocaleString() + " 원";
 			}
 		},
+		chipinResult: function(){
+
+			this.price=((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+
+			return this.price;
+		},
 
 		leaderNic: function() {
-
 			return this.leader.nic;
 		}
 	
@@ -812,9 +826,7 @@ export default {
 				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 			}, 50);
 		},
-		// totalPriceComma: function(){
-		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
-		// }
+		
 		totalPriceAlert: function () {
 			if (this.totalPrice > 999999)
 				return console.log("over");
@@ -888,20 +900,6 @@ export default {
 	flex-grow: 1;
 }
 
-/* .calc-account {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	padding: 0px;
-
-	width: 279px;
-	height: 92px;
-
-	flex: none;
-	order: 0;
-	flex-grow: 0;
-} */
 
 .account-title {
 	font-weight: 600;
