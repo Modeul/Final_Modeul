@@ -11,7 +11,7 @@ export default {
 			stuffId: 1,
 			openModal: false,
 			openModal2: false,
-			openModal3: true,
+			openModal3: false,
 			openModal4: false,
 			stuff: {},
 			category: {},
@@ -287,7 +287,8 @@ export default {
 			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
 			<!-- 수정/삭제 모달 버튼 -->
-			<i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i>
+			<!-- <i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i> -->
+			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
 				<div class="icon-edit2">
