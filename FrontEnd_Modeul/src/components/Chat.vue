@@ -118,16 +118,49 @@
 	</div>
 
 	<!-- ** 정산 입력 폼 모달 ** -->
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
-		<section class="calc">
+
+		<section class="calc" :class="{ 'd-none': !isAccount }">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
-				<router-link to="list" class="icon calc-back" @click="dnoneHandler">뒤로가기</router-link>
+				<div class="icon">뒤로가기</div>
+				<div class="calc-header-title">계좌입력</div>
+			</header>
+
+			<div class="calc-contents">
+				<div class="account-title">
+					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span>계좌 정보를</span><br>
+					<span>입력해주세요.</span>
+				</div>
+				<div class="account-input">
+					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
+						style="width: 260px;">
+					</v-select>
+					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
+					</v-text-field>
+					<!-- <input class="account-input-box" pl> -->
+				</div>
+				<div class="account-recent">
+					<div>최근 등록 계좌</div>
+					<div>
+						2343242423423
+					</div>
+				</div>
+				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
+
+			</div>
+		</section>
+
+		<section class="calc" :class="{ 'd-none': !isCalc }">
+			<h1 class="d-none">정산하기</h1>
+			<header class="calc-header">
+				<div class="icon calc-back" @click.prevent="dnoneHandler">뒤로가기</div>
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post" :class="{ 'd-none': !isNextCalc }" @submit.prevent="calculate">
+			<form class="calc-contents" method="post" @submit.prevent="calculate">
 				<div>
 					<section class="calc-method-btn calc-member-line">
 						<h1 class="d-none">정산 방법</h1>
@@ -145,10 +178,9 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" v-model.number="totalPrice" @keydown="inputCheck"
+							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
 								placeholder="총금액을 입력해 주세요.">원
 						</div>
-							
 					</section>
 					<div class="calc-members-title">참여 인원</div>
 					<div class="calc-members">
@@ -164,45 +196,18 @@
 									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
 										placeholder="금액 입력" @keydown="inputCheck"> 원
 								</span>
-								
 							</div>
 						</div>
-						<span @click="AA">qw</span>
 					</div>
 					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
 							v-if="totalText">합계</span>{{ total }}</div>
-					<button type="submit" class="calc-button">정산하기</button>
+					<button type="submit" class="calc-button" @click.prevent="resultDnoneHandler">정산하기</button>
 				</div>
-			</form>
-
-			<form class="calc-contents" :class="{ 'd-none': isNextCalc }" method="put" @submit.prevent="inputHandler">
-				<div class="account-title">
-					<span class="account-title-leader">{{ leaderNic }}</span><span> 님의</span><br>
-					<span>계좌 정보를</span><br>
-					<span>입력해주세요.</span>
-				</div>
-				<div class="account-input">
-					<select required class="account-input-box" v-model="account.bank">
-						<option value="" selected>은행 선택</option>
-						<option v-for="bank in banks" v-text="bank"></option>
-					</select>
-					<input placeholder="계좌번호" class="account-input-box" v-model="account.accountNum" pattern="[0-9]*" required> 
-				</div>
-				<div class="account-recent">
-					<div>최근 등록 계좌</div>
-					<div>
-						{{ accountInfo }}
-					</div>
-				</div>
-				<button type="submit" class="calc-button">등록하기</button>
 			</form>
 		</section>
-	</v-navigation-drawer>
 
-	<!-- ** 정산 결과 모달 ** -->
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult"
-		location="bottom" temporary>
-		<section class="calc-result-default">
+		<!-- ** 정산 결과 모달 ** -->
+		<section class="calc-result-default" :class="{ 'd-none': !isCalcResult }">
 			<h1 class="d-none">calculate</h1>
 
 			<section class="cal-result-main">
@@ -397,7 +402,7 @@
 
 				<section class="cal-result-check-form">
 					<h1 class="d-none">check</h1>
-					<button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+					<button class="cal-result-check-btn" @click="calDrawer = !calDrawer">확인</button>
 				</section>
 
 			</section>
@@ -416,7 +421,6 @@ export default {
 	data() {
 		return {
 			calDrawer: null,
-			isCheckCalResult: null,
 			userName: "",
 			message: "",
 			recvList: [],
@@ -454,32 +458,30 @@ export default {
 			// memberPriceList: [{'key'}]
 
 			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
-			banks: ['농협','신한','IBK기업','하나','우리','국민','SC제일','대구','부산','광주','새마을금고','경남','전북','제주','산업','우체국','신협','수협','씨티'],
-			account: {
-				bank:'',
-				accountNum:''
-			},
-			accountInfo:'',
-			isNextCalc: false,
 
-			leader: {},
+
+			banks: ['국민은행', '기업은행'
+
+				// { state: 'Nebraska', abbr: 'NE' },
+				// { state: 'California', abbr: 'CA' },
+				// { state: 'New York', abbr: 'NY' },
+			],
+			isAccount: true,
+			isCalc: false,
+			isCalcResult: false
 		}
 	},
 
 	methods: {
-		AA(){
-			console.log(this.price);
-		},
 		blurHandler() {
 			console.log(this.memberPriceList);
 		},
 
-		// chipinHandler() {
-		// 	this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-
-
-		// 	return this.chipinResult;
-		// },
+		chipinHandler() {
+			console.log(this.totalPrice)
+			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+			return this.chipinResult;
+		},
 
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
@@ -604,9 +606,6 @@ export default {
 			// 방장에게 추방 권한
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
-
-				this.leader.nic = this.memberInfo.nickname;
-				this.leader.id = this.memberInfo.id;
 			}
 		},
 		banishUserHandler() {
@@ -680,9 +679,6 @@ export default {
 		showBanishHandler() {
 			this.showBanish = !this.showBanish;
 		},
-		calResultCheckHandler() {
-			this.isCheckCalResult = !this.isCheckCalResult;
-		},
 		inputCheck(event) {
 			if (
 				!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
@@ -697,7 +693,6 @@ export default {
 			this.calcSwitch = false;
 		},
 		calculate() {
-			if(calcSwitch){
 			var requestOptions = {
 				method: 'PUT',
 				redirect: 'follow',
@@ -710,27 +705,14 @@ export default {
 					console.log(result);
 				})
 				.catch(error => console.log('error', error));
-			}
-			else {
-
-			}
 		},
-		inputHandler() {
-
-			this.accountInfo = this.account.bank + this.account.accountNum;
-			
-			var requestOptions = {
-			method: 'PUT',
-			redirect: 'follow'
-			};
-
-			fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
-			.then(response => response.text())
-			.then(result => console.log(result))
-			.catch(error => console.log('error', error));
-
-			this.isNextCalc = !this.isNextCalc;
-
+		dnoneHandler() {
+			this.isAccount = !this.isAccount;
+			this.isCalc = !this.isCalc;
+		},
+		resultDnoneHandler() {
+			this.isCalc = !this.isCalc;
+			this.isCalcResult = !this.isCalcResult;
 		}
 	},
 	beforeRouteLeave() {
@@ -740,8 +722,6 @@ export default {
 		this.stompConnect();
 		this.connect();
 		this.loadParticipant();
-		
-		
 	},
 	updated() {
 
@@ -766,22 +746,6 @@ export default {
 
 		this.checkStuffLeader();
 
-		this.stuffId = this.$route.params.stuffId; 
-
-		// this.accountInfo = 
-		var requestOptions = {
-		method: 'GET',
-		redirect: 'follow'
-		};
-
-		fetch(`${this.$store.state.host}/api/account/${leaderNic}`, requestOptions)
-		.then(response => response.text())
-		.then(result => {
-			this.accountInfo = result;
-			console.log(result);
-		})
-		.catch(error => console.log('error', error));
-
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -792,7 +756,7 @@ export default {
 		},
 		total: function () {
 			let total = Object.values(this.price).reduce((p, c) => {
-				if(c == parseInt(c))
+				if (c == parseInt(c))
 					return parseInt(p) + parseInt(c)
 				else
 					return NaN;
@@ -806,18 +770,7 @@ export default {
 				this.totalText = true;
 				return total.toLocaleString() + " 원";
 			}
-		},
-		chipinResult: function(){
-
-			this.price=((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-
-			return this.price;
-		},
-
-		leaderNic: function() {
-			return this.leader.nic;
 		}
-	
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
@@ -826,7 +779,9 @@ export default {
 				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 			}, 50);
 		},
-		
+		// totalPriceComma: function(){
+		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
+		// }
 		totalPriceAlert: function () {
 			if (this.totalPrice > 999999)
 				return console.log("over");
@@ -900,6 +855,20 @@ export default {
 	flex-grow: 1;
 }
 
+/* .calc-account {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 0px;
+
+	width: 279px;
+	height: 92px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+} */
 
 .account-title {
 	font-weight: 600;
@@ -929,33 +898,24 @@ export default {
 }
 
 .account-input-box {
-	width: 272px;
+	width: 236px;
 	height: 48px;
+	background: #FFFFFF;
 	border: 1px solid #888888;
-	color: #888888;
 	border-radius: 10px;
 	margin-bottom: 8px;
-	padding-left: 12px;
-}
-
-select option[value=""][disabled] {
-	display: none;
-}
-.account-input-box::-webkit-input-placeholder {
-  color: #888888;
-  font-size: 16px;
-  text-align:left;
 }
 
 .account-recent {
-	padding: 20px 4px;
-	font-size: 14px;
+	padding: 16px 4px;
+
 	flex: none;
 	order: 2;
 	flex-grow: 0;
 }
 
 .account-recent>div:first-child {
+	font-size: 14px;
 	font-weight: 700;
 	color: #63A0C2;
 }
@@ -1092,10 +1052,9 @@ input::placeholder {
 }
 
 .calc-member-line {
-	width: 295px;
 	border-bottom: 2px solid #D9D9D9;
 	padding: 0;
-	margin: 0;
+	margin-top: 10px;
 }
 
 .calc-members-title {
@@ -1103,7 +1062,7 @@ input::placeholder {
 	flex-direction: row;
 	align-items: center;
 	/* padding: 12px 16px 0px; */
-	margin-top: 28px;
+	margin-top: 18px;
 	gap: 16px;
 	font-size: 12px;
 	font-weight: 700;
@@ -1124,7 +1083,7 @@ input::placeholder {
 	justify-content: space-between;
 	/* align-items: flex-start; */
 	align-items: center;
-	margin-top: 36px;
+	margin-top: 26px;
 
 	/* gap: 4px; */
 
@@ -1174,9 +1133,6 @@ input::placeholder {
 
 
 	position: relative;
-	height: 635px;
-	height: 635px;
-	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
 	border-radius: 30px 30px 0px 0px;
@@ -1190,9 +1146,7 @@ input::placeholder {
 	padding: 0px 24px 0px;
 	overflow: auto;
 
-	width: 375px;
-	height: 635px;
-	height: 635px;
+	height: 629px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
 	flex: none;
@@ -1295,6 +1249,8 @@ input::placeholder {
 	object-fit: cover;
 	border-radius: 50%;
 	overflow: hidden;
+	display: inline-block;
+	text-indent: -999px;
 }
 
 .cal-user-name {
@@ -1832,9 +1788,5 @@ input::placeholder {
 
 .v-dialog:deep {
 	font-size: 14px;
-}
-
-.v-select:deep {
-	width: 280px;
 }
 </style>
