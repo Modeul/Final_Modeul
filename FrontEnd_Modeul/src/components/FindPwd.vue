@@ -3,7 +3,7 @@
         <!-- header -->
         <header class="header">
             <router-link to="/login" class="back"></router-link>
-            <div class="changpwd-title">비밀번호 찾기</div>
+            <div class="find-title">비밀번호 찾기</div>
         </header>
         <!-- input section -->
         <section class="input-sec">
@@ -241,7 +241,7 @@ export default{
     height: 24px;
     margin-top: 9px;
 }
-.changpwd-title{
+.find-title{
     margin-left: 86px;
     /* font-size: 14px; */
     color:#333;

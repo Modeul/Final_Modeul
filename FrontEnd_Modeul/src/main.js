@@ -23,6 +23,7 @@ import Signup from "./components/Signup.vue";
 import Login from "./components/Login.vue";
 import Chat from "./components/Chat.vue";
 import FindPwd from "./components/FindPwd.vue";
+import FindId from "./components/FindId.vue";
 
 import MyPage from "./components/member/MyPage.vue";
 import MypageEdit from "./components/member/MypageEdit.vue";
@@ -31,6 +32,7 @@ import ChangePwd from "./components/member/ChangePwd.vue";
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
 import MyRegList from "./components/member/stuff/MyRegList.vue";
+import MyDutchList from "./components/member/stuff/MyDutchList.vue";
 import Detail from "./components/member/stuff/Detail.vue";
 import Reg from "./components/member/stuff/Reg.vue";
 import EditReg from "./components/member/stuff/EditReg.vue";
@@ -56,6 +58,7 @@ const routes = [
       { path: "index", component: Index },
       { path: "login", component: Login },
       { path: "login/findpwd", component: FindPwd },
+      { path: "login/findid", component: FindId },
       { path: "signup", component: Signup },
       { path: "chat/:stuffId/:memberId", component: Chat }
     ]
@@ -68,6 +71,7 @@ const routes = [
       { path: "mypage/edit", component: MypageEdit },
       { path: "mypage/changepwd", component: ChangePwd },
       { path: "mypage/myreglist", component: MyRegList },
+      { path: "mypage/mydutchlist", component: MyDutchList },
       { path: "stuff/list", component: List },
       { path: "stuff/:id", component: Detail },
       { path: "stuff/reg", component: Reg },
@@ -78,16 +82,16 @@ const routes = [
       { path: "participation/list", component: ParticipationList }
     ]
   },
+	{ path: "/admin/login", component: AdminLogin },
   {
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "login", component: AdminLogin },
       { path: "index", component: AdminIndex },
       { path: "member/list", component: MemberList },
       { path: "stuff/list", component: StuffList },
       { path: "category/list", component: CategoryList },
-      { path: "analytics/list", component: Analytics }
+      // { path: "analytics/list", component: Analytics }
     ]
   }
 ];

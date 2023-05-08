@@ -33,7 +33,9 @@
             <!-- 아이디찾기 ~ 플렉스 -->
             <div class="find-container">
                 <div class="find-box">
-                    <span class="find-text">아이디 찾기</span>
+                    <router-link to="/login/findid">
+                        <span class="find-text">아이디 찾기</span>
+                    </router-link>
                     <span class="find-text2">|</span>
                     <router-link to="/login/findpwd">
                         <span class="find-text">비밀번호 찾기</span>
@@ -60,6 +62,7 @@ export default {
             uid: "",
             pwd: "",
             errormsg: "",
+            loginMember:{},
         }
     },
     methods: {
@@ -82,13 +85,15 @@ export default {
             };
 
             await fetch(`${this.$store.state.host}/api/member/login`, requestOptions)
-                .then(response => response.text())
+                .then(response => response.json())
                 .then(result => {
                     console.log(result);
-                    if (result)
-                        this.errormsg = result;
-                    else
+                    if (result.result == null)
+                        this.errormsg = "아이디 또는 비밀번호를 확인하세요";
+                    else{
+                        this.loginMember = result.result;
                         this.$router.push('/member/stuff/list');
+                    }
                 })
                 .catch(error => console.log('error', error));
         }

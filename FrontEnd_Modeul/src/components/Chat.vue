@@ -55,8 +55,8 @@
 						</div>
 						<div class="chat-side-list-user-icon">
 							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
-								v-if="user.memberId !== this.chat.memberId"
-								src="../../public/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
+								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg"
+								alt="추방버튼">
 						</div>
 					</div>
 				</div>
@@ -68,7 +68,7 @@
 
 		</v-navigation-drawer>
 
-		<v-app-bar height="80" density="compact" flat >
+		<v-app-bar height="80" density="compact" flat>
 
 			<template v-slot:prepend>
 				<v-btn icon="mdi-arrow-left" @click="goback"></v-btn>
@@ -83,7 +83,6 @@
 		</v-app-bar>
 
 		<div class="chat-canvas">
-
 			<div v-for="m in messageView">
 				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
 					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
@@ -96,7 +95,7 @@
 					</div>
 				</div>
 				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
-					<!-- <p class="chat-content">{{ m.content }}</p> -->
+				<!-- <p class="chat-content">{{ m.content }}</p> -->
 				<!-- </div> -->
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
@@ -104,9 +103,10 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="../../images/member/stuff/cal-btn.svg">
+				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img src="../../images/member/stuff/cal-result-btn.svg">
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
+						src="/images/member/stuff/cal-result-btn.svg">
 				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
@@ -114,151 +114,300 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom" temporary>
-		<section class="calc">
+	<!-- ** 정산 입력 폼 모달 ** -->
+	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+		temporary>
+
+		<section class="calc" :class="{ 'd-none': !isAccount }">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
-                <router-link to="list" class="icon calc-back">뒤로가기</router-link>
-                <div class="calc-header-title">정산하기</div>
-            </header>
-
-			<form class="calc-contents" method="post" >
-				<section class="calc-method-btn calc-member-line">
-					<h1 class="d-none">정산 방법</h1>
-					<div>
-						<a class="btn-division"></a>
-						<span>1/N하기</span>
-					</div>
-					<div></div>
-					<div>
-						<a class="btn-writing"></a>
-						<span>직접 입력</span>
-					</div>
-					<div class="calc-member-line"> </div>
-				</section>
-				<section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<input type="text">원
-				</section>
-
-				<div class="calc-members-title">참여 인원</div>
-
-				<div class="calc-members">
-						<div class="chat-user-img">
-							<img :src="'/images/member/stuff/'">
-						</div>
-						<div class="calc-members-nic"></div>
-						<div class="calc-member-price">
-							<input type="text"> 원
-						</div>
-					</div>
-				
-
-				<!-- <section class="calc-total">
-					<h1 class="d-none">합계</h1>
-					<div>
-						<label>합계:</label>
-						<span></span>
-						<span>원</span>
-					</div>
-				</section> -->
-				<button type="submit" class="calc-button">정산하기</button>
-			</form>
-
-
-		</section>
-
-		<!-- <section class="calc-result">
-			<h1 class="d-none">정산 결과</h1>
-			<header class="result-header">
-				<div>정산결과</div>
-				<button>삭제하기</button>
+				<div class="icon">뒤로가기</div>
+				<div class="calc-header-title">계좌입력</div>
 			</header>
-			<section class="result-contents">
-				<h1 class=d-none>결과 내용</h1>
-				<div class="calc-members">
-					<div class="chat-user-img">
-						<img :src="'/images/member/stuff/'">
-					</div>
-					<div class="calc-members-nic"></div>
-					<div class="calc-member-price">
-						<input type="text"> 원
+
+			<div class="calc-contents">
+				<div class="account-title">
+					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span>계좌 정보를</span><br>
+					<span>입력해주세요.</span>
+				</div>
+				<div class="account-input">
+					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
+						style="width: 260px;">
+					</v-select>
+					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
+					</v-text-field>
+					<!-- <input class="account-input-box" pl> -->
+				</div>
+				<div class="account-recent">
+					<div>최근 등록 계좌</div>
+					<div>
+						2343242423423
 					</div>
 				</div>
-				<div	> </div>
+				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
+
+			</div>
+		</section>
+
+		<section class="calc" :class="{ 'd-none': !isCalc }">
+			<h1 class="d-none">정산하기</h1>
+			<header class="calc-header">
+				<div class="icon calc-back" @click.prevent="dnoneHandler">뒤로가기</div>
+				<div class="calc-header-title">정산하기</div>
+			</header>
+
+			<form class="calc-contents" method="post" @submit.prevent="calculate">
+				<div>
+					<section class="calc-method-btn calc-member-line">
+						<h1 class="d-none">정산 방법</h1>
+						<div :class="{ 'calc-btn-color': calcSwitch }">
+							<a class="btn-chipin"></a>
+							<span @click="calc1n" class="calc-btn">1/N하기</span>
+						</div>
+						<div></div>
+						<div :class="{ 'calc-btn-color': !calcSwitch }">
+							<a class="btn-writing"></a>
+							<span @click="calcdir" class="calc-btn">직접 입력</span>
+						</div>
+						<div class="calc-member-line"> </div>
+					</section>
+					<section class="calc-total">
+						<h1 class="d-none">합계</h1>
+						<div v-if="calcSwitch" class="calc-input-total">
+							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
+								placeholder="총금액을 입력해 주세요.">원
+						</div>
+					</section>
+					<div class="calc-members-title">참여 인원</div>
+					<div class="calc-members">
+						<div v-for="user in participantList" class="calc-member-div">
+							<div class="chat-user-img">
+								<img :src="'/images/member/' + user.memberImage">
+							</div>
+							<div class="calc-members-nic">{{ user.memberNickname }}</div>
+
+							<div class="calc-member-price">
+								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
+								<span v-if="!calcSwitch" class="calc-member-span-price">
+									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
+										placeholder="금액 입력" @keydown="inputCheck"> 원
+								</span>
+							</div>
+						</div>
+					</div>
+					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
+							v-if="totalText">합계</span>{{ total }}</div>
+					<button type="submit" class="calc-button" @click.prevent="resultDnoneHandler">정산하기</button>
+				</div>
+			</form>
+		</section>
+
+		<!-- ** 정산 결과 모달 ** -->
+		<section class="calc-result-default" :class="{ 'd-none': !isCalcResult }">
+			<h1 class="d-none">calculate</h1>
+
+			<section class="cal-result-main">
+
+
+				<header class="cal-result-header">
+					<h1 class="d-none">title</h1>
+					<div class="cal-result-title">정산결과</div>
+					<div class="cal-result-del"><span>삭제하기</span></div>
+				</header>
+
+				<main class="cal-result-user-list">
+					<h1 class="d-none">main</h1>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/chatid113.svg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/chatid110.svg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/chatid111.svg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
+						</div>
+						<div class="cal-user-name">
+							화난 식빵
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
+						</div>
+						<div class="cal-user-name">
+							아보카도 도레미
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+					<div class="cal-user">
+						<div class="cal-user-img">
+							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
+						</div>
+						<div class="cal-user-name">
+							그럴 수박! 에
+						</div>
+						<div class="cal-user-self-result">
+							111,111원
+						</div>
+					</div>
+				</main>
+
+				<section class="cal-result-sum">
+					<h1 class="d-none">sum</h1>
+					<div>
+						합계
+					</div>
+					<div>
+						666,666원
+					</div>
+				</section>
+
+				<section class="cal-result-account-form">
+					<h1 class="d-none">account</h1>
+
+					<div class="cal-result-account-all">
+						<a class="icon-bank-security">은행명</a>
+						<div class="cal-leader-account">
+							하나 32589046473333
+						</div>
+						<a class="icon-account-paste">복사하기</a>
+					</div>
+
+					<div class="cal-leader-name">
+						한땡땡
+					</div>
+
+				</section>
+
+				<section class="cal-result-check-form">
+					<h1 class="d-none">check</h1>
+					<button class="cal-result-check-btn" @click="calDrawer = !calDrawer">확인</button>
+				</section>
+
 			</section>
-			
-			
-
-		</section> -->
+		</section>
 	</v-navigation-drawer>
-
-	<v-navigation-drawer width="600" v-model="isCheckCalResult" location="bottom" temporary>
-        <section class="calc-result-default">
-            <h1 class="d-none">calculate</h1>
-            <section class="cal-result-main">
-                <header class="cal-result-header">
-                    <h1 class="d-none">title</h1>
-                    <div class="cal-result-title">정산결과</div>
-                    <div class="cal-result-del">삭제하기</div>
-                </header>
-
-                <main class="cal-result-user-list">
-                    <div class="cal-user">
-                        <div class="cal-user-img">
-                            <img src="/images/member/chatid113.svg" alt="사용자1">
-                        </div>
-                        <div class="cal-user-name">
-                            그럴 수박! 에
-                        </div>
-                        <div class="cal-user-self-result">
-                            333,333원
-                        </div>
-                    </div>
-
-                    <div class="cal-user">
-                        <div class="cal-user-img">
-                            <img src="/images/member/chatid110.svg" alt="사용자2">
-                        </div>
-                        <div class="cal-user-name">
-                            화난 식빵
-                        </div>
-                        <div class="cal-user-self-result">
-                            333,333원
-                        </div>
-                    </div>
-
-                    <div class="cal-user">
-                        <div class="cal-user-img">
-                            <img src="/images/member/chatid111.svg" alt="사용자3">
-                        </div>
-                        <div class="cal-user-name">
-                            아보카도 도레미
-                        </div>
-                        <div class="cal-user-self-result">
-                            333,333원
-                        </div>
-                    </div>
-                </main>
-                <div class="cal-result-check-form">
-                    <div class="cal-result-sum">
-                        합계: 999,999원
-                    </div>
-                    <div>
-                        <button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
-                    </div>
-                </div>
-            </section>
-
-        </section>
-    </v-navigation-drawer>
-
-
-
 </template>
 
 <script>
@@ -272,7 +421,6 @@ export default {
 	data() {
 		return {
 			calDrawer: null,
-			isCheckCalResult:null,
 			userName: "",
 			message: "",
 			recvList: [],
@@ -282,6 +430,7 @@ export default {
 			openModal: false,
 			stompClient: '',
 			participantList: '',
+			price: {},
 			chat: {
 				title: "여러가지 나눔",
 				participantCount: "12",
@@ -298,14 +447,40 @@ export default {
 			openLeaveModal: false,
 			banishAuthority: false,
 			showBanish: false,
+
+			calcSwitch: true,
+			chipinResult: 0,
+			totalPrice: 0,
+			totalPriceComma: '',
+			totalPriceAlert: '',
+			totalText: true,
+			memberPrice: 0,
+			// memberPriceList: [{'key'}]
+
+			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
+
+
+			banks: ['국민은행', '기업은행'
+
+				// { state: 'Nebraska', abbr: 'NE' },
+				// { state: 'California', abbr: 'CA' },
+				// { state: 'New York', abbr: 'NY' },
+			],
+			isAccount: true,
+			isCalc: false,
+			isCalcResult: false
 		}
 	},
 
 	methods: {
-		memberPriceList(){
-			return this.participantList.map((m)=> {
-				return {key: m.memberNickname, value: price }
-			})
+		blurHandler() {
+			console.log(this.memberPriceList);
+		},
+
+		chipinHandler() {
+			console.log(this.totalPrice)
+			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+			return this.chipinResult;
 		},
 
 		sendMessage(e) {
@@ -356,7 +531,8 @@ export default {
 					const response = await fetch(`${this.$store.state.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
 					const result = await response.text();
-					this.messageView = JSON.parse(result)
+					if (result != '')
+						this.messageView = JSON.parse(result)
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
@@ -503,8 +679,40 @@ export default {
 		showBanishHandler() {
 			this.showBanish = !this.showBanish;
 		},
-		calResultCheckHandler(){
-			this.isCheckCalResult = !this.isCheckCalResult;
+		inputCheck(event) {
+			if (
+				!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(event.code) &&
+				(isNaN(Number(event.key)) || event.code === 'Space')
+			)
+				event.preventDefault();
+		},
+		calc1n() {
+			this.calcSwitch = true;
+		},
+		calcdir() {
+			this.calcSwitch = false;
+		},
+		calculate() {
+			var requestOptions = {
+				method: 'PUT',
+				redirect: 'follow',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(this.price)
+			};
+
+			fetch(`${this.$store.state.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+				})
+				.catch(error => console.log('error', error));
+		},
+		dnoneHandler() {
+			this.isAccount = !this.isAccount;
+			this.isCalc = !this.isCalc;
+		},
+		resultDnoneHandler() {
+			this.isCalc = !this.isCalc;
+			this.isCalcResult = !this.isCalcResult;
 		}
 	},
 	beforeRouteLeave() {
@@ -537,6 +745,7 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
+
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -545,6 +754,23 @@ export default {
 		chatLength: function () {
 			return this.messageView.length;
 		},
+		total: function () {
+			let total = Object.values(this.price).reduce((p, c) => {
+				if (c == parseInt(c))
+					return parseInt(p) + parseInt(c)
+				else
+					return NaN;
+			}, 0);
+
+			if (isNaN(total)) {
+				this.totalText = false;
+				return "숫자만 입력해 주세요."
+			}
+			else {
+				this.totalText = true;
+				return total.toLocaleString() + " 원";
+			}
+		}
 	},
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
@@ -552,6 +778,13 @@ export default {
 			setTimeout(() => {
 				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 			}, 50);
+		},
+		// totalPriceComma: function(){
+		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
+		// }
+		totalPriceAlert: function () {
+			if (this.totalPrice > 999999)
+				return console.log("over");
 		}
 	},
 }
@@ -559,243 +792,361 @@ export default {
 
 <style scoped>
 .calc {
-    display: flex;
-    flex-direction: column;
-    /* align-items: center; */
-    padding: 0px 24px 24px;
-    position: relative;
-    height: 635px;
-    width: 375px;
+	/* display: flex; */
+	/* flex-direction: column; */
+	/* align-items: center; */
+	padding: 0px 24px 24px;
+	position: relative;
+	/* height: 635px; */
+	width: 375px;
 	align-self: center;
 	margin: auto;
 
-    background: #F1F2F2;
+	background: #F1F2F2;
 	border-radius: 30px 30px 0px 0px;
 }
-	.calc-header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-		/* justify-content: space-between; */
-        /* padding: 12px 40px; */
-        gap: 120px;
-        width: 327px;
-        height: 71px;
-        flex: none;
-        order: 0;
-        flex-grow: 0;
-    }
-        .calc-header-title {
-            color: #222222;
-            font-weight: 700;
-            margin-left: 18px;
-        }
-        .calc-back {
-            background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
-        
-            width: 16px;
-            height: 16px;
-            
-            z-index: 9; 
-        }
 
-    
-    .calc-contents {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 8px 24px 0px;
-        overflow: auto;
+.calc-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: start;
+	/* justify-content: space-between; */
+	/* padding: 12px 40px; */
+	gap: 100px;
+	width: 327px;
+	height: 71px;
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
 
-        width: 327px;
-        height: 531px;
-		/* height: 80%; */
-        background: #fff;
-        border-radius: 30px 30px 10px 10px;
-        flex: none;
-        order: 1;
-        flex-grow: 1;
-    }   
-	.btn-writing {
-		width: 20px;
-		height: 20px;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' d='M17 4a2.121 2.121 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zM9.5 17.5h8m-2-11l1 1'%3E%3C/path%3E%3C/svg%3E");
-	}
-	.btn-division {
-		width: 20px;
-		height: 20px;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
-	}
-		.calc-method-btn {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-			padding: 10px 0px;
-			gap: 1px;
+.calc-header-title {
+	color: #222222;
+	font-weight: 700;
+	margin-left: 18px;
+}
 
-			width: 279px;
-			height: 56px;
+.calc-back {
+	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
 
-			flex: none;
-			order: 0;
-			flex-grow: 0;
-		}
-		.calc-method-btn>div:nth-child(2) {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-			padding: 0px 10px;
+	width: 16px;
+	height: 16px;
 
-			width: 50%;
-			/* width: 138px; */
-			height: 32px;
-			font-size: 14px;
+	z-index: 9;
+}
 
-			flex: none;
-			order: 0;
-			flex-grow: 0;
-		}
-		.calc-method-btn>div:nth-child(3) {
-			border-left : solid #D9D9D9;
-			height : 32px;
-		}
-		.calc-method-btn>div:nth-child(4) {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-			padding: 0px;
 
-			width: 50%;
-			height: 32px;
-			font-size: 14px;
+.calc-contents {
 
-			flex: none;
-			order: 1;
-			flex-grow: 0;
-		}
-        
-        .calc-members {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 20px 0px;
-            height: 70px;
-            width: 100%;
-            flex: none;
-            order: 4;
-            flex-grow: 0;
-        }
-            .calc-members-nic {
-                flex-grow: 1;
-                margin: 0 10px;
-                font-size: 12px;
-            }
-            .calc-member-price{
-                position: relative;
-                right: 4px;
-                
-                font-size: 12px;
-                font-weight: 700;
-                color: #222;
-            }
-            .calc-member-price input{
-                width: 50px;
-            }
-			.calc-member-line {
-				width: 295px;
-				border-bottom: 2px solid #D9D9D9;
-				padding: 0;
-				margin: 0;
-			}
-			.calc-members-title {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				/* padding: 12px 16px 0px; */
-				margin-top: 28px;
-				gap: 16px;
-				font-size: 12px;
-				font-weight: 700;
-				color: #8A8787; 
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 0px 24px 0px;
+	/* overflow: auto; */
 
-				width: 279px;
-				height: 28px;
+	width: 327px;
+	height: 531px;
+	/* height: 80%; */
+	background: #fff;
+	border-radius: 30px 30px 10px 10px;
+	flex: none;
+	order: 1;
+	flex-grow: 1;
+}
 
-				flex: none;
-				order: 3;
-				flex-grow: 0;
-			}
+/* .calc-account {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 0px;
 
-        
-        .calc-total {
-			display: flex;
-			flex-direction: row;
-			justify-content: flex-end;
-			align-items: flex-start;
-			margin-top: 36px;
-			gap: 16px;
+	width: 279px;
+	height: 92px;
 
-			width: 270px;
-			height: 48px;
-			font-size: 25px;
-			font-weight: 600;;
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+} */
 
-			flex: none;
-			order: 2;
-			flex-grow: 0;
+.account-title {
+	font-weight: 600;
+	font-size: 20px;
+	padding-top: 32px;
 
-			border-bottom: 2px solid #222;
-        }
-		.calc-total input {
-			width: 275px;
-		}
-			
-        .calc-button {
-            width: 136px;
-            height: 45px;
-          
-            position: absolute;
-            left: 119.5px;
-            right: 119.5px;
-            top: 514px;
-            bottom: 90.6px;
-          
-            border-radius: 10px;
-          
-            background: #63A0C2;
-            font-size: 12px;
-            color: #fff;
-            font-weight: 700;
-          
-            flex: none;
-            order: 2;
-            flex-grow: 0;
-        }
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
 
-		.calc-result-default {
+.account-title-leader {
+	color: #63A0C2;
+}
+
+.account-input {
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	justify-content: center;
+
+	flex: none;
+	order: 1;
+	flex-grow: 0;
+
+	padding-top: 28px;
+}
+
+.account-input-box {
+	width: 236px;
+	height: 48px;
+	background: #FFFFFF;
+	border: 1px solid #888888;
+	border-radius: 10px;
+	margin-bottom: 8px;
+}
+
+.account-recent {
+	padding: 16px 4px;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+}
+
+.account-recent>div:first-child {
+	font-size: 14px;
+	font-weight: 700;
+	color: #63A0C2;
+}
+
+.btn-writing {
+	width: 20px;
+	height: 20px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' d='M17 4a2.121 2.121 0 0 1 0 3l-9.5 9.5l-4 1l1-3.944l9.504-9.552a2.116 2.116 0 0 1 2.864-.125zM9.5 17.5h8m-2-11l1 1'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.btn-chipin {
+	width: 20px;
+	height: 20px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23000000' d='M8 11a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm0 3a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm5-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0Zm-4-2a1 1 0 1 0 0-2a1 1 0 0 0 0 2Zm1 2a1 1 0 1 1-2 0a1 1 0 0 1 2 0ZM7.5 4A1.5 1.5 0 0 0 6 5.5v1A1.5 1.5 0 0 0 7.5 8h5A1.5 1.5 0 0 0 14 6.5v-1A1.5 1.5 0 0 0 12.5 4h-5ZM7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-1Zm9 10a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-11A2.5 2.5 0 0 1 6.5 2h7A2.5 2.5 0 0 1 16 4.5v11Zm-1-11A1.5 1.5 0 0 0 13.5 3h-7A1.5 1.5 0 0 0 5 4.5v11A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5v-11Z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.calc-btn:hover {
+	cursor: pointer;
+}
+
+.calc-btn-color {
+	filter: invert(62%) sepia(10%) saturate(1733%) hue-rotate(157deg) brightness(96%) contrast(80%);
+	color: #63A0C2;
+}
+
+.calc-method-btn {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 10px 0px;
+	gap: 1px;
+
+	width: 279px;
+	height: 56px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+
+	font-weight: 700;
+}
+
+.calc-method-btn>div:nth-child(2) {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 0px 10px;
+
+	width: 50%;
+	/* width: 138px; */
+	height: 32px;
+	font-size: 14px;
+
+	flex: none;
+	order: 0;
+	flex-grow: 0;
+}
+
+.calc-method-btn>div:nth-child(3) {
+	border-left: solid #D9D9D9;
+	height: 32px;
+}
+
+.calc-method-btn>div:nth-child(4) {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 0px;
+
+	width: 50%;
+	height: 32px;
+	font-size: 14px;
+
+	flex: none;
+	order: 1;
+	flex-grow: 0;
+}
+
+.calc-members {
+	/* display: flex; */
+	/* flex-direction: column; */
+	align-items: center;
+	/* padding: 20px 0px; */
+	width: 100%;
+	height: 230px;
+	/* flex: none; */
+	order: 4;
+	/* flex-grow: 0; */
+	overflow: scroll;
+}
+
+.calc-members::-webkit-scrollbar {
+	display: none;
+}
+
+.calc-member-div {
+	display: flex;
+	flex-direction: row;
+	margin-top: 4px;
+}
+
+.calc-members-nic {
+	flex-grow: 1;
+	margin: auto;
+	margin-left: 10px;
+	font-size: 12px;
+}
+
+.calc-member-span-price {
+	position: relative;
+	right: 4px;
+
+	font-size: 12px;
+	font-weight: 700;
+	color: #8A8787;
+
+	margin: auto;
+}
+
+input::placeholder {
+	text-align: right;
+}
+
+.calc-member-price {
+	margin: auto;
+}
+
+.calc-member-price input {
+	width: 70px;
+	text-align: right;
+}
+
+.calc-member-line {
+	border-bottom: 2px solid #D9D9D9;
+	padding: 0;
+	margin-top: 10px;
+}
+
+.calc-members-title {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	/* padding: 12px 16px 0px; */
+	margin-top: 18px;
+	gap: 16px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #8A8787;
+
+	width: 279px;
+	height: 28px;
+
+	flex: none;
+	order: 3;
+	flex-grow: 0;
+}
+
+
+.calc-input-total {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	/* align-items: flex-start; */
+	align-items: center;
+	margin-top: 26px;
+
+	/* gap: 4px; */
+
+	width: 270px;
+	height: 48px;
+	font-size: 18px;
+	font-weight: 600;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+
+	border-bottom: 2px solid #222;
+}
+
+.calc-input-total input {
+	width: 245px;
+	font-size: 18px;
+	text-align: right;
+}
+
+.calc-button {
+	width: 136px;
+	height: 45px;
+
+	position: absolute;
+	left: 119.5px;
+	right: 119.5px;
+	top: 514px;
+	bottom: 90.6px;
+
+	border-radius: 10px;
+
+	background: #63A0C2;
+	font-size: 12px;
+	color: #fff;
+	font-weight: 700;
+
+	flex: none;
+	order: 2;
+	flex-grow: 0;
+}
+
+.calc-result-default {
 	display: flex;
 	flex-direction: column;
 
 
 	position: relative;
-	height: 740px;
-	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
+	border-radius: 30px 30px 0px 0px;
+	border-radius: 30px 30px 0px 0px;
 }
 
-.cal-result-main{
+.cal-result-main {
 	display: flex;
 	flex-direction: column;
 	align-self: center;
 	padding: 0px 24px 0px;
 	overflow: auto;
 
-	width: 375px;
-	height: 531px;
+	height: 629px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
 	flex: none;
@@ -807,7 +1158,8 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	/* justify-content: center; */
+	/* justify-content: center; */
 
 	width: 327px;
 	height: 74px;
@@ -818,55 +1170,87 @@ export default {
 	color: #222222;
 	font-weight: 700;
 	font-size: 18px;
-	height: 37px;
-	margin-top: 18px;
+	padding-top: 28px;
+	padding-top: 28px;
 }
 
 .cal-result-del {
 	width: 327px;
-	height: 37px;
 
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
-	padding-bottom: 11px;
+
+	padding: 7px 8px 0px 0px;
+
+	padding: 7px 8px 0px 0px;
 
 	font-size: 12px;
 	color: #8A8787;
+
+}
+
+.cal-result-del span {
 	cursor: pointer;
 }
 
 .cal-result-user-list {
 	width: 327px;
-	height: 140px;
+	height: 210px;
+	height: 210px;
 
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 
 	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
 	border-image-slice: 200 100;
 	border-image-width: 1px;
 	border-image-repeat: repeat;
+
+	margin-top: 11px;
+	padding-bottom: 9px;
+	overflow: auto;
+	overscroll-behavior-y: none;
+	scroll-behavior: smooth;
+	-ms-overflow-style: none;
+	/* 익스플로러, 앳지 */
+	scrollbar-width: none;
+	/* 파이어폭스 */
+
+}
+
+.cal-result-user-list::-webkit-scrollbar {
+	display: none;
+	/* 크롬, 사파리, 오페라 */
 }
 
 .cal-user {
 	display: flex;
 	justify-content: center;
-	margin-top: 15px;
+	margin-top: 9px;
+	margin-top: 9px;
 
 }
 
 .cal-user-img {
 	width: 24px;
 	height: 24px;
-	margin-left: 4px;
+	margin-left: 5px;
+	margin-left: 5px;
 }
 
 .cal-user img {
 	width: 100%;
 	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+	overflow: hidden;
+	object-fit: cover;
+	border-radius: 50%;
+	overflow: hidden;
+	display: inline-block;
+	text-indent: -999px;
 }
 
 .cal-user-name {
@@ -883,30 +1267,107 @@ export default {
 	color: #333333;
 	margin-left: 56px;
 	text-align: right;
-	padding-right: 8px;
+	padding-right: 7px;
+	padding-right: 7px;
 }
 
+
+.cal-result-sum {
+	width: 327px;
+	height: 48px;
+
+	display: flex;
+	justify-content: space-between;
+
+	margin-top: 18px;
+	padding: 0px 7px 18px 4px;
+
+	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
+	border-image-slice: 0 0 200 0;
+	border-image-width: 1px;
+	border-image-repeat: repeat;
+
+	font-size: 14px;
+	color: #222222;
+	font-weight: bold;
+}
+
+.cal-result-account-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 73px;
+}
+
+.cal-result-account-all {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+.icon-bank-security {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-position: center;
+	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
+
+	width: 12px;
+	height: 14px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+	margin-right: 5px;
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='14' viewBox='0 0 12 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.6 1.75C10.6 1.75 9.8 1.75 8.5 1.25C7.1 0.75 6.25 0.2 6.25 0.2L5.85 0L5.5 0.2C5.5 0.2 4.6 0.75 3.25 1.25C1.9 1.7 1.15 1.75 1.15 1.75L0.5 1.8V8.7C0.5 11.25 5.25 14 5.85 14C6.4 14 11.2 11.25 11.2 8.7V1.8L10.6 1.75ZM5.5 9.7L3 7.4L3.75 6.45L5.35 7.9L8.35 4.15L9.25 5L5.5 9.7Z' fill='%23008EFF'/%3E%3C/svg%3E%0A");
+
+	width: 12px;
+	height: 14px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+	margin-right: 5px;
+}
+
+.icon-account-paste {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	background-image: url("data:image/svg+xml,%3Csvg width='14' height='18' viewBox='0 0 14 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 2.6V12.2C4 12.6243 4.15804 13.0313 4.43934 13.3314C4.72064 13.6314 5.10218 13.8 5.5 13.8H11.5C11.8978 13.8 12.2794 13.6314 12.5607 13.3314C12.842 13.0313 13 12.6243 13 12.2V5.1936C13 4.98045 12.96 4.76945 12.8825 4.573C12.805 4.37654 12.6914 4.19859 12.5485 4.0496L10.0623 1.456C9.78202 1.16373 9.40568 1.00005 9.01375 1H5.5C5.10218 1 4.72064 1.16857 4.43934 1.46863C4.15804 1.76869 4 2.17565 4 2.6Z' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 13.8V15.4C10 15.8243 9.84196 16.2313 9.56066 16.5314C9.27936 16.8314 8.89782 17 8.5 17H2.5C2.10218 17 1.72064 16.8314 1.43934 16.5314C1.15804 16.2313 1 15.8243 1 15.4V6.6C1 6.17565 1.15804 5.76869 1.43934 5.46863C1.72064 5.16857 2.10218 5 2.5 5H4' stroke='%2363A0C2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+	width: 12px;
+	height: 16px;
+
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+
+	cursor: pointer;
+	margin-left: 5px;
+	display: inline-block;
+	overflow: hidden;
+	text-indent: -999px;
+
+	cursor: pointer;
+	margin-left: 5px;
+}
+
+.cal-leader-account {
+	font-size: 16px;
+}
+
+.cal-leader-name {
+	margin-top: 21px;
+	font-size: 16px;
+}
 
 .cal-result-check-form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
-	background-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-size: cover;
+	margin-top: 60px;
 }
-
-.cal-result-sum {
-	width: 327px;
-	display: flex;
-	justify-content: flex-end;
-	font-size: 14px;
-	margin-top: 18px;
-
-}
-
 
 .cal-result-check-btn {
 	background-color: #63A0C2;
@@ -916,9 +1377,6 @@ export default {
 	color: #FFFFFF;
 	font-size: 14px;
 	font-weight: bold;
-	margin-top: 286px;
-
-
 }
 
 .canvas,
@@ -929,6 +1387,7 @@ export default {
 .chat-canvas {
 	margin-top: 64px;
 	padding-bottom: 78px;
+
 }
 
 .v-app-bar .chat-title {
@@ -1200,6 +1659,13 @@ export default {
 	height: 38px;
 	object-fit: cover;
 	border-radius: 50%;
+	overflow: hidden;
+	margin-top: 5px;
+}
+
+.chat-user-img img {
+	width: 100%;
+	height: 100%;
 }
 
 .chat-user-nickname {
@@ -1322,4 +1788,5 @@ export default {
 
 .v-dialog:deep {
 	font-size: 14px;
-}</style>
+}
+</style>

@@ -1,8 +1,5 @@
 package com.modeul.web.controller.api;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Crawling;
@@ -58,11 +53,15 @@ public class StuffController {
 	public Map<String, Object> getList(@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "p", defaultValue = "1") int page,
 			@RequestParam(name = "c", required = false) Long categoryId,
-			@RequestParam(name = "id", required = false) Long memberId
+			@RequestParam(name = "id", required = false) Long memberId,
+			@RequestParam(name = "dc", required = false) String dongCode
 			) {
-		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page);
-		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId);
+		System.out.println("동코드"+dongCode);
+		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
+		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId, dongCode); 
 		List<Category> categoryList = categoryService.getList();
+		
+		
 		Long listCount = service.getListCount(categoryId, page, memberId);
 
 		Map<String, Object> dataList = new HashMap<>();
@@ -72,6 +71,12 @@ public class StuffController {
 		dataList.put("listCount", listCount);
 
 		return dataList;
+	}
+
+	@GetMapping("/stuffAll")
+	public List<StuffView> getListAll() {
+
+		return service.getViewAll();
 	}
 
 	@GetMapping("/stuff/categories")

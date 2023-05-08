@@ -1,5 +1,7 @@
 package com.modeul.web.repository;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.modeul.web.entity.Member;
@@ -13,9 +15,13 @@ public interface MemberRepository {
 	
 	Member getbyId(int id);
 
+	List<Member> findAll();
+
 	String getbyUid(String uid);
 
 	Member getPwdByUid(String uid);
+
+	String getByName(String name);
 
 	String getByEmail(String email);
 
@@ -25,9 +31,13 @@ public interface MemberRepository {
 
 	int updatePwd(Member member);
 
-    int delete(Member member);
+	int delete(Member member);
 
 	String getEmailByUid(Member member);
 
 	void updateImg(MemberImage memberImage);
+
+	String getEmailByName(Member member);
+
+	String getUid(String name,String email);
 }

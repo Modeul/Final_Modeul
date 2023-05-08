@@ -1,7 +1,7 @@
 <template>
     <section class="canvas">
         <header>
-            <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
+            <router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
         </header>
 
         <nav>
@@ -53,6 +53,23 @@
 
             <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> {{ listCount }}</span></button>
         </main>
+		<nav class="navi-bar d-fl-jf">
+			<div class="navi-icon">
+				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+			</div>
+			<div>
+				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
+			</div>
+		</nav>
     </section>
 </template>
 

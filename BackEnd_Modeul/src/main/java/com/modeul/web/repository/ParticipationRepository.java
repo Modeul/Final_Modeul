@@ -3,6 +3,7 @@ package com.modeul.web.repository;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
@@ -36,4 +37,6 @@ public interface ParticipationRepository {
     ParticipationMemberView findMemberBystuffIdmemberId(Long stuffId, Long memberId);
 
     void putCalResultMsg(Message message);
+
+    int insertCalculatedAmount(@Param("stuffId") Long stuffId, @Param("memberId") Long memberId, @Param("price") Integer price);
 }

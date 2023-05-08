@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 public class Participation {
     private Long id;
     private LocalDateTime date;
+    private String dutch;
+    private String account;
     private Long memberId;
     private Long stuffId;
 

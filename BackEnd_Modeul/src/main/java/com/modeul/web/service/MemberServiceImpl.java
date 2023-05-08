@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.modeul.web.entity.Image;
 import com.modeul.web.entity.Member;
 import com.modeul.web.entity.MemberImage;
 import com.modeul.web.repository.MemberRepository;
@@ -52,6 +51,23 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return null;
 	}
+	
+	@Override
+	public Boolean isValid(Member member) {
+		Member loginMember = repository.getPwdByUid(member.getUid());
+		if (loginMember == null) {
+			return false;
+		}
+		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public Member getMemberByUid(String uid) {
+		return repository.getPwdByUid(uid);
+	}
 
 	@Override
 	public String checkPwd(Member loginMember) {
@@ -66,6 +82,14 @@ public class MemberServiceImpl implements MemberService {
 	public Boolean checkUid(String uid) {
 		String getUid = repository.getbyUid(uid);
 		Boolean result = (getUid != null) ? false : true;
+
+		return result;
+	}
+
+	@Override
+	public Boolean checkName(String name) {
+		String getName = repository.getByName(name);
+		Boolean result = (getName != null) ? true : false;
 
 		return result;
 	}
@@ -150,6 +174,27 @@ public class MemberServiceImpl implements MemberService {
 		Boolean result = UserEmail.equals(member.getEmail());
 
 		return result;
+	}
+
+	@Override
+	public Boolean checkEmailByName(Member member) {
+		String UserEmail = repository.getEmailByName(member);
+		Boolean result = UserEmail.equals(member.getEmail());
+
+		return result;
+	}
+
+	@Override
+	public String findUid(String name,String email) {
+		String uid = repository.getUid(name,email);
+		
+		return uid;
+	}
+
+	@Override
+	public List<Member> getMemberList() {
+
+		return repository.findAll();
 	}
 
 

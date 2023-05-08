@@ -107,53 +107,13 @@ export default {
 }
 </script>
 
-<style scoped>
-@import url(/css/component/member/stuff/component-list.css);
-</style>
 <template>
 	<section class="canvas p-rel b-rad-2">
-		<header class="d-fl-al header-jc">
-			내가 쓴 게시글
-
-		<div>
-				<!-- <a class="icon icon-menu">메뉴</a> -->
-				<a class="icon icon-alarm">알림</a>
-				<a class="icon">
-					<input type="checkbox" id="menuicon">
-					<label for="menuicon">
-						<span></span>
-						<span></span>
-						<span></span>
-					</label>
-					<div class="sidebar">
-						<div class="welcome f-weight">
-							<span class="f-color-2">뉴렉님</span><br>환영합니다.
-						</div>
-						<div class="side-menu">
-							<div></div>
-
-							<span class="sidebar-padding">
-								<router-link to="/member/stuff/list">HOME</router-link>
-							</span>
-							<span class="sidebar-padding">
-								<router-link to="/member/stuff/crawlinglist">추천상품</router-link>
-							</span>
-							<span class="sidebar-padding">
-								<router-link to="/member/stuff/listsearch">검색하기</router-link>
-							</span>
-							<span class="sidebar-padding">
-								<router-link to="/member/stuff/reg">글 등록하기</router-link>
-							</span>
-							<span class="sidebar-padding">
-								<router-link to="/member/participation/list">채팅하기</router-link>
-							</span>
-							<span class="sidebar-padding">
-								<router-link to="/member/mypage">마이페이지</router-link>
-							</span>
-						</div>
-					</div>
-				</a>
+		<header class="header">
+			<div>
+				<router-link to="/member/mypage" class="back"></router-link>
 			</div>
+			<div class="title">내가 쓴 게시글</div>
 		</header>
 
 		<nav>
@@ -171,7 +131,7 @@ export default {
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
 			<div class="stuff-list" v-for="stuff in list">
-				<router-link :to="'./' + stuff.id">
+				<router-link :to="'../stuff/' + stuff.id">
 						<div class="d-gr li-gr m-t-13px list-cl">
 							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
@@ -207,28 +167,7 @@ export default {
 			</div>
 
 			<button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button>
-			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff"></div>
-			</router-link>
-		</main>
-
-		<nav class="navi-bar d-fl-jf" style="display: none;">
-			<div>
-				<router-link to="/member/stuff/list" class="icon icon-home m-notop">home</router-link>
-			</div>
-			<div>
-				<router-link to="/member/stuff/listsearch" class="icon icon-search m-notop">search</router-link>
-			</div>
-			<div>
-				<router-link to="/member/stuff/reg" class="icon icon-post m-notop">post+</router-link>
-			</div>
-			<div>
-				<router-link to="/member/participation/list" class="icon icon-chat m-notop">chat</router-link>
-			</div>
-			<div>
-				<a class="icon icon-info m-notop">mypage</a>
-			</div>
-		</nav>
+			</main>
 	</section>
 </template>
 
@@ -236,4 +175,25 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
 @import "/css/button.css";
+.header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+    
+    width: 312px;
+    margin-top: 25px;
+}
+.back{
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
+    width: 23.04px;
+    height: 24px;
+    margin-top: 9px;
+}
+.title{
+    margin-left: 86px;
+    /* font-size: 14px; */
+    color:#333;
+}
 </style>

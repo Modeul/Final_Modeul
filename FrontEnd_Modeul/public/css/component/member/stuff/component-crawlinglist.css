@@ -212,8 +212,8 @@ li-pic {
   text-align: center;
   line-height: 30px;
   position: fixed;
-  right: 30px;
-  bottom: 30px;
+  right: 20px;
+  bottom: 50px;
   cursor: pointer;
 }
 .reg-stuff::before {

@@ -103,5 +103,10 @@
 		values(#{sender}, #{content},#{participationId})
 	</insert>
 
+  <insert id="insertCalculatedAmount" parameterType="map">
+    INSERT INTO dutch(stuff_id, member_id, price)
+    VALUES (#{stuffId}, #{memberId},#{price})
+	</insert>
+
 
 </mapper>
