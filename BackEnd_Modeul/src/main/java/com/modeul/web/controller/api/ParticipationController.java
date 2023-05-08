@@ -3,7 +3,6 @@ package com.modeul.web.controller.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.modeul.web.entity.Account;
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
@@ -23,12 +23,16 @@ import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
+import com.modeul.web.service.DutchService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
 
 @RestController
 @RequestMapping("api")
 public class ParticipationController {
+
+    @Autowired
+    private DutchService dutchService;
 
     @Autowired
     private ParticipationService participationService;
@@ -132,8 +136,29 @@ public class ParticipationController {
     public boolean calculate(
             @PathVariable("stuffId") Long stuffId,
             @RequestBody Map<Long, Integer> prices) {
-
-        participationService.calculatedAmount(stuffId, prices);
+        System.out.println("stuffId: "+stuffId);
+        System.out.println("prices: "+prices);
+        // participationService.calculatedAmount(stuffId, prices);
         return true;
+    }
+
+    @PostMapping("/dutch/{stuffId}")
+    public String addDutch(
+            @PathVariable("stuffId") Long stuffId,
+            @RequestBody Map<String, Object> dutch
+            // @RequestBody Map<Long, Integer> prices,
+            // String bankName,
+            // String number,
+            // Long memberId
+            ) {
+        System.out.println("stuffId: "+stuffId);
+        System.out.println("dutch: "+dutch);
+        // System.out.println("bankName: "+bankName);
+        // System.out.println("number: "+number);
+        // System.out.println("memberId: "+memberId);
+        // dutchService.addAllDutch(stuffId, prices);
+        // dutchService.addAllDutch(stuffId, prices, account);
+        dutchService.addAllDutch(stuffId, dutch);
+        return "ok";
     }
 }

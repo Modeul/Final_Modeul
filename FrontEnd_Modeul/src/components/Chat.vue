@@ -136,9 +136,9 @@
 				</div>
 				<div class="account-input">
 					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
-						style="width: 260px;">
+						style="width: 260px; scroll-behavior: smooth;">
 					</v-select>
-					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
+					<v-text-field v-model="accountNumber" label="계좌번호" variant="underlined" style="width: 260px;">
 					</v-text-field>
 					<!-- <input class="account-input-box" pl> -->
 				</div>
@@ -221,154 +221,15 @@
 
 				<main class="cal-result-user-list">
 					<h1 class="d-none">main</h1>
-					<div class="cal-user">
+					<div class="cal-user" v-for="m in dutchMemberList">
 						<div class="cal-user-img">
-							<img src="/images/member/chatid113.svg" alt="사용자1">
+							<img :src="'/images/member/' + m.memberImage" alt="사용자1">
 						</div>
 						<div class="cal-user-name">
-							그럴 수박! 에
+							{{ m.memberNickname }}
 						</div>
 						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/chatid110.svg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/chatid111.svg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
+							{{ m.price }}원
 						</div>
 					</div>
 				</main>
@@ -379,7 +240,7 @@
 						합계
 					</div>
 					<div>
-						666,666원
+						{{ sumDutch }}원
 					</div>
 				</section>
 
@@ -455,20 +316,20 @@ export default {
 			totalPriceAlert: '',
 			totalText: true,
 			memberPrice: 0,
-			// memberPriceList: [{'key'}]
+			banks: ['국민은행', '우리은행', '기업은행', '신한은행', 'KEB하나은행', 
+			'농협은행', '새마을금고', '외환은행', 'SC제일은행', '한국시티은행', 
+			'카카오뱅크', '토스뱅크' ,'케이뱅크'
 
-			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
-
-
-			banks: ['국민은행', '기업은행'
-
-				// { state: 'Nebraska', abbr: 'NE' },
-				// { state: 'California', abbr: 'CA' },
-				// { state: 'New York', abbr: 'NY' },
 			],
 			isAccount: true,
 			isCalc: false,
-			isCalcResult: false
+			isCalcResult: false,
+			selectBank:'',
+			accountNumber:'',
+			stuffLeaderId:'',
+			dutchMemberList:'',
+			sumDutch:'',
+			dutchList:'',
 		}
 	},
 
@@ -606,6 +467,7 @@ export default {
 			// 방장에게 추방 권한
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
+				this.stuffLeaderId = this.chat.memberId;
 			}
 		},
 		banishUserHandler() {
@@ -707,12 +569,87 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		dnoneHandler() {
+			console.log("bank:" + this.selectBank);
+			console.log("accountNumber: "+this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
 		},
 		resultDnoneHandler() {
+			console.log("price:" + this.price);
+			this.dutchHandler();
 			this.isCalc = !this.isCalc;
 			this.isCalcResult = !this.isCalcResult;
+		},
+		selectBankHandler(){
+			console.log("bank" + this.selectBank);
+		},
+		dutchHandler() {
+
+			var raw = JSON.stringify({
+						"prices": this.price,
+						"account":{
+							"bankName":this.selectBank,
+							"number":this.accountNumber,
+							"memberId":this.stuffLeaderId.toString()
+						}
+					});
+
+			var requestOptions = {
+				method: 'POST',
+				redirect: 'follow',
+				headers: { 'Content-Type': 'application/json' },
+				body:raw
+			};
+
+			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+					this.loadDutchMemberList();
+				})
+				.catch(error => console.log('error', error));
+		},
+		async loadDutchMemberList(){
+			await fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchMemberList = dataList.list;
+					this.sumDutchHandler();
+					this.loadDutchList();
+					this.checkDutchHave();
+				})
+				.catch(error => console.log('error', error));
+		},
+		loadDutchList(){
+			fetch(`${this.$store.state.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchList = dataList.listView;
+					console.log(this.dutchList);
+				})
+				.catch(error => console.log('error', error));
+		},
+		sumDutchHandler(){
+			let sum = 0;
+
+			for(let dmL of this.dutchMemberList) {
+				console.log("price:" + dmL.price+'\n');
+				sum += parseInt(dmL.price);
+			}
+			this.sumDutch = sum;
+			console.log(this.sumDutch);
+			return this.sumDutch;
+		},
+		checkDutchHave(){
+			console.log("Have dutchList:"+ this.dutchList);
+			console.log("this.$route.params.stuffId: "+ this.$route.params.stuffId +'\n');
+			
+			for(let dL of this.dutchList) {
+				console.log("dL.stuffId:" + dL.stuffId+ '\n');
+				if(dL.stuffId == this.$route.params.stuffId){
+					this.isAccount = !this.isAccount;
+					this.isCalcResult = !this.isCalcResult;
+				}
+			}
 		}
 	},
 	beforeRouteLeave() {
@@ -722,6 +659,8 @@ export default {
 		this.stompConnect();
 		this.connect();
 		this.loadParticipant();
+		this.loadDutchMemberList();
+		this.loadDutchList();
 	},
 	updated() {
 
@@ -745,7 +684,7 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
-
+		this.checkDutchHave();
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
