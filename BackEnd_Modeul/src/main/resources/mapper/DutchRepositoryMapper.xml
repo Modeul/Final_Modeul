@@ -53,12 +53,21 @@
       order by stuff_id, participation_date;
     </select>
 
-    <insert id="insertDutch" parameterType="int">
+    <select id="findViewAllBymemberId" resultMap="DutchViewResultMap">
+      select *
+      from dutch_view
+      where member_id = #{memberId}
+      <if test="orderField != null and orderDir != null">
+        order by ${orderField} ${orderDir}
+      </if>
+    </select>
+
+    <insert id="insertDutch" parameterType="map">
       insert into dutch(stuff_id, member_id, price)
       values (#{stuffId}, #{memberId},#{price})
     </insert>
 
-    <insert id="insertAccount" parameterType="int">
+    <insert id="insertAccount" parameterType="map">
       insert into account(bank_name, number, member_id)
       values (#{bankName}, #{number},#{memberId})
     </insert>

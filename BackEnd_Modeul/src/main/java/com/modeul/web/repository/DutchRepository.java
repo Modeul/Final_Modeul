@@ -25,8 +25,10 @@ public interface DutchRepository {
     List<DutchMemberView> findMemberViewBystuffId(Long stuffId);
 
     // int insertDutch(@Param("stuffId") Long stuffId, @Param("memberId") Long memberId, @Param("price") Integer price);
-    int insertDutch(Long stuffId, Long memberId, Integer price);
+    int insertDutch(Long stuffId, Long memberId, String price);
     
     // int insertAccount(Account account);
     int insertAccount(String bankName, String number, Long memberId);
+
+    List<DutchView> findViewAllBymemberId(Long memberId, String orderField, String orderDir);
 }
