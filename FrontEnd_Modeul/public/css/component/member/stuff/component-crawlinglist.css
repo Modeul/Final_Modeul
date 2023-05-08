@@ -40,6 +40,11 @@
   color: #ffffff;
 }
 
+.header-categ[value="4"] {
+  background-color: #b04ce2;
+  color: #ffffff;
+}
+
 .stuff-list {
   padding: 12px 0;
   /* border-bottom: 0.5px raga(0, 0, 0, 0.3) solid; */

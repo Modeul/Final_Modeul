@@ -6,9 +6,10 @@ export default {
 		return {
 			page: '',
 			list: [],
-			categoryList: [],
+			category: [],
 			categoryId:'',
-			queryList:[]
+			queryList:[],
+			categoryList:[]
 		};
 	},
 	computed: {
@@ -19,7 +20,7 @@ export default {
 			e.preventDefault();
             this.query = e.target.value;
 			console.log(this.query);
-			fetch(`${this.$store.state.host}/api/stuff/crawlinglist?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.$store.state.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.queryList;
@@ -31,26 +32,26 @@ export default {
 			this.$router.go(-1);
 		},
 		categoryHandler(e){
-			console.log(e.target.value);
-			// this.page=1;
-			// this.categoryId = e.target.value;
-			// console.log(this.categoryId);
-			// fetch(`${this.$store.state.host}/api/stuff/crawlinglist?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
-			// 	.then(response => response.json())
-			// 	.then(dataList => {
-			// 		this.list = dataList.crawlingList;
-			// 		this.listCount = dataList.listCount;
-			// 		this.categoryList = dataList.categoryList;
-			// 		// console.log(this.list)
-			// 	}).catch(error => console.log('error', error));
+			this.page=1;
+			this.categoryId = e.target.value;
+			console.log(this.categoryId);
+			fetch(`${this.$store.state.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = dataList.categoryList;
+					this.listCount = dataList.listCount;
+					this.category = dataList.category;
+					// console.log(this.list)
+				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
 
 			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
-			console.log(this.page , this.categoryId);
+			console.log(this.categoryId);
+			console.log(this.query);
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuff/crawlinglist?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.$store.state.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -59,10 +60,12 @@ export default {
 					if (this.query == null)
 						this.list = dataList.crawlingList;
 					else this.list = dataList.queryList;
+					if (this.categoryId == 1 || this.categoryId == 2 || this.categoryId == 3 ||this.categoryId == 4)
+						this.list = dataList.categoryList;
 					this.listCount = dataList.listCount;
-					this.categoryList = dataList.categoryList;
+					this.category = dataList.category;
 					this.$store.commit('LOADING_STATUS', false);
-					console.log(dataList);
+					console.log(this.list);
 				})
 				.catch(error => console.log('error', error));
 				
@@ -102,8 +105,8 @@ export default {
 					<!-- <button class="header-categ">전체</button> -->
 				</div>
 
-				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="cid" :value="c.categoryId">{{ c.categoryName }}</button>
+				<div v-for="c in category">
+					<button class="header-categ" @click="categoryHandler" name="c" :value="c.categoryId">{{ c.categoryName }}</button>
 				</div>
 			</div>
 		</nav>

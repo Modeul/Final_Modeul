@@ -157,7 +157,7 @@ export default {
 								<router-link to="/member/stuff/list">HOME</router-link>
 							</span>
 							<span class="sidebar-padding">
-								<router-link to="/member/stuff/crawlinglist">추천상품</router-link>
+								<router-link to="/member/stuff/recommends">추천상품</router-link>
 							</span>
 							<span class="sidebar-padding">
 								<router-link to="/member/stuff/listsearch">검색하기</router-link>

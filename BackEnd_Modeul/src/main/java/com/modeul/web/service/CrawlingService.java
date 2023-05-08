@@ -10,6 +10,7 @@ public interface CrawlingService {
 
     List<Crawling> getViewAll(); // 전체 페이지 목록 조회용
     List<Crawling> getViewAll(int page); // 페이지 더보기용
+    List<Crawling> getViewAll(int page , Long categoryId); // 카테고리별 목록 조회용
     List<Crawling> getViewAll(String query, int page, Long categoryId); // 검색용
 
 

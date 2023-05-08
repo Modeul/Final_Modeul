@@ -23,6 +23,9 @@
 			<if test="query != null">
 				title like '%${query}%'
 			</if>
+			<if test="categoryId != null">
+				and category_id = #{categoryId}
+			</if>
 		</trim>
 		<if test="size != null and offset != null">
 			limit ${size} offset ${offset}

@@ -21,6 +21,13 @@ public class CrawlingServiceImpl implements CrawlingService {
     }
 
     @Override
+    public List<Crawling> getViewAll(int page , Long categoryId) {
+        int size = page * 7;
+
+        return repository.findAll(null, categoryId, size, 0);
+    }
+
+    @Override
     public List<Crawling> getViewAll(int page) {
         int size = page * 7;
 
