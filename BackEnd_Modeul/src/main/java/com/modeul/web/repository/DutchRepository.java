@@ -3,9 +3,7 @@ package com.modeul.web.repository;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-import com.modeul.web.entity.Account;
 import com.modeul.web.entity.DutchMemberView;
 import com.modeul.web.entity.DutchView;
 
@@ -24,11 +22,12 @@ public interface DutchRepository {
     /* 공구상품별 정산에 참여한 회원 조회 */
     List<DutchMemberView> findMemberViewBystuffId(Long stuffId);
 
-    // int insertDutch(@Param("stuffId") Long stuffId, @Param("memberId") Long memberId, @Param("price") Integer price);
+    /* 정산 가격만 Dutch 테이블에 insert */
     int insertDutch(Long stuffId, Long memberId, String price);
     
-    // int insertAccount(Account account);
+    /* 계좌 정보만 Account 테이블에 insert */
     int insertAccount(String bankName, String number, Long memberId);
 
+    /* 정산했는지 체크용 정산 내역 목록 조회 */
     List<DutchView> findViewAllBymemberId(Long memberId, String orderField, String orderDir);
 }

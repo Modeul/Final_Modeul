@@ -105,9 +105,6 @@
 			<div class="chat-input-wrap">
 				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
-						src="/images/member/stuff/cal-result-btn.svg">
-				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">

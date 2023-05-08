@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.modeul.web.entity.Account;
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
@@ -145,19 +144,10 @@ public class ParticipationController {
     @PostMapping("/dutch/{stuffId}")
     public String addDutch(
             @PathVariable("stuffId") Long stuffId,
-            @RequestBody Map<String, Object> dutch
-            // @RequestBody Map<Long, Integer> prices,
-            // String bankName,
-            // String number,
-            // Long memberId
-            ) {
+            @RequestBody Map<String, Object> dutch) {
         System.out.println("stuffId: "+stuffId);
         System.out.println("dutch: "+dutch);
-        // System.out.println("bankName: "+bankName);
-        // System.out.println("number: "+number);
-        // System.out.println("memberId: "+memberId);
-        // dutchService.addAllDutch(stuffId, prices);
-        // dutchService.addAllDutch(stuffId, prices, account);
+
         dutchService.addAllDutch(stuffId, dutch);
         return "ok";
     }
