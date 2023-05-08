@@ -32,14 +32,14 @@
                         <tr v-for="item in categoryList">
                                 <td>{{ item.id }}</td>
                             
-                                <td ><span v-if="editId!=item.id">{{ item.name }}</span><input v-model="item.name"  v-else></td>
+                                <td ><span v-if="editId!=item.id">{{ item.name }}</span><input class="input" v-model="item.name"  v-else></td>
 
                                 <td>
                                     <span v-if="editId!=item.id">
                                         <button :value="item.id" class="icon-admin3 admin-edit-icon" @click.prevent="editId=item.id">수정하기 버튼</button>
                                         <button :value="item.id" class="icon-admin3 icon-delete" @click.prevent="modalHandler">지우기 버튼</button>
                                     </span>
-                                    <button v-else @click.prevent="editCategory(item)">확인</button>
+                                    <button class="save-btn" v-else @click.prevent="editCategory(item)">확인</button>
                                 </td>
                         </tr>
                     </tbody>
@@ -96,7 +96,7 @@ export default{
     },
     methods:{
         load(){
-            fetch("http://localhost:8080/api/category")
+            fetch(`${this.$store.state.host}/api/category`)
             .then(response => response.json())
             .then(result => {
                 this.categoryList = result
@@ -133,7 +133,7 @@ export default{
                 redirect: 'follow'
             };
 
-            await fetch("http://localhost:8080/api/category", requestOptions)
+            await fetch(`${this.$store.state.host}/api/category`, requestOptions)
                 .then(response => response.text())
                 .then(result => {
                     console.log(result)
@@ -158,7 +158,7 @@ export default{
                 redirect: 'follow'
             };
 
-            fetch("http://localhost:8080/api/category", requestOptions)
+            fetch(`${this.$store.state.host}/api/category`, requestOptions)
                 .then(response => response.text())
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
@@ -170,7 +170,7 @@ export default{
 				method: 'DELETE',
 				redirect: 'follow'
 			};
-            await fetch(`http://localhost:8080/api/category?id=${this.deleteId}`, requestOptions)
+            await fetch(`${this.$store.state.host}/api/category?id=${this.deleteId}`, requestOptions)
                 .then(response => response.text())
                 .then(result => {
                     this.openModal = false;

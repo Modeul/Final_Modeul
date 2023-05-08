@@ -175,7 +175,6 @@
         width: 108px;
         height: 108px;
         border-radius: 50%;
-        background-color: antiquewhite;
     }
     .edit-btn{
         width: 36px;
