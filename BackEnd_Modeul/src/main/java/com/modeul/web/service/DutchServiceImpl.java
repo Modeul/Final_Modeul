@@ -16,16 +16,21 @@ public class DutchServiceImpl implements DutchService {
     private DutchRepository repository;
 
     @Override
-    public List<DutchView> getViewBymemberId(Long memberId, int page) {
+    public List<DutchView> getViewBymemberId(Long memberId, int page, int month) {
 
         int size = page * 8;
 
-        return repository.findViewBymemberId(memberId, "date", "desc", size, 0);
+        return repository.findViewBymemberId(memberId, month, "date", "desc", size, 0);
     }
 
     @Override
     public List<DutchMemberView> getMemberViewBystuffId(Long stuffId) {
         return repository.findMemberViewBystuffId(stuffId);
+    }
+
+    @Override
+    public List<Integer> getViewMonthBymemberId(Long memberId) {
+        return repository.findViewMonthBymemberId(memberId);
     }
     
 }

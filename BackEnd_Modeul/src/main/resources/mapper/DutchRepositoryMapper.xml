@@ -28,12 +28,22 @@
         select *
         from dutch_view
         where member_id = #{memberId}
+        <if test="month != null">
+          and month(date) = ${month}
+        </if>
         <if test="orderField != null and orderDir != null">
-			order by ${orderField} ${orderDir}
-		</if>
+          order by ${orderField} ${orderDir}
+        </if>
         <if test="size != null and offset != null">
 			limit ${size} offset ${offset}
 		</if>
+    </select>
+    
+    <select id="findViewMonthBymemberId" resultType="Map">
+        select month(date) month
+        from dutch_view
+        where member_id = #{memberId}
+        order by date
     </select>
 
     <select id="findMemberViewBystuffId" resultMap="DutchMemberViewResultMap">
