@@ -52,4 +52,14 @@
       where stuff_id = #{stuffId}
       order by stuff_id, participation_date;
     </select>
+
+    <insert id="insertDutch" parameterType="int">
+      insert into dutch(stuff_id, member_id, price)
+      values (#{stuffId}, #{memberId},#{price})
+    </insert>
+
+    <insert id="insertAccount" parameterType="int">
+      insert into account(bank_name, number, member_id)
+      values (#{bankName}, #{number},#{memberId})
+    </insert>
 </mapper>

@@ -138,7 +138,7 @@
 					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
 						style="width: 260px;">
 					</v-select>
-					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
+					<v-text-field v-model="accountNumber" label="계좌번호" variant="underlined" style="width: 260px;">
 					</v-text-field>
 					<!-- <input class="account-input-box" pl> -->
 				</div>
@@ -468,7 +468,10 @@ export default {
 			],
 			isAccount: true,
 			isCalc: false,
-			isCalcResult: false
+			isCalcResult: false,
+			selectBank:'',
+			accountNumber:'',
+			stuffLeaderId:'',
 		}
 	},
 
@@ -606,6 +609,7 @@ export default {
 			// 방장에게 추방 권한
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
+				this.stuffLeaderId = this.chat.memberId;
 			}
 		},
 		banishUserHandler() {
@@ -707,13 +711,56 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		dnoneHandler() {
+			console.log("bank:" + this.selectBank);
+			console.log("accountNumber: "+this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
 		},
 		resultDnoneHandler() {
+			console.log("price:" + this.price);
+			this.dutchHandler();
 			this.isCalc = !this.isCalc;
 			this.isCalcResult = !this.isCalcResult;
-		}
+		},
+		selectBankHandler(){
+			console.log("bank" + this.selectBank);
+		},
+		dutchHandler() {
+			// var formData = new FormData();
+			// formData.append("prices",JSON.stringify(this.price));
+			// formData.append("bankName",this.selectBank);
+			// formData.append("number",this.accountNumber);
+			// formData.append("memberId",this.stuffLeaderId);
+			
+			var raw = JSON.stringify({
+						"prices": this.price,
+						"account":{
+							"bankName":this.selectBank,
+							"number":this.accountNumber,
+							"memberId":this.stuffLeaderId.toString()
+						}
+						// "bankName":this.selectBank,
+						// "accountNumber":this.accountNumber
+					});
+			var requestOptions = {
+				method: 'POST',
+				redirect: 'follow',
+				headers: { 'Content-Type': 'application/json' },
+				// headers: { 'Content-Type': 'multipart/form-data' },
+				// body: JSON.stringify({
+				// 	"prices": this.price,
+				// 	"bankName":this.selectBank,
+				// 	"accountNumber":this.accountNumber
+				// })
+				body:raw
+			};
+
+			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+				})
+				.catch(error => console.log('error', error));
+		},
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent()
