@@ -18,7 +18,7 @@ export default {
 
 			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
 
-			await fetch(`${this.$store.state.host}/api/stuffAll`)
+			await fetch(`${this.$store.state.host}/api/reports/stuff`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
@@ -51,6 +51,12 @@ export default {
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
+		formatDate(date){
+
+				let regdate = dayjs(date).locale('ko');
+				let formatDate = regdate.format('YYYY-M-D HH:mm');
+				return formatDate;
+		}
 	},
 
 	mounted() {
@@ -86,18 +92,20 @@ export default {
 			<table class="admin-categ-table">
 				<thead class="table-head">
 					<tr>
-						<th style="width: 200px; text-align:left;">번호</th>
-						<th style="width: 150px; text-align:left;">신고 일</th>
-						<th style="width: 200px; text-align:left;">신고 자</th>
-						<th style="width: 700px; text-align:left;">신고 글</th>
+						<th style="width: 100px; text-align:left;">번호</th>
+						<th style="width: 100px; text-align:left;">신고 일</th>
+						<th style="width: 100px; text-align:left;">신고 자</th>
+						<th style="width: 100px; text-align:left;">신고 글</th>
+						<th style="width: 600px; text-align:left;">신고 사유</th>
 					</tr>
 				</thead>
 				<tbody class="table-body">
 					<tr v-for="s in list">
-						<td style="width: 200px; text-align:left;">{{ s.id }}</td>
-						<td style="width: 150px; text-align:left;">{{ s.regDate }}</td>
-						<td style="width: 200px; text-align:left;">{{ s.nickname }}</td>
-						<td style="width: 700px; text-align:left;"><router-link :to="{ path: '/member/stuff/' + s.stuffId }"></router-link></td>
+						<td style="width: 100px; text-align:left;">{{ s.id }}</td>
+						<td style="width: 100px; text-align:left;" v-text=formatDate(s.regdate)></td>
+						<td style="width: 100px; text-align:left;">{{ s.nickname }}</td>
+						<td style="width: 100px; text-align:left; color: rgba(114, 153, 190, 1);"><router-link :to="{ path: '/member/stuff/' + s.stuffId }">{{ s.stuffId }}</router-link></td>
+						<td style="width: 600px; text-align:left;">{{s.detail}}</td>
 						<td><button @click="modalHandler" :value="s.stuffId" class="icon-admin3 icon-delete">지우기 버튼</button></td>
 					</tr>
 				</tbody>

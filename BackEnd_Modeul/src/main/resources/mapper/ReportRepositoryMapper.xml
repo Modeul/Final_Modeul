@@ -8,6 +8,7 @@
 		<result property="regDate" column="reg_date" />
 		<result property="stuffId" column="stuff_id" />
 		<result property="memberId" column="member_id" />
+		<result property="detail" column="detail" />
 	</resultMap>
 	
 	<resultMap id="reportResultViewMap" type="ReportStuffView">
@@ -16,6 +17,7 @@
 		<result property="stuffId" column="stuff_id" />
 		<result property="memberId" column="member_id" />
 		<result property="nickname" column="nickname" />
+		<result property="detail" column="detail" />
 	</resultMap>
 
 
@@ -26,8 +28,8 @@
 
 
 	<insert id="insert" parameterType="ReportStuff">
-		insert into report_stuff(stuff_id, member_id ) values
-		(#{stuffId},#{memberId})
+		insert into report_stuff(stuff_id, member_id, detail ) values
+		(#{stuffId},#{memberId}, #{detail})
 	</insert>
 
 	<delete id="delete" parameterType="Integer" >

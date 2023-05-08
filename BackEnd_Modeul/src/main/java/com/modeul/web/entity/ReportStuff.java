@@ -17,7 +17,7 @@ public class ReportStuff {
 	 LocalDateTime regDate;
 	 Integer stuffId;
 	 Integer memberId;
-//	 String detail;
+	 String detail;
 //	 Integer progress;
 //	 String reply;
 }
