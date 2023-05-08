@@ -11,7 +11,7 @@ export default {
 			stuffId: 1,
 			openModal: false,
 			openModal2: false,
-			openModal3: false,
+			openModal3: true,
 			openModal4: false,
 			stuff: {},
 			category: {},

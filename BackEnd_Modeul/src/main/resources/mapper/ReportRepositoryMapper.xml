@@ -34,7 +34,7 @@
 
 	<delete id="delete" parameterType="Integer" >
 		delete from report_stuff
-		where id=#{id}
+		where stuff_id=#{id}
 	</delete>
 
 </mapper>

@@ -35,7 +35,7 @@ export default {
 				redirect: 'follow'
 			};
 			// this.$router.push("/member/stuff/list");
-			await fetch(`${this.$store.state.host}/api/stuff/${this.deleteId}`, requestOptions)
+			await fetch(`${this.$store.state.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
