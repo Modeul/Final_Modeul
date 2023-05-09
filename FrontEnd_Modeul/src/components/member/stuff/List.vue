@@ -13,11 +13,25 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
+			query: ''
 		};
 	},
 	computed: {
 	},
 	methods: {
+		searchInput(e) {
+			this.page = 1;
+			e.preventDefault();
+			this.query = e.target.value;
+
+			console.log(this.query);
+			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = this.formatDateList(dataList.queryList);
+
+				}).catch(error => console.log('error', error));
+		},
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
@@ -173,7 +187,7 @@ export default {
 			<div class="logo-moduel header-logo"></div>
 			<div class="search-container">
 				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요.">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
 					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
 			</div>
@@ -300,7 +314,7 @@ export default {
 			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
 				<div class="reg-stuff d-none"></div>
-			</router-link> 
+			</router-link>
 		</main>
 
 		<nav class="navi-bar d-fl-jf">
