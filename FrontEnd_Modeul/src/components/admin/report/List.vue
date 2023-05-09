@@ -9,6 +9,7 @@ export default {
 			list: [],
 			openModal: null,
 			openModal2: null,
+			openModal3: null,
 			deleteValid: null,
 			deleteId: '',
 		}
@@ -27,6 +28,22 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 
+		},
+		async deleteReport() {
+			this.openModal3 = true;
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+			// this.$router.push("/member/stuff/list");
+			await fetch(`${this.$store.state.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
+				.then(response => response.text())
+				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+			console.log("삭제완료");
+			this.openModal3 = false;
+			this.addListHandler();
+			this.openModal2 = true;
 		},
 		async deleteStuff() {
 			this.openModal = true;
@@ -48,6 +65,10 @@ export default {
 			this.deleteId = e.target.value;
 			this.openModal = !this.openModal;
 		},
+		modalHandler3(e){
+			this.deleteId = e.target.value;
+			this.openModal3 = !this.openModal3;
+		},
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
@@ -68,6 +89,15 @@ export default {
 <template>
 	<main>
 		<!-- 취소 확인 모달 -->
+		<div v-if="openModal3" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+				<div class="delete-box-2">
+					<div @click="deleteReport" class="delete-box-3">삭제</div>
+					<div @click="modalHandler" class="delete-box-4">취소</div>
+				</div>
+			</div>
+		</div>
 		<div v-if="openModal" class="black-bg">
 			<div class="delete-box">
 				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
@@ -101,7 +131,7 @@ export default {
 				</thead>
 				<tbody class="table-body">
 					<tr v-for="s in list">
-						<td style="width: 100px; text-align:left;">{{ s.id }}</td>
+						<td style="width: 100px; text-align:left;">{{ s.id }} <button @click="modalHandler3" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
 						<td style="width: 100px; text-align:left;" v-text=formatDate(s.regdate)></td>
 						<td style="width: 100px; text-align:left;">{{ s.nickname }}</td>
 						<td style="width: 100px; text-align:left; color: rgba(114, 153, 190, 1);"><router-link :to="{ path: '/member/stuff/' + s.stuffId }">{{ s.stuffId }}</router-link></td>

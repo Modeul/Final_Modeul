@@ -4,7 +4,7 @@
 <mapper namespace="com.modeul.web.repository.ReportStuffRepository">
 
 	<resultMap id="reportResultMap" type="ReportStuff">
-		<result property="Id" column="id" />
+		<result property="id" column="id" />
 		<result property="regDate" column="reg_date" />
 		<result property="stuffId" column="stuff_id" />
 		<result property="memberId" column="member_id" />
@@ -12,7 +12,7 @@
 	</resultMap>
 	
 	<resultMap id="reportResultViewMap" type="ReportStuffView">
-		<result property="Id" column="id" />
+		<result property="id" column="id" />
 		<result property="regDate" column="reg_date" />
 		<result property="stuffId" column="stuff_id" />
 		<result property="memberId" column="member_id" />
@@ -32,9 +32,9 @@
 		(#{stuffId},#{memberId}, #{detail})
 	</insert>
 
-	<delete id="delete" parameterType="Integer" >
+	<delete id="delete" parameterType="Integer">
 		delete from report_stuff
-		where stuff_id=#{id}
+		where id = #{id}
 	</delete>
 
 </mapper>

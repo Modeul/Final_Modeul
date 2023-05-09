@@ -11,6 +11,6 @@ public interface ReportService {
 	
 	String regReportedStuff(ReportStuff reportStuff);
 
-	String deleteReportedStuff(Integer id);
+	String deleteReportedStuff(Integer id, String c);
 
 }
