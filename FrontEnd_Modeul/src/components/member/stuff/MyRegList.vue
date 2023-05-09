@@ -192,7 +192,7 @@ export default {
 	padding: 0px;
 	gap: 10px;
 
-	width: 312px;
+	width: 100%;
 	margin-top: 25px;
 }
 
@@ -204,9 +204,9 @@ export default {
 }
 
 .title {
-	margin-left: 86px;
-	/* font-size: 14px; */
 	color: #333;
+	margin: 0 auto;
+	padding-right: 23px;
 }
 
 .canvas {
