@@ -23,5 +23,8 @@
     select *
     from account
     where member_id = #{memberId}
+    order by reg_date desc
+    limit ${size} offset ${offset}
+  
   </select>
 </mapper>

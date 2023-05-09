@@ -14,6 +14,6 @@ public interface AccountRepository {
 
     // Account findAccountById(Long memberId);
 
-    List<Account> findViewById(Long memberId);
+    List<Account> findViewById(Long memberId, int size, int offset, String orderField, String orderDir);
     
 }

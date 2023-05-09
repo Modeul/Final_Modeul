@@ -134,18 +134,19 @@
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
+				
 				<div class="account-input">
-					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
-						style="width: 260px; scroll-behavior: smooth;">
-					</v-select>
-					<v-text-field v-model="accountNumber" label="계좌번호" variant="underlined" style="width: 260px;">
-					</v-text-field>
-					<!-- <input class="account-input-box" pl> -->
-				</div>
-				<div class="account-recent">
+                    <select required class="account-input-box" v-model="selectBank">
+                        <option value="" selected>은행 선택</option>
+                        <option v-for="bank in banks" v-text="bank"></option>
+                    </select>
+                    <input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required> 
+                </div>
+				<div class="account-recent" >
 					<div>최근 등록 계좌</div>
-					<div>
-						2343242423423
+					<div v-for="ra in recentAccountInfo">
+						<span>{{ `${ra.bankName}  ` }}</span>
+						<span>{{ `  ${ra.number}` }}</span>
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -330,6 +331,7 @@ export default {
 			dutchMemberList:'',
 			sumDutch:'',
 			dutchList:'',
+			recentAccountInfo:'',
 		}
 	},
 
@@ -685,6 +687,12 @@ export default {
 
 		this.checkStuffLeader();
 		this.checkDutchHave();
+
+		// 최근 계좌 목록
+		await fetch(`${this.$store.state.host}/api/account/recent/${this.myUserId}`)
+		.then(response => response.json())
+		.then(result => {this.recentAccountInfo = result;})
+		.catch(error => console.log('error', error));
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -837,26 +845,33 @@ export default {
 }
 
 .account-input-box {
-	width: 236px;
-	height: 48px;
-	background: #FFFFFF;
-	border: 1px solid #888888;
-	border-radius: 10px;
-	margin-bottom: 8px;
+	width: 272px;
+    height: 48px;
+    border: 1px solid #888888;
+    color: #333;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    padding-left: 12px;
 }
-
+select option[value=""][disabled] {
+    display: none;
+}
+.account-input-box::-webkit-input-placeholder {
+  color: #888888;
+  font-size: 16px;
+  text-align:left;
+}
 .account-recent {
-	padding: 16px 4px;
-
-	flex: none;
-	order: 2;
-	flex-grow: 0;
+	padding: 20px 4px;
+    font-size: 14px;
+    flex: none;
+    order: 2;
+    flex-grow: 0;
 }
 
 .account-recent>div:first-child {
-	font-size: 14px;
-	font-weight: 700;
-	color: #63A0C2;
+    font-weight: 700;
+    color: #63A0C2;
 }
 
 .btn-writing {

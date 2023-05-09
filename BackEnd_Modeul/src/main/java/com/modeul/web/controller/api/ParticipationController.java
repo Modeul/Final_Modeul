@@ -15,14 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.modeul.web.entity.Account;
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.entity.StuffView;
-import com.modeul.web.service.AccountService;
 import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.DutchService;
 import com.modeul.web.service.ParticipationService;
@@ -43,7 +41,6 @@ public class ParticipationController {
 
     @Autowired
     private StuffService stuffService;
-
 
     @PostMapping("/participation")
     public String addParticipation(@RequestBody Participation participation) {
@@ -153,13 +150,5 @@ public class ParticipationController {
 
         dutchService.addAllDutch(stuffId, dutch);
         return "ok";
-
     }
-    @GetMapping("account/{leaderId}")
-    public String getAccount(
-            @PathVariable Long leaderId){
-        
-        return participationService.getAccount(leaderId);
-        }
 }
-
