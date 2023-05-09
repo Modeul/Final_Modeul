@@ -78,10 +78,9 @@ const routes = [
       { path: "stuff/reg", component: Reg },
       { path: "stuff/edit/:id", component: EditReg },
       { path: "stuff/listsearch", component: ListSearch },
-      { path: "stuff/crawlinglist", component: CrawlingList },
+      { path: "stuff/recommends", component: CrawlingList },
       { path: "stuff/gps", component: Gps },
-      { path: "participation/list", component: ParticipationList },
-			
+      { path: "participation/list", component: ParticipationList }
     ]
   },
 	{ path: "/admin/login", component: AdminLogin },

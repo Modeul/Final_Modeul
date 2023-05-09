@@ -17,23 +17,22 @@ public class CrawlingServiceImpl implements CrawlingService {
     // 조회용
     @Override
     public List<Crawling> getViewAll() {
-        return repository.findAll(null, 10, 0);
+        return repository.findAll(null, null, 7, 0);
+    }
+
+    @Override
+    public List<Crawling> getViewAll(int page , Long categoryId) {
+        int size = page * 7;
+
+        return repository.findAll(null, categoryId, size, 0);
     }
 
     @Override
     public List<Crawling> getViewAll(int page) {
-        int size = 10;
-        int offset = (page-1)*10;
+        int size = page * 7;
 
-        return repository.findAll(null, size, offset);
+        return repository.findAll(null, null, size, 0);
     }
-    // @Override
-	// public List<Crawling> getViewAll(Long categoryId, int page) {
-	// 	int size = 10;
-	// 	int offset = (page-1)*10;
-		
-	// 	return repository.findAll(null, categoryId, null, null, size, offset);
-	// }
 
     @Override
 	public Long getListCount(Long categoryId, int page) {
@@ -42,4 +41,19 @@ public class CrawlingServiceImpl implements CrawlingService {
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
+
+    @Override // 검색용
+    public List<Crawling> getViewAll(String query, int page, Long categoryId) {
+        int size = page * 7;
+        return repository.findAll(query, categoryId, size, 0);
+    }
+
+    @Override
+    public List<Crawling> getCategoryNameList(int page, String categoryName) {
+        int size = page * 7;
+        return repository.findCategory(null, null, size, 0, categoryName);
+    }
+
+
+    
 }
