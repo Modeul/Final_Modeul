@@ -46,7 +46,7 @@ export default {
 		modalHandler3() {
 			this.openModal3 = !this.openModal3;
 		},
-		modalHandler4(){
+		modalHandler4() {
 			this.openModal4 = !this.openModal4;
 		},
 
@@ -59,6 +59,31 @@ export default {
 		formatDateStuff() {
 			const deadlineObj = dayjs(this.stuff.deadline).locale('ko');
 			this.stuff.deadline = deadlineObj.format("M월 D일 (dd) HH시까지");
+
+			this.stuff.dDay = dayjs().diff(deadlineObj, 'day');
+			if (parseInt(this.stuff.dDay) < 0) {
+				this.stuff.dDay = 'D' + this.stuff.dDay;
+				this.stuff.deadlineState = 1;
+			}
+			else if (parseInt(this.stuff.dDay) == 0) {
+				this.stuff.dDay = deadlineObj.diff(dayjs(), 'hours')
+				if (parseInt(this.stuff.dDay) > 0) {
+					this.stuff.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
+					this.stuff.deadlineState = 2;
+				}
+				else if (parseInt(this.stuff.dDay) == 0) {
+					this.stuff.dDay = '1시간 내 마감';
+					this.stuff.deadlineState = 3;
+				}
+				else {
+					this.stuff.dDay = '마감';
+					this.stuff.deadlineState = 0;
+				}
+			}
+			else {
+				this.stuff.dDay = '마감';
+				this.stuff.deadlineState = 0;
+			}
 		},
 		/* 글 내용 br */
 		getContent(content) {
@@ -93,12 +118,13 @@ export default {
 
 			fetch(`${this.$store.state.host}/api/reports/stuff`, requestOptions)
 				.then(response => response.text())
-				.then(result => 
-				{if (result ==='OK') {
-					console.log(result);
-					this.modalHandler3();
-					this.modalHandler4();
-				}} )
+				.then(result => {
+					if (result === 'OK') {
+						console.log(result);
+						this.modalHandler3();
+						this.modalHandler4();
+					}
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -325,13 +351,13 @@ export default {
 			</div>
 
 			<div v-if="openModal4" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">신고 완료</div>
-						<div class="delete-box-2">
-							<div @click="modalHandler4" class="delete-box-3">닫기</div>
-						</div>
+				<div class="delete-box">
+					<div class="delete-box-1">신고 완료</div>
+					<div class="delete-box-2">
+						<div @click="modalHandler4" class="delete-box-3">닫기</div>
 					</div>
 				</div>
+			</div>
 
 
 
@@ -345,8 +371,7 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -356,7 +381,9 @@ export default {
 					<div class="d-fl detail-edit">
 						<div class="detail-top">
 							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status">모집중</div>
+							<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+								(stuff.deadlineState == 1) ? 'day-left' :
+									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
 						</div>
 
 						<div class="icon-heart">하트</div>
@@ -499,4 +526,5 @@ export default {
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
+
 </style>

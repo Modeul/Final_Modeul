@@ -96,6 +96,11 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
 @import "/css/component/member/stuff/component-list-search.css";
+.canvas {
+		max-width: 600px;
+		padding: 0 20px;
+		margin: 0 auto;
+	}
 .search-header{
 	display: flex;
 	align-items: center;

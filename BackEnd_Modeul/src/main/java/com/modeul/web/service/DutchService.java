@@ -17,4 +17,6 @@ public interface DutchService {
     void addAllDutch(Long stuffId, Map<String, Object> dutch);
 
     List<DutchView> getViewAllBymemberId(Long memberId);
+
+    int removeDutch(Long stuffId);
 }

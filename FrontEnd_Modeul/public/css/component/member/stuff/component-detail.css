@@ -98,6 +98,22 @@ main {
   box-sizing: border-box;
   border-radius: 5px;
 }
+
+.detail-status.expired {
+	background-color: #19191982;
+	color: #FFFFFF;
+}
+
+.detail-status.day-left {
+	background-color: #b8ccff82;
+	color: #56A4FF;
+}
+
+.detail-status.hour-left {
+	background-color: #FAEEF0;
+	color: #FF687B;
+}
+
 .detail-heart {
   font-size: 0.5em;
   color: rgb(138, 138, 139);
@@ -502,3 +518,4 @@ transition: 0.5s;
   align-self: auto;
   order: 1;
 }
+

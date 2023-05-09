@@ -326,5 +326,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
+@import "/css/component/admin/member/list-responsive.css";
 @import "/css/button.css";
 </style>

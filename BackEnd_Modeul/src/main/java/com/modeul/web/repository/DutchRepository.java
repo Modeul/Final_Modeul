@@ -30,4 +30,7 @@ public interface DutchRepository {
 
     /* 정산했는지 체크용 정산 내역 목록 조회 */
     List<DutchView> findViewAllBymemberId(Long memberId, String orderField, String orderDir);
+
+    // 더치정보 삭제
+    int deleteDutch(Long stuffId);
 }
