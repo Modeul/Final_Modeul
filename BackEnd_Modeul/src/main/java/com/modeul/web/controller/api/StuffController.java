@@ -17,12 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Crawling;
+import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.entity.Image;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.CrawlingService;
+import com.modeul.web.service.FavoriteService;
 import com.modeul.web.service.ImageService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
@@ -46,6 +48,9 @@ public class StuffController {
 
 	@Autowired
 	private CrawlingService crawlingservice;
+
+	@Autowired
+	private FavoriteService favoriteService;
 
 
 	// 반환 타입 주의!
@@ -97,6 +102,7 @@ public class StuffController {
 		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
 		int memberCount = participationService.getMemberCountBystuffId(stuff.getId());
 		StuffView stuffView = service.getViewById(id);
+		FavoriteView favoriteView = favoriteService.getListByStuffId(id);
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff", stuff);
@@ -105,6 +111,7 @@ public class StuffController {
 		data.put("participantList", participantList);
 		data.put("memberCount", memberCount);
 		data.put("stuffView", stuffView);
+		data.put("favoriteView", favoriteView);
 
 		return data;
 	}

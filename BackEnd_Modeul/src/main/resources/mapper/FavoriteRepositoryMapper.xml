@@ -15,6 +15,7 @@
 		<result property="stuffId" column="stuff_id" />
 		<result property="stuffTitle" column="stuff_title" />
 		<result property="stuffPlace" column="stuff_place" />
+		<result property="categoryId" column="category_id" />
 		<result property="stuffDeadline" column="stuff_deadline" />
 		<result property="favoriteDate" column="favorite_date" />
 		<result property="imageName" column="image_name" />
@@ -32,14 +33,11 @@
 		
 	</select> -->
 
-	<!-- <select id="findViewById" resultMap="FavoriteViewResultMap">
+	 <select id="findViewByStuffId" resultMap="FavoriteViewResultMap">
 		select * 
 		from favorite_view
-		where member_id = #{memberId}
-		order by favorite_date
-		
-		
-	</select> -->
+		where stuff_id = #{stuffId}
+	</select> 
 
 	<select id="findViewById" resultMap="FavoriteViewResultMap">
 		select * 
@@ -48,10 +46,24 @@
 		<if test="categoryId != null">
 					and category_id = #{categoryId}
 		</if>
-		order by favorite_date
+		order by favorite_date desc
 		<if test="size != null and offset != null">
 				limit ${size} offset ${offset}
 			</if>
+	</select>
+
+	<select id="getCountList" resultType="Long" parameterType="FavoriteView">
+		select count(id)
+		from
+		favorite_view
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="categoryId != null">
+				category_id = #{categoryId}
+			</if>
+			<if test="memberId != null">
+				and member_id = #{memberId}
+			</if>
+		</trim>
 	</select>
 
 	

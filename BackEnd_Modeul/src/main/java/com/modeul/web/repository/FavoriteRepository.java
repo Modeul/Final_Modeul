@@ -22,8 +22,14 @@ public interface FavoriteRepository {
                                 
 
 
-    void addList(Long memberId, Long stuffId, LocalDateTime date);
+    void addList(Long memberId, Long stuffId);
 
     void deleteList(Long memberId, Long stuffId);
+
+   
+
+    FavoriteView findViewByStuffId(Long stuffId);
+
+    Long getCountList(Long categoryId, Long memberId);
 
 }

@@ -13,4 +13,6 @@ public interface FavoriteService {
     
     void addFavorite(Long memberId, Long stuffId);
     void removeFavorite(Long memberId, Long stuffId);
+    FavoriteView getListByStuffId(Long stuffId);
+    Long getListCount(Long categoryId, int page, Long memberId);
 }
