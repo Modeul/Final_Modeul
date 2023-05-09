@@ -1,7 +1,7 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
-
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 
 export default {
 	data() {
@@ -13,6 +13,7 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
+			userDetails:useUserDetailsStore(),
 		};
 	},
 	computed: {
@@ -166,6 +167,7 @@ export default {
 <template>
 	<div class="pc-header-wrap">
 		<div class="header-menu">
+			<div>{{ userDetails.uid }}</div>
 			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
 			<div class="login"><router-link to="/login">로그인</router-link></div>
 		</div>
