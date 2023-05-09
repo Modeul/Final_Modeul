@@ -179,19 +179,24 @@ public class StuffController {
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 크롤링 컨트롤러 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 	//  get ,   insert  , delete
-	@GetMapping("/stuff/crawlinglist")
+	@GetMapping("/stuff/recommends")
 	public Map<String,Object> getCrawlingList(
-			@RequestParam(name="p", defaultValue = "1") int page,		
-			@RequestParam(name="c", required=false) Long categoryId) {
+			@RequestParam(name = "q", required = false) String query,
+			@RequestParam(name="p", defaultValue = "1") int page,
+			@RequestParam(name="c", required=false) Long categoryId,
+			@RequestParam(name="cname", required=false) String categoryName) {
 		
 		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
-		List<Category> categoryList = categoryService.getList();
+		List<Crawling> queryList = crawlingservice.getViewAll(query , page , categoryId);
+		List<Crawling> category = crawlingservice.getCategoryNameList(page , categoryName);
+		List<Crawling> categoryList = crawlingservice.getViewAll(page , categoryId);
 		Long listCount = crawlingservice.getListCount(categoryId, page);
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("crawlingList", crawlingList);
-		// dataList.put("list", list);
-		dataList.put("categoryList", categoryList);
+		dataList.put("queryList", queryList);
 		dataList.put("listCount", listCount);
+		dataList.put("category", category);
+		dataList.put("categoryList", categoryList);
 
 		return dataList;
 	}

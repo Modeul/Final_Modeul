@@ -11,6 +11,8 @@ export default {
 			stuffId: 1,
 			openModal: false,
 			openModal2: false,
+			openModal3: false,
+			openModal4: false,
 			stuff: {},
 			category: {},
 			imageList: '',
@@ -18,10 +20,15 @@ export default {
 			memberCount: '',
 			isCheckParticipation: '',
 			dialog: false,
-			participantInfo: {},
-			memberInfo: '',
-			stuffAuthority: false,
+			participantInfo:  {},
+			memberInfo:  '',
+			stuffAuthority:  false,
 			stuffView: '',
+			Report: {
+				stuffId: 0,
+				memberId: 113,
+				detail:  '',
+			},
 			favoriteList: [],
 			heartStuffId: '',
 			isfavorite: false,
@@ -42,6 +49,13 @@ export default {
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
+		modalHandler3() {
+			this.openModal3 = !this.openModal3;
+		},
+		modalHandler4() {
+			this.openModal4 = !this.openModal4;
+		},
+
 		imageZoomInHandler() {
 			console.log("zoom-in");
 		},
@@ -51,6 +65,31 @@ export default {
 		formatDateStuff() {
 			const deadlineObj = dayjs(this.stuff.deadline).locale('ko');
 			this.stuff.deadline = deadlineObj.format("M월 D일 (dd) HH시까지");
+
+			this.stuff.dDay = dayjs().diff(deadlineObj, 'day');
+			if (parseInt(this.stuff.dDay) < 0) {
+				this.stuff.dDay = 'D' + this.stuff.dDay;
+				this.stuff.deadlineState = 1;
+			}
+			else if (parseInt(this.stuff.dDay) == 0) {
+				this.stuff.dDay = deadlineObj.diff(dayjs(), 'hours')
+				if (parseInt(this.stuff.dDay) > 0) {
+					this.stuff.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
+					this.stuff.deadlineState = 2;
+				}
+				else if (parseInt(this.stuff.dDay) == 0) {
+					this.stuff.dDay = '1시간 내 마감';
+					this.stuff.deadlineState = 3;
+				}
+				else {
+					this.stuff.dDay = '마감';
+					this.stuff.deadlineState = 0;
+				}
+			}
+			else {
+				this.stuff.dDay = '마감';
+				this.stuff.deadlineState = 0;
+			}
 		},
 		/* 글 내용 br */
 		getContent(content) {
@@ -66,6 +105,32 @@ export default {
 			fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+		},
+
+		reportStuff() {
+			var requestOptions = {
+				method: 'POST',
+				redirect: 'follow',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					stuffId: this.$route.params.id,
+					memberId: this.Report.memberId,
+					detail: this.Report.detail,
+				})
+			};
+
+			fetch(`${this.$store.state.host}/api/reports/stuff`, requestOptions)
+				.then(response => response.text())
+				.then(result => {
+					if (result === 'OK') {
+						console.log(result);
+						this.modalHandler3();
+						this.modalHandler4();
+					}
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -113,7 +178,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo() {
+		loadParticipantInfo(){
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
 				.then(response => response.json())
 				.then(data => {
@@ -131,10 +196,10 @@ export default {
 				}
 			}
 		},
-		checkStuffLeader() {
+		checkStuffLeader(){
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if (this.stuffView.memberId === this.memberInfo.id) {
+			if(this.stuffView.memberId === this.memberInfo.id){
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -329,7 +394,8 @@ export default {
 			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
 			<!-- 수정/삭제 모달 버튼 -->
-			<i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i>
+			<!-- <i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i> -->
+			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
 				<div class="icon-edit2">
@@ -337,9 +403,8 @@ export default {
 						<router-link :to="'./edit/' + stuff.id">
 							<div class="icon-edit3"></div>
 						</router-link>
-						<div @click="modalHandler2" class="icon-edit4">
-
-						</div>
+						<div @click="modalHandler2" class="icon-edit4"></div>
+						<div @click="modalHandler3">신고</div>
 					</div>
 				</div>
 				<!-- 취소 확인 모달 -->
@@ -352,7 +417,27 @@ export default {
 						</div>
 					</div>
 				</div>
+			</div>
 
+			<div v-if="openModal3" class="black-bg">
+				<div class="report-box">
+					<div class="delete-box-1">신고 하시겠습니까?</div>
+					<div>사유</div>
+					<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
+					<div class="delete-box-2">
+						<div @click="reportStuff" class="delete-box-3">신고</div>
+						<div @click="modalHandler3" class="delete-box-4">취소</div>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="openModal4" class="black-bg">
+				<div class="delete-box">
+					<div class="delete-box-1">신고 완료</div>
+					<div class="delete-box-2">
+						<div @click="modalHandler4" class="delete-box-3">닫기</div>
+					</div>
+				</div>
 			</div>
 			
 
@@ -368,8 +453,7 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -379,7 +463,9 @@ export default {
 					<div class="d-fl detail-edit">
 						<div class="detail-top">
 							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status">모집중</div>
+							<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+								(stuff.deadlineState == 1) ? 'day-left' :
+									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
 						</div>
 
 						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>

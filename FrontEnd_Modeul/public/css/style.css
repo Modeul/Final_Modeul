@@ -450,9 +450,9 @@
 
 
 /* ---- 카테고리 기본이미지 ---------------------- */
-.header{
+/* .header{
 
-}
+} */
 .header-categ-box {
 	display: flex;
 	justify-content: flex-start;
