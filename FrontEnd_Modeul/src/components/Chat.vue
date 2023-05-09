@@ -105,6 +105,9 @@
 			<div class="chat-input-wrap">
 				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
+						src="/images/member/stuff/cal-result-btn.svg">
+				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
@@ -127,23 +130,22 @@
 
 			<div class="calc-contents">
 				<div class="account-title">
-					<span class="account-title-leader">{{ leaderNic }}</span><span> 님의</span><br>
+					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
 				<div class="account-input">
-					<select required class="account-input-box" v-model="selectBank">
-						<option value="" selected>은행 선택</option>
-						<option v-for="bank in banks" v-text="bank"></option>
-					</select>
-					<input placeholder="계좌번호" class="account-input-box" v-model="account.number" pattern="[0-9]*" required> 
+					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
+						style="width: 260px; scroll-behavior: smooth;">
+					</v-select>
+					<v-text-field v-model="accountNumber" label="계좌번호" variant="underlined" style="width: 260px;">
+					</v-text-field>
+					<!-- <input class="account-input-box" pl> -->
 				</div>
 				<div class="account-recent">
 					<div>최근 등록 계좌</div>
-					<div @click="AA">aa</div>
 					<div>
-						<span>{{ this.recentAccount}}</span>
-						<span></span>
+						2343242423423
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -308,6 +310,7 @@ export default {
 			showBanish: false,
 
 			calcSwitch: true,
+			chipinResult: 0,
 			totalPrice: 0,
 			totalPriceComma: '',
 			totalPriceAlert: '',
@@ -334,57 +337,12 @@ export default {
 		blurHandler() {
 			console.log(this.memberPriceList);
 		},
-		AA(){
-			console.log(this.recentAccount);
+
+		chipinHandler() {
+			console.log(this.totalPrice)
+			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+			return this.chipinResult;
 		},
-		// transition적용 예정!
-		inputAccount(){
-			// 같은 멤버(memberId)가 다른 계좌번호(number) 등록 가능? YES
-				// 같을 경우, 최근 계좌 번호로 뽑아낼 수 있어야 함.
-			// YES이기 때문에, 수정(PUT)할 필요가 없어짐.
-			this.account.memberId = this.myUserId;
-
-			var myHeaders = new Headers();
-			myHeaders.append("Content-Type", "application/json");
-
-			var raw = JSON.stringify({
-				bankName: this.account.bankName,
-				number: this.account.number,
-				memberId: this.account.memberId 
-
-			});
-
-			var requestOptions = {
-			method: 'POST',
-			headers: myHeaders,
-			body: raw,
-			redirect: 'follow'
-			};
-
-			fetch(`${this.$store.state.host}/api/account`, requestOptions)
-			.then(response => response.text())
-			.then(result => console.log(result))
-			.catch(error => console.log('error', error));
-
-			// this.account.memberId = this.myUserId;
-			// console.log(this.account.memberId);
-			
-			// var requestOptions = {
-			// method: 'PUT',
-			// redirect: 'follow'
-			// };
-
-			// fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
-			// .then(response => response.text())
-			// .then(result => console.log(result))
-			// .catch(error => console.log('error', error));
-		},
-
-		// chipinHandler() {
-		// 	console.log(this.totalPrice)
-		// 	this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-		// 	return this.chipinResult;
-		// },
 
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
@@ -601,8 +559,7 @@ export default {
 				method: 'PUT',
 				redirect: 'follow',
 				headers: { 'Content-Type': 'application/json' },
-				// body: JSON.stringify(this.price)
-				
+				body: JSON.stringify(this.price)
 			};
 
 			fetch(`${this.$store.state.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
@@ -728,41 +685,6 @@ export default {
 
 		this.checkStuffLeader();
 		this.checkDutchHave();
-
-		this.stuffId = this.$route.params.stuffId; 
-
-
-		//최근 계좌
-		// 한 멤버당 여러 개의 계좌를 등록할 수 있기 때문에 List로 받아온다.
-
-		var myHeaders = new Headers();
-		myHeaders.append("Content-Type", "application/json");
-
-		var requestOptions = {
-		method: 'GET',
-		headers: myHeaders,
-		redirect: 'follow'
-		};
-
-		fetch(`${this.$store.state.host}/api/account/recent/${this.myUserId}`, requestOptions)
-		.then(response => response.text())
-		.then(result => 
-			
-			this.recentAccount = result
-		)
-		.catch(error => console.log('error', error));
-		// var requestOptions = {
-		// method: 'GET',
-		// redirect: 'follow'
-		// };
-
-		// fetch(`${this.$store.state.host}/api/account/${this.memberInfo.id}`, requestOptions)
-		// .then(response => response.text())
-		// .then(result => {
-		// 	this.recentAccount = result;
-		// 	console.log(result);
-		// })
-		// .catch(error => console.log('error', error));
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -787,13 +709,8 @@ export default {
 				this.totalText = true;
 				return total.toLocaleString() + " 원";
 			}
-		},
-		leaderNic: function() {
-			return this.leader.nic;
-		},
-		
+		}
 	},
-	
 	// computed: { chatLength: () => this.messageView.length },
 	watch: {
 		chatLength: function () {
@@ -807,11 +724,7 @@ export default {
 		totalPriceAlert: function () {
 			if (this.totalPrice > 999999)
 				return console.log("over");
-		},
-		chipinResult: function(){
-			return ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 		}
-
 	},
 }
 </script>
@@ -924,32 +837,24 @@ export default {
 }
 
 .account-input-box {
-	width: 272px;
+	width: 236px;
 	height: 48px;
+	background: #FFFFFF;
 	border: 1px solid #888888;
-	color: #888888;
 	border-radius: 10px;
 	margin-bottom: 8px;
-	padding-left: 12px;
-}
-select option[value=""][disabled] {
-	display: none;
-}
-.account-input-box::-webkit-input-placeholder {
-  color: #888888;
-  font-size: 16px;
-  text-align:left;
 }
 
 .account-recent {
-	padding: 20px 4px;
-	font-size: 14px;
+	padding: 16px 4px;
+
 	flex: none;
 	order: 2;
 	flex-grow: 0;
 }
 
 .account-recent>div:first-child {
+	font-size: 14px;
 	font-weight: 700;
 	color: #63A0C2;
 }
