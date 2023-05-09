@@ -6,11 +6,10 @@ export default {
 	data() {
 		return {
 			page: '',
-			listOrigin: '',
-			list: '',
-			query: '',
+			list: [],
 			openModal: null,
 			openModal2: null,
+			openModal3: null,
 			deleteValid: null,
 			deleteId: '',
 		}
@@ -20,15 +19,31 @@ export default {
 
 			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
 
-			await fetch(`${this.$store.state.host}/api/stuffAll`)
+			await fetch(`${this.$store.state.host}/api/reports/stuff`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
-					this.listOrigin = dataList;
+					console.log(dataList);
 					this.$store.commit('LOADING_STATUS', false);
 				})
 				.catch(error => console.log('error', error));
 
+		},
+		async deleteReport() {
+			this.openModal3 = true;
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+			// this.$router.push("/member/stuff/list");
+			await fetch(`${this.$store.state.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
+				.then(response => response.text())
+				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+			console.log("삭제완료");
+			this.openModal3 = false;
+			this.addListHandler();
+			this.openModal2 = true;
 		},
 		async deleteStuff() {
 			this.openModal = true;
@@ -37,7 +52,7 @@ export default {
 				redirect: 'follow'
 			};
 			// this.$router.push("/member/stuff/list");
-			await fetch(`${this.$store.state.host}/api/stuff/${this.deleteId}`, requestOptions)
+			await fetch(`${this.$store.state.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
@@ -50,12 +65,18 @@ export default {
 			this.deleteId = e.target.value;
 			this.openModal = !this.openModal;
 		},
+		modalHandler3(e){
+			this.deleteId = e.target.value;
+			this.openModal3 = !this.openModal3;
+		},
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
-		queryHandler(e) {
-			this.query = e.target.value
-			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query)|| stuff.content.includes(this.query));
+		formatDate(date){
+
+				let regdate = dayjs(date).locale('ko');
+				let formatDate = regdate.format('YYYY-M-D HH:mm');
+				return formatDate;
 		}
 	},
 
@@ -67,60 +88,60 @@ export default {
 
 <template>
 	<main>
-		<h1 class="d-none">물건 관리 목록</h1>
-		<div class="admin-header">
-			<span>게시글 관리</span>
-		</div>
-		<div class="admin-search-box">
-			<div class="search-container-admin-sr">
-				<form action="" class="d-fl d-b-none search-form1" method="get">
-					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="제목이나 내용으로 검색" :value="query" @input="queryHandler">
-				</form>
+		<!-- 취소 확인 모달 -->
+		<div v-if="openModal3" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+				<div class="delete-box-2">
+					<div @click="deleteReport" class="delete-box-3">삭제</div>
+					<div @click="modalHandler" class="delete-box-4">취소</div>
+				</div>
 			</div>
 		</div>
+		<div v-if="openModal" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+				<div class="delete-box-2">
+					<div @click="deleteStuff" class="delete-box-3">삭제</div>
+					<div @click="modalHandler" class="delete-box-4">취소</div>
+				</div>
+			</div>
+		</div>
+		<div v-if="openModal2" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">삭제되었습니다.</div>
+				<div class="delete-box-2">
+					<div @click="modalHandler2" class="delete-box-5">확인</div>
+				</div>
+			</div>
+		</div>
+
+		<h1 class="d-none">신고 목록</h1>
 
 		<div class="m-t-13">
 			<table class="admin-categ-table">
 				<thead class="table-head">
 					<tr>
-						<th style="width: 230px;  min-width: 230px;">글 제목</th>
-						<th style="width: 150px;  min-width: 150px;">카테고리</th>
-						<th style="width: 200px;  min-width: 200px;">장소</th>
-						<th style="width: calc(100vw - 890px); min-width: 700px">내용</th>
-						<th style="width: 20px;   min-width: 20px;"></th>
+						<th style="width: 100px; text-align:left;">번호</th>
+						<th style="width: 100px; text-align:left;">신고 일</th>
+						<th style="width: 100px; text-align:left;">신고 자</th>
+						<th style="width: 100px; text-align:left;">신고 글</th>
+						<th style="width: 600px; text-align:left;">신고 사유</th>
 					</tr>
 				</thead>
 				<tbody class="table-body">
 					<tr v-for="s in list">
-						<td style="width: 230px;  min-width: 230px;  ">{{ s.title }}</td>
-						<td style="width: 150px;  min-width: 150px;   ">{{ s.categoryName }}</td>
-							<td style="width: 200px;  min-width: 200px;  ">{{ s.place }}</td>
-							<td style="width: calc(100vw - 890px);  min-width: 700px; text-align:left;">{{ s.content }}</td>
-							<td style="width: 20px;   min-width: 20px;  text-align:left;"><button @click="modalHandler" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<!-- 취소 확인 모달 -->
-			<div v-if="openModal" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-					<div class="delete-box-2">
-						<div @click="deleteStuff" class="delete-box-3">삭제</div>
-						<div @click="modalHandler" class="delete-box-4">취소</div>
-					</div>
-				</div>
-			</div>
-			<div v-if="openModal2" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">삭제되었습니다.</div>
-					<div class="delete-box-2">
-						<div @click="modalHandler2" class="delete-box-5">확인</div>
-					</div>
-				</div>
-			</div>
-		</main>
+						<td style="width: 100px; text-align:left;">{{ s.id }} <button @click="modalHandler3" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+						<td style="width: 100px; text-align:left;" v-text=formatDate(s.regdate)></td>
+						<td style="width: 100px; text-align:left;">{{ s.nickname }}</td>
+						<td style="width: 100px; text-align:left; color: rgba(114, 153, 190, 1);"><router-link :to="{ path: '/member/stuff/' + s.stuffId }">{{ s.stuffId }}</router-link></td>
+						<td style="width: 600px; text-align:left;">{{s.detail}}</td>
+						<td><button @click="modalHandler" :value="s.stuffId" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</main>
 </template>
 
 <style scoped>

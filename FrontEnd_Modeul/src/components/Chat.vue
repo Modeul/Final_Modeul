@@ -21,6 +21,16 @@
 		</div>
 	</div>
 
+	<div v-if="openDeleteModal" class="black-bg">
+		<div class="delete-box">
+			<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+			<div class="delete-box-2">
+				<div @click="removeDutchHandler" class="delete-box-3">삭제하기</div>
+				<div @click="openDeleteModalHandler" class="delete-box-4">취소</div>
+			</div>
+		</div>
+	</div>
+
 	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
@@ -105,9 +115,6 @@
 			<div class="chat-input-wrap">
 				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
-						src="/images/member/stuff/cal-result-btn.svg">
-				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
@@ -118,16 +125,49 @@
 	</div>
 
 	<!-- ** 정산 입력 폼 모달 ** -->
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
-		<section class="calc">
+
+		<section class="calc" :class="{ 'd-none': !isAccount }">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
-				<router-link to="list" class="icon calc-back" @click="dnoneHandler">뒤로가기</router-link>
+				<div class="icon">뒤로가기</div>
+				<div class="calc-header-title">계좌입력</div>
+			</header>
+
+			<div class="calc-contents">
+				<div class="account-title">
+					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span>계좌 정보를</span><br>
+					<span>입력해주세요.</span>
+				</div>
+				<div class="account-input">
+					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
+						style="width: 260px; scroll-behavior: smooth;">
+					</v-select>
+					<v-text-field v-model="accountNumber" label="계좌번호" variant="underlined" style="width: 260px;">
+					</v-text-field>
+					<!-- <input class="account-input-box" pl> -->
+				</div>
+				<div class="account-recent">
+					<div>최근 등록 계좌</div>
+					<div>
+						2343242423423
+					</div>
+				</div>
+				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
+
+			</div>
+		</section>
+
+		<section class="calc" :class="{ 'd-none': !isCalc }">
+			<h1 class="d-none">정산하기</h1>
+			<header class="calc-header">
+				<div class="icon calc-back" @click.prevent="dnoneHandler">뒤로가기</div>
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post" :class="{ 'd-none': !isNextCalc }" @submit.prevent="calculate">
+			<form class="calc-contents" method="post" @submit.prevent="resultDnoneHandler">
 				<div>
 					<section class="calc-method-btn calc-member-line">
 						<h1 class="d-none">정산 방법</h1>
@@ -171,38 +211,10 @@
 					<button type="submit" class="calc-button">정산하기</button>
 				</div>
 			</form>
-
-			<div class="calc-contents" :class="{ 'd-none': isNextCalc }">
-
-				<div class="account-title">
-					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
-					<span>계좌 정보를</span><br>
-					<span>입력해주세요.</span>
-				</div>
-				<div class="account-input">
-					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
-						style="width: 260px;">
-					</v-select>
-					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
-					</v-text-field>
-					<!-- <input class="account-input-box" pl> -->
-				</div>
-				<div class="account-recent">
-					<div>최근 등록 계좌</div>
-					<div>
-						2343242423423
-					</div>
-				</div>
-				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">등록하기</button>
-
-			</div>
 		</section>
-	</v-navigation-drawer>
 
-	<!-- ** 정산 결과 모달 ** -->
-	<v-navigation-drawer style="height: 635px; border-radius: 30px 30px 0px 0px;" v-model="isCheckCalResult"
-		location="bottom" temporary>
-		<section class="calc-result-default">
+		<!-- ** 정산 결과 모달 ** -->
+		<section class="calc-result-default" :class="{ 'd-none': !isCalcResult }">
 			<h1 class="d-none">calculate</h1>
 
 			<section class="cal-result-main">
@@ -211,159 +223,20 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span>삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
 					<h1 class="d-none">main</h1>
-					<div class="cal-user">
+					<div class="cal-user" v-for="m in dutchMemberList">
 						<div class="cal-user-img">
-							<img src="/images/member/chatid113.svg" alt="사용자1">
+							<img :src="'/images/member/' + m.memberImage" alt="사용자1">
 						</div>
 						<div class="cal-user-name">
-							그럴 수박! 에
+							{{ m.memberNickname }}
 						</div>
 						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/chatid110.svg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/chatid111.svg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
+							{{ m.price }}원
 						</div>
 					</div>
 				</main>
@@ -374,7 +247,7 @@
 						합계
 					</div>
 					<div>
-						666,666원
+						{{ sumDutch }}원
 					</div>
 				</section>
 
@@ -397,7 +270,7 @@
 
 				<section class="cal-result-check-form">
 					<h1 class="d-none">check</h1>
-					<button class="cal-result-check-btn" @click="calResultCheckHandler">확인</button>
+					<button class="cal-result-check-btn" @click="calDrawer = !calDrawer">확인</button>
 				</section>
 
 			</section>
@@ -416,7 +289,6 @@ export default {
 	data() {
 		return {
 			calDrawer: null,
-			isCheckCalResult: null,
 			userName: "",
 			message: "",
 			recvList: [],
@@ -441,6 +313,7 @@ export default {
 				image: ''
 			},
 			openLeaveModal: false,
+			openDeleteModal: false,
 			banishAuthority: false,
 			showBanish: false,
 
@@ -451,18 +324,20 @@ export default {
 			totalPriceAlert: '',
 			totalText: true,
 			memberPrice: 0,
-			// memberPriceList: [{'key'}]
+			banks: ['국민은행', '우리은행', '기업은행', '신한은행', 'KEB하나은행',
+				'농협은행', '새마을금고', '외환은행', 'SC제일은행', '한국시티은행',
+				'카카오뱅크', '토스뱅크', '케이뱅크'
 
-			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
-
-
-			banks: ['국민은행', '기업은행'
-
-				// { state: 'Nebraska', abbr: 'NE' },
-				// { state: 'California', abbr: 'CA' },
-				// { state: 'New York', abbr: 'NY' },
 			],
-			isNextCalc: false,
+			isAccount: true,
+			isCalc: false,
+			isCalcResult: false,
+			selectBank: '',
+			accountNumber: '',
+			stuffLeaderId: '',
+			dutchMemberList: '',
+			sumDutch: '',
+			dutchList: '',
 		}
 	},
 
@@ -600,6 +475,7 @@ export default {
 			// 방장에게 추방 권한
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
+				this.stuffLeaderId = this.chat.memberId;
 			}
 		},
 		banishUserHandler() {
@@ -655,6 +531,9 @@ export default {
 		modalLeaveCloseHandler() {
 			this.openLeaveModal = !this.openLeaveModal;
 		},
+		openDeleteModalHandler() {
+			this.openDeleteModal = !this.openDeleteModal;
+		},
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
@@ -672,9 +551,6 @@ export default {
 		},
 		showBanishHandler() {
 			this.showBanish = !this.showBanish;
-		},
-		calResultCheckHandler() {
-			this.isCheckCalResult = !this.isCheckCalResult;
 		},
 		inputCheck(event) {
 			if (
@@ -701,10 +577,107 @@ export default {
 				.then(result => {
 					console.log(result);
 				})
-				.catch(error => console.log('error', error));
+				.catch(error => console.log('error', error))
 		},
 		dnoneHandler() {
-			this.isNextCalc = !this.isNextCalc;
+			console.log("bank:" + this.selectBank);
+			console.log("accountNumber: " + this.accountNumber);
+			this.isAccount = !this.isAccount;
+			this.isCalc = !this.isCalc;
+		},
+		resultDnoneHandler() {
+			console.log("price:" + this.price);
+			this.dutchHandler();
+			this.isCalc = !this.isCalc;
+			this.isCalcResult = !this.isCalcResult;
+		},
+		selectBankHandler() {
+			console.log("bank" + this.selectBank);
+		},
+		dutchHandler() {
+
+			var raw = JSON.stringify({
+				"prices": this.price,
+				"account": {
+					"bankName": this.selectBank,
+					"number": this.accountNumber,
+					"memberId": this.stuffLeaderId.toString()
+				}
+			});
+
+			var requestOptions = {
+				method: 'POST',
+				redirect: 'follow',
+				headers: { 'Content-Type': 'application/json' },
+				body: raw
+			};
+
+			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+					this.loadDutchMemberList();
+				})
+				.catch(error => console.log('error', error));
+		},
+		async loadDutchMemberList() {
+			await fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchMemberList = dataList.list;
+					this.sumDutchHandler();
+					this.loadDutchList();
+					this.checkDutchHave();
+				})
+				.catch(error => console.log('error', error));
+		},
+		loadDutchList() {
+			fetch(`${this.$store.state.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchList = dataList.listView;
+					console.log(this.dutchList);
+				})
+				.catch(error => console.log('error', error));
+		},
+		sumDutchHandler() {
+			let sum = 0;
+
+			for (let dmL of this.dutchMemberList) {
+				console.log("price:" + dmL.price + '\n');
+				sum += parseInt(dmL.price);
+			}
+			this.sumDutch = sum;
+			console.log(this.sumDutch);
+			return this.sumDutch;
+		},
+		checkDutchHave() {
+			console.log("Have dutchList:" + this.dutchList);
+			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
+
+			for (let dL of this.dutchList) {
+				console.log("dL.stuffId:" + dL.stuffId + '\n');
+				if (dL.stuffId == this.$route.params.stuffId) {
+					this.isAccount = !this.isAccount;
+					this.isCalcResult = !this.isCalcResult;
+				}
+			}
+		},
+		removeDutchHandler() {
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow',
+			};
+
+			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+					this.isAccount = !this.isAccount;
+					this.isCalcResult = !this.isCalcResult;
+					this.calDrawer = !this.calDrawer;
+				})
+				.catch(error => console.log('error', error))
+
+			this.openDeleteModalHandler()
 		}
 	},
 	beforeRouteLeave() {
@@ -714,11 +687,14 @@ export default {
 		this.stompConnect();
 		this.connect();
 		this.loadParticipant();
+		this.loadDutchMemberList();
+		this.loadDutchList();
 	},
 	updated() {
 
 	},
 	async mounted() {
+
 		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 			.then(response => response.json())
 			.then(dataList => {
@@ -737,7 +713,7 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
-
+		this.checkDutchHave();
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -748,7 +724,7 @@ export default {
 		},
 		total: function () {
 			let total = Object.values(this.price).reduce((p, c) => {
-				if(c == parseInt(c))
+				if (c == parseInt(c))
 					return parseInt(p) + parseInt(c)
 				else
 					return NaN;
@@ -1044,10 +1020,9 @@ input::placeholder {
 }
 
 .calc-member-line {
-	width: 295px;
 	border-bottom: 2px solid #D9D9D9;
 	padding: 0;
-	margin: 0;
+	margin-top: 10px;
 }
 
 .calc-members-title {
@@ -1055,7 +1030,7 @@ input::placeholder {
 	flex-direction: row;
 	align-items: center;
 	/* padding: 12px 16px 0px; */
-	margin-top: 28px;
+	margin-top: 18px;
 	gap: 16px;
 	font-size: 12px;
 	font-weight: 700;
@@ -1076,7 +1051,7 @@ input::placeholder {
 	justify-content: space-between;
 	/* align-items: flex-start; */
 	align-items: center;
-	margin-top: 36px;
+	margin-top: 26px;
 
 	/* gap: 4px; */
 
@@ -1126,9 +1101,6 @@ input::placeholder {
 
 
 	position: relative;
-	height: 635px;
-	height: 635px;
-	/* width: 375px; */
 	width: 100%;
 	background: #f5f1f1;
 	border-radius: 30px 30px 0px 0px;
@@ -1142,9 +1114,7 @@ input::placeholder {
 	padding: 0px 24px 0px;
 	overflow: auto;
 
-	width: 375px;
-	height: 635px;
-	height: 635px;
+	height: 629px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
 	flex: none;
@@ -1247,6 +1217,8 @@ input::placeholder {
 	object-fit: cover;
 	border-radius: 50%;
 	overflow: hidden;
+	display: inline-block;
+	text-indent: -999px;
 }
 
 .cal-user-name {

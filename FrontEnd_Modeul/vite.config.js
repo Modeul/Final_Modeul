@@ -25,4 +25,7 @@ export default defineConfig({
 	// 	overlay: false,
 	// 	},
 	// },
+	// devServer: {
+	// 	proxy: 'http://localhost:8080/api'
+	// }
 })

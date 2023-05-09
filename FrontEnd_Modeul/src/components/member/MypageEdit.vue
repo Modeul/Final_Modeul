@@ -240,7 +240,6 @@ export default {
         width: 108px;
         height: 108px;
         border-radius: 50%;
-        background-color: antiquewhite;
     }
     .edit-btn2{
         width: 36px;

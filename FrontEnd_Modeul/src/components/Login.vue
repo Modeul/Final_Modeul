@@ -13,13 +13,13 @@
                 <form>
 
                     <div class="input-field-1">
-                        <label for="uid" class="uid-label">
+                        <label for="uid" class="uid-label login-label">
                             <span class="d-none">uid</span>
                         </label>
                         <input type="text" class="input-text" placeholder="아이디를 입력해주세요" v-model="uid" autofocus>
                     </div>
                     <div class="input-field-1 m-t-1">
-                        <label for="password" class="password-label">
+                        <label for="password" class="password-label login-label">
                             <span class="d-none">uid</span>
                         </label>
                         <input type="password" class="input-text" placeholder="비밀번호를 입력해주세요" v-model="pwd">
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { useUserDetailsStore } from '../stores/useUserDetailsStore';
+
 export default {
     data() {
         return {
@@ -63,6 +65,7 @@ export default {
             pwd: "",
             errormsg: "",
             loginMember:{},
+            userDetails:useUserDetailsStore(),
         }
     },
     methods: {
@@ -88,10 +91,12 @@ export default {
                 .then(response => response.json())
                 .then(result => {
                     console.log(result);
-                    if (result.result == null)
+                    if (result.loginMember == null)
                         this.errormsg = "아이디 또는 비밀번호를 확인하세요";
                     else{
-                        this.loginMember = result.result;
+                        // this.loginMember = result.loginMember;
+                        this.userDetails.uid = result.loginMember.uid;
+                        console.log("hi"+this.userDetails.uid);
                         this.$router.push('/member/stuff/list');
                     }
                 })
