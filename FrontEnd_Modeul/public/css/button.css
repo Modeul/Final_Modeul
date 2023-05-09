@@ -124,7 +124,7 @@
 }
 /* login */
 .btn-2{
-    width: 236px;
+    width: 320px;
     height: 35px;
     background: #222222;
     border-radius: 7px;
@@ -178,12 +178,30 @@
     } */
 
 .btn-post{
-    position: relative;
-    top: -2%;
-    right: -3%;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 40px;
     height: 25px;
-    border: solid 1px #253232;
+    border: solid 1px #aeaeae;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+  
+    font-size: 10px;
+    line-height: 13px;
+    color: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+    transition: 0.2s;
+  }
+.btn-auth{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 25px;
+    border: solid 1px #aeaeae;
     border-radius: 5px;
     background-color: #FFFFFF;
   
@@ -192,21 +210,8 @@
     color: rgba(0, 0, 0, 0.7);
     cursor: pointer;
   }
-
-.btn-auth{
-    position: relative;
-    top: -2%;
-    right: -3%;
-    width: 40px;
-    height: 25px;
-    border: solid 1px #D5D5D5;
-    border-radius: 5px;
-    background-color: #FFFFFF;
-  
-    font-size: 10px;
-    line-height: 13px;
-    color: rgba(0, 0, 0, 0.7);
-    cursor: pointer;
+  .btn-post:hover,.btn-auth:hover{
+    background-color: #dededea0;
   }
   /* 3월9일 추가분 */
   .btn-plus{
