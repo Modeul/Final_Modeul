@@ -185,6 +185,12 @@ export default {
 <style scoped>
     @import "/css/component/member/stuff/component-list.css";
     @import "/css/component/member/participation/component-parti-list.css";
+
+	.canvas {
+		max-width: 600px;
+		padding: 0 20px;
+		margin: 0 auto;
+	}
 </style>
 
 
