@@ -24,12 +24,16 @@ import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.AccountService;
 import com.modeul.web.service.CategoryService;
+import com.modeul.web.service.DutchService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
 
 @RestController
 @RequestMapping("api")
 public class ParticipationController {
+
+    @Autowired
+    private DutchService dutchService;
 
     @Autowired
     private ParticipationService participationService;
@@ -134,28 +138,23 @@ public class ParticipationController {
     public boolean calculate(
             @PathVariable("stuffId") Long stuffId,
             @RequestBody Map<Long, Integer> prices) {
-                // Map<String, Map<String, String>>
-                // Map<String, Map<Long, Integer>
-                // Map<String, Object>
-        participationService.calculatedAmount(stuffId, prices);
+        System.out.println("stuffId: "+stuffId);
+        System.out.println("prices: "+prices);
+        // participationService.calculatedAmount(stuffId, prices);
         return true;
     }
 
-    // @PutMapping("/calc/{stuffId}")
-    // public String 
+    @PostMapping("/dutch/{stuffId}")
+    public String addDutch(
+            @PathVariable("stuffId") Long stuffId,
+            @RequestBody Map<String, Object> dutch) {
+        System.out.println("stuffId: "+stuffId);
+        System.out.println("dutch: "+dutch);
 
-    // @PutMapping("/account/{stuffId}")
-    // public String inputAccount(
-    //         @PathVariable("stuffId") Long stuffId,
-    //         @RequestParam(name="ac") String account ) {
-        
-    //     participationService.inputAccount(stuffId, account);
+        dutchService.addAllDutch(stuffId, dutch);
+        return "ok";
 
-    //     return "ok";
-    // }
-    
-    
-
+    }
     @GetMapping("account/{leaderId}")
     public String getAccount(
             @PathVariable Long leaderId){

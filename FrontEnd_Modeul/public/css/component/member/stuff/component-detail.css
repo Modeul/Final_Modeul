@@ -412,6 +412,29 @@ transition: 0.5s;
   margin-left: 25px;
   cursor: pointer;
 }
+.report-box{
+  width: 253px;
+  height: 250px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  color: #000000;
+  font-weight: 400;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.report-box>textarea{
+  width: 200px;
+  height: 120px;
+  border: #517A92 solid  1px;
+}
+
 .noImg{
   height: 200px;
 	width: 360px;

@@ -25,12 +25,17 @@ public class DutchController {
     @GetMapping("dutchs")
     public Map<String, Object> getList(
         @RequestParam Long memberId, 
-        @RequestParam(name="p", defaultValue = "1") int page){
+        @RequestParam(name="p", defaultValue = "1") int page,
+        @RequestParam(name="m", defaultValue = "1") int month){
 
-        List<DutchView> list = service.getViewBymemberId(memberId, page);
+        List<DutchView> list = service.getViewBymemberId(memberId, page, month);
+        List<Integer> months = service.getViewMonthBymemberId(memberId);
+        List<DutchView> listView = service.getViewAllBymemberId(memberId);
 
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("list",list);
+        dataList.put("months",months);
+        dataList.put("listView",listView);
 
         return dataList;
     }
@@ -46,4 +51,5 @@ public class DutchController {
 
         return dataList;
     }
+
 }

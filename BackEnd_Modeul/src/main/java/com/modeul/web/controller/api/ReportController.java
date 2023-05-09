@@ -34,7 +34,7 @@ public class ReportController {
 	}
 
 	@DeleteMapping("/stuff")
-	public String updateStuffReport(Integer id) {
+	public String delStuffReport(Integer id) {
 
 		return service.deleteReportedStuff(id);
 	}

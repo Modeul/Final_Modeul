@@ -28,12 +28,22 @@
         select *
         from dutch_view
         where member_id = #{memberId}
+        <if test="month != null">
+          and month(date) = ${month}
+        </if>
         <if test="orderField != null and orderDir != null">
-			order by ${orderField} ${orderDir}
-		</if>
+          order by ${orderField} ${orderDir}
+        </if>
         <if test="size != null and offset != null">
 			limit ${size} offset ${offset}
 		</if>
+    </select>
+    
+    <select id="findViewMonthBymemberId" resultType="Map">
+        select month(date) month
+        from dutch_view
+        where member_id = #{memberId}
+        order by date
     </select>
 
     <select id="findMemberViewBystuffId" resultMap="DutchMemberViewResultMap">
@@ -42,4 +52,23 @@
       where stuff_id = #{stuffId}
       order by stuff_id, participation_date;
     </select>
+
+    <select id="findViewAllBymemberId" resultMap="DutchViewResultMap">
+      select *
+      from dutch_view
+      where member_id = #{memberId}
+      <if test="orderField != null and orderDir != null">
+        order by ${orderField} ${orderDir}
+      </if>
+    </select>
+
+    <insert id="insertDutch" parameterType="map">
+      insert into dutch(stuff_id, member_id, price)
+      values (#{stuffId}, #{memberId},#{price})
+    </insert>
+
+    <insert id="insertAccount" parameterType="map">
+      insert into account(bank_name, number, member_id)
+      values (#{bankName}, #{number},#{memberId})
+    </insert>
 </mapper>

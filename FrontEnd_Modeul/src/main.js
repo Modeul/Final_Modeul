@@ -49,6 +49,7 @@ import MemberList from "./components/admin/member/List.vue";
 import StuffList from "./components/admin/stuff/List.vue";
 import CategoryList from "./components/admin/category/List.vue";
 import Analytics from "./components/admin/analytics/List.vue";
+import ReportList from"./components/admin/report/List.vue";
 
 const routes = [
   {
@@ -92,6 +93,7 @@ const routes = [
       { path: "member/list", component: MemberList },
       { path: "stuff/list", component: StuffList },
       { path: "category/list", component: CategoryList },
+      { path: "report/list", component: ReportList },
       // { path: "analytics/list", component: Analytics }
     ]
   }

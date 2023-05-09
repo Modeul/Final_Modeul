@@ -36,6 +36,12 @@
                         <img src="/images/member/stuff/heart_plus.svg">
                         <span>관심목록</span>
                     </li>
+                <router-link to="/member/mypage/mydutchlist">
+                    <li>
+                        <img src="/images/member/stuff/dutch.svg">
+                        <span>정산 내역 목록</span>
+                    </li>
+                </router-link>
                 <router-link to="/member/mypage/changepwd">
                     <li>
                         <img src="/images/member/stuff/password-icon.svg">
@@ -169,7 +175,6 @@
         width: 108px;
         height: 108px;
         border-radius: 50%;
-        background-color: antiquewhite;
     }
     .edit-btn{
         width: 36px;
