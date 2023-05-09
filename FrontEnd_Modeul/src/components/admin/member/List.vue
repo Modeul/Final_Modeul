@@ -2,7 +2,9 @@
 export default {
 	data() {
 		return {
+			listOrigin: '',
 			list: '',
+			query: '',
 			openModal: false,
 			openModal2: false,
 			selectedId: ''
@@ -13,6 +15,7 @@ export default {
 
 			const response = await fetch(`${this.$store.state.host}/api/member/list`);
 			const result = await response.json();
+			this.listOrigin = result;
 			this.list = result;
 		},
 
@@ -48,6 +51,10 @@ export default {
 				alert("실패")
 				this.openModal = !this.openModal
 			}
+		},
+		queryHandler(e) {
+			this.query = e.target.value
+			this.list = this.listOrigin.filter(member => member.uid.includes(this.query) || member.email.includes(this.query));
 		}
 	},
 	mounted() {
@@ -84,6 +91,15 @@ export default {
 		<div class="admin-header">
 			<span>회원 관리</span>
 		</div>
+		<div class="admin-search-box">
+			<div class="search-container-admin-sr">
+				<form action="" class="d-fl d-b-none search-form1" method="get">
+					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
+					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="ID 혹은 EMAIL로 검색" :value="query"
+						@input="queryHandler">
+				</form>
+			</div>
+		</div>
 		<table>
 			<thead>
 				<tr>
@@ -100,16 +116,16 @@ export default {
 						EMAIL
 					</th>
 					<th>
-						
+
 					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-for="item in list" :key="item.name">
-					<td >{{ item.uid }}</td>
-					<td >{{ item.name }}</td>
-					<td >{{ item.nickname }}</td>
-					<td >{{ item.email }}</td>
+					<td>{{ item.uid }}</td>
+					<td>{{ item.name }}</td>
+					<td>{{ item.nickname }}</td>
+					<td>{{ item.email }}</td>
 					<td> <button @click="deleteBtnHandler" :value="item.id" class="icon-admin3 icon-delete">삭제</button> </td>
 				</tr>
 			</tbody>

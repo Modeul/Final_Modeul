@@ -20,15 +20,21 @@ export default {
 			memberCount: '',
 			isCheckParticipation: '',
 			dialog: false,
-			participantInfo: {},
-			memberInfo: '',
-			stuffAuthority: false,
+			participantInfo:  {},
+			memberInfo:  '',
+			stuffAuthority:  false,
 			stuffView: '',
 			Report: {
 				stuffId: 0,
 				memberId: 113,
-				detail: '',
+				detail:  '',
 			},
+			favoriteList: [],
+			heartStuffId: '',
+			isfavorite: false,
+			list: [],
+			zzimModalMsg: "",
+			favorOpenModal:false,
 		};
 	},
 	methods: {
@@ -46,7 +52,7 @@ export default {
 		modalHandler3() {
 			this.openModal3 = !this.openModal3;
 		},
-		modalHandler4(){
+		modalHandler4() {
 			this.openModal4 = !this.openModal4;
 		},
 
@@ -59,6 +65,31 @@ export default {
 		formatDateStuff() {
 			const deadlineObj = dayjs(this.stuff.deadline).locale('ko');
 			this.stuff.deadline = deadlineObj.format("M월 D일 (dd) HH시까지");
+
+			this.stuff.dDay = dayjs().diff(deadlineObj, 'day');
+			if (parseInt(this.stuff.dDay) < 0) {
+				this.stuff.dDay = 'D' + this.stuff.dDay;
+				this.stuff.deadlineState = 1;
+			}
+			else if (parseInt(this.stuff.dDay) == 0) {
+				this.stuff.dDay = deadlineObj.diff(dayjs(), 'hours')
+				if (parseInt(this.stuff.dDay) > 0) {
+					this.stuff.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
+					this.stuff.deadlineState = 2;
+				}
+				else if (parseInt(this.stuff.dDay) == 0) {
+					this.stuff.dDay = '1시간 내 마감';
+					this.stuff.deadlineState = 3;
+				}
+				else {
+					this.stuff.dDay = '마감';
+					this.stuff.deadlineState = 0;
+				}
+			}
+			else {
+				this.stuff.dDay = '마감';
+				this.stuff.deadlineState = 0;
+			}
 		},
 		/* 글 내용 br */
 		getContent(content) {
@@ -93,12 +124,13 @@ export default {
 
 			fetch(`${this.$store.state.host}/api/reports/stuff`, requestOptions)
 				.then(response => response.text())
-				.then(result => 
-				{if (result ==='OK') {
-					console.log(result);
-					this.modalHandler3();
-					this.modalHandler4();
-				}} )
+				.then(result => {
+					if (result === 'OK') {
+						console.log(result);
+						this.modalHandler3();
+						this.modalHandler4();
+					}
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -146,7 +178,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo() {
+		loadParticipantInfo(){
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
 				.then(response => response.json())
 				.then(data => {
@@ -164,10 +196,10 @@ export default {
 				}
 			}
 		},
-		checkStuffLeader() {
+		checkStuffLeader(){
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if (this.stuffView.memberId === this.memberInfo.id) {
+			if(this.stuffView.memberId === this.memberInfo.id){
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -248,6 +280,78 @@ export default {
 			this.memberInfo = data;
 			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
+
+		loadFavoriteList() {
+			fetch(`${this.$store.state.host}/api/favorites?memberId=${this.memberId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = dataList.list;
+					this.categoryList = dataList.categoryList;
+					this.$store.commit("LOADING_STATUS", false);
+				})
+				.catch(error => console.log("error", error));
+		},
+
+		toggleFavorite() {
+			if (this.isfavorite) {
+				// 이미 등록된 경우, 삭제 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				var raw = JSON.stringify({
+
+					"heartStuffId": this.stuff.id,
+					"memberId": this.memberInfo.id,
+				});
+				var requestOptions = {
+					method: 'DELETE',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+					.then(response => {
+						response.text();
+					})
+					.then(result => {
+						console.log("관심삭제");
+						this.isfavorite = !this.isfavorite;
+					})
+					.catch(error => console.log('error', error));
+			} else {
+				// 등록되지 않은 경우, 등록 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				var raw = JSON.stringify({
+					"heartStuffId": this.stuff.id,
+					"memberId": this.memberInfo.id,
+				});
+
+				var requestOptions = {
+					method: 'POST',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+					.then(response => response.text())
+					.then(result => {
+						this.isfavorite = !this.isfavorite;
+						console.log("관심등록");
+					})
+					.catch(error => console.log('error', error));
+				this.zzimModalMsg = "  관심목록에 추가되었습니다."
+				this.favorOpenModal= true;
+			}
+		},
+		checkFavoriteList() {
+			for (let f of this.list) {
+				if (f.stuffId == this.stuff.id) {
+					this.isfavorite = !this.isfavorite;
+				}
+			}
+		},
 	},
 	computed: {
 
@@ -256,6 +360,7 @@ export default {
 		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
+		this.loadFavoriteList();
 	},
 	async mounted() {
 		this.$store.commit('LOADING_STATUS', true);
@@ -269,6 +374,7 @@ export default {
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.stuffView = data.stuffView;
+				this.favoriteList = data.favoriteView;
 				this.$store.commit('LOADING_STATUS', false);
 			})
 			.catch((error) => console.log("error", error));
@@ -276,6 +382,7 @@ export default {
 
 		this.checkParticipation();
 		this.checkStuffLeader();
+		this.checkFavoriteList();
 	},
 };
 </script>
@@ -325,13 +432,14 @@ export default {
 			</div>
 
 			<div v-if="openModal4" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">신고 완료</div>
-						<div class="delete-box-2">
-							<div @click="modalHandler4" class="delete-box-3">닫기</div>
-						</div>
+				<div class="delete-box">
+					<div class="delete-box-1">신고 완료</div>
+					<div class="delete-box-2">
+						<div @click="modalHandler4" class="delete-box-3">닫기</div>
 					</div>
 				</div>
+			</div>
+			
 
 
 
@@ -345,8 +453,7 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -356,10 +463,15 @@ export default {
 					<div class="d-fl detail-edit">
 						<div class="detail-top">
 							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status">모집중</div>
+							<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+								(stuff.deadlineState == 1) ? 'day-left' :
+									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
 						</div>
 
-						<div class="icon-heart">하트</div>
+						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
+
+
+
 
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
@@ -402,6 +514,12 @@ export default {
 				</section>
 			</div>
 		</main>
+		<div class="favorModal" >
+			<div v-if="favorOpenModal == true">
+				<div class="error-box">{{ zzimModalMsg }}</div>
+				<router-link :to="'/member/mypage/favorite?memberId='+memberId"><div class="error-gotofavor">관심목록 보기</div></router-link>
+			</div>
+		</div>
 
 		<!-- detail-join : detail - itme2  -->
 
@@ -495,8 +613,77 @@ export default {
 .v-dialog :deep {
 	font-size: 14px;
 }
+
+.filledHeart {
+	background-image: url("/images/member/stuff/filled-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 100%;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+	text-indent: -9999px;
+}
+
+.emptyHeart {
+	background-image: url("/images/member/stuff/empty-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 100%;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+	text-indent: -9999px;
+}
+.error-box{
+	position: absolute;
+    background-color: white;
+    width: 80%;
+    height: 40px;
+    text-align: center;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+
+}
+
+.error-gotofavor{
+	position: absolute;
+    text-align: center;
+    top: 5%;
+    right: 5%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    padding: 0 12px;
+    font-weight: 600;
+	font-size: 10px;
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+}
+
+
 </style>
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
+
+@keyframes fadeout {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
 </style>

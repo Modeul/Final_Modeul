@@ -61,10 +61,8 @@ input::-webkit-input-placeholder { vertical-align: middle; }
     margin: 0 5px 0 5px;
 }
 .signup-text{
-  width: 37px;
-  height: 8px;
   font-weight: 500;
-  font-size: 7px;
+  font-size: 12px;
   line-height: 10px;
   color: #4B83EE;
   transform: translate(0,2px);
@@ -82,18 +80,15 @@ h2:after {
 h2:hover:after { transform: scaleX(1); }
 
 .signup-text2{
-  width: 102px;
-  height: 13px;
   font-weight: 400;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 14px;
 }
 .signup-box{
   margin-top: 58px;
-  width: 140px;
   display: flex;
+  white-space: nowrap;
 }
-  /*  */
 
 /* sign-up-label-img */
 
@@ -114,10 +109,8 @@ h2:hover:after { transform: scaleX(1); }
   background-image: url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Crect width='25' height='25' fill='url(%23pattern0)'/%3E%3Cdefs%3E%3Cpattern id='pattern0' patternContentUnits='objectBoundingBox' width='1' height='1'%3E%3Cuse xlink:href='%23image0_126_663' transform='scale(0.0208333)'/%3E%3C/pattern%3E%3Cimage id='image0_126_663' width='48' height='48' xlink:href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAnFJREFUaEPtl+ExBEEQhd9FQAaIABEgAkSACBABIkAEiAARIAJEgAyIgPqupq/6tuZuxnXVnVPTVfdjZ7t7+73X3bvX05xbb87rVwMwawWbAk2BIAOthYIEhsObAmEKgwmaAkECw+H/UoE1SeeSDiS9J4pOJX1LupT0WaDN4m8kXSffI0nbko4lvRTilyWdSP3vtP3ku5lqIv7Rx+cUoOil5LgliYRvKehMEmDGGUXvJaAryZH4RUmAsqJG5QAsBGLrCfCDJEC8SoKggeUA7Ei6TR4AOJTE2UcCU+pbCoWEBUkAxmD0K8WXFMTfkwjoK1dPUQF8cdpILFIQtivprlR9uo9KFO2tRj3zh21YxwBMDfeJyKGkXgH/QNrGS02SCxf51O3F5E/rmXVbzV+jps2HLxrSzGglI48z/G0mue6r6wEwpLWWY9NUq8kBAbDsLafauFz92j0A31sgX3XR9K/fHrDRZRCF/IB5NklF0WbkgmFvKO5VJxdzZMYA+/npEzDqPZBjg43iJRzHDoXY4Jkfa7kLelQOin/u3GSFd0FnAXTXJsXQ2wwwg1wy1LO1yeBhvANgDxJqtpCtTZsVm09bq4MacgqwQm1twgRS+bU6tMYyaGglVi/m3wNc12wirx6E8Txazr+bxgKgfZCKn0lOEpThrLRKAQ8IYm3zcM15TTyE4Y9SNuiA4ozf0HYbNQMU6/u9e13TRvhYu9g6rGkfy11Vw7/8mCux+6fuNwVmLUdToCkQZKC1UJDAcHhOgd/8LwgXMEGCoZobgAkYjIYUFYg+YKrxbQtNle7Mw5oCTYEgA62FggSGw5sCYQqDCX4ADxZ1McMpYs0AAAAASUVORK5CYII='/%3E%3C/defs%3E%3C/svg%3E%0A");
 }
 .find-box{
-  width: 120px;
-  height: 16px;
   font-weight: 400;
-  font-size: 9px;
+  font-size: 12px;
   line-height: 11.72px;
   color: #898989;
   text-align: center;

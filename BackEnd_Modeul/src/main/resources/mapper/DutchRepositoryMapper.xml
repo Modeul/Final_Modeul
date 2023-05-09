@@ -71,4 +71,8 @@
       insert into account(bank_name, number, member_id)
       values (#{bankName}, #{number},#{memberId})
     </insert>
+
+    <delete id="deleteDutch">
+      delete from dutch where stuff_id = #{stuffId};
+    </delete>
 </mapper>

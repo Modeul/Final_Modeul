@@ -3,7 +3,6 @@ package com.modeul.web.entity;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -13,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class ReportStuff {
-	 Integer Id;
+	 Integer id;
 	 LocalDateTime regDate;
 	 Integer stuffId;
 	 Integer memberId;

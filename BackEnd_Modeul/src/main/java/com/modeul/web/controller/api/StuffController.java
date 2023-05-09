@@ -17,12 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Crawling;
+import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.entity.Image;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.CrawlingService;
+import com.modeul.web.service.FavoriteService;
 import com.modeul.web.service.ImageService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
@@ -46,6 +48,9 @@ public class StuffController {
 
 	@Autowired
 	private CrawlingService crawlingservice;
+
+	@Autowired
+	private FavoriteService favoriteService;
 
 
 	// 반환 타입 주의!
@@ -97,6 +102,7 @@ public class StuffController {
 		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
 		int memberCount = participationService.getMemberCountBystuffId(stuff.getId());
 		StuffView stuffView = service.getViewById(id);
+		FavoriteView favoriteView = favoriteService.getListByStuffId(id);
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff", stuff);
@@ -105,6 +111,7 @@ public class StuffController {
 		data.put("participantList", participantList);
 		data.put("memberCount", memberCount);
 		data.put("stuffView", stuffView);
+		data.put("favoriteView", favoriteView);
 
 		return data;
 	}
@@ -172,19 +179,24 @@ public class StuffController {
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 크롤링 컨트롤러 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 	//  get ,   insert  , delete
-	@GetMapping("/stuff/crawlinglist")
+	@GetMapping("/stuff/recommends")
 	public Map<String,Object> getCrawlingList(
-			@RequestParam(name="p", defaultValue = "1") int page,		
-			@RequestParam(name="c", required=false) Long categoryId) {
+			@RequestParam(name = "q", required = false) String query,
+			@RequestParam(name="p", defaultValue = "1") int page,
+			@RequestParam(name="c", required=false) Long categoryId,
+			@RequestParam(name="cname", required=false) String categoryName) {
 		
 		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
-		List<Category> categoryList = categoryService.getList();
+		List<Crawling> queryList = crawlingservice.getViewAll(query , page , categoryId);
+		List<Crawling> category = crawlingservice.getCategoryNameList(page , categoryName);
+		List<Crawling> categoryList = crawlingservice.getViewAll(page , categoryId);
 		Long listCount = crawlingservice.getListCount(categoryId, page);
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("crawlingList", crawlingList);
-		// dataList.put("list", list);
-		dataList.put("categoryList", categoryList);
+		dataList.put("queryList", queryList);
 		dataList.put("listCount", listCount);
+		dataList.put("category", category);
+		dataList.put("categoryList", categoryList);
 
 		return dataList;
 	}

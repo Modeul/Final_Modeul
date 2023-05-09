@@ -29,15 +29,21 @@ public class ReportServiceimpl implements ReportService {
 		String result =  (resp != 1) ? "ERROR" : "OK";
 		return result;
 	}
-	@Transactional
+	// @Transactional
 	@Override
-	public String deleteReportedStuff(Integer id) {
+	public String deleteReportedStuff(Integer id, String c) {
 		
-		stuffService.deleteStuff(Long.valueOf(id));
-		int resp = repository.delete(id);
+		if (c != null) {
+			return (repository.delete(id) != 1) ? "ERROR" : "OK"; 
+			
+		} else {
+			stuffService.deleteStuff(Long.valueOf(id));
+			return "OK";
+		}
+		
+		// int resp = repository.delete(id);  -- ON DELETE CASCADE
+		// String result =  (resp != 0) ? "ERROR" : "OK";
 
-		String result =  (resp != 1) ? "ERROR" : "OK";
-		return result;
 	}
 
 }

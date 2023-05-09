@@ -1,15 +1,10 @@
 <template>
-  <div class="canvas f-family">
-    <header class="d-fl fl-dir-col al-cen">
-      <section>
-        <span class="d-none">헤더</span>
-        <div>
-          <router-link to="/login" class="icon icon-back">Back</router-link>
+  <div class="wrap">
+    <header class="d-fl al-cen header">
+        <router-link to="/login" class="icon icon-back">Back</router-link>
+        <div class="signup-title">
+          회원가입
         </div>
-        <div class="d-fl-jf">
-          <h1 class="logo-main logo-moduel logo-size2 m-t-44px">mo_deul</h1>
-        </div>
-      </section>
     </header>
     <!-- ----------------------------------------------------------- -->
     <main class="m-t-31px">
@@ -21,9 +16,9 @@
           action="signup"
           method="post"
         >
-          <div @change="checkUidDupl"
+          <div @input="checkUidDupl"
           class="input-field-2">
-            <label for="uid" class="uid-label">
+            <label for="uid" class="uid-label signup-label">
               <span class="d-none">uid</span>
               <input
                 type="text"
@@ -33,14 +28,15 @@
                 placeholder="아이디를 입력해주세요."
                 v-model="member.uid"
               />
+              <div v-if="uidbtn==''" class="btn-null"></div>
+              <div v-if="uidbtn==true" class="btn-check"></div>
+              <div v-if="uidbtn==false" class="btn-x"></div>
             </label>
-            <div v-if="uidbtn==''" class="btn-null"></div>
-            <div v-if="uidbtn==true" class="btn-check"></div>
-            <div v-if="uidbtn==false" class="btn-x"></div>
+            <div class="error-font">{{ this.uidError }}</div>
           </div>
-          <div @change="isValidPwd"
-                class="input-field-2 m-t-1">
-            <label for="password" class="password-label">
+          <div @input="isValidPwd"
+                class="input-field-2">
+            <label for="password" class="password-label signup-label">
               <span class="d-none">pw</span>
               <input
                 type="password"
@@ -50,14 +46,15 @@
                 placeholder="비밀번호를 입력해주세요."
                 v-model="member.pwd"
               />
+              <div v-if="pwdbtn==''" class="btn-null"></div>
+              <div v-if="pwdbtn==true" class="btn-check"></div>
+              <div v-if="pwdbtn==false" class="btn-x"></div>        
             </label>
-            <div v-if="pwdbtn==''" class="btn-null"></div>
-            <div v-if="pwdbtn==true" class="btn-check"></div>
-            <div v-if="pwdbtn==false" class="btn-x"></div>        
+            <div class="error-font">{{this.pwdError}}</div>
           </div>
-          <div @change="isValidPwdConfirm" 
-                class="input-field-2 m-t-1">
-            <label for="password-confirm" class="password-confirm-label">
+          <div @input="isValidPwdConfirm" 
+                class="input-field-2">
+            <label for="password-confirm" class="password-confirm-label signup-label">
               <span class="d-none">pw-confirm</span>
               <input
                 type="password"
@@ -67,15 +64,16 @@
                 placeholder="비밀번호를 다시 입력해주세요."
                 v-model="member.pwdConfirm"
               />
+              <div v-if="pwdbtn2==''" class="btn-null"></div>
+              <div v-if="pwdbtn2==true" class="btn-check"></div>
+              <div v-if="pwdbtn2==false" class="btn-x"></div>   
             </label>
-            <div v-if="pwdbtn2==''" class="btn-null"></div>
-            <div v-if="pwdbtn2==true" class="btn-check"></div>
-            <div v-if="pwdbtn2==false" class="btn-x"></div>   
+            <div class="error-font">{{this.pwdCheckError}}</div>
           </div>
 
-          <div @change="isValidName"
-              class="input-field-2 m-t-1">
-            <label for="name" class="name-label">
+          <div @input="isValidName"
+              class="input-field-2">
+            <label for="name" class="name-label signup-label">
               <span class="d-none">name</span>
               <input
                 type="text"
@@ -85,15 +83,16 @@
                 placeholder="이름을 입력해주세요."
                 v-model="member.name"
               />
+              <div v-if="namebtn==''" class="btn-null"></div>
+              <div v-if="namebtn==true" class="btn-check"></div>
+              <div v-if="namebtn==false" class="btn-x"></div>   
             </label>
-            <div v-if="namebtn==''" class="btn-null"></div>
-            <div v-if="namebtn==true" class="btn-check"></div>
-            <div v-if="namebtn==false" class="btn-x"></div>   
+            <div class="error-font">{{ this.nameError }}</div>
           </div>
 
-          <div @change="checkNicknameDupl" 
-              class="input-field-2 m-t-1">
-            <label for="name" class="name-label">
+          <div @input="checkNicknameDupl" 
+              class="input-field-2">
+            <label for="name" class="name-label signup-label">
               <span class="d-none">nickname</span>
               <input
                 type="text"
@@ -103,15 +102,16 @@
                 placeholder="닉네임을 입력해주세요."
                 v-model="member.nickname"
               />
+              <div v-if="nicknamebtn==''" class="btn-null"></div>
+              <div v-if="nicknamebtn==true" class="btn-check"></div>
+              <div v-if="nicknamebtn==false" class="btn-x"></div> 
             </label> 
-            <div v-if="nicknamebtn==''" class="btn-null"></div>
-            <div v-if="nicknamebtn==true" class="btn-check"></div>
-            <div v-if="nicknamebtn==false" class="btn-x"></div> 
+            <div class="error-font">{{ this.nicknameError }}</div>
           </div>
 
-          <div @change="checkEmailDupl" 
-              class="input-field-2 m-t-1">
-            <label for="email" class="email-label">
+          <div @input="checkEmailDupl" 
+              class="input-field-2">
+            <label for="email" class="email-label signup-label">
               <span class="d-none">email</span>
               <input
                 type="text"
@@ -121,14 +121,16 @@
                 placeholder="이메일을 입력해주세요."
                 v-model="member.email"
               />
+              <div v-if="emailbtn==''" class="btn-null"></div>
+              <div v-if="emailbtn==true" class="btn-check"></div>
+              <div v-if="emailbtn==false" class="btn-x"></div> 
             </label>
-            <div v-if="emailbtn==''" class="btn-null"></div>
-            <div v-if="emailbtn==true" class="btn-check"></div>
-            <div v-if="emailbtn==false" class="btn-x"></div> 
+            <div class="error-font">{{ this.emailError }}</div>
+            <div class="error-font">{{ this.emailCheckError }}</div>
           </div>
 
-          <div class="input-field-2 m-t-1">
-            <label for="email" class="email-confirm-label">
+          <div class="input-field-2" @input="checkEmailConfirm">
+            <label for="email" class="email-confirm-label signup-label">
               <span class="d-none">email-confirm</span>
               <input
                 type="text"
@@ -147,24 +149,14 @@
                 type="button"
                 value="전송"
               />
-              <!-- 전송버튼 클릭하면 확인버튼 표시 하기 -->
-              <input
-                @click.prevent="checkEmailConfirm"
-                v-if="emailconfirmbtn && !emailConfirmChk"
-                class="btn-auth"
-                id="btn-auth"
-                type="button"
-                value="확인"
-              />
+              <div v-if="emailConfirmChk" class="btn-check"></div>
+              <!-- <div v-if="!emailConfirmChk" class="btn-x"></div>  -->
             </label>
-            <div v-if="emailConfirmChk" class="btn-check"></div>
-            <div v-if="emailcodeError" class="error-font">
-              {{ emailcodeError }}
-            </div>
+            <div class="error-font">{{ this.emailcodeError }} </div>
           </div>
 
-          <div class="d-fl-jf m-t-69px">
-            <input class="btn-4" type="submit" value="가입하기" />
+          <div class="d-fl-jf m-t-28px">
+            <input class="btn-4" type="submit" value="가입하기" @click.prevent="[submit()]"/>
           </div>
         </form>
 
@@ -199,7 +191,9 @@ export default {
       nameError: "",
       nicknameError: "",
       pwdError: "",
+      pwdCheckError:"",
       emailError: "",
+      emailCheckError:"",
       emailcodeError: "",
       ErrorMsg:"",
       // 이메일 인증 코드
@@ -250,7 +244,7 @@ export default {
         this.emailbtn = false;
       } else if (!this.emailDupl) {
         this.ErrorMsg = "중복 된 이메일 주소입니다.";
-      } else if (!this.isValidEmail(this.member.email)) {
+      } else if (!this.checkEmailDupl()) {
         this.ErrorMsg = "올바른 이메일 주소를 입력해주세요.";
       } else if (!this.emailConfirmChk){
         this.ErrorMsg = "이메일 인증번호를 확인해주세요.";
@@ -267,7 +261,6 @@ export default {
       // 만약 ErrorMsg 가 있다면 모달창 띄우기
       if(this.ErrorMsg){
         this.openModal = true;
-        console.log("에러메시지 존재");
         return false;
       }
       // 전체 체크
@@ -276,9 +269,7 @@ export default {
         !this.pwdError &&
         this.namebtn &&
         this.nicknameDupl &&
-        this.emailDupl &&
-        !this.emailError &&
-        this.emailconfirm
+        !this.emailError
       ) {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -301,16 +292,12 @@ export default {
         this.$router.push('/login');
       }
     },
-    isValidEmail() {
-      const emailRegex = /\S+@\S+\.\S+/;
-      return emailRegex.test(this.member.email);
-    },
     // pwd 검사
     isValidPwd() {
       // 비밀번호는 8자 이상이어야 합니다.
       if (this.member.pwd.length < 8) {
         this.pwdbtn = false;
-        this.pwdError = "올바른 비밀번호를 입력해주세요.(8자 이상 영어+숫자)";
+        this.pwdError = "영어,숫자 포함 8자 이상 입력해주세요.";
         return false;
       }
 
@@ -319,6 +306,7 @@ export default {
       const hasNumber = /\d/.test(this.member.pwd);
       if (!hasLetter || !hasNumber) {
         this.pwdbtn = false;
+
         return false;
       }
 
@@ -331,15 +319,21 @@ export default {
     isValidPwdConfirm(){
       if (this.member.pwd !== this.member.pwdConfirm) {
         this.pwdbtn2 = false;
-        this.pwdError = "비밀번호가 일치하지 않습니다.";
+        this.pwdCheckError = "비밀번호가 일치하지 않습니다.";
         return false
       }
       this.pwdbtn2 = true;
-      this.pwdError = "";
+      this.pwdCheckError = "";
       return true
     },
     // name 검사
     isValidName(){
+      const hasName = /^[ㄱ-ㅎ|가-힣]+$/.test(this.member.name);
+      if(!hasName){
+        this.nameError = "이름은 한글로 입력해주세요.";
+        this.namebtn = false;
+        return false;
+      }
       if (this.member.name.length > 10) {
         this.nameError = "이름은 10글자 이하로 입력해주세요.";
         this.namebtn = false;
@@ -408,7 +402,7 @@ export default {
             this.uidError = "중복된 아이디 입니다.";
             this.uidbtn = false;
           } else {
-            this.uidError = "올바른 아이디 입니다.";
+            this.uidError = "";
             this.uidbtn = true;
           }
         })
@@ -418,6 +412,7 @@ export default {
     checkNicknameDupl() {
       this.nicknameDupl = "";
       this.nicknameError = "";
+      this.emailCheckError = "";
       fetch(
         `${this.$store.state.host}/api/signup/checkNickname?nickname=${this.member.nickname}`
       )
@@ -436,23 +431,36 @@ export default {
         .catch((error) => console.log("error", error));
     },
     // 이메일 중복 검사
-    checkEmailDupl() {
+    async checkEmailDupl() {
       this.emailDupl = "";
       this.emailError = "";
-      fetch(
+      this.emailCheckError="";
+      await fetch(
         `${this.$store.state.host}/api/signup/checkEmail?email=${this.member.email}`
       )
         .then((response) => response.text())
         .then((result) => {
           if (result == "false") this.emailDupl = false;
           else this.emailDupl = true;
-
-          if (!this.emailDupl) {
-            this.emailError = "중복된 이메일 입니다.";
+          const emailRegex = /\S+@\S+\.\S+/.test(this.member.email);
+          if (!emailRegex) {
             this.emailbtn = false;
-          } else {
+            this.emailCheckError = "올바른 이메일 형식으로 입력해주세요.";
+            return false;
+          } else{
+            this.ErrorMsg = "";
+            this.emailDupl = true;
+          }
+          if (!this.emailDupl) {
+            this.emailError = "이미 가입된 이메일 입니다.";
+            this.emailbtn = false;
+            return false;
+          } else{
             this.emailError = "";
+            this.ErrorMsg = "";
             this.emailbtn = true;
+            this.emailDupl = true;
+            return true;
           }
         })
         .catch((error) => console.log("error", error));
@@ -460,33 +468,6 @@ export default {
     toggleModal() {
       this.openModal = !this.openModal;
     },
-  },
-
-  // 라이프사이클 체크
-
-  beforeCreate() {
-    console.log("beforeCreate");
-  },
-  created() {
-    console.log("created");
-  },
-  beforeMount() {
-    // console.log("beforeMount");
-  },
-  mounted() {
-    console.log("mounted");
-  },
-  beforeUpdate() {
-    // console.log("beforeUpdate");
-  },
-  updated() {
-    console.log("updated");
-  },
-  beforeUnmount() {
-    // console.log("beforeUnmount");
-  },
-  unmounted() {
-    console.log("unmounted");
   },
 };
 </script>
