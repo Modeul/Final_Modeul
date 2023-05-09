@@ -244,6 +244,12 @@ onMounted(() => {
 @import "/css/style.css";
 
 
+.canvas {
+		max-width: 600px;
+		padding: 0 20px;
+		margin: 0 auto;
+	}
+
 .dutch {
     display: flex;
     flex-direction: column;
