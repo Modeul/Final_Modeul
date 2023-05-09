@@ -18,7 +18,6 @@
                     <img src="/images/member/stuff/star.svg">
                     <span class="star-avg">5.0</span>
                 </div> -->
-<<<<<<< HEAD
             </div>
             <ul class="mypage-list">
                 <router-link to="/member/mypage/myreglist">

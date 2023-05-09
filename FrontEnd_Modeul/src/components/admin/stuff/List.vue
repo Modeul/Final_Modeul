@@ -8,6 +8,7 @@ export default {
 			page: '',
 			listOrigin: '',
 			list: '',
+			query: '',
 			openModal: null,
 			openModal2: null,
 			deleteValid: null,
