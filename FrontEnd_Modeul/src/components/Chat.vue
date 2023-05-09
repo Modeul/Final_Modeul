@@ -135,20 +135,21 @@
 					<span>입력해주세요.</span>
 				</div>
 				<div class="account-input">
-					<select required class="account-input-box" v-model="account.bank">
+					<select required class="account-input-box" v-model="account.bankName">
 						<option value="" selected>은행 선택</option>
 						<option v-for="bank in banks" v-text="bank"></option>
 					</select>
-					<input placeholder="계좌번호" class="account-input-box" v-model="account.accountNum" pattern="[0-9]*" required> 
+					<input placeholder="계좌번호" class="account-input-box" v-model="account.number" pattern="[0-9]*" required> 
 				</div>
 				<div class="account-recent">
 					<div>최근 등록 계좌</div>
 					<div @click="AA">aa</div>
 					<div>
-						{{ recentAccount }}
+						<span>{{ this.recentAccount}}</span>
+						<span></span>
 					</div>
 				</div>
-				<button type="submit" class="calc-button" @click.prevent="inputAccount, dnoneHandler">다음</button>
+				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
 
 			</div>
 		</section>
@@ -458,13 +459,15 @@ export default {
 
 			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
 
+			resultPrice: 0,
 
 			banks: ['농협','신한','IBK기업','하나','우리','국민','SC제일','대구','부산','광주','새마을금고','경남','전북','제주','산업','우체국','신협','수협','씨티'],
 			account: {
-				bank:'',
-				accountNum:''
+				bankName:'',
+				number:'',
+				memberId: ''
 			},
-			recentAccount: '',
+			recentAccount: [],
 			leader: {},
 
 			accountInfo:'',
@@ -483,17 +486,45 @@ export default {
 		},
 		// transition적용 예정!
 		inputAccount(){
-			this.accountInfo = this.account.bank + this.account.accountNum;
-			
+			// 같은 멤버(memberId)가 다른 계좌번호(number) 등록 가능? YES
+				// 같을 경우, 최근 계좌 번호로 뽑아낼 수 있어야 함.
+			// YES이기 때문에, 수정(PUT)할 필요가 없어짐.
+			this.account.memberId = this.myUserId;
+
+			var myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/json");
+
+			var raw = JSON.stringify({
+				bankName: this.account.bankName,
+				number: this.account.number,
+				memberId: this.account.memberId 
+
+			});
+
 			var requestOptions = {
-			method: 'PUT',
+			method: 'POST',
+			headers: myHeaders,
+			body: raw,
 			redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
+			fetch(`${this.$store.state.host}/api/account`, requestOptions)
 			.then(response => response.text())
 			.then(result => console.log(result))
 			.catch(error => console.log('error', error));
+
+			// this.account.memberId = this.myUserId;
+			// console.log(this.account.memberId);
+			
+			// var requestOptions = {
+			// method: 'PUT',
+			// redirect: 'follow'
+			// };
+
+			// fetch(`${this.$store.state.host}/api/account/${this.$route.params.stuffId}?ac=${this.accountInfo}`, requestOptions)
+			// .then(response => response.text())
+			// .then(result => console.log(result))
+			// .catch(error => console.log('error', error));
 		},
 
 		// chipinHandler() {
@@ -719,7 +750,8 @@ export default {
 				method: 'PUT',
 				redirect: 'follow',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(this.price)
+				// body: JSON.stringify(this.price)
+				
 			};
 
 			fetch(`${this.$store.state.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
@@ -770,19 +802,38 @@ export default {
 
 		this.stuffId = this.$route.params.stuffId; 
 
+
 		//최근 계좌
+		// 한 멤버당 여러 개의 계좌를 등록할 수 있기 때문에 List로 받아온다.
+
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
+
 		var requestOptions = {
 		method: 'GET',
+		headers: myHeaders,
 		redirect: 'follow'
 		};
 
-		fetch(`${this.$store.state.host}/api/account/${this.memberInfo.id}`, requestOptions)
+		fetch(`${this.$store.state.host}/api/account/recent/${this.myUserId}`, requestOptions)
 		.then(response => response.text())
-		.then(result => {
-			this.recentAccount = result;
-			console.log(result);
-		})
+		.then(result => 
+			
+			this.recentAccount = result
+		)
 		.catch(error => console.log('error', error));
+		// var requestOptions = {
+		// method: 'GET',
+		// redirect: 'follow'
+		// };
+
+		// fetch(`${this.$store.state.host}/api/account/${this.memberInfo.id}`, requestOptions)
+		// .then(response => response.text())
+		// .then(result => {
+		// 	this.recentAccount = result;
+		// 	console.log(result);
+		// })
+		// .catch(error => console.log('error', error));
 
 	},
 	beforeUnmount() {
