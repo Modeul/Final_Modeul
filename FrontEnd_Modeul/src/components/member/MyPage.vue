@@ -32,10 +32,12 @@
                         <span>참여 딜 목록</span>
                     </li>
                 </router-link>
+                <router-link to="/member/mypage/favorite?memberId=2">
                     <li>
                         <img src="/images/member/stuff/heart_plus.svg">
                         <span>관심목록</span>
                     </li>
+                </router-link>
                 <router-link to="/member/mypage/changepwd">
                     <li>
                         <img src="/images/member/stuff/password-icon.svg">

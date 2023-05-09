@@ -16,12 +16,18 @@ export default {
 			imageList: '',
 			participantList: [],
 			memberCount: '',
-			isCheckParticipation:'',
+			isCheckParticipation: '',
 			dialog: false,
-			participantInfo:{},
-			memberInfo:'',
-			stuffAuthority:false,
-			stuffView:'',
+			participantInfo: {},
+			memberInfo: '',
+			stuffAuthority: false,
+			stuffView: '',
+			favoriteList: [],
+			heartStuffId: '',
+			isfavorite: false,
+			list: [],
+			zzimModalMsg: "",
+			favorOpenModal:false,
 		};
 	},
 	methods: {
@@ -88,7 +94,7 @@ export default {
 					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
-					this.dialog=true;
+					this.dialog = true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -107,7 +113,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo(){
+		loadParticipantInfo() {
 			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
 				.then(response => response.json())
 				.then(data => {
@@ -117,18 +123,18 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
-		checkParticipation(){
-			for(let p of this.participantList){
-				console.log("p.memberId: " + p.memberId+'\n');
-				if(p.memberId === this.participantInfo.memberId){
+		checkParticipation() {
+			for (let p of this.participantList) {
+				console.log("p.memberId: " + p.memberId + '\n');
+				if (p.memberId === this.participantInfo.memberId) {
 					this.isCheckParticipation = !this.isCheckParticipation;
 				}
 			}
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if(this.stuffView.memberId === this.memberInfo.id){
+			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -145,7 +151,7 @@ export default {
 					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
-					this.dialog=true;
+					this.dialog = true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -207,7 +213,79 @@ export default {
 			const response = await fetch(`${this.$store.state.host}/api/member/${this.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:"+ this.memberInfo.id);
+			console.log("this.memberInfo:" + this.memberInfo.id);
+		},
+
+		loadFavoriteList() {
+			fetch(`${this.$store.state.host}/api/favorites?memberId=${this.memberId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = dataList.list;
+					this.categoryList = dataList.categoryList;
+					this.$store.commit("LOADING_STATUS", false);
+				})
+				.catch(error => console.log("error", error));
+		},
+
+		toggleFavorite() {
+			if (this.isfavorite) {
+				// 이미 등록된 경우, 삭제 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				var raw = JSON.stringify({
+
+					"heartStuffId": this.stuff.id,
+					"memberId": this.memberInfo.id,
+				});
+				var requestOptions = {
+					method: 'DELETE',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+					.then(response => {
+						response.text();
+					})
+					.then(result => {
+						console.log("관심삭제");
+						this.isfavorite = !this.isfavorite;
+					})
+					.catch(error => console.log('error', error));
+			} else {
+				// 등록되지 않은 경우, 등록 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				var raw = JSON.stringify({
+					"heartStuffId": this.stuff.id,
+					"memberId": this.memberInfo.id,
+				});
+
+				var requestOptions = {
+					method: 'POST',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+					.then(response => response.text())
+					.then(result => {
+						this.isfavorite = !this.isfavorite;
+						console.log("관심등록");
+					})
+					.catch(error => console.log('error', error));
+				this.zzimModalMsg = "  관심목록에 추가되었습니다."
+				this.favorOpenModal= true;
+			}
+		},
+		checkFavoriteList() {
+			for (let f of this.list) {
+				if (f.stuffId == this.stuff.id) {
+					this.isfavorite = !this.isfavorite;
+				}
+			}
 		},
 	},
 	computed: {
@@ -217,6 +295,7 @@ export default {
 		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
+		this.loadFavoriteList();
 	},
 	async mounted() {
 		this.$store.commit('LOADING_STATUS', true);
@@ -230,6 +309,7 @@ export default {
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.stuffView = data.stuffView;
+				this.favoriteList = data.favoriteView;
 				this.$store.commit('LOADING_STATUS', false);
 			})
 			.catch((error) => console.log("error", error));
@@ -237,6 +317,7 @@ export default {
 
 		this.checkParticipation();
 		this.checkStuffLeader();
+		this.checkFavoriteList();
 	},
 };
 </script>
@@ -273,6 +354,7 @@ export default {
 				</div>
 
 			</div>
+			
 
 
 
@@ -300,7 +382,10 @@ export default {
 							<div class="detail-status">모집중</div>
 						</div>
 
-						<div class="icon-heart">하트</div>
+						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
+
+
+
 
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
@@ -343,6 +428,12 @@ export default {
 				</section>
 			</div>
 		</main>
+		<div class="favorModal" >
+			<div v-if="favorOpenModal == true">
+				<div class="error-box">{{ zzimModalMsg }}</div>
+				<router-link :to="'/member/mypage/favorite?memberId='+memberId"><div class="error-gotofavor">관심목록 보기</div></router-link>
+			</div>
+		</div>
 
 		<!-- detail-join : detail - itme2  -->
 
@@ -362,22 +453,15 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button
-						class="detail-join-button"
-						v-if="!isCheckParticipation"
-						@click="participationHandler"
-					>
-					참여하기
+					<button class="detail-join-button" v-if="!isCheckParticipation" @click="participationHandler">
+						참여하기
 					</button>
 
 					<div class="join-button-wrap" v-if="isCheckParticipation">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button">채팅하기</router-link>
-						<button
-							class="detail-cancel-button"
-							@click="cancelParticipationHandler"
-							v-if="!stuffAuthority"
-						>
-						참여취소
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId"
+							class="detail-chat-button">채팅하기</router-link>
+						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
+							참여취소
 						</button>
 					</div>
 				</div>
@@ -389,7 +473,7 @@ export default {
 							참여되었습니다.
 						</v-card-text>
 						<v-card-actions>
-						<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
+							<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -440,12 +524,80 @@ export default {
 /* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
 개발자모드에서 보여지는 css 계층의 값 변경 가능*/
 
-.v-dialog :deep{
+.v-dialog :deep {
 	font-size: 14px;
 }
+
+.filledHeart {
+	background-image: url("/images/member/stuff/filled-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 100%;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+	text-indent: -9999px;
+}
+
+.emptyHeart {
+	background-image: url("/images/member/stuff/empty-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 100%;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+	text-indent: -9999px;
+}
+.error-box{
+	position: absolute;
+    background-color: white;
+    width: 80%;
+    height: 40px;
+    text-align: center;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+
+}
+
+.error-gotofavor{
+	position: absolute;
+    text-align: center;
+    top: 5%;
+    right: 5%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    padding: 0 12px;
+    font-weight: 600;
+	font-size: 10px;
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+}
+
+
 </style>
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
 
+@keyframes fadeout {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
 </style>

@@ -28,23 +28,6 @@ public class FavoriteController {
     @Autowired
 	private CategoryService categoryService;
 
-    
-
-    //리스트내용
-    // @GetMapping("/favorites")
-	// public Map<String, Object> getList(Long memberId, 
-    // @RequestParam(name = "p", defaultValue = "1") int page) {
-
-	// 	List<FavoriteView> list = favoriteService.getFavoriteByMemberId(memberId, page);
-	// 	List<Category> categoryList = categoryService.getList();
-        
-	// 	Map<String, Object> dataList = new HashMap<>();
-	// 	dataList.put("list", list);
-	// 	dataList.put("categoryList", categoryList);
-
-	// 	return dataList;
-	// }
-
     @GetMapping("/favorites")
 	public Map<String, Object> getList(Long memberId,
     @RequestParam(name="p", defaultValue = "1") int page,
@@ -53,20 +36,22 @@ public class FavoriteController {
 
 		List<FavoriteView> list = favoriteService.getFavoriteByMemberId(memberId,categoryId, page);
 		List<Category> categoryList = categoryService.getList();
+        Long listCount = favoriteService.getListCount(categoryId, page, memberId);
         
 		Map<String, Object> dataList = new HashMap<>();
 		dataList.put("list", list);
+		dataList.put("listCount", listCount);
 		dataList.put("categoryList", categoryList);
 
 		return dataList;
 	}
 
-
+    
     //찜등록
     @PostMapping("/favorite")
     public void addFavorite(@RequestBody Map<String, Long> request){
         Long memberId = request.get("memberId");
-        Long stuffId = request.get("stuffId");
+        Long stuffId = request.get("heartStuffId");
         favoriteService.addFavorite(memberId,stuffId);
         
       
@@ -76,7 +61,7 @@ public class FavoriteController {
     @DeleteMapping("/favorite")
     public void removeFavorite(@RequestBody Map<String, Long> request){
         Long memberId = request.get("memberId");
-        Long stuffId = request.get("stuffId");
+        Long stuffId = request.get("heartStuffId");
         favoriteService.removeFavorite(memberId,stuffId);
     }
 }

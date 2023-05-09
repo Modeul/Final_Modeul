@@ -5,15 +5,15 @@
             <div class="title">관심 목록</div>
         </div>
 
-        <div class="stuff-list" v-for="(f) in list" >
+        <div class="stuff-list" v-for="f in list" :key="f.stuffId">
             <router-link :to="'/member/stuff/' + f.stuffId">
                 <div class="d-gr li-gr m-t-13px list-cl">
 					<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 					<div class="li-pic b-rad-1">
 						<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
-						<img v-else-if="f.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg" alt="img">
-						<img v-else-if="f.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg" alt="img">
-						<img v-else-if="f.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg" alt="img">
+						<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg" alt="img">
+						<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg" alt="img">
+						<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg" alt="img">
 						<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 					</div>
 					<div class="li-categ-place">
@@ -24,23 +24,22 @@
 					</div>
 					<div class="li-dday"
 						:class="(f.deadlineState == 0)? 'expired' : 
-						(f.deadlineState == 1)? 'day-left' : 
+						(f.deadlineState == 1)?  'day-left' : 
 						(f.deadlineState == 2)? 'hour-left' : 'minute-left' ">{{ f.dDay }}</div>
 					<div class="li-subj">{{ f.stuffTitle }}</div>
+					
 			
-					<!-- <div @click.prevent="addToFavorite" v-if="!this.isFavorite" class="icon-empty-heart"></div>
-					<div @click.prevent="addToFavorite" v-if="this.isFavorite" class="icon-full-heart" :value="f.stuffId"></div> -->
-
-
-					<div :class=" f.isFavorite? 'filled-heart' : 'empty-heart'"
-						@click.prevent="toggleFavorite()">
-						<img v-if="!f.isFavorite" src="/images/member/stuff/empty-heart.png" alt="img">
-						<img v-else src="/images/member/stuff/filled-heart.png" alt="img">					
+					<div :class="isfavorite[f.stuffId]? 'empty-heart' : 'filled-heart'"
+						@click.prevent="toggleFavorite(f.stuffId)">
+						 <!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
+						 <input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
+						
 					</div>
                 </div>
-                
             </router-link>
 		</div>
+        <button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
+       
     </div>
 </template>
 
@@ -48,105 +47,157 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { vModelCheckbox } from 'vue';
 
 
 export default {
-	data() {
-		return {
-			memberId:2,
-			page: '',
-			list: [],
-			categoryList: [],
-			categoryId:'',
-            isFavorite: false,
-			
-		};
-	},
-	computed: {
-		
-	},
-	methods: {
-		toggleFavorite() {
-      		this.isFavorite = !this.isFavorite;
-			console.log(this.isFavorite)
-   		 },
-        // addToFavorite(e) {
-        // this.isFavorite = !this.isFavorite;
-        // console.log(this.isFavorite)
-		// e.target.value
-        // },
-		
-		addListHandler() {
+    data() {
+        return {
+            memberId: 2,
+            page: '',
+            list: [],
+            listCount:'',
+            categoryList: [],
+            categoryId: '',
+            isfavorite: {},
+            heartStuffId:'',
+            stuffId:'',
+            valiError: "",
+            openModal:false,
+        };
+    },
+    computed: {},
+    methods: {
+        toggleModal() {
+			this.openModal = !this.openModal;
+		},
+       	toggleFavorite(stuffId) {
+			// this.isfavorite[StuffId] = !this.isfavorite[StuffId];
+			// console.log(`StuffId:${StuffId}`)
+			// console.log(this.isfavorite[StuffId])
+            if (this.isfavorite[stuffId]) {
+					// 등록되지 않은 경우, 등록 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
 
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
-
-			this.page++;
-			fetch(`${this.$store.state.host}/api/favorites?memberId=${this.memberId}`)
-				.then(response => response.json())
-				.then(dataList => {
-					this.list = this.formatDateList(dataList.list);
-					// this.categoryList = dataList.categoryList;
-					//console.log(`categoryList:${this.list}`);
-						this.$store.commit('LOADING_STATUS', false);
-				})
-				.catch(error => console.log('error', error));
+				var raw = JSON.stringify({
+					"heartStuffId": stuffId, 
+					"memberId": this.memberId,
+				});
 				
-		},
-		formatDateList(list) {
-			if (list == null)
-				return;
-			let resultList = [];
-			for (let item of list) {
-				if (item.stuffDeadline == null)
-					continue;
-				const today = new dayjs().format('YYYY-MM-DD');
+				var requestOptions = {
+					method: 'POST',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				 fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+					.then(response => response.text())
+					.then(result => {
+						console.log("post");
+						this.isfavorite[stuffId] = !this.isfavorite[stuffId];
+						console.log("p.stuffId:"+ stuffId);
+						console.log("p.memberId:"+ this.memberId);
+						
+					})
+					.catch(error => console.log('error', error));
+			} else {
+				// 이미 등록된 경우, 삭제 요청 수행
+                var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
 
-				const deadlineObj = dayjs(item.stuffDeadline).locale('ko');
-				const isToday = (deadlineObj.format('YYYY-MM-DD') == today) ? '오늘, ' : ''
-				item.stuffDeadline = isToday + deadlineObj.format("M월 D일 (dd) HH시까지");
-
-				item.dDay = dayjs().diff(deadlineObj, 'day');
-				if (parseInt(item.dDay) < 0){
-					item.dDay = 'D' + item.dDay;
-					item.deadlineState = 1;
-				}
-				else if (parseInt(item.dDay) == 0) {
-					item.dDay = deadlineObj.diff(dayjs(), 'hours')
-					if (parseInt(item.dDay) > 0){
-						item.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
-						item.deadlineState = 2;
-					}
-					else if (parseInt(item.dDay) == 0){
-						item.dDay = '1시간 내 마감';
-						item.deadlineState = 3;
-					}
-					else{
-						item.dDay = '마감';
-						item.deadlineState = 0;
-					}
-				}
-				else{
-					item.dDay = '마감';
-					item.deadlineState = 0;
-				}
-				resultList.push(item);
+				var raw = JSON.stringify({
+					
+					"heartStuffId": stuffId,
+					"memberId": this.memberId,
+				});
+				var requestOptions = {
+					method: 'DELETE',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				 fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+					.then(response => {
+						response.text();
+					})
+					.then(result => {
+						console.log("delete");
+						console.log("d.stuffId:"+ stuffId);
+						console.log("d.memberId:"+ this.memberId);
+						this.isfavorite[stuffId] = !this.isfavorite[stuffId];
+					})
+				.catch(error => console.log('error', error));
 			}
-			return resultList;
-		},
-	},
-	mounted() {
-		this.page = 0;
-		this.addListHandler();
-	}
+    },
+			
+        async addListHandler() {
+            this.$store.commit("LOADING_STATUS", true); // 해당 함수 true/false 로 어디서나 추가 가능
+            // setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
+            this.page++;
+            await fetch(`${this.$store.state.host}/api/favorites?memberId=${this.memberId}&p=${this.page}&c=${this.categoryId}`)
+                .then(response => response.json())
+                .then(dataList => {
+					this.list = this.formatDateList(dataList.list);
+                    this.listCount = dataList.listCount;
+					this.categoryList = dataList.categoryList;
+					this.$store.commit("LOADING_STATUS", false);
+            	})
+                .catch(error => console.log("error", error));
+        },
+        formatDateList(list) {
+            if (list == null)
+                return;
+            let resultList = [];
+            for (let item of list) {
+                if (item.stuffDeadline == null)
+                    continue;
+                const today = new dayjs().format("YYYY-MM-DD");
+                const deadlineObj = dayjs(item.stuffDeadline).locale("ko");
+                const isToday = (deadlineObj.format("YYYY-MM-DD") == today) ? "오늘, " : "";
+                item.stuffDeadline = isToday + deadlineObj.format("M월 D일 (dd) HH시까지");
+                item.dDay = dayjs().diff(deadlineObj, "day");
+                if (parseInt(item.dDay) < 0) {
+                    item.dDay = "D" + item.dDay;
+                    item.deadlineState = 1;
+                }
+                else if (parseInt(item.dDay) == 0) {
+                    item.dDay = deadlineObj.diff(dayjs(), "hours");
+                    if (parseInt(item.dDay) > 0) {
+                        item.dDay = "마감 " + deadlineObj.diff(dayjs(), "hours") + "시간 전";
+                        item.deadlineState = 2;
+                    }
+                    else if (parseInt(item.dDay) == 0) {
+                        item.dDay = "1시간 내 마감";
+                        item.deadlineState = 3;
+                    }
+                    else {
+                        item.dDay = "마감";
+                        item.deadlineState = 0;
+                    }
+                }
+                else {
+                    item.dDay = "마감";
+                    item.deadlineState = 0;
+                }
+                resultList.push(item);
+            }
+            return resultList;
+        },
+    },
+    mounted() {
+        this.page = 0;
+        this.addListHandler();
+    },
+    components: { vModelCheckbox }
 }
 </script>
 
 <style scoped>
-@import "/css/component/member/stuff/component-list.css";
-@import "/css/button.css";
-@import "/css/style.css";
-
+@import url(/css/component/member/stuff/component-list.css);
+@import url(/css/button.css);
+@import url(/css/style.css);
+@import url(/css/component/component.css);
 
 .favorite{
         display: flex;
@@ -212,45 +263,33 @@ export default {
 	/* grid-row-gap: 1%; */
 	/* grid-column-gap: 10px; */
 }
-.icon-full-heart {
-    grid-area: heart;
-	justify-self: right;
-	align-self: center;
-	width: 20px;
-	height: 20px;
-	background-size: 100%;
-}
-.icon-empty-heart{
-    grid-area: heart;
-	/* background-repeat: no-repeat;
-	background-position: center;
-	width: 19px;
-	height: 19px;
-	display: inline-block;
-	text-indent: -9999px; */
-    justify-self: right;
-	align-self: center;
-	width: 20px;
-	height: 20px;
-	background-size: 100%;
-}
 
 .filled-heart{
 	grid-area: heart;
-	justify-self: right;
-	align-self: center;
-	width: 20px;
-	height: 20px;
+	background-image: url("/images/member/stuff/filled-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
 	background-size: 100%;
+    position: relative;
+    right: -45px;
+	width: 25px;
+	height: 25px;
+	display: inline-block;
+	text-indent: -9999px;
 }
 
 .empty-heart{
 	grid-area: heart;
-	justify-self: right;
-	align-self: center;
-	width: 20px;
-	height: 20px;
+	background-image: url("/images/member/stuff/empty-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
 	background-size: 100%;
+    position: relative;
+    right: -45px;
+	width: 25px;
+	height: 25px;
+	display: inline-block;
+	text-indent: -9999px;
 }
 
 

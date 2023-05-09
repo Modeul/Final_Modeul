@@ -20,6 +20,7 @@ public class FavoriteView {
     private Long StuffId;
     private String stuffTitle;
     private String stuffDeadline;
+    private String categoryId;
     private String stuffPlace;
     private LocalDateTime favoriteDate;
     private String imageName;

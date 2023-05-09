@@ -16,7 +16,8 @@ public class FavoriteServiceImpl implements FavoriteService {
     private FavoriteRepository favoriteRepository;
 
 
-    
+    static int pageSize = 7;
+
 
     // @Override
 	// public List<FavoriteView> getFavoriteByMemberId(Long memberId, int page) {
@@ -25,27 +26,47 @@ public class FavoriteServiceImpl implements FavoriteService {
 	// 	return favoriteRepository.findViewById( memberId , size);
 	// }
 
+    
          
 
     @Override
 	public List<FavoriteView> getFavoriteByMemberId(Long memberId,Long categoryId, int page) {
 		int size = page * 7;
 
-		return favoriteRepository.findViewById( memberId,categoryId, "participation_date", "desc", size, 0);
+		return favoriteRepository.findViewById( memberId,categoryId, "favorite_date", "desc", size, 0);
 	}
   
 
 
     @Override
     public void addFavorite(Long memberId, Long stuffId) {
-        LocalDateTime date = LocalDateTime.now();
-        favoriteRepository.addList(memberId, stuffId, date);
+        //LocalDateTime date = LocalDateTime.now();
+        favoriteRepository.addList(memberId, stuffId);
     }
 
     @Override
     public void removeFavorite(Long memberId, Long stuffId) {
         favoriteRepository.deleteList(memberId, stuffId);
     }
+
+
+
+
+
+
+    @Override
+    public FavoriteView getListByStuffId(Long stuffId) {
+       return favoriteRepository.findViewByStuffId(stuffId);
+    }
+
+
+
+	@Override
+	public Long getListCount(Long categoryId, int page, Long memberId) {
+        Long countList = favoriteRepository.getCountList(categoryId, memberId) - (page * pageSize);
+		Long result = countList <= 0 ? 0 : countList;
+		return result;
+	}
 
     
 
