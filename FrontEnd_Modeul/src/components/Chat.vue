@@ -21,6 +21,16 @@
 		</div>
 	</div>
 
+	<div v-if="openDeleteModal" class="black-bg">
+		<div class="delete-box">
+			<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+			<div class="delete-box-2">
+				<div @click="removeDutchHandler" class="delete-box-3">삭제하기</div>
+				<div @click="openDeleteModalHandler" class="delete-box-4">취소</div>
+			</div>
+		</div>
+	</div>
+
 	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
@@ -157,7 +167,7 @@
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post" @submit.prevent="calculate">
+			<form class="calc-contents" method="post" @submit.prevent="resultDnoneHandler">
 				<div>
 					<section class="calc-method-btn calc-member-line">
 						<h1 class="d-none">정산 방법</h1>
@@ -198,7 +208,7 @@
 					</div>
 					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
 							v-if="totalText">합계</span>{{ total }}</div>
-					<button type="submit" class="calc-button" @click.prevent="resultDnoneHandler">정산하기</button>
+					<button type="submit" class="calc-button">정산하기</button>
 				</div>
 			</form>
 		</section>
@@ -213,7 +223,7 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span>삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
@@ -303,6 +313,7 @@ export default {
 				image: ''
 			},
 			openLeaveModal: false,
+			openDeleteModal: false,
 			banishAuthority: false,
 			showBanish: false,
 
@@ -313,20 +324,20 @@ export default {
 			totalPriceAlert: '',
 			totalText: true,
 			memberPrice: 0,
-			banks: ['국민은행', '우리은행', '기업은행', '신한은행', 'KEB하나은행', 
-			'농협은행', '새마을금고', '외환은행', 'SC제일은행', '한국시티은행', 
-			'카카오뱅크', '토스뱅크' ,'케이뱅크'
+			banks: ['국민은행', '우리은행', '기업은행', '신한은행', 'KEB하나은행',
+				'농협은행', '새마을금고', '외환은행', 'SC제일은행', '한국시티은행',
+				'카카오뱅크', '토스뱅크', '케이뱅크'
 
 			],
 			isAccount: true,
 			isCalc: false,
 			isCalcResult: false,
-			selectBank:'',
-			accountNumber:'',
-			stuffLeaderId:'',
-			dutchMemberList:'',
-			sumDutch:'',
-			dutchList:'',
+			selectBank: '',
+			accountNumber: '',
+			stuffLeaderId: '',
+			dutchMemberList: '',
+			sumDutch: '',
+			dutchList: '',
 		}
 	},
 
@@ -520,6 +531,9 @@ export default {
 		modalLeaveCloseHandler() {
 			this.openLeaveModal = !this.openLeaveModal;
 		},
+		openDeleteModalHandler() {
+			this.openDeleteModal = !this.openDeleteModal;
+		},
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
@@ -563,11 +577,11 @@ export default {
 				.then(result => {
 					console.log(result);
 				})
-				.catch(error => console.log('error', error));
+				.catch(error => console.log('error', error))
 		},
 		dnoneHandler() {
 			console.log("bank:" + this.selectBank);
-			console.log("accountNumber: "+this.accountNumber);
+			console.log("accountNumber: " + this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
 		},
@@ -577,25 +591,25 @@ export default {
 			this.isCalc = !this.isCalc;
 			this.isCalcResult = !this.isCalcResult;
 		},
-		selectBankHandler(){
+		selectBankHandler() {
 			console.log("bank" + this.selectBank);
 		},
 		dutchHandler() {
 
 			var raw = JSON.stringify({
-						"prices": this.price,
-						"account":{
-							"bankName":this.selectBank,
-							"number":this.accountNumber,
-							"memberId":this.stuffLeaderId.toString()
-						}
-					});
+				"prices": this.price,
+				"account": {
+					"bankName": this.selectBank,
+					"number": this.accountNumber,
+					"memberId": this.stuffLeaderId.toString()
+				}
+			});
 
 			var requestOptions = {
 				method: 'POST',
 				redirect: 'follow',
 				headers: { 'Content-Type': 'application/json' },
-				body:raw
+				body: raw
 			};
 
 			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
@@ -605,7 +619,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		async loadDutchMemberList(){
+		async loadDutchMemberList() {
 			await fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -616,7 +630,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadDutchList(){
+		loadDutchList() {
 			fetch(`${this.$store.state.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -625,28 +639,45 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		sumDutchHandler(){
+		sumDutchHandler() {
 			let sum = 0;
 
-			for(let dmL of this.dutchMemberList) {
-				console.log("price:" + dmL.price+'\n');
+			for (let dmL of this.dutchMemberList) {
+				console.log("price:" + dmL.price + '\n');
 				sum += parseInt(dmL.price);
 			}
 			this.sumDutch = sum;
 			console.log(this.sumDutch);
 			return this.sumDutch;
 		},
-		checkDutchHave(){
-			console.log("Have dutchList:"+ this.dutchList);
-			console.log("this.$route.params.stuffId: "+ this.$route.params.stuffId +'\n');
-			
-			for(let dL of this.dutchList) {
-				console.log("dL.stuffId:" + dL.stuffId+ '\n');
-				if(dL.stuffId == this.$route.params.stuffId){
+		checkDutchHave() {
+			console.log("Have dutchList:" + this.dutchList);
+			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
+
+			for (let dL of this.dutchList) {
+				console.log("dL.stuffId:" + dL.stuffId + '\n');
+				if (dL.stuffId == this.$route.params.stuffId) {
 					this.isAccount = !this.isAccount;
 					this.isCalcResult = !this.isCalcResult;
 				}
 			}
+		},
+		removeDutchHandler() {
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow',
+			};
+
+			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+					this.isAccount = !this.isAccount;
+					this.isCalcResult = !this.isCalcResult;
+					this.calDrawer = !this.calDrawer;
+				})
+				.catch(error => console.log('error', error))
+
+			this.openDeleteModalHandler()
 		}
 	},
 	beforeRouteLeave() {
@@ -663,6 +694,7 @@ export default {
 
 	},
 	async mounted() {
+
 		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
 			.then(response => response.json())
 			.then(dataList => {

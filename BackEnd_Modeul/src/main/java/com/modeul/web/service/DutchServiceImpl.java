@@ -82,5 +82,11 @@ public class DutchServiceImpl implements DutchService {
     public List<DutchView> getViewAllBymemberId(Long memberId) {
         return repository.findViewAllBymemberId(memberId, "date", "desc");
     }
+
+    @Override
+    public int removeDutch(Long stuffId) {
+        
+        return repository.deleteDutch(stuffId);
+    }
     
 }
