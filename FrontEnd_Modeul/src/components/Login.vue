@@ -13,13 +13,13 @@
                 <form>
 
                     <div class="input-field-1">
-                        <label for="uid" class="uid-label">
+                        <label for="uid" class="uid-label login-label">
                             <span class="d-none">uid</span>
                         </label>
                         <input type="text" class="input-text" placeholder="아이디를 입력해주세요" v-model="uid" autofocus>
                     </div>
                     <div class="input-field-1 m-t-1">
-                        <label for="password" class="password-label">
+                        <label for="password" class="password-label login-label">
                             <span class="d-none">uid</span>
                         </label>
                         <input type="password" class="input-text" placeholder="비밀번호를 입력해주세요" v-model="pwd">

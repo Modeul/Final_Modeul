@@ -222,7 +222,6 @@ export default{
         position: relative;
         width: 360px;
         
-        background: #FFFFFF;
         margin:0 auto;
 }
 .header{
