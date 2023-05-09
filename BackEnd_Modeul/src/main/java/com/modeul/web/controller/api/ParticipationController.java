@@ -3,7 +3,6 @@ package com.modeul.web.controller.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.modeul.web.entity.Account;
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.entity.StuffView;
+import com.modeul.web.service.AccountService;
 import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
@@ -38,6 +39,7 @@ public class ParticipationController {
 
     @Autowired
     private StuffService stuffService;
+
 
     @PostMapping("/participation")
     public String addParticipation(@RequestBody Participation participation) {
@@ -132,7 +134,9 @@ public class ParticipationController {
     public boolean calculate(
             @PathVariable("stuffId") Long stuffId,
             @RequestBody Map<Long, Integer> prices) {
-
+                // Map<String, Map<String, String>>
+                // Map<String, Map<Long, Integer>
+                // Map<String, Object>
         participationService.calculatedAmount(stuffId, prices);
         return true;
     }
@@ -140,20 +144,21 @@ public class ParticipationController {
     // @PutMapping("/calc/{stuffId}")
     // public String 
 
-    @PutMapping("/account/{stuffId}")
-    public String inputAccount(
-            @PathVariable("stuffId") Long stuffId,
-            @RequestParam(name="ac") String account ) {
+    // @PutMapping("/account/{stuffId}")
+    // public String inputAccount(
+    //         @PathVariable("stuffId") Long stuffId,
+    //         @RequestParam(name="ac") String account ) {
         
-        participationService.inputAccount(stuffId, account);
+    //     participationService.inputAccount(stuffId, account);
 
-        return "ok";
-    }
+    //     return "ok";
+    // }
+    
+    
 
     @GetMapping("account/{leaderId}")
     public String getAccount(
             @PathVariable Long leaderId){
-        
         
         return participationService.getAccount(leaderId);
         }
