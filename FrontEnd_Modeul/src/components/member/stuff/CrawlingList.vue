@@ -111,12 +111,10 @@ export default {
 			</div>
 		</nav>
 
-		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
 			<div class="stuff-list" v-for="stuff in list">
 				<a :href="stuff.contenturl" target="_blank">
 						<div class="d-gr li-gr m-t-13px list-cl">
-							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
 								<img class="listview-image" :src="stuff.imgurl" alt="img">
 							</div>
@@ -125,6 +123,7 @@ export default {
 									{{stuff.categoryName}}
 								</span>
 							</div>
+							<a href="/#/member/stuff/reg" class="icon-write"></a>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
 								<span class="li-member-limit"> {{ stuff.price }}₩</span>
@@ -133,10 +132,24 @@ export default {
 					</a>
 			</div>
 
-			<button class="btn-next more-list" @click="addListHandler"> 더보기</button>
-			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff"></div>
-			</router-link>
+			<button class="btn-next more-list" @click="addListHandler"> 더보기 </button>
+			<nav class="navi-bar d-fl-jf">
+				<div class="navi-icon">
+					<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
+				</div>
+				<div class="navi-icon">
+					<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				</div>
+				<div>
+					<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
+				</div>
+				<div class="navi-icon">
+					<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
+				</div>
+				<div class="navi-icon">
+					<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
+				</div>
+			</nav>
 		</main>
 
 		
@@ -144,6 +157,6 @@ export default {
 </template>
 
 
-<style scoped>
+<!-- <style scoped>
 @import "/css/button.css";
-</style>
+</style> -->
