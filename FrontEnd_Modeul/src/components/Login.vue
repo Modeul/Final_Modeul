@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { useUserDetailsStore } from '../stores/useUserDetailsStore';
+
 export default {
     data() {
         return {
@@ -63,6 +65,7 @@ export default {
             pwd: "",
             errormsg: "",
             loginMember:{},
+            userDetails:useUserDetailsStore(),
         }
     },
     methods: {
@@ -88,10 +91,12 @@ export default {
                 .then(response => response.json())
                 .then(result => {
                     console.log(result);
-                    if (result.result == null)
+                    if (result.loginMember == null)
                         this.errormsg = "아이디 또는 비밀번호를 확인하세요";
                     else{
-                        this.loginMember = result.result;
+                        // this.loginMember = result.loginMember;
+                        this.userDetails.uid = result.loginMember.uid;
+                        console.log("hi"+this.userDetails.uid);
                         this.$router.push('/member/stuff/list');
                     }
                 })

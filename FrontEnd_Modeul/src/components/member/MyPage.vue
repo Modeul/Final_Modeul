@@ -32,10 +32,12 @@
                         <span>참여 딜 목록</span>
                     </li>
                 </router-link>
+                <router-link to="/member/mypage/favorite?memberId=2">
                     <li>
                         <img src="/images/member/stuff/heart_plus.svg">
                         <span>관심목록</span>
                     </li>
+                </router-link>
                 <router-link to="/member/mypage/mydutchlist">
                     <li>
                         <img src="/images/member/stuff/dutch.svg">

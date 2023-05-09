@@ -295,7 +295,7 @@ export default {
 				var formData = new FormData(this.$refs.form);
 
 				var requestOptions = {
-					method: 'POST',
+					method: '',
 					body: formData,
 					redirect: 'follow'
 				};
