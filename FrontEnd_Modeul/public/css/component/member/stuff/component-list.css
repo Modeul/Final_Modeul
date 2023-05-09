@@ -366,3 +366,9 @@ input[id="menuicon"]:checked+label+div {
 .li-pic .listview-image {
 	object-fit: cover;
 }
+
+.search-form .search-input {
+	text-align: left;
+	height: 25px;
+	width: 90%;
+}
