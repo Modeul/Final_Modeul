@@ -16,6 +16,12 @@
 
 	<!-- VIEW 이용할 때, on 조건 중 id 뭐로 연결할 건지 다시 생각! VIEW 테이블 자체는 조건절이 없었다. -->
 	<!--- MariaDB의 SQL문에 $는 '' 없이 SQL문에 값이 그냥 들어가고 #은 ''를 붙여서 SQL문에 값이 들어간다. -->
+	<select id="findbyId" resultMap="crawlingResultMap">
+		select *
+		from crawling
+		where id = #{id}
+	</select>
+
 	<select id="findAll" resultMap="crawlingResultMap">
 		select *
 		from crawling

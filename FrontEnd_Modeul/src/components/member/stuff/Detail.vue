@@ -659,38 +659,38 @@ export default {
 
 .error-box {
 	position: absolute;
-	background-color: white;
-	width: 80%;
-	height: 40px;
-	text-align: center;
-	top: 5%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	display: flex;
-	align-items: center;
-	padding: 0 12px;
-	box-sizing: border-box;
-	border-radius: 5px;
-	font-size: 12px;
-	font-weight: 500;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+    background-color: white;
+    width: 70%;
+    height: 40px;
+    text-align: center;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    padding: 0 26px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 
 }
 
 .error-gotofavor {
 	position: absolute;
-	text-align: center;
-	top: 5%;
-	right: 5%;
-	transform: translate(-50%, -50%);
-	display: flex;
-	padding: 0 12px;
-	font-weight: 600;
+    text-align: center;
+    top: 5%;
+    right: 15%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    /* padding: 0 12px; */
+    font-weight: 600;
 	font-size: 10px;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 }
 </style>
@@ -699,12 +699,12 @@ export default {
 @import "/css/component/member/stuff/map-content.css";
 
 @keyframes fadeout {
-	from {
-		opacity: 1;
-	}
-
-	to {
-		opacity: 0;
-	}
-}
+        from {
+            opacity: 1;
+        }
+		50%  {opacity: 1;}
+        to {
+            opacity: 0;
+        }
+    }
 </style>
