@@ -123,10 +123,10 @@ export default {
 									{{stuff.categoryName}}
 								</span>
 							</div>
-							<router-link :to="'/member/stuff/crawlingreg/'+stuff.id" class="icon-write"></router-link>
+							<a href="/#/member/stuff/reg" class="icon-write"></a>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
-								<span class="li-member-limit"> {{ stuff.price }} ₩</span>
+								<span class="li-member-limit"> {{ stuff.price }}₩</span>
 							</div>
 						</div>
 					</a>

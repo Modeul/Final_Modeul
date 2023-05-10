@@ -193,5 +193,20 @@ public class StuffController {
 
 		return dataList;
 	}
+	@GetMapping("/stuff/recommend/reg/{id}")
+	public Map<String, Object> getCrwalingReg(@PathVariable("id") long id) {
 
+		
+		Crawling stuff = crawlingservice.getById(id);
+
+
+
+		Map<String, Object> data = new HashMap<>();
+		data.put("stuff", stuff);
+		// data.put("participantList", participantList);
+		// data.put("memberCount", memberCount);
+		// data.put("stuffView", stuffView);
+
+		return data;
+	}
 }
