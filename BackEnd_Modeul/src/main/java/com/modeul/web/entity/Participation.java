@@ -24,4 +24,10 @@ public class Participation {
         this.memberId = memberId;
         this.stuffId = stuffId;
     }
+
+    public Participation(String account){
+        this.account = account;
+    }
+
+    
 }

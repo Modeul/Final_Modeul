@@ -1,11 +1,15 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
-
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
+
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			page: '',
 			list: [],
 			categoryList: [],
@@ -21,7 +25,7 @@ export default {
 			this.page = 1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -32,11 +36,11 @@ export default {
 		},
 		async addListHandler() {
 
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -46,7 +50,7 @@ export default {
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
 					console.log(dataList);
-					this.$store.commit('LOADING_STATUS', false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
 
@@ -180,10 +184,10 @@ export default {
 @import "/css/button.css";
 
 .canvas {
-		max-width: 600px;
-		padding: 0 20px;
-		margin: 0 auto;
-	}
+	max-width: 600px;
+	padding: 0 20px;
+	margin: 0 auto;
+}
 
 .header {
 	display: flex;
@@ -211,7 +215,7 @@ export default {
 
 .canvas {
 	max-width: 600px;
-	padding : 0 20px;
+	padding: 0 20px;
 	margin: 0 auto;
 }
 </style>

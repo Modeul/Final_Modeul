@@ -2,7 +2,6 @@
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
-
 export default {
 	data() {
 		return {
@@ -51,7 +50,6 @@ export default {
 		async addListHandler() {
 
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 			console.log(this.categoryId);
 			console.log(this.query);
 			this.page++;
@@ -127,10 +125,10 @@ export default {
 									{{stuff.categoryName}}
 								</span>
 							</div>
-							<router-link :to="'/member/stuff/crawlingreg/'+stuff.id" class="icon-write"></router-link>
+							<a href="/#/member/stuff/reg" class="icon-write"></a>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
-								<span class="li-member-limit"> {{ stuff.price }} ₩</span>
+								<span class="li-member-limit"> {{ stuff.price }}₩</span>
 							</div>
 						</div>
 					</a>

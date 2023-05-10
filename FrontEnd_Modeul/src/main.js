@@ -1,9 +1,8 @@
 import App from "./App.vue";
 import { createApp } from "vue";
 import { createPinia } from 'pinia'
+import piniaPersist from 'pinia-plugin-persist'
 import { createRouter, createWebHashHistory } from "vue-router";
-
-import Store from "./store/store";
 
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -37,6 +36,7 @@ import MyRegList from "./components/member/stuff/MyRegList.vue";
 import MyDutchList from "./components/member/stuff/MyDutchList.vue";
 import Detail from "./components/member/stuff/Detail.vue";
 import Reg from "./components/member/stuff/Reg.vue";
+import CrawlingReg from "./components/member/stuff/CrawlingReg.vue";
 import EditReg from "./components/member/stuff/EditReg.vue";
 import ListSearch from "./components/member/stuff/ListSearch.vue";
 import CrawlingList from "./components/member/stuff/CrawlingList.vue";
@@ -51,7 +51,7 @@ import MemberList from "./components/admin/member/List.vue";
 import StuffList from "./components/admin/stuff/List.vue";
 import CategoryList from "./components/admin/category/List.vue";
 import Analytics from "./components/admin/analytics/List.vue";
-import ReportList from"./components/admin/report/List.vue";
+import ReportList from "./components/admin/report/List.vue";
 
 const routes = [
   {
@@ -79,6 +79,7 @@ const routes = [
       { path: "stuff/list", component: List },
       { path: "stuff/:id", component: Detail },
       { path: "stuff/reg", component: Reg },
+      { path: "stuff/crawlingreg", component: CrawlingReg },
       { path: "stuff/edit/:id", component: EditReg },
       { path: "stuff/listsearch", component: ListSearch },
       { path: "stuff/recommends", component: CrawlingList },
@@ -86,7 +87,7 @@ const routes = [
       { path: "participation/list", component: ParticipationList }
     ]
   },
-	{ path: "/admin/login", component: AdminLogin },
+  { path: "/admin/login", component: AdminLogin },
   {
     path: "/admin",
     component: AdminLayout,
@@ -95,7 +96,7 @@ const routes = [
       { path: "member/list", component: MemberList },
       { path: "stuff/list", component: StuffList },
       { path: "category/list", component: CategoryList },
-      { path: "report/list", component: ReportList },
+      { path: "report/list", component: ReportList }
       // { path: "analytics/list", component: Analytics }
     ]
   }
@@ -109,6 +110,7 @@ const router = createRouter({
 });
 
 const pinia = createPinia();
+pinia.use(piniaPersist);
 
 // 이제는 .js파일이 아니라 뷰엔진(변환기!!)이 들어간 .vue 파일을 이용한다.
-createApp(App).use(router).use(Store).use(vuetify).use(pinia).mount("#app");
+createApp(App).use(router).use(vuetify).use(pinia).mount("#app");

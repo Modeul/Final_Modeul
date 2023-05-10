@@ -71,7 +71,8 @@
 							</div>
 						</label>
 
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
+							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -87,7 +88,8 @@
 					<select class="category-box" name="categoryId">
 						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
-						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id v-text="c.name">
+						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
+							v-text="c.name">
 						</option>
 
 					</select>
@@ -102,19 +104,22 @@
 					<div class="select-box2 d-fl">
 						<label for="" class="input-field-txt">인원</label>
 						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
+							<input class="btn-minus" id="people-count" type="button" value=""
+								@click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
+							<input type="text" class="people-count-num" name="numPeople" id="result"
+								v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
+							<input class="btn-plus" id="people-count" type="button" value=""
+								@click.prevent="numPeoplePlusHandler">
 						</div>
 					</div>
 
 					<!-- 마감일 설정 -->
 					<div id="btn-date" class="select-box d-fl jf-sb">
 						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
-							name="deadline" v-model="stuff.deadline">
+						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
+							aria-required="true" name="deadline" v-model="stuff.deadline">
 
 					</div>
 
@@ -123,14 +128,14 @@
 						<input type="text" class="input-field" name="price" id="price" v-model="stuff.price">
 					</div>
 
-					<div class="select-box" @click.prevent="postCode">
+					<div class="select-box" @click.prevent="postCode" >
 						<label for="place" class="input-field-txt">장소</label>
 						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" hidden>
-						<div class="input-field">{{ stuff.place }}</div>
+						<div  class="input-field">{{ stuff.place }}</div>
 					</div>
 					<div class="select-box toggle-map" v-if="mapNav">
-						<div v-if="showMap" @click="toggleMap">지도 열기</div>
-						<div v-else @click="toggleMap">지도 닫기</div>
+						<div  v-if="showMap" @click="toggleMap">지도 열기</div>
+						<div  v-else @click="toggleMap">지도 닫기</div>
 					</div>
 					<div id="map"></div>
 					<input type="text" class="input-field" name="coordX" v-show="false" v-model="stuff.coordX">
@@ -160,6 +165,8 @@ import 'dayjs/locale/ko'
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+
+
 export default {
 	data() {
 		return {
@@ -185,7 +192,7 @@ export default {
 				price: '',
 				url: '',
 				content: '',
-				dongCode: '',
+				dongCode:'',
 				imageList: [
 					{
 						"id": '',
@@ -293,7 +300,7 @@ export default {
 				var formData = new FormData(this.$refs.form);
 
 				var requestOptions = {
-					method: '',
+					method: 'POST',
 					body: formData,
 					redirect: 'follow'
 				};

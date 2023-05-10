@@ -1,5 +1,5 @@
 <template>
-	<div class="loader-warp" v-if="loading">
+	<div class="loader-warp" v-if="defaultStore.loadingStatus">
 		<div class="loading">
 			<span></span>
 			<span></span>
@@ -9,12 +9,18 @@
 </template>
 
 <script>
-export default {
+import { useDefaultStore } from '../../stores/useDefaultStore.js'
 
+export default {
 	props: {
 		loading: {
 			type: Boolean,
 			required: true,
+		}
+	},
+	data() {
+		return {
+			defaultStore: useDefaultStore()
 		}
 	}
 };
