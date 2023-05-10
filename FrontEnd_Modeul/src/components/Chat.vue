@@ -750,7 +750,7 @@ export default {
 		this.checkDutchHave();
 
 		// 최근 계좌 목록
-		await fetch(`${this.$store.state.host}/api/account/recent/${this.myUserId}`)
+		await fetch(`${this.defaultStore.host}/api/account/recent/${this.myUserId}`)
 		.then(response => response.json())
 		.then(result => {this.recentAccountInfo = result;})
 		.catch(error => console.log('error', error));

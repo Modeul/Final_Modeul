@@ -162,11 +162,16 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			categorySelected: null,
 			isNext: false,
 			categoryList: [],
@@ -233,7 +238,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/stuff/categories`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/categories`, requestOptions)
 				.then(response => response.json())
 				.then(categoryList => {
 					this.categoryList = categoryList;
@@ -300,7 +305,7 @@ export default {
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.$store.state.host}/api/stuff/upload`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));

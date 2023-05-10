@@ -287,12 +287,12 @@ export default {
 		},
 
 		loadFavoriteList() {
-			fetch(`${this.$store.state.host}/api/favorites?memberId=${this.memberId}`)
+			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.memberId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.list;
 					this.categoryList = dataList.categoryList;
-					this.$store.commit("LOADING_STATUS", false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log("error", error));
 		},
@@ -314,7 +314,7 @@ export default {
 					body: raw,
 					redirect: 'follow'
 				};
-				fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+				fetch(`${this.defaultStore.host}/api/favorite`, requestOptions)
 					.then(response => {
 						response.text();
 					})
@@ -339,7 +339,7 @@ export default {
 					body: raw,
 					redirect: 'follow'
 				};
-				fetch(`${this.$store.state.host}/api/favorite`, requestOptions)
+				fetch(`${this.defaultStore.host}/api/favorite`, requestOptions)
 					.then(response => response.text())
 					.then(result => {
 						this.isfavorite = !this.isfavorite;
