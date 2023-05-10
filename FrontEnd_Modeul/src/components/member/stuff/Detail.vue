@@ -1,10 +1,15 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
 			memberId: 2,
@@ -96,7 +101,7 @@ export default {
 			};
 			this.$router.push("/member/stuff/list");
 
-			fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
@@ -116,7 +121,7 @@ export default {
 				})
 			};
 
-			fetch(`${this.$store.state.host}/api/reports/stuff`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/reports/stuff`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					if (result === 'OK') {
@@ -147,7 +152,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -163,7 +168,7 @@ export default {
 				method: 'GET',
 				redirect: 'follow'
 			};
-			fetch(`${this.$store.state.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					this.participantList = data.list;
@@ -173,7 +178,7 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		loadParticipantInfo() {
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
+			fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
 				.then(response => response.json())
 				.then(data => {
 					this.participantInfo = data.memberInfo;
@@ -204,7 +209,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -269,7 +274,7 @@ export default {
 
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.$store.state.host}/api/member/${this.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
 			console.log("this.memberInfo:" + this.memberInfo.id);
@@ -284,8 +289,8 @@ export default {
 		this.loadParticipantInfo();
 	},
 	async mounted() {
-		this.$store.commit('LOADING_STATUS', true);
-		await fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`)
+		this.defaultStore.loadingStatus = true;
+		await fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`)
 			.then((response) => response.json())
 			.then((data) => {
 				this.stuff = data.stuff;
@@ -295,13 +300,13 @@ export default {
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.stuffView = data.stuffView;
-				this.$store.commit('LOADING_STATUS', false);
+				this.defaultStore.loadingStatus = false;
 			})
 			.catch((error) => console.log("error", error));
-		this.$store.commit('LOADING_STATUS', false);
 
 		this.checkParticipation();
 		this.checkStuffLeader();
+		console.log(this.userDetails.level);
 	},
 };
 </script>
@@ -526,5 +531,4 @@ export default {
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
-
 </style>

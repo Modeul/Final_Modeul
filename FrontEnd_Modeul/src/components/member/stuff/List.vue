@@ -2,6 +2,7 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
 	data() {
@@ -13,7 +14,8 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
-			userDetails:useUserDetailsStore(),
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore()
 		};
 	},
 	computed: {
@@ -23,7 +25,7 @@ export default {
 			this.page = 1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -33,11 +35,11 @@ export default {
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -47,7 +49,7 @@ export default {
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
 					console.log(dataList);
-					this.$store.commit('LOADING_STATUS', false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
 
@@ -152,11 +154,10 @@ export default {
 
 		document.addEventListener("scroll", (e) => {
 
-			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
 					this.addListHandler();
 				}
-
 			}
 		})
 
@@ -167,9 +168,9 @@ export default {
 <template>
 	<div class="pc-header-wrap">
 		<div class="header-menu">
-			<div>{{ userDetails.uid }}</div>
-			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div class="login"><router-link to="/login">로그인</router-link></div>
+			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
+			<div v-else @click.prevent="userDetails.logout" class="login">로그아웃</div>
 		</div>
 		<div class="pc-header">
 			<div class="logo-moduel header-logo"></div>
@@ -302,7 +303,7 @@ export default {
 			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
 				<div class="reg-stuff d-none"></div>
-			</router-link> 
+			</router-link>
 		</main>
 
 		<nav class="navi-bar d-fl-jf">

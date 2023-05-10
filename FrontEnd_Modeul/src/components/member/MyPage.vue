@@ -18,47 +18,47 @@
                     <img src="/images/member/stuff/star.svg">
                     <span class="star-avg">5.0</span>
                 </div> -->
-            </div>
-            <ul class="mypage-list">
-                <router-link to="/member/mypage/myreglist">
-                <li>
-                    <img src="/images/member/stuff/write.svg">
-                    <span>작성 글 목록</span>
-                </li>
-                </router-link>
-                <router-link to="/member/participation/list">
-                    <li>
-                        <img src="/images/member/stuff/cart.svg">
-                        <span>참여 딜 목록</span>
-                    </li>
-                </router-link>
-                    <li>
-                        <img src="/images/member/stuff/heart_plus.svg">
-                        <span>관심목록</span>
-                    </li>
-                <router-link to="/member/mypage/mydutchlist">
-                    <li>
-                        <img src="/images/member/stuff/dutch.svg">
-                        <span>정산 내역 목록</span>
-                    </li>
-                </router-link>
-                <router-link to="/member/mypage/changepwd">
-                    <li>
-                        <img src="/images/member/stuff/password-icon.svg">
-                        <span>비밀번호 변경</span>
-                    </li>
-                </router-link>
-                <li>
-                    <img src="/images/member/stuff/logout.svg">
-                    <span @click="modalHandler2">로그아웃</span>
-                </li>
-                <li>
-                    <img src="/images/member/stuff/out.svg">
-                    <span @click="modalHandler">탈퇴하기</span>
-                </li>
-            </ul>
-        </section>
-        <nav class="navi-bar d-fl-jf">
+			</div>
+			<ul class="mypage-list">
+				<router-link to="/member/mypage/myreglist">
+					<li>
+						<img src="/images/member/stuff/write.svg">
+						<span>작성 글 목록</span>
+					</li>
+				</router-link>
+				<router-link to="/member/participation/list">
+					<li>
+						<img src="/images/member/stuff/cart.svg">
+						<span>참여 딜 목록</span>
+					</li>
+				</router-link>
+				<li>
+					<img src="/images/member/stuff/heart_plus.svg">
+					<span>관심목록</span>
+				</li>
+				<router-link to="/member/mypage/mydutchlist">
+					<li>
+						<img src="/images/member/stuff/dutch.svg">
+						<span>정산 내역 목록</span>
+					</li>
+				</router-link>
+				<router-link to="/member/mypage/changepwd">
+					<li>
+						<img src="/images/member/stuff/password-icon.svg">
+						<span>비밀번호 변경</span>
+					</li>
+				</router-link>
+				<li>
+					<img src="/images/member/stuff/logout.svg">
+					<span @click="modalHandler2">로그아웃</span>
+				</li>
+				<li>
+					<img src="/images/member/stuff/out.svg">
+					<span @click="modalHandler">탈퇴하기</span>
+				</li>
+			</ul>
+		</section>
+		<nav class="navi-bar d-fl-jf">
 			<div class="navi-icon">
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
@@ -98,9 +98,14 @@
 	</div>
 </template>
 <script>
+import { useUserDetailsStore } from '../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../stores/useDefaultStore';
+
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			myMemberId: 110,
 			loginInfo: '',
 			openModal: false,
@@ -124,7 +129,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/member/delete`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/member/delete`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
@@ -141,7 +146,7 @@ export default {
 		},
 	},
 	mounted() {
-		fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
+		fetch(`${this.defaultStore.host}/api/member/${this.myMemberId}`)
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
@@ -316,4 +321,5 @@ section {
 	line-height: 26px;
 	margin-left: 25px;
 	cursor: pointer;
-}</style>
+}
+</style>

@@ -1,10 +1,15 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
 			isNext: false,
@@ -46,7 +51,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/stuff/categories`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/categories`, requestOptions)
 				.then(response => response.json())
 				.then(categoryList => {
 					console.log(categoryList);
@@ -115,7 +120,7 @@ export default {
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.$store.state.host}/api/stuff/update/${this.$route.params.id}`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/update/${this.$route.params.id}`, requestOptions)
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
@@ -148,7 +153,7 @@ export default {
 		},
 
 		load() {
-			fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`)
+			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`)
 				.then(response => response.json())
 				.then(stuffView => {
 					this.stuffView = stuffView;
@@ -282,8 +287,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-reg.css";
-
-
 </style>
 <template>
 	<!-- =================== reg2 ======================= -->
@@ -323,8 +326,7 @@ export default {
 								<img class="uploaded-files" :src="changed ? img : '/images/member/stuff/' + img.name">
 							</div>
 						</label>
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
-							@change="uploadImage">
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -349,22 +351,19 @@ export default {
 					<div class="select-box2 d-fl">
 						<label for="" class="input-field-txt">인원</label>
 						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value=""
-								@click.prevent="numPeopleMinusHandler">
+							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result"
-								v-model="stuff.numPeople">
+							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value=""
-								@click.prevent="numPeoplePlusHandler">
+							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
 						</div>
 					</div>
 
 					<!-- 마감일 설정 -->
 					<div id="btn-date" class="select-box d-fl jf-sb">
 						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
-							aria-required="true" name="deadline" v-model="stuff.deadline">
+						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
+							name="deadline" v-model="stuff.deadline">
 					</div>
 
 
@@ -375,8 +374,7 @@ export default {
 
 					<div class="select-box">
 						<label for="place" class="input-field-txt">장소</label>
-						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place"
-							@click="postCode">
+						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" @click="postCode">
 					</div>
 					<div class="select-box toggle-map" v-if="showMap" @click="toggleMap">지도 열기</div>
 					<div class="select-box toggle-map" v-else @click="toggleMap">지도 닫기</div>
