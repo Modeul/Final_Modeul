@@ -352,6 +352,9 @@ export default {
 				}
 			}
 		},
+		aniEndHandler(){
+			this.favorOpenModal = false;
+		}
 	},
 	computed: {
 
@@ -514,7 +517,7 @@ export default {
 				</section>
 			</div>
 		</main>
-		<div class="favorModal" >
+		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
 				<router-link :to="'/member/mypage/favorite?memberId='+memberId"><div class="error-gotofavor">관심목록 보기</div></router-link>
