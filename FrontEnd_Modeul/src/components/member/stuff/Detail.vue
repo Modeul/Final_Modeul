@@ -25,21 +25,22 @@ export default {
 			memberCount: '',
 			isCheckParticipation: '',
 			dialog: false,
-			participantInfo:  {},
-			memberInfo:  '',
-			stuffAuthority:  false,
+			participantInfo: {},
+			memberInfo: '',
+			stuffAuthority: false,
 			stuffView: '',
 			Report: {
 				stuffId: 0,
 				memberId: 113,
-				detail:  '',
+				detail: '',
 			},
 			favoriteList: [],
 			heartStuffId: '',
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
-			favorOpenModal:false,
+			favorOpenModal: false,
+			stuffUser: false,
 		};
 	},
 	methods: {
@@ -201,10 +202,10 @@ export default {
 				}
 			}
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if(this.stuffView.memberId === this.memberInfo.id){
+			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -347,7 +348,7 @@ export default {
 					})
 					.catch(error => console.log('error', error));
 				this.zzimModalMsg = "  관심목록에 추가되었습니다."
-				this.favorOpenModal= true;
+				this.favorOpenModal = true;
 			}
 		},
 		checkFavoriteList() {
@@ -357,8 +358,12 @@ export default {
 				}
 			}
 		},
-		aniEndHandler(){
+		aniEndHandler() {
 			this.favorOpenModal = false;
+		},
+		checkStuffUser() {
+			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
+			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
 		}
 	},
 	computed: {
@@ -384,12 +389,14 @@ export default {
 				this.stuffView = data.stuffView;
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
+				console.log(this.stuff);
 			})
 			.catch((error) => console.log("error", error));
 
 		this.checkParticipation();
 		this.checkStuffLeader();
 		this.checkFavoriteList();
+		this.checkStuffUser();
 	},
 };
 </script>
@@ -405,12 +412,16 @@ export default {
 			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
-				<div class="icon-edit2">
+				<div class="icon-edit2" v-if="this.stuffUser">
 					<div class="d-fl-al fl-dir-col">
 						<router-link :to="'./edit/' + stuff.id">
 							<div class="icon-edit3"></div>
 						</router-link>
 						<div @click="modalHandler2" class="icon-edit4"></div>
+					</div>
+				</div>
+				<div class="icon-report" v-else>
+					<div class="d-fl-al fl-dir-col">
 						<div @click="modalHandler3">신고</div>
 					</div>
 				</div>
@@ -446,7 +457,7 @@ export default {
 					</div>
 				</div>
 			</div>
-			
+
 
 
 
@@ -460,7 +471,8 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList"
+							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -524,7 +536,9 @@ export default {
 		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
-				<router-link :to="'/member/mypage/favorite?memberId='+memberId"><div class="error-gotofavor">관심목록 보기</div></router-link>
+				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+					<div class="error-gotofavor">관심목록 보기</div>
+				</router-link>
 			</div>
 		</div>
 
@@ -642,55 +656,55 @@ export default {
 	display: inline-block;
 	text-indent: -9999px;
 }
-.error-box{
+
+.error-box {
 	position: absolute;
-    background-color: white;
-    width: 80%;
-    height: 40px;
-    text-align: center;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 500;
+	background-color: white;
+	width: 80%;
+	height: 40px;
+	text-align: center;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	padding: 0 12px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 12px;
+	font-weight: 500;
 	animation-timing-function: ease-in;
 	animation: fadeout 5s;
 	animation-fill-mode: forwards;
 
 }
 
-.error-gotofavor{
+.error-gotofavor {
 	position: absolute;
-    text-align: center;
-    top: 5%;
-    right: 5%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    padding: 0 12px;
-    font-weight: 600;
+	text-align: center;
+	top: 5%;
+	right: 5%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	padding: 0 12px;
+	font-weight: 600;
 	font-size: 10px;
 	animation-timing-function: ease-in;
 	animation: fadeout 5s;
 	animation-fill-mode: forwards;
 }
-
-
 </style>
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
 
 @keyframes fadeout {
-        from {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-        }
-    }
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
 </style>
