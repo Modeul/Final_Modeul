@@ -27,8 +27,7 @@ export default {
 			e.preventDefault();
 			this.query = e.target.value;
 
-			console.log(this.query);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.queryList);
@@ -38,14 +37,12 @@ export default {
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			console.log(this.categoryId);
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -62,7 +59,6 @@ export default {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(dataList);
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
