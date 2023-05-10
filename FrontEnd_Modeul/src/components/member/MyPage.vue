@@ -18,47 +18,49 @@
                     <img src="/images/member/stuff/star.svg">
                     <span class="star-avg">5.0</span>
                 </div> -->
-			</div>
-			<ul class="mypage-list">
-				<router-link to="/member/mypage/myreglist">
-					<li>
-						<img src="/images/member/stuff/write.svg">
-						<span>작성 글 목록</span>
-					</li>
-				</router-link>
-				<router-link to="/member/participation/list">
-					<li>
-						<img src="/images/member/stuff/cart.svg">
-						<span>참여 딜 목록</span>
-					</li>
-				</router-link>
-				<li>
-					<img src="/images/member/stuff/heart_plus.svg">
-					<span>관심목록</span>
-				</li>
-				<router-link to="/member/mypage/mydutchlist">
-					<li>
-						<img src="/images/member/stuff/dutch.svg">
-						<span>정산 내역 목록</span>
-					</li>
-				</router-link>
-				<router-link to="/member/mypage/changepwd">
-					<li>
-						<img src="/images/member/stuff/password-icon.svg">
-						<span>비밀번호 변경</span>
-					</li>
-				</router-link>
-				<li>
-					<img src="/images/member/stuff/logout.svg">
-					<span @click="modalHandler2">로그아웃</span>
-				</li>
-				<li>
-					<img src="/images/member/stuff/out.svg">
-					<span @click="modalHandler">탈퇴하기</span>
-				</li>
-			</ul>
-		</section>
-		<nav class="navi-bar d-fl-jf">
+            </div>
+            <ul class="mypage-list">
+                <router-link to="/member/mypage/myreglist">
+                <li>
+                    <img src="/images/member/stuff/write.svg">
+                    <span>작성 글 목록</span>
+                </li>
+                </router-link>
+                <router-link to="/member/participation/list">
+                    <li>
+                        <img src="/images/member/stuff/cart.svg">
+                        <span>참여 딜 목록</span>
+                    </li>
+                </router-link>
+                <router-link to="/member/mypage/favorite?memberId=2">
+                    <li>
+                        <img src="/images/member/stuff/heart_plus.svg">
+                        <span>관심목록</span>
+                    </li>
+                </router-link>
+                <router-link to="/member/mypage/mydutchlist">
+                    <li>
+                        <img src="/images/member/stuff/dutch.svg">
+                        <span>정산 내역 목록</span>
+                    </li>
+                </router-link>
+                <router-link to="/member/mypage/changepwd">
+                    <li>
+                        <img src="/images/member/stuff/password-icon.svg">
+                        <span>비밀번호 변경</span>
+                    </li>
+                </router-link>
+                <li>
+                    <img src="/images/member/stuff/logout.svg">
+                    <span @click="modalHandler2">로그아웃</span>
+                </li>
+                <li>
+                    <img src="/images/member/stuff/out.svg">
+                    <span @click="modalHandler">탈퇴하기</span>
+                </li>
+            </ul>
+        </section>
+        <nav class="navi-bar d-fl-jf">
 			<div class="navi-icon">
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>

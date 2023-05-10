@@ -25,9 +25,10 @@ import Chat from "./components/Chat.vue";
 import FindPwd from "./components/FindPwd.vue";
 import FindId from "./components/FindId.vue";
 
-import MyPage from "./components/member/MyPage.vue";
-import MypageEdit from "./components/member/MypageEdit.vue";
-import ChangePwd from "./components/member/ChangePwd.vue";
+import MyPage from './components/member/MyPage.vue';
+import MypageEdit from './components/member/MypageEdit.vue';
+import ChangePwd from './components/member/ChangePwd.vue';
+import Favorite from './components/member/Favorite.vue';
 
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
@@ -35,6 +36,7 @@ import MyRegList from "./components/member/stuff/MyRegList.vue";
 import MyDutchList from "./components/member/stuff/MyDutchList.vue";
 import Detail from "./components/member/stuff/Detail.vue";
 import Reg from "./components/member/stuff/Reg.vue";
+import CrawlingReg from "./components/member/stuff/CrawlingReg.vue";
 import EditReg from "./components/member/stuff/EditReg.vue";
 import ListSearch from "./components/member/stuff/ListSearch.vue";
 import CrawlingList from "./components/member/stuff/CrawlingList.vue";
@@ -49,7 +51,7 @@ import MemberList from "./components/admin/member/List.vue";
 import StuffList from "./components/admin/stuff/List.vue";
 import CategoryList from "./components/admin/category/List.vue";
 import Analytics from "./components/admin/analytics/List.vue";
-import ReportList from"./components/admin/report/List.vue";
+import ReportList from "./components/admin/report/List.vue";
 
 const routes = [
   {
@@ -71,11 +73,13 @@ const routes = [
       { path: "mypage", component: MyPage },
       { path: "mypage/edit", component: MypageEdit },
       { path: "mypage/changepwd", component: ChangePwd },
+			{ path: 'mypage/favorite', component: Favorite },
       { path: "mypage/myreglist", component: MyRegList },
       { path: "mypage/mydutchlist", component: MyDutchList },
       { path: "stuff/list", component: List },
       { path: "stuff/:id", component: Detail },
       { path: "stuff/reg", component: Reg },
+      { path: "stuff/crawlingreg", component: CrawlingReg },
       { path: "stuff/edit/:id", component: EditReg },
       { path: "stuff/listsearch", component: ListSearch },
       { path: "stuff/recommends", component: CrawlingList },
@@ -83,7 +87,7 @@ const routes = [
       { path: "participation/list", component: ParticipationList }
     ]
   },
-	{ path: "/admin/login", component: AdminLogin },
+  { path: "/admin/login", component: AdminLogin },
   {
     path: "/admin",
     component: AdminLayout,
@@ -92,7 +96,7 @@ const routes = [
       { path: "member/list", component: MemberList },
       { path: "stuff/list", component: StuffList },
       { path: "category/list", component: CategoryList },
-      { path: "report/list", component: ReportList },
+      { path: "report/list", component: ReportList }
       // { path: "analytics/list", component: Analytics }
     ]
   }

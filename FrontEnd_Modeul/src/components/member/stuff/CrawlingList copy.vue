@@ -1,13 +1,9 @@
 <script>
-import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
-import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 
 export default {
 	data() {
 		return {
-			userDetails: useUserDetailsStore(),
-			defaultStore: useDefaultStore(),
 			page: '',
 			list: [],
 			category: [],
@@ -24,7 +20,7 @@ export default {
 			e.preventDefault();
             this.query = e.target.value;
 			console.log(this.query);
-			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.$store.state.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.queryList;
@@ -39,7 +35,7 @@ export default {
 			this.page=1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.$store.state.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.categoryList;
@@ -50,12 +46,12 @@ export default {
 		},
 		async addListHandler() {
 
-			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
+			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
 			console.log(this.categoryId);
 			console.log(this.query);
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.$store.state.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -68,7 +64,7 @@ export default {
 						this.list = dataList.categoryList;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
-					this.defaultStore.loadingStatus = false;
+					this.$store.commit('LOADING_STATUS', false);
 					console.log(this.list);
 				})
 				.catch(error => console.log('error', error));
@@ -127,10 +123,10 @@ export default {
 									{{stuff.categoryName}}
 								</span>
 							</div>
-							<router-link :to="'/member/stuff/crawlingreg/'+stuff.id" class="icon-write"></router-link>
+							<a href="/#/member/stuff/reg" class="icon-write"></a>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
-								<span class="li-member-limit"> {{ stuff.price }} ₩</span>
+								<span class="li-member-limit"> {{ stuff.price }}₩</span>
 							</div>
 						</div>
 					</a>

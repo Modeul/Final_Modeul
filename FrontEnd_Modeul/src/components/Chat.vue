@@ -115,6 +115,9 @@
 			<div class="chat-input-wrap">
 				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
 				</div>
+				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
+						src="/images/member/stuff/cal-result-btn.svg">
+				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
 					<div class="submit-btn" @click="sendClickHandler"><img src="/images/member/stuff/chat-submit-btn.svg">
@@ -137,22 +140,27 @@
 
 			<div class="calc-contents">
 				<div class="account-title">
-					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span class="account-title-leader">{{ this.memberInfo.nickname }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
+				
 				<div class="account-input">
-					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
-						style="width: 260px; scroll-behavior: smooth;">
-					</v-select>
-					<v-text-field v-model="accountNumber" label="계좌번호" variant="underlined" style="width: 260px;">
-					</v-text-field>
-					<!-- <input class="account-input-box" pl> -->
-				</div>
-				<div class="account-recent">
+                    <select required class="account-input-box" v-model="selectBank">
+                        <option value="" selected>은행 선택</option>
+                        <option v-for="bank in banks" v-text="bank"></option>
+                    </select>
+                    <input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required> 
+                </div>
+				<div class="account-recent" >
 					<div>최근 등록 계좌</div>
-					<div>
-						2343242423423
+					<!-- <div>{{this.recentAccountInfo}}</div> -->
+					<div v-for="ra in recentAccountInfo">
+						<span>{{ ra.bankName }} </span>
+						<span> {{ ra.number }}</span>
+					</div>
+					<div @click="AA">
+						aa
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -255,15 +263,16 @@
 					<h1 class="d-none">account</h1>
 
 					<div class="cal-result-account-all">
-						<a class="icon-bank-security">은행명</a>
+						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							하나 32589046473333
+							<span>{{ selectBank }}  </span>
+							<span>{{ accountNumber }}</span>
 						</div>
-						<a class="icon-account-paste">복사하기</a>
+						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 					</div>
 
 					<div class="cal-leader-name">
-						한땡땡
+						{{ this.stuffLeaderName }}
 					</div>
 
 				</section>
@@ -276,6 +285,10 @@
 			</section>
 		</section>
 	</v-navigation-drawer>
+
+	<div v-if="copyModal" class="error-box ani">
+		복사되었습니다.
+	</div>
 </template>
 
 <script>
@@ -344,6 +357,8 @@ export default {
 			dutchMemberList: '',
 			sumDutch: '',
 			dutchList: '',
+			copyModal: false,
+			recentAccountInfo:'',
 		}
 	},
 
@@ -684,6 +699,19 @@ export default {
 				.catch(error => console.log('error', error))
 
 			this.openDeleteModalHandler()
+		},
+		copyHandler() {
+			navigator.clipboard.writeText("하나 1231234")
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
 		}
 	},
 	beforeRouteLeave() {
@@ -720,6 +748,12 @@ export default {
 
 		this.checkStuffLeader();
 		this.checkDutchHave();
+
+		// 최근 계좌 목록
+		await fetch(`${this.$store.state.host}/api/account/recent/${this.myUserId}`)
+		.then(response => response.json())
+		.then(result => {this.recentAccountInfo = result;})
+		.catch(error => console.log('error', error));
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -872,26 +906,33 @@ export default {
 }
 
 .account-input-box {
-	width: 236px;
-	height: 48px;
-	background: #FFFFFF;
-	border: 1px solid #888888;
-	border-radius: 10px;
-	margin-bottom: 8px;
+	width: 272px;
+    height: 48px;
+    border: 1px solid #888888;
+    color: #333;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    padding-left: 12px;
 }
-
+select option[value=""][disabled] {
+    display: none;
+}
+.account-input-box::-webkit-input-placeholder {
+  color: #888888;
+  font-size: 16px;
+  text-align:left;
+}
 .account-recent {
-	padding: 16px 4px;
-
-	flex: none;
-	order: 2;
-	flex-grow: 0;
+	padding: 20px 4px;
+    font-size: 14px;
+    flex: none;
+    order: 2;
+    flex-grow: 0;
 }
 
 .account-recent>div:first-child {
-	font-size: 14px;
-	font-weight: 700;
-	color: #63A0C2;
+    font-weight: 700;
+    color: #63A0C2;
 }
 
 .btn-writing {
@@ -1762,5 +1803,42 @@ input::placeholder {
 
 .v-dialog:deep {
 	font-size: 14px;
+}
+
+.error-box {
+	position: fixed;
+	background-color: #FFF;
+	width: 80%;
+	height: 40px;
+	text-align: center;
+	top: 15%;
+	padding: auto 0;
+	line-height: 40px;
+	/* left: 50%; */
+	/* transform: translate(-50%, -50%); */
+	/* display: flex; */
+	/* align-items: center; */
+	/* padding: 0 12px; */
+	/* box-sizing: border-box; */
+	/* border-radius: 5px; */
+	/* font-size: 12px; */
+	font-weight: bold;
+	z-index: 9999;
+}
+
+.ani {
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
 }
 </style>
