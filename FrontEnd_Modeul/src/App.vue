@@ -1,5 +1,5 @@
 <script>
-import Loader from './components/common/loader.vue';
+import Loader from './components/common/Loader.vue';
 
 export default {
 	data() {
