@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.modeul.web.repository.CrawlingRepository">
+	<!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
+
+	<!-- resultMap이 필요한 이유는 Stuff 테이블에서 Java를 이용하면, categoryId으로 칼럼명이 쓰인다. 그 
+		categoryId 칼럼은 한 번 더 Category 테이블로 건너가서 categoryName 칼럼을 이용하기 위해서는 resultMap을 
+		사용하여 MySQL DB의 칼럼명으로 다시 매핑해줘야 한다. -->
+	<resultMap id="crawlingResultMap" type="Crawling">
+		<result property="categoryId" column="category_id" />
+	</resultMap>
+
+
+	<!-- VIEW 이용할 때, on 조건 중 id 뭐로 연결할 건지 다시 생각! VIEW 테이블 자체는 조건절이 없었다. -->
+	<!--- MariaDB의 SQL문에 $는 '' 없이 SQL문에 값이 그냥 들어가고 #은 ''를 붙여서 SQL문에 값이 들어간다. -->
+	<select id="findbyId" resultMap="crawlingResultMap">
+		select *
+		from crawling
+		where id = #{id}
+	</select>
+
+	<select id="findAll" resultMap="crawlingResultMap">
+		select *
+		from crawling
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="query != null">
+				title like '%${query}%'
+			</if>
+			<if test="categoryId != null">
+				and category_id = #{categoryId}
+			</if>
+		</trim>
+		<if test="size != null and offset != null">
+			limit ${size} offset ${offset}
+		</if>
+	</select>
+
+	<select id="getCountList" resultType="Long">
+		select count(id)
+		from
+		crawling
+		<if test="categoryId != null">
+			where category_id = #{categoryId}
+		</if>
+	</select>
+
+	<select id="findCategory" resultMap="crawlingResultMap">
+		SELECT DISTINCT categoryname , category_id
+		FROM crawling
+	</select>
+	
+</mapper>

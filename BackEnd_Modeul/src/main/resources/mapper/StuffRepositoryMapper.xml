@@ -14,6 +14,9 @@
 		<result property="regDate" column="reg_date" />
 		<result property="categoryId" column="category_id" />
 		<result property="memberId" column="member_id" />
+		<result property="coordX" column="coord_x" />
+		<result property="coordY" column="coord_y" />
+		<result property="dongCode" column="dong_code" />
 	</resultMap>
 	<!-- StuffView는 원래 알던 개념 db 칼럼명과 일치시켜서 그 칼럼의 데이터 이용하게 한다. 그리고 StuffView 
 		이런 식으로 덩어리로 인자를 사용하면 resultMap으로 세부 칼럼들을 매핑 시켜줘야 한다. -->
@@ -24,6 +27,14 @@
 		<result property="numPeople" column="num_people" />
 		<result property="memberId" column="member_id" />
 		<result property="regDate" column="reg_date" />
+		<result property="participantCount" column="participation_count" />
+		<result property="coordX" column="coord_x" />
+		<result property="coordY" column="coord_y" />
+		<result property="dongCode" column="dong_code" />
+	</resultMap>
+	
+	<resultMap id="ImageResultMap" type="Image">
+		<result property="stuffId" column="stuff_id" />
 	</resultMap>
 
 	<select id="findbyId" resultMap="stuffResultMap">
@@ -31,6 +42,13 @@
 		from stuff
 		where id = #{id}
 	</select>
+
+	<select id="findViewbyId" resultMap="stuffViewResultMap">
+		select *
+		from stuff_view
+		where id = #{id}
+	</select>
+
 
 
 	<!-- VIEW 이용할 때, on 조건 중 id 뭐로 연결할 건지 다시 생각! VIEW 테이블 자체는 조건절이 없었다. -->
@@ -45,9 +63,35 @@
 			<if test="categoryId != null">
 				and category_id = #{categoryId}
 			</if>
+			<if test="memberId != null">
+				and member_id = #{memberId}
+			</if>
+			<if test="dongCode != null">
+				and dong_code = #{dongCode}
+			</if>
 		</trim>
 		<if test="orderField != null and orderDir != null">
-			order by ${orderField} ${orderDir}		<!-- orderField랑 orderDir, limit, offset 
+			order by ${orderField} ${orderDir}
+			<!-- orderField랑 orderDir, limit, offset 
+				값 필수라서 trim 안함 -->
+		</if>
+
+		<if test="size != null and offset != null">
+			limit ${size} offset ${offset}
+		</if>
+	</select>
+	
+	<select id="findViewBy" resultMap="stuffViewResultMap">
+		select *
+		from stuff_view
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="query != null">
+				title like '%${query}%'
+			</if>
+		</trim>
+		<if test="orderField != null and orderDir != null">
+			order by ${orderField} ${orderDir}
+			<!-- orderField랑 orderDir, limit, offset 
 				값 필수라서 trim 안함 -->
 		</if>
 
@@ -56,13 +100,19 @@
 		</if>
 	</select>
 
-	<select id="getCountList" resultType="Long">
+
+	<select id="getCountList" resultType="Long" parameterType="StuffView">
 		select count(id)
 		from
 		stuff_view
-		<if test="categoryId != null">
-			where category_id = #{categoryId}
-		</if>
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="categoryId != null">
+				category_id = #{categoryId}
+			</if>
+			<if test="memberId != null">
+				and member_id = #{memberId}
+			</if>
+		</trim>
 	</select>
 
 	<!-- selectKey, LAST_INSERT_ID() 찾기!! -->
@@ -74,8 +124,8 @@
 	<!-- 공구상품글 등록  -->
 	<insert id="insert" parameterType="Stuff">
 		insert into stuff(title, place, num_people, deadline, price, url,
-		content, category_id)
-		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId})
+		content, category_id, coord_x, coord_y, dong_code)
+		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId}, #{coordX}, #{coordY}, #{dongCode})
 		<selectKey resultType="long" keyProperty="id" order="AFTER">
 
 			select last_insert_id()
@@ -84,7 +134,7 @@
 	</insert>
 
 	
-	<insert id="imageUpload" parameterType="Image">
+	<insert id="uploadImage" parameterType="Image">
 		insert into image(name, stuff_id)
 		values(#{name}, #{stuffId})
 	</insert>
@@ -92,7 +142,7 @@
 	<!-- 상품 정보 수정, 나중에 categoryId 추가하기!! -->
 	<update id="update" parameterType="Stuff">
 		update stuff set title = #{title}, place = #{place}, num_people = #{numPeople}, deadline = #{deadline}, price = #{price}, 
-		url = #{url}, content = #{content}, category_id = #{categoryId}
+		url = #{url}, content = #{content}, category_id = #{categoryId}, coord_x = #{coordX}, coord_y = #{coordY}, dong_code = #{dongCode}
 		where id = #{id}
 	</update>
 
@@ -105,4 +155,9 @@
 	<delete id="delete" parameterType="Stuff">
       delete from stuff where id=${id}
    </delete>
+   
+   <!-- 이미지 정보 조회 -->
+   <select id="findImagebyId" parameterType="Long" resultType="Image">
+      select * from image where stuff_id = ${id}
+   </select>
 </mapper>

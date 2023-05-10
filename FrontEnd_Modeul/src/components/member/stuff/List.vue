@@ -1,41 +1,56 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
-
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
 	data() {
 		return {
 			page: '',
+			dongCode: '',
+			dongName: '',
 			list: [],
 			categoryList: [],
-			categoryId:'',
-			listCount:''
+			categoryId: '',
+			listCount: '',
+			query: '',
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore()
 		};
 	},
 	computed: {
 	},
 	methods: {
-		categoryHandler(e){	
-			this.page=1;
+		searchInput(e) {
+			this.page = 1;
+			e.preventDefault();
+			this.query = e.target.value;
+
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = this.formatDateList(dataList.queryList);
+
+				}).catch(error => console.log('error', error));
+		},
+		categoryHandler(e) {
+			this.page = 1;
 			this.categoryId = e.target.value;
-			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
-
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -44,12 +59,17 @@ export default {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(dataList);
-						this.$store.commit('LOADING_STATUS', false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
-				
+
 		},
+		scrollCheck() {
+			if (window.innerHeight >= 718) {
+				this.addListHandler();
+			}
+		},
+
 		formatDateList(list) {
 			if (list == null)
 				return;
@@ -70,26 +90,26 @@ export default {
 				// 3: 1시간 내 마감 -> (1시간 내 마감)  // 빨강?
 
 				item.dDay = dayjs().diff(deadlineObj, 'day');
-				if (parseInt(item.dDay) < 0){
+				if (parseInt(item.dDay) < 0) {
 					item.dDay = 'D' + item.dDay;
 					item.deadlineState = 1;
 				}
 				else if (parseInt(item.dDay) == 0) {
 					item.dDay = deadlineObj.diff(dayjs(), 'hours')
-					if (parseInt(item.dDay) > 0){
+					if (parseInt(item.dDay) > 0) {
 						item.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
 						item.deadlineState = 2;
 					}
-					else if (parseInt(item.dDay) == 0){
+					else if (parseInt(item.dDay) == 0) {
 						item.dDay = '1시간 내 마감';
 						item.deadlineState = 3;
 					}
-					else{
+					else {
 						item.dDay = '마감';
 						item.deadlineState = 0;
 					}
 				}
-				else{
+				else {
 					item.dDay = '마감';
 					item.deadlineState = 0;
 				}
@@ -97,28 +117,102 @@ export default {
 			}
 			return resultList;
 		},
+
+		onChage(v) {
+			if (v.target.value === 'cur') {
+				this.getDongInfo();
+			} else {
+				this.dongCode = '';
+				this.dongName = '';
+				this.addListHandler();
+			}
+
+
+		},
+
+		getDongInfo() {
+
+			const geocoder = new kakao.maps.services.Geocoder();
+			const watchID = navigator.geolocation.getCurrentPosition((position) => {
+				let lat = position.coords.latitude;
+				let lng = position.coords.longitude;
+
+				geocoder.coord2Address(lng, lat, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.dongName = result[0].address.region_3depth_name;
+					}
+				});
+				geocoder.coord2RegionCode(lng, lat, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.dongCode = result[0].code;
+
+						this.addListHandler();
+					}
+				});
+
+			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+		},
+
 	},
 	mounted() {
 		this.page = 0;
 		this.addListHandler();
+		this.scrollCheck();
+		// this.getDongInfo();
+
+		document.addEventListener("scroll", (e) => {
+
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+				if (this.listCount !== 0) {
+					this.addListHandler();
+				}
+			}
+		})
 
 	}
 }
 </script>
 
-<style scoped>
-@import url(/css/component/member/stuff/component-list.css);
-</style>
 <template>
-	<section class="canvas p-rel b-rad-2">
-		<header class="d-fl-al header-jc">
-			<select class="selectbox-set" onchange="if(this.value) location.href=(this.value);">
-				<option value="">신수동</option>
-				<option value="">신설동</option>
-				<option value="/member/stuff/gps">GPS설정</option>
-			</select>
+	<div class="pc-header-wrap">
+		<div class="header-menu">
+			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
+			<div v-else @click.prevent="userDetails.logout" class="login">로그아웃</div>
+		</div>
+		<div class="pc-header">
+			<div class="logo-moduel header-logo"></div>
+			<div class="search-container">
+				<div class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
+					<h1 class="icon search-dodbogi">돋보기</h1>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn-heart"></div>
+				<div class="btn-location"></div>
+			</div>
+		</div>
+	</div>
+	<div class="pc-carousel">
+		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
+			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
+			<v-carousel-item src="https://gcdn.market09.kr/data/banner/1682557050291.jpg"></v-carousel-item>
+		</v-carousel>
+	</div>
 
-		<div>
+	<section class="canvas">
+		<header class="d-fl-al header-jc">
+			<select class="selectbox-set" @change="onChage($event)">
+				<option value="" default>전체</option>
+				<option value="">신설동</option>
+				<option value="cur">현재위치</option>
+			</select>
+			<div> {{ dongName }}</div>
+
+			<div>
 				<!-- <a class="icon icon-menu">메뉴</a> -->
 				<a class="icon icon-alarm">알림</a>
 				<a class="icon">
@@ -139,6 +233,9 @@ export default {
 								<router-link to="/member/stuff/list">HOME</router-link>
 							</span>
 							<span class="sidebar-padding">
+								<router-link to="/member/stuff/recommends">추천상품</router-link>
+							</span>
+							<span class="sidebar-padding">
 								<router-link to="/member/stuff/listsearch">검색하기</router-link>
 							</span>
 							<span class="sidebar-padding">
@@ -146,6 +243,9 @@ export default {
 							</span>
 							<span class="sidebar-padding">
 								<router-link to="/member/participation/list">채팅하기</router-link>
+							</span>
+							<span class="sidebar-padding">
+								<router-link to="/member/mypage">마이페이지</router-link>
 							</span>
 						</div>
 					</div>
@@ -167,15 +267,22 @@ export default {
 
 		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
-			<div class="stuff-list" v-for="stuff in list">
-				<router-link :to="'./' + stuff.id">
+
+			<div class="list-wrap">
+
+				<div class="stuff-list" v-for="stuff in list">
+					<router-link :to="'./' + stuff.id">
 						<div class="d-gr li-gr m-t-13px list-cl">
 							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
-								<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName" alt="img">
-								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg" alt="img">
-								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg" alt="img">
-								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg" alt="img">
+								<img v-if="stuff.imageName != null" class="listview-image"
+									:src="'/images/member/stuff/' + stuff.imageName" alt="img">
+								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
+									alt="img">
+								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
+									alt="img">
+								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
+									alt="img">
 								<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 							</div>
 							<div class="li-categ-place">
@@ -186,13 +293,12 @@ export default {
 									{{ stuff.place }}
 								</span>
 							</div>
-							<div class="li-dday"
-							:class="(stuff.deadlineState == 0)? 'expired' : 
-							(stuff.deadlineState == 1)? 'day-left' : 
-							(stuff.deadlineState == 2)? 'hour-left' : 'minute-left' ">{{ stuff.dDay }}</div>
+							<div class="li-dday" :class="(stuff.deadlineState == 0) ? 'expired' :
+								(stuff.deadlineState == 1) ? 'day-left' :
+									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
-								<span class="li-member-limit"> 1</span>
+								<span class="li-member-limit"> {{ stuff.participantCount }} </span>
 								/ {{ stuff.numPeople }} 명
 							</div>
 							<!-- <div class="li-place">{{ stuff.place }}</div> -->
@@ -201,29 +307,30 @@ export default {
 							<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
 						</div>
 					</router-link>
+				</div>
 			</div>
 
-			<button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button>
+			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff"></div>
+				<div class="reg-stuff d-none"></div>
 			</router-link>
 		</main>
 
-		<nav class="navi-bar d-fl-jf" style="display: none;">
-			<div>
-				<router-link to="/member/stuff/list" class="icon icon-home m-notop">home</router-link>
+		<nav class="navi-bar d-fl-jf">
+			<div class="navi-icon">
+				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
+			</div>
+			<div class="navi-icon">
+				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
 			</div>
 			<div>
-				<router-link to="/member/stuff/listsearch" class="icon icon-search m-notop">search</router-link>
+				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
 			</div>
-			<div>
-				<router-link to="/member/stuff/reg" class="icon icon-post m-notop">post+</router-link>
+			<div class="navi-icon">
+				<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
 			</div>
-			<div>
-				<router-link to="/member/participation/list" class="icon icon-chat m-notop">chat</router-link>
-			</div>
-			<div>
-				<a class="icon icon-info m-notop">mypage</a>
+			<div class="navi-icon">
+				<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
 			</div>
 		</nav>
 	</section>
@@ -232,5 +339,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
+@import "/css/component/admin/member/list-responsive.css";
 @import "/css/button.css";
 </style>

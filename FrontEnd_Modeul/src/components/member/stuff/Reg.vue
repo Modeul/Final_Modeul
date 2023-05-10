@@ -7,7 +7,7 @@
 			<!-- =================== reg1 : header ===================== -->
 			<header class="d-fl">
 				<div>
-					<router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+					<router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
 				</div>
 
 				<div class="hd-title-box">
@@ -65,16 +65,14 @@
 					<!-- 이미지 업로드  -->
 					<div class="file-box">
 						<label for="file">
-							<div class="btn-file"></div> 
-							<div class="btn-uploaded-files">
-								<img class="uploaded-files" :src="imageURL" />
+							<div class="btn-file">{{ imageList.length }}/6</div>
+							<div class="btn-uploaded-files" v-for="item in imageList">
+								<img class="uploaded-files" :src="item" />
 							</div>
-							<div class="btn-uploaded-files"></div>
 						</label>
 
 						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
 					</div>
-
 
 					<!-- 에러메시지 모달창 -->
 					<div v-if="openModal == true" class="black-bg">
@@ -125,10 +123,19 @@
 						<input type="text" class="input-field" name="price" id="price" v-model="stuff.price">
 					</div>
 
-					<div class="select-box">
+					<div class="select-box" @click.prevent="postCode">
 						<label for="place" class="input-field-txt">장소</label>
-						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place">
+						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" hidden>
+						<div class="input-field">{{ stuff.place }}</div>
 					</div>
+					<div class="select-box toggle-map" v-if="mapNav">
+						<div v-if="showMap" @click="toggleMap">지도 열기</div>
+						<div v-else @click="toggleMap">지도 닫기</div>
+					</div>
+					<div id="map"></div>
+					<input type="text" class="input-field" name="coordX" v-show="false" v-model="stuff.coordX">
+					<input type="text" class="input-field" name="coordY" v-show="false" v-model="stuff.coordY">
+					<input type="text" class="input-field" name="dongCode" v-show="false" v-model="stuff.dongCode">
 
 					<div class="select-box">
 						<label for="url" class="input-field-txt">링크</label>
@@ -150,16 +157,25 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
-
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			categorySelected: null,
 			isNext: false,
 			categoryList: [],
-			file: [],
-			imageURL: '',
+			files: [],
+			imageList: [],
+			showMap: false,
+			mapStatus: false,
+			mapNav: false,
+
+			croodX: 0,
+			croodY: 0,
 			stuff: {
 				title: '',
 				place: '',
@@ -169,6 +185,7 @@ export default {
 				price: '',
 				url: '',
 				content: '',
+				dongCode: '',
 				imageList: [
 					{
 						"id": '',
@@ -184,6 +201,9 @@ export default {
 		}
 	},
 	methods: {
+		goback() {
+			this.$router.go(-1);
+		},
 		/* reg1 <-> reg2 이동 이벤트 */
 		dnoneHandler() {
 			this.isNext = !this.isNext;
@@ -211,7 +231,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/stuff/categories`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/categories`, requestOptions)
 				.then(response => response.json())
 				.then(categoryList => {
 					this.categoryList = categoryList;
@@ -273,27 +293,40 @@ export default {
 				var formData = new FormData(this.$refs.form);
 
 				var requestOptions = {
-					method: 'POST',
+					method: '',
 					body: formData,
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.$store.state.host}/api/stuff/upload`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
 
-				this.$router.push('/member/stuff/list')
+				this.$router.replace('/member/stuff/list')
 			}
 		},
 
 		// 썸네일 조작
 		uploadImage(e) {
-			this.file = e.target.files;
-			console.log(this.file);
-			this.url = URL.createObjectURL(this.file[0]);
-			console.log(this.url);
-			this.imageURL = this.url;
+			this.files = e.target.files;
+
+			if (this.files.length > 6) {
+				this.valiError = "이미지는 최대 6개까지 선택할 수 있습니다.";
+				this.openModal = true;
+				return;
+			}
+
+			// 취소 버튼을 눌렀을 때 이미지 초기화 방지
+			if (this.files.length <= 0) {
+				return;
+			}
+
+			this.imageList = [];
+
+			for (let file of this.files) {
+				this.imageList.push(URL.createObjectURL(file));
+			}
 		},
 		// 제목 체크
 		isValidTitle() {
@@ -320,7 +353,7 @@ export default {
 		},
 		isValidDeadline() {
 			const deadlineObj = new dayjs(this.stuff.deadline)
-			if(deadlineObj.diff(dayjs(), 'minute') <= 0)
+			if (deadlineObj.diff(dayjs(), 'minute') <= 0)
 				return false;
 			else
 				return true;
@@ -328,6 +361,80 @@ export default {
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},
+
+		postCode() {
+
+
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.stuff.place = data.address;
+					this.stuff.dongCode = data.bcode;
+					console.log(this.stuff.place);
+
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.stuff.coordX = result.x;
+							this.stuff.coordY = result.y;
+							console.log(this.stuff.coordX);
+							this.showMap = true;
+							this.mapStatus = true;
+							this.mapNav = true;
+							document.querySelector("#content").focus();
+
+						}
+					});
+
+				}
+			}).open();
+		},
+
+		drawMap() {
+			const mapContainer = document.getElementById('map');
+			let coords = new daum.maps.LatLng(this.stuff.coordY, this.stuff.coordX);
+			let mapOption = {
+				center: coords,
+				level: 5
+			};
+
+
+			let map = new daum.maps.Map(mapContainer, mapOption);
+
+
+			let marker = new daum.maps.Marker({
+				position: coords,
+				map: map
+			});
+
+			map.relayout();
+			map.setCenter(coords);
+			marker.setPosition(coords);
+		},
+		toggleMap() {
+
+			let map = document.querySelector("#map");
+			if (this.showMap) {
+				map.style.height = '300px';
+				this.showMap = !this.showMap;
+
+				if (this.mapStatus) {
+					setTimeout(() => {
+						this.mapStatus = false;
+						this.drawMap();
+					}, 500);
+				}
+
+
+			} else {
+				map.style.height = 0;
+				this.showMap = !this.showMap;
+			}
+
+		}
 	},
 	mounted() {
 		this.loadCategory();
@@ -339,6 +446,8 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-reg.css";
 
+
+
 select {
 	-webkit-appearance: none;
 	/* 크롬 화살표 없애기 */
@@ -346,6 +455,6 @@ select {
 	/* 파이어폭스 화살표 없애기 */
 	appearance: none
 		/* 화살표 없애기 */
-		
+
 }
 </style>
