@@ -645,7 +645,7 @@ export default {
 .error-box{
 	position: absolute;
     background-color: white;
-    width: 80%;
+    width: 70%;
     height: 40px;
     text-align: center;
     top: 5%;
@@ -653,13 +653,13 @@ export default {
     transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 26px;
     box-sizing: border-box;
     border-radius: 5px;
     font-size: 12px;
     font-weight: 500;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 
 }
@@ -668,14 +668,14 @@ export default {
 	position: absolute;
     text-align: center;
     top: 5%;
-    right: 5%;
+    right: 15%;
     transform: translate(-50%, -50%);
     display: flex;
-    padding: 0 12px;
+    /* padding: 0 12px; */
     font-weight: 600;
 	font-size: 10px;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 }
 
@@ -689,6 +689,7 @@ export default {
         from {
             opacity: 1;
         }
+		50%  {opacity: 1;}
         to {
             opacity: 0;
         }
