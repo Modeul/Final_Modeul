@@ -155,11 +155,11 @@
 				<div class="account-recent" >
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
-					<div v-for="ra in recentAccountInfo" :key="ra.bankName" :value="ra.number">
-						<div @click="AA">{{ ra.bankName }} {{  ra.number }}</div>
+					<div v-for="ra in recentAccountInfo">
+						<div @click="AA">{{ ra.bankName }} {{ ra.number }}</div>
 						
 					</div>
-					<div @click="AA">
+					<div>
 						aa
 					</div>
 				</div>
@@ -722,9 +722,7 @@ export default {
 		// inputRecentAccount() {
 		// 	this.selectBank = 
 		// },
-		AA(){
-			console.log(key);
-		}
+		
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent()
