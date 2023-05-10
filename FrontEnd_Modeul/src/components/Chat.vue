@@ -140,7 +140,7 @@
 
 			<div class="calc-contents">
 				<div class="account-title">
-					<span class="account-title-leader">{{ this.memberInfo.nickname }}</span><span> 님의</span><br>
+					<span class="account-title-leader">{{ this.stuffLeaderNic }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
@@ -155,9 +155,9 @@
 				<div class="account-recent" >
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
-					<div v-for="ra in recentAccountInfo">
-						<span>{{ ra.bankName }} </span>
-						<span> {{ ra.number }}</span>
+					<div v-for="ra in recentAccountInfo" :key="ra.bankName" :value="ra.number">
+						<div @click="AA">{{ ra.bankName }} {{  ra.number }}</div>
+						
 					</div>
 					<div @click="AA">
 						aa
@@ -348,11 +348,15 @@ export default {
 			selectBank: '',
 			accountNumber: '',
 			stuffLeaderId: '',
+			stuffLeaderNic:'',
+			stuffLeaderName:'',
 			dutchMemberList: '',
 			sumDutch: '',
 			dutchList: '',
 			copyModal: false,
 			recentAccountInfo:'',
+			selectRecentBank:'',
+
 		}
 	},
 
@@ -491,6 +495,8 @@ export default {
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
 				this.stuffLeaderId = this.chat.memberId;
+				this.stuffLeaderNic = this.memberInfo.nickname;
+				this.stuffLeaderName = this.memberInfo.name;
 			}
 		},
 		banishUserHandler() {
@@ -706,6 +712,12 @@ export default {
 					() => {
 
 					});
+		},
+		// inputRecentAccount() {
+		// 	this.selectBank = 
+		// },
+		AA(){
+			console.log(key);
 		}
 	},
 	beforeRouteLeave() {
@@ -787,6 +799,9 @@ export default {
 		totalPriceAlert: function () {
 			if (this.totalPrice > 999999)
 				return console.log("over");
+		},
+		saveAccountInfo: function() {
+
 		}
 	},
 }
