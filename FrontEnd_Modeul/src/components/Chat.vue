@@ -156,11 +156,9 @@
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<div @click="AA">{{ ra.bankName }} {{ ra.number }}</div>
-						
-					</div>
-					<div>
-						aa
+						<span>{{ ra.bankName + " "}} </span>
+						<span> {{ ra.number }}</span>
+						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -719,6 +717,19 @@ export default {
 
 					});
 		},
+		copyRecentAccountHandler(number){
+			navigator.clipboard.writeText(number)
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
+		},
 		// inputRecentAccount() {
 		// 	this.selectBank = 
 		// },
@@ -733,6 +744,7 @@ export default {
 		this.loadParticipant();
 		this.loadDutchMemberList();
 		this.loadDutchList();
+		this.checkDutchHave();
 	},
 	updated() {
 
@@ -745,6 +757,8 @@ export default {
 				this.participantList = dataList.memberList;
 				this.chat = dataList.stuffView;
 				this.formatChatRegDate();
+				this.loadDutchMemberList();
+				this.checkDutchHave();
 				console.log(this.participantList);
 				console.log("this.participantList.memberId: " + this.participantList[0].memberId);
 				console.log("this.chat.memberId:" + this.chat.memberId);

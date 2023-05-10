@@ -12,12 +12,7 @@
 import { useDefaultStore } from '../../stores/useDefaultStore.js'
 
 export default {
-	props: {
-		loading: {
-			type: Boolean,
-			required: true,
-		}
-	},
+
 	data() {
 		return {
 			defaultStore: useDefaultStore()

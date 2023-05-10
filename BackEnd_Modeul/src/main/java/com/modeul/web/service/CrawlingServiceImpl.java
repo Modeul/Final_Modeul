@@ -56,8 +56,7 @@ public class CrawlingServiceImpl implements CrawlingService {
 
     @Override
     public Crawling getById(long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+        return repository.findbyId(id);
     }
 
 

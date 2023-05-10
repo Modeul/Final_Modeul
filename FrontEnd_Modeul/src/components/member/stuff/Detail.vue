@@ -25,21 +25,22 @@ export default {
 			memberCount: '',
 			isCheckParticipation: '',
 			dialog: false,
-			participantInfo:  {},
-			memberInfo:  '',
-			stuffAuthority:  false,
+			participantInfo: {},
+			memberInfo: '',
+			stuffAuthority: false,
 			stuffView: '',
 			Report: {
 				stuffId: 0,
 				memberId: 113,
-				detail:  '',
+				detail: '',
 			},
 			favoriteList: [],
 			heartStuffId: '',
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
-			favorOpenModal:false,
+			favorOpenModal: false,
+			stuffUser: false,
 		};
 	},
 	methods: {
@@ -201,10 +202,10 @@ export default {
 				}
 			}
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if(this.stuffView.memberId === this.memberInfo.id){
+			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -347,7 +348,7 @@ export default {
 					})
 					.catch(error => console.log('error', error));
 				this.zzimModalMsg = "  관심목록에 추가되었습니다."
-				this.favorOpenModal= true;
+				this.favorOpenModal = true;
 			}
 		},
 		checkFavoriteList() {
@@ -357,8 +358,12 @@ export default {
 				}
 			}
 		},
-		aniEndHandler(){
+		aniEndHandler() {
 			this.favorOpenModal = false;
+		},
+		checkStuffUser() {
+			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
+			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
 		}
 	},
 	computed: {
@@ -384,17 +389,40 @@ export default {
 				this.stuffView = data.stuffView;
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
+				console.log(this.stuff);
 			})
 			.catch((error) => console.log("error", error));
 
 		this.checkParticipation();
 		this.checkStuffLeader();
 		this.checkFavoriteList();
+		this.checkStuffUser();
 	},
 };
 </script>
 
 <template>
+
+<div class="pc-header-wrap">
+		<div class="header-menu">
+			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<div class="login"><router-link to="/login">로그인</router-link></div>
+		</div>
+		<div class="pc-header">
+			<div class="logo-moduel header-logo"></div>
+			<div class="search-container">
+				<div class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
+					<h1 class="icon search-dodbogi">돋보기</h1>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn-heart"></div>
+				<div class="btn-location"></div>
+			</div>
+		</div>
+	</div>
+
 	<!-- detail : flex-container -->
 	<div class="detail">
 		<header class="detail-header">
@@ -405,12 +433,16 @@ export default {
 			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
 			<!-- 모달 배경 -->
 			<div v-if="openModal">
-				<div class="icon-edit2">
+				<div class="icon-edit2" v-if="this.stuffUser">
 					<div class="d-fl-al fl-dir-col">
 						<router-link :to="'./edit/' + stuff.id">
 							<div class="icon-edit3"></div>
 						</router-link>
 						<div @click="modalHandler2" class="icon-edit4"></div>
+					</div>
+				</div>
+				<div class="icon-report" v-else>
+					<div class="d-fl-al fl-dir-col">
 						<div @click="modalHandler3">신고</div>
 					</div>
 				</div>
@@ -446,7 +478,7 @@ export default {
 					</div>
 				</div>
 			</div>
-			
+
 
 
 
@@ -460,25 +492,24 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList"
+							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
-				<!-- detail-heading : detail-main - item2 -->
-				<section class="canvas detail-heading">
-					<h1 class="d-none">heading</h1>
-					<div class="d-fl detail-edit">
-						<div class="detail-top">
-							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
-								(stuff.deadlineState == 1) ? 'day-left' :
-									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
-						</div>
+				<div class="detail-content-wrap">
+					<!-- detail-heading : detail-main - item2 -->
+					<section class="canvas detail-heading">
+						<h1 class="d-none">heading</h1>
+						<div class="d-fl detail-edit">
+							<div class="detail-top">
+								<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
+								<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+									(stuff.deadlineState == 1) ? 'day-left' :
+										(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+							</div>
 
 						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
-
-
-
 
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
@@ -486,45 +517,48 @@ export default {
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
-					<div class="detail-price">{{ stuff.price }}원</div>
+						<div class="detail-price">{{ stuff.price }}원</div>
 
-				</section>
-				<!-- detail-info : detail-main - item3 -->
-				<section class="canvas detail-info">
-					<h1 class="d-none">info</h1>
-					<div class="detail-in">
-						<div class="detail-info-title">인원</div>
-						<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">기한</div>
-						<div class="detail-info-txt">{{ stuff.deadline }}</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">장소</div>
-						<div class="detail-info-txt">{{ stuff.place }}</div>
-					</div>
+					</section>
+					<!-- detail-info : detail-main - item3 -->
+					<section class="canvas detail-info">
+						<h1 class="d-none">info</h1>
+						<div class="detail-in">
+							<div class="detail-info-title">인원</div>
+							<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">기한</div>
+							<div class="detail-info-txt">{{ stuff.deadline }}</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">장소</div>
+							<div class="detail-info-txt">{{ stuff.place }}</div>
+						</div>
 
-				</section>
-				<section class="canvas map">
-					<div @click="toggleMap" v-if="showMap">지도 열기</div>
-					<div @click="toggleMap" v-else>지도 닫기</div>
-					<div id="map"></div>
-				</section>
-				<!-- detail-writing : detail-main - item4 -->
-				<section class="canvas detail-writing">
-					<h1 class="d-none">writing</h1>
-					<!-- <p class="detail-paragraph">
+					</section>
+					<section class="canvas map">
+						<div @click="toggleMap" v-if="showMap">지도 열기</div>
+						<div @click="toggleMap" v-else>지도 닫기</div>
+						<div id="map"></div>
+					</section>
+					<!-- detail-writing : detail-main - item4 -->
+					<section class="canvas detail-writing">
+						<h1 class="d-none">writing</h1>
+						<!-- <p class="detail-paragraph">
 								            {{ stuff.content }}
 								          </p> -->
-					<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
-				</section>
+						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
+					</section>
+				</div>
 			</div>
 		</main>
 		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
-				<router-link :to="'/member/mypage/favorite?memberId='+memberId"><div class="error-gotofavor">관심목록 보기</div></router-link>
+				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+					<div class="error-gotofavor">관심목록 보기</div>
+				</router-link>
 			</div>
 		</div>
 
@@ -588,9 +622,28 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
+@import "/css/component/admin/member/list-responsive.css";
 
-.detail {
-	margin: 0 auto;
+@media (min-width: 768px) {
+	.detail-main {
+		display: flex;
+		flex-direction: row;
+	}
+
+	main
+	{
+		max-width: 1050px;
+		margin: 0 auto;
+	}
+
+	.detail-img {
+		width: 50%;
+	}
+
+	.detail-content-wrap {
+		width: 50%;
+		margin: auto 0;
+	}
 }
 
 .v-slide-group button {
@@ -642,10 +695,11 @@ export default {
 	display: inline-block;
 	text-indent: -9999px;
 }
-.error-box{
+
+.error-box {
 	position: absolute;
     background-color: white;
-    width: 80%;
+    width: 70%;
     height: 40px;
     text-align: center;
     top: 5%;
@@ -653,33 +707,31 @@ export default {
     transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 26px;
     box-sizing: border-box;
     border-radius: 5px;
     font-size: 12px;
     font-weight: 500;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 
 }
 
-.error-gotofavor{
+.error-gotofavor {
 	position: absolute;
     text-align: center;
     top: 5%;
-    right: 5%;
+    right: 15%;
     transform: translate(-50%, -50%);
     display: flex;
-    padding: 0 12px;
+    /* padding: 0 12px; */
     font-weight: 600;
 	font-size: 10px;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 }
-
-
 </style>
 
 <style>
@@ -689,6 +741,7 @@ export default {
         from {
             opacity: 1;
         }
+		50%  {opacity: 1;}
         to {
             opacity: 0;
         }

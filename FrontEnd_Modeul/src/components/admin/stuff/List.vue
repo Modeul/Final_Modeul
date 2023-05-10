@@ -10,7 +10,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			page: '',
+
 			listOrigin: '',
 			list: '',
 			query: '',
@@ -18,6 +18,12 @@ export default {
 			openModal2: null,
 			deleteValid: null,
 			deleteId: '',
+
+			page: 1,
+			totalPage: 0,
+			pageSize: 5,
+			pageList: [],
+
 		}
 	},
 	methods: {
@@ -29,6 +35,9 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
+					this.totalPage = Math.floor(dataList.length / this.pageSize);
+					if (dataList.length % this.pageSize > 0) { this.totalPage += 1 };
+					this.pagingList();
 					this.listOrigin = dataList;
 					this.defaultStore.loadingStatus = false;
 				})
@@ -60,12 +69,29 @@ export default {
 		},
 		queryHandler(e) {
 			this.query = e.target.value
-			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query)|| stuff.content.includes(this.query));
-		}
+			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query) || stuff.content.includes(this.query));
+		},
+		pagingList() {
+			let start = (this.page - 1)* this.pageSize;
+			let end = start + this.pageSize;
+			this.pageList = this.list.slice(start, end);
+			console.log(this.pageList);
+		},
+		nextPage() {
+			this.page += 1;
+			this.pagingList();
+		},
+		prevPage() {
+			this.page -= 1;
+			this.pagingList();
+		},
 	},
+	created() {
 
+	},
 	mounted() {
 		this.addListHandler();
+		this.pagingList();
 	}
 }
 </script>
@@ -80,7 +106,8 @@ export default {
 			<div class="search-container-admin-sr">
 				<form action="" class="d-fl d-b-none search-form1" method="get">
 					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="제목이나 내용으로 검색" :value="query" @input="queryHandler">
+					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="제목이나 내용으로 검색"
+						:value="query" @input="queryHandler">
 				</form>
 			</div>
 		</div>
@@ -97,35 +124,47 @@ export default {
 					</tr>
 				</thead>
 				<tbody class="table-body">
-					<tr v-for="s in list">
+					<tr v-for="s in pageList">
 						<td style="width: 230px;  min-width: 230px;  ">{{ s.title }}</td>
 						<td style="width: 150px;  min-width: 150px;   ">{{ s.categoryName }}</td>
-							<td style="width: 200px;  min-width: 200px;  ">{{ s.place }}</td>
-							<td style="width: calc(100vw - 890px);  min-width: 700px; text-align:left;">{{ s.content }}</td>
-							<td style="width: 20px;   min-width: 20px;  text-align:left;"><button @click="modalHandler" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<!-- 취소 확인 모달 -->
-			<div v-if="openModal" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-					<div class="delete-box-2">
-						<div @click="deleteStuff" class="delete-box-3">삭제</div>
-						<div @click="modalHandler" class="delete-box-4">취소</div>
-					</div>
+						<td style="width: 200px;  min-width: 200px;  ">{{ s.place }}</td>
+						<td style="width: calc(100vw - 890px);  min-width: 700px; text-align:left;">{{ s.content }}</td>
+						<td style="width: 20px;   min-width: 20px;  text-align:left;"><button @click="modalHandler"
+								:value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="paging-nav">
+			<div class="nav-items"> <button :disabled="page === 1" @click="prevPage()">
+					left
+				</button></div>
+			<div class="nav-items"> <span>{{ page }} / {{ totalPage === 0 ? 1 : totalPage }}</span></div>
+			<div class="nav-items"> <button :disabled="page >= totalPage " @click="nextPage()">
+					right
+				</button></div>
+		</div>
+
+		<!-- 취소 확인 모달 -->
+		<div v-if="openModal" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+				<div class="delete-box-2">
+					<div @click="deleteStuff" class="delete-box-3">삭제</div>
+					<div @click="modalHandler" class="delete-box-4">취소</div>
 				</div>
 			</div>
-			<div v-if="openModal2" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">삭제되었습니다.</div>
-					<div class="delete-box-2">
-						<div @click="modalHandler2" class="delete-box-5">확인</div>
-					</div>
+		</div>
+		<div v-if="openModal2" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">삭제되었습니다.</div>
+				<div class="delete-box-2">
+					<div @click="modalHandler2" class="delete-box-5">확인</div>
 				</div>
 			</div>
-		</main>
+		</div>
+	</main>
 </template>
 
 <style scoped>
@@ -224,5 +263,22 @@ export default {
 	line-height: 26px;
 	margin: auto;
 	cursor: pointer;
+}
+
+.paging-nav {
+	margin: 15px auto 0;
+	display: flex;
+	justify-content: center;
+}
+
+.nav-items>button {
+	color: #FFFFFF;
+	background-color: rgb(156, 156, 156);
+	border-radius: 10%;
+	width: 50px;
+}
+
+.nav-items {
+	margin: auto 8px;
 }
 </style>

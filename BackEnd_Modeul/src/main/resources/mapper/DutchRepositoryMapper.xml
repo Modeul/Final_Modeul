@@ -43,6 +43,7 @@
         select month(date) month
         from dutch_view
         where member_id = #{memberId}
+        group by month(date)
         order by date
     </select>
 

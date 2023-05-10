@@ -27,4 +27,6 @@ public interface CrawlingRepository {
 								Integer offset,
 								String categoryName);
 
+    Crawling findbyId(long id);
+
 }
