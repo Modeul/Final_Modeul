@@ -7,7 +7,7 @@
 			<!-- =================== reg1 : header ===================== -->
 			<header class="d-fl">
 				<div>
-					<router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
+					<router-link to="/member/stuff/recommends" class="icon icon-back" @click="goback">뒤로가기</router-link>
 				</div>
 
 				<div class="hd-title-box">
