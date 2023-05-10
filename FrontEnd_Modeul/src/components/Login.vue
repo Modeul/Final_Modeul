@@ -97,6 +97,7 @@ export default {
 					if (result.loginMember == null)
 						this.errormsg = "아이디 또는 비밀번호를 확인하세요";
 					else {
+						this.userDetails.id = result.loginMember.id;
 						this.userDetails.uid = result.loginMember.uid;
 						let level = result.loginMember.level;
 						if (level == 1)
