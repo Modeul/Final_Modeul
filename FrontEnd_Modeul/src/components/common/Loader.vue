@@ -1,5 +1,5 @@
 <template>
-	<div class="loader-warp">
+	<div class="loader-warp" v-if="defaultStore.loadingStatus">
 		<div class="loading">
 			<span></span>
 			<span></span>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { useDefaultStore } from '../../../stores/useDefaultStore';
+import { useDefaultStore } from '../../stores/useDefaultStore.js'
 
 export default {
 	props: {
