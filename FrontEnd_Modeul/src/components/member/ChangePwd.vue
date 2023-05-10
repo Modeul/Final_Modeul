@@ -53,7 +53,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			myMemberId: '110',
+			// myMemberId: '110',
 			loginInfo: '',
 
 			pwd: "",
@@ -183,7 +183,7 @@ export default {
 		}
 	},
 	mounted() {
-		fetch(`${this.defaultStore.host}/api/member/${this.myMemberId}`)
+		fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
@@ -194,54 +194,6 @@ export default {
 
 </script>
 
-<!-- <script setup>
-import {computed, onMounted, reactive, ref} from 'vue';
-import { useStore } from 'vuex'
-
-// === Variaables =============================
-let model = reactive({
-    member:'',
-    input:''
-})
-const store = useStore();   
-let myMemberId = '120';
-let pwdbtn = null;
-
-
-// === Life Cycles =============================
-onMounted(async() => {
-    let response = await fetch(`${store.state.host}/api/member/${myMemberId}`)
-    let member = await response.json();
-    model.member = member;
-    console.log(model.member);
-});
-
-
-// === methods =============================
-async function checkPwd(){
-    console.log(model.member.uid);
-    console.log(model.input.pwd);
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-        "uid": model.member.uid,
-        "pwd": model.input.pwd
-    });
-
-    var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-    };
-    let result = await fetch(`${store.state.host}/api/member/checkpwd`, requestOptions)
-        pwdbtn = await result.json();
-        console.log(result);
-}
-
-
-</script> -->
 <style scoped>
 @import url(/css/component/component.css);
 @import url(/css/button.css);
