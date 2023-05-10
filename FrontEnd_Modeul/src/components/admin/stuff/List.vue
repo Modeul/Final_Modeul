@@ -36,7 +36,7 @@ export default {
 				.then(dataList => {
 					this.list = dataList;
 					this.totalPage = Math.floor(dataList.length / this.pageSize);
-					if (dataList.length % this.pageSize > 0) {this.totalPage += 1};
+					if (dataList.length % this.pageSize > 0) { this.totalPage += 1 };
 					this.pagingList();
 					this.listOrigin = dataList;
 					this.defaultStore.loadingStatus = false;
@@ -72,7 +72,7 @@ export default {
 			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query) || stuff.content.includes(this.query));
 		},
 		pagingList() {
-			let start = this.page * this.pageSize;
+			let start = (this.page - 1)* this.pageSize;
 			let end = start + this.pageSize;
 			this.pageList = this.list.slice(start, end);
 			console.log(this.pageList);
@@ -86,7 +86,7 @@ export default {
 			this.pagingList();
 		},
 	},
-	created(){
+	created() {
 
 	},
 	mounted() {
@@ -136,14 +136,14 @@ export default {
 			</table>
 		</div>
 
-		<div>
-			<button :disabled="page === 0" @click="prevPage()">
+		<div class="paging-nav">
+			<div class="nav-items"> <button :disabled="page === 1" @click="prevPage()">
 					left
-			</button>
-			<span>{{ page }} / {{ totalPage === 0 ? 1 : totalPage }}</span>
-			<button :disabled="page >= totalPage - 1" @click="nextPage()">
+				</button></div>
+			<div class="nav-items"> <span>{{ page }} / {{ totalPage === 0 ? 1 : totalPage }}</span></div>
+			<div class="nav-items"> <button :disabled="page >= totalPage " @click="nextPage()">
 					right
-			</button>
+				</button></div>
 		</div>
 
 		<!-- 취소 확인 모달 -->
@@ -263,5 +263,22 @@ export default {
 	line-height: 26px;
 	margin: auto;
 	cursor: pointer;
+}
+
+.paging-nav {
+	margin: 15px auto 0;
+	display: flex;
+	justify-content: center;
+}
+
+.nav-items>button {
+	color: #FFFFFF;
+	background-color: rgb(156, 156, 156);
+	border-radius: 10%;
+	width: 50px;
+}
+
+.nav-items {
+	margin: auto 8px;
 }
 </style>
