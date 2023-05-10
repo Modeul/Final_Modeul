@@ -17,4 +17,7 @@ public interface CrawlingService {
 
     Long getListCount(Long categoryId, int page);
     List<Crawling> getCategoryNameList(int page, String categoryName); //카테고리 목록
+    
+
+    Crawling getById(long id); // stuff조회
 }

@@ -54,6 +54,11 @@ public class CrawlingServiceImpl implements CrawlingService {
         return repository.findCategory(null, null, size, 0, categoryName);
     }
 
+    @Override
+    public Crawling getById(long id) {
+        return repository.findbyId(id);
+    }
+
 
     
 }
