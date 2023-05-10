@@ -1,10 +1,15 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			page: '',
 			list: [],
 			openModal: null,
@@ -17,14 +22,14 @@ export default {
 	methods: {
 		async addListHandler() {
 
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 
-			await fetch(`${this.$store.state.host}/api/reports/stuff`)
+			await fetch(`${this.defaultStore.host}/api/reports/stuff`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
 					console.log(dataList);
-					this.$store.commit('LOADING_STATUS', false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
 
@@ -36,7 +41,7 @@ export default {
 				redirect: 'follow'
 			};
 			// this.$router.push("/member/stuff/list");
-			await fetch(`${this.$store.state.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
+			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
@@ -52,7 +57,7 @@ export default {
 				redirect: 'follow'
 			};
 			// this.$router.push("/member/stuff/list");
-			await fetch(`${this.$store.state.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
+			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));

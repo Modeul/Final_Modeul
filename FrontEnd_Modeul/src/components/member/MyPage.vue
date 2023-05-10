@@ -100,9 +100,14 @@
 	</div>
 </template>
 <script>
+import { useUserDetailsStore } from '../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../stores/useDefaultStore';
+
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			myMemberId: 110,
 			loginInfo: '',
 			openModal: false,
@@ -126,7 +131,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/member/delete`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/member/delete`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
@@ -143,7 +148,7 @@ export default {
 		},
 	},
 	mounted() {
-		fetch(`${this.$store.state.host}/api/member/${this.myMemberId}`)
+		fetch(`${this.defaultStore.host}/api/member/${this.myMemberId}`)
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
@@ -318,4 +323,5 @@ section {
 	line-height: 26px;
 	margin-left: 25px;
 	cursor: pointer;
-}</style>
+}
+</style>

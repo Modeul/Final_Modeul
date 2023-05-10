@@ -1,9 +1,8 @@
 import App from "./App.vue";
 import { createApp } from "vue";
 import { createPinia } from 'pinia'
+import piniaPersist from 'pinia-plugin-persist'
 import { createRouter, createWebHashHistory } from "vue-router";
-
-import Store from "./store/store";
 
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -111,6 +110,7 @@ const router = createRouter({
 });
 
 const pinia = createPinia();
+pinia.use(piniaPersist);
 
 // 이제는 .js파일이 아니라 뷰엔진(변환기!!)이 들어간 .vue 파일을 이용한다.
-createApp(App).use(router).use(Store).use(vuetify).use(pinia).mount("#app");
+createApp(App).use(router).use(vuetify).use(pinia).mount("#app");

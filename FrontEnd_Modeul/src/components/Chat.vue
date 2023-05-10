@@ -297,10 +297,16 @@ import 'dayjs/locale/ko'
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 
+import { useUserDetailsStore } from '../stores/useUserDetailsStore';
+import { useDefaultStore } from '../stores/useDefaultStore';
+
+
 export default {
 
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			calDrawer: null,
 			userName: "",
 			message: "",
@@ -405,7 +411,7 @@ export default {
 			}
 		},
 		stompConnect() {
-			const serverURL = `${this.$store.state.host}/ws-stomp`
+			const serverURL = `${this.defaultStore.host}/ws-stomp`
 			let socket = new SockJS(serverURL);
 			this.stompClient = Stomp.over(socket);
 		},
@@ -416,7 +422,7 @@ export default {
 					// 소켓 연결 성공!
 					this.connected = true;
 
-					const response = await fetch(`${this.$store.state.host}/api/chatlog?
+					const response = await fetch(`${this.defaultStore.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
 					const result = await response.text();
 					if (result != '')
@@ -446,7 +452,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -479,13 +485,13 @@ export default {
 			this.$router.go(-1);
 		},
 		async loadParticipationList() {
-			const response = await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+			const response = await fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.stuffId}`)
 			const dataList = await response.json();
 			this.participantList = dataList.memberList;
 			this.chat = dataList.stuffView;
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.$route.params.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
 			console.log("this.memberInfo:" + this.memberInfo.id);
@@ -506,7 +512,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -594,7 +600,7 @@ export default {
 				body: JSON.stringify(this.price)
 			};
 
-			fetch(`${this.$store.state.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
 				.then(result => {
 					console.log(result);
 				})
@@ -633,7 +639,7 @@ export default {
 				body: raw
 			};
 
-			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
 				.then(result => {
 					console.log(result);
 					this.loadDutchMemberList();
@@ -641,7 +647,7 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		async loadDutchMemberList() {
-			await fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`)
+			await fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.dutchMemberList = dataList.list;
@@ -652,7 +658,7 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		loadDutchList() {
-			fetch(`${this.$store.state.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
+			fetch(`${this.defaultStore.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.dutchList = dataList.listView;
@@ -689,7 +695,7 @@ export default {
 				redirect: 'follow',
 			};
 
-			fetch(`${this.$store.state.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
 				.then(result => {
 					console.log(result);
 					this.isAccount = !this.isAccount;
@@ -735,7 +741,7 @@ export default {
 	},
 	async mounted() {
 
-		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+		await fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.stuffId}`)
 			.then(response => response.json())
 			.then(dataList => {
 				this.participantList = dataList.memberList;
@@ -756,7 +762,7 @@ export default {
 		this.checkDutchHave();
 
 		// 최근 계좌 목록
-		await fetch(`${this.$store.state.host}/api/account/recent/${this.myUserId}`)
+		await fetch(`${this.defaultStore.host}/api/account/recent/${this.myUserId}`)
 		.then(response => response.json())
 		.then(result => {this.recentAccountInfo = result;})
 		.catch(error => console.log('error', error));

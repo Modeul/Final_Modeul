@@ -1,9 +1,11 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import store from "../../../store/store.js";
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 // Vue3 Composition API으로 작성해보기**
 
@@ -16,6 +18,8 @@ let month = ref(todayMonth);
 let calDrawer = ref(false);
 let stuffId = ref();
 let sumDutch = ref();
+let userDetails = useUserDetailsStore();
+let defaultStore = useDefaultStore();
 
 console.log(stuffId.value);
 

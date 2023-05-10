@@ -1,7 +1,13 @@
 <script>
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
+
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			listOrigin: '',
 			list: '',
 			query: '',
@@ -13,7 +19,7 @@ export default {
 	methods: {
 		async load() {
 
-			const response = await fetch(`${this.$store.state.host}/api/member/list`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/list`);
 			const result = await response.json();
 			this.listOrigin = result;
 			this.list = result;
@@ -39,7 +45,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			const response = await fetch(`${this.$store.state.host}/api/member/delete`, requestOptions)
+			const response = await fetch(`${this.defaultStore.host}/api/member/delete`, requestOptions)
 			const result = await response.json();
 
 			if (result == 1) {
