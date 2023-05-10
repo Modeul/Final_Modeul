@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.modeul.web.entity.Account;
-import com.modeul.web.entity.AccountView;
 import com.modeul.web.service.AccountService;
 
 

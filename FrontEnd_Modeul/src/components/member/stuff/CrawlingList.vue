@@ -19,6 +19,10 @@ export default {
 	computed: {
 	},
 	methods: {
+		regbuttonHandler(e){
+			console.log(e.target.value);
+
+		},
 		searchInput(e){
 			this.page = 1;
 			e.preventDefault();
@@ -127,7 +131,7 @@ export default {
 									{{stuff.categoryName}}
 								</span>
 							</div>
-							<router-link :to="'/member/stuff/crawlingreg/'+stuff.id" class="icon-write"></router-link>
+							<router-link :to="'/member/stuff/crawlingreg/'+stuff.id" class="icon-write" v-on:click="regbuttonHandler"></router-link>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
 								<span class="li-member-limit"> {{ stuff.price }} ₩</span>
