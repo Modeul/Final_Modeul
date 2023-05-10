@@ -140,7 +140,7 @@
 
 			<div class="calc-contents">
 				<div class="account-title">
-					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span class="account-title-leader">{{ this.memberInfo.nickname }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
@@ -154,9 +154,13 @@
                 </div>
 				<div class="account-recent" >
 					<div>최근 등록 계좌</div>
+					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<span>{{ `${ra.bankName}  ` }}</span>
-						<span>{{ `  ${ra.number}` }}</span>
+						<span>{{ ra.bankName }} </span>
+						<span> {{ ra.number }}</span>
+					</div>
+					<div @click="AA">
+						aa
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -259,15 +263,16 @@
 					<h1 class="d-none">account</h1>
 
 					<div class="cal-result-account-all">
-						<a class="icon-bank-security">은행명</a>
+						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							하나 32589046473333
+							<span>{{ selectBank }}  </span>
+							<span>{{ accountNumber }}</span>
 						</div>
 						<a class="icon-account-paste">복사하기</a>
 					</div>
 
 					<div class="cal-leader-name">
-						한땡땡
+						{{ this.stuffLeaderName }}
 					</div>
 
 				</section>
