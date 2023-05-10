@@ -156,11 +156,9 @@
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<span>{{ ra.bankName }} </span>
+						<span>{{ ra.bankName + " "}} </span>
 						<span> {{ ra.number }}</span>
-					</div>
-					<div @click="AA">
-						aa
+						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -702,6 +700,19 @@ export default {
 		},
 		copyHandler() {
 			navigator.clipboard.writeText("하나 1231234")
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
+		},
+		copyRecentAccountHandler(number){
+			navigator.clipboard.writeText(number)
 				.then(() => {
 					this.copyModal = false;
 
