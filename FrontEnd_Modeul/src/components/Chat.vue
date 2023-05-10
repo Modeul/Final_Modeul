@@ -268,7 +268,7 @@
 							<span>{{ selectBank }}  </span>
 							<span>{{ accountNumber }}</span>
 						</div>
-						<a class="icon-account-paste">복사하기</a>
+						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 					</div>
 
 					<div class="cal-leader-name">
@@ -285,6 +285,10 @@
 			</section>
 		</section>
 	</v-navigation-drawer>
+
+	<div v-if="copyModal" class="error-box ani">
+		복사되었습니다.
+	</div>
 </template>
 
 <script>
@@ -341,12 +345,13 @@ export default {
 			isAccount: true,
 			isCalc: false,
 			isCalcResult: false,
-			selectBank:'',
-			accountNumber:'',
-			stuffLeaderId:'',
-			dutchMemberList:'',
-			sumDutch:'',
-			dutchList:'',
+			selectBank: '',
+			accountNumber: '',
+			stuffLeaderId: '',
+			dutchMemberList: '',
+			sumDutch: '',
+			dutchList: '',
+			copyModal: false,
 			recentAccountInfo:'',
 		}
 	},
@@ -688,6 +693,19 @@ export default {
 				.catch(error => console.log('error', error))
 
 			this.openDeleteModalHandler()
+		},
+		copyHandler() {
+			navigator.clipboard.writeText("하나 1231234")
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
 		}
 	},
 	beforeRouteLeave() {
@@ -1779,5 +1797,42 @@ input::placeholder {
 
 .v-dialog:deep {
 	font-size: 14px;
+}
+
+.error-box {
+	position: fixed;
+	background-color: #FFF;
+	width: 80%;
+	height: 40px;
+	text-align: center;
+	top: 15%;
+	padding: auto 0;
+	line-height: 40px;
+	/* left: 50%; */
+	/* transform: translate(-50%, -50%); */
+	/* display: flex; */
+	/* align-items: center; */
+	/* padding: 0 12px; */
+	/* box-sizing: border-box; */
+	/* border-radius: 5px; */
+	/* font-size: 12px; */
+	font-weight: bold;
+	z-index: 9999;
+}
+
+.ani {
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
 }
 </style>
