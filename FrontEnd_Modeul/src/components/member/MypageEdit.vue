@@ -1,9 +1,8 @@
 <template>
 	<div class="mypage">
-
 		<div v-if="openModal" class="black-bg">
 			<div class="delete-box">
-				<div class="delete-box-1">프로필 사진이 변경되었습니다 </div>
+				<div class="delete-box-1">프로필 사진이 변경되었습니다</div>
 				<div class="delete-box-2">
 					<div @click="modalHandler" class="delete-box-4">확인</div>
 				</div>
@@ -25,13 +24,13 @@
 		</div>
 		<div class="profile-pic">
 			<div class="profile-img">
-				<img class="profile-img" :src="'/images/member/' + loginInfo.image">
+				<img class="profile-img" :src="'/images/member/' + loginInfo.image" />
 			</div>
 			<form @submit="uploadImg" method="post" enctype="multipart/form-data" ref="form">
 				<label for="file">
 					<div class="edit-btn2">
-						<input type="file" class="d-none" id="file" name="imgs" @change.prevent="uploadImg">
-						<img src="/images/member/stuff/mypageEditIcon.svg">
+						<input type="file" class="d-none" id="file" name="imgs" @change.prevent="uploadImg" />
+						<img src="/images/member/stuff/mypageEditIcon.svg" />
 					</div>
 				</label>
 			</form>
@@ -52,17 +51,18 @@
 						{{ loginInfo.nickname }}
 						<input @click.prevent="active" class="btn-change" id="btn-auth" type="button" value="변경" />
 					</div>
-
 				</div>
 				<div v-if="this.nicknamebtn" class="input-field">
 					<div class="nickname-icon"></div>
-					<input class="text" type="text" v-model="loginInfo.nickname">
+					<input class="text" type="text" v-model="loginInfo.nickname" />
 					<input @click.prevent="checkNicknameDupl" class="btn-change" id="btn-auth" type="button" value="확인" />
 				</div>
 				<span class="error-txt">{{ this.ErrorMsg }}</span>
 			</div>
 		</div>
-		<div v-if="this.nicknamebtn" @click.prevent="submit" class="btn-save">저장하기</div>
+		<div v-if="this.nicknamebtn" @click.prevent="submit" class="btn-save">
+			저장하기
+		</div>
 	</div>
 </template>
 <script>
@@ -74,7 +74,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			myMemberId: "110",
+			// myMemberId: "110",
 			ErrorMsg: "",
 			nicknameDupl: "",
 			nicknamebtn: false,
@@ -155,7 +155,7 @@ export default {
 			this.loginInfo.image = this.file[0].name;
 
 			var formData = new FormData(this.$refs.form);
-			formData.append('id', this.myMemberId);
+			formData.append('id', this.userDetails.id);
 
 			var requestOptions = {
 				method: 'POST',
@@ -164,7 +164,10 @@ export default {
 			};
 			await fetch(`${this.defaultStore.host}/api/member/updateImage`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => {
+					console.log(result)
+					this.load()
+				})
 				.catch(error => console.log('error', error));
 			this.openModal = true;
 		},
@@ -173,17 +176,21 @@ export default {
 		},
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
+		},
+		async load() {
+			await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
+				.then(response => response.json())
+				.then(data => {
+					this.loginInfo = data;
+					console.log(data);
+				})
 		}
 	},
 	mounted() {
-		fetch(`${this.defaultStore.host}/api/member/${this.myMemberId}`)
-			.then(response => response.json())
-			.then(data => {
-				this.loginInfo = data;
-				console.log(data);
-			})
-	},
+		this.load();
+	}
 }
+
 
 </script>
 <style>
@@ -197,7 +204,7 @@ export default {
 	width: 360px;
 	height: 740px;
 
-	background: #FFFFFF;
+	background: #ffffff;
 }
 
 .mypage .header {
@@ -273,7 +280,7 @@ export default {
 	align-items: center;
 	width: 300px;
 	height: 45px;
-	border: 1px solid #D5D5D5;
+	border: 1px solid #d5d5d5;
 	border-radius: 10px;
 }
 
@@ -282,7 +289,7 @@ export default {
 	align-items: center;
 	width: 300px;
 	height: 45px;
-	border: 1px solid #7299BE;
+	border: 1px solid #7299be;
 	border-radius: 10px;
 }
 
@@ -340,7 +347,7 @@ export default {
 }
 
 .btn-save:hover {
-	background: #7299BE;
+	background: #7299be;
 }
 
 .btn-change {
@@ -349,9 +356,9 @@ export default {
 	right: -3%;
 	width: 40px;
 	height: 25px;
-	border: solid 1px #D5D5D5;
+	border: solid 1px #d5d5d5;
 	border-radius: 5px;
-	background-color: #FFFFFF;
+	background-color: #ffffff;
 	font-size: 10px;
 	line-height: 13px;
 	color: rgba(0, 0, 0, 0.7);
@@ -361,7 +368,7 @@ export default {
 }
 
 .btn-change:active {
-	background: #7299BE;
+	background: #7299be;
 	transition: 0.3s;
 }
 
@@ -384,7 +391,7 @@ export default {
 .delete-box {
 	width: 253px;
 	height: 113px;
-	background: #FFFFFF;
+	background: #ffffff;
 	border-radius: 10px;
 	color: #000000;
 	font-weight: 400;
@@ -397,13 +404,12 @@ export default {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 1007;
-
 }
 
 .delete-box-1 {
 	width: 135px;
 	height: 12px;
-	background: #FFFFFF;
+	background: #ffffff;
 	border-radius: 5px;
 	color: #000000;
 	font-weight: 400;
@@ -424,10 +430,10 @@ export default {
 .delete-box-3 {
 	width: 65px;
 	height: 26px;
-	background: #FFFFFF;
+	background: #ffffff;
 	border-radius: 5px;
-	border: 0.5px solid #E01616;
-	color: #E01616;
+	border: 0.5px solid #e01616;
+	color: #e01616;
 	font-weight: 400;
 	font-size: 10px;
 	text-align: center;
@@ -438,13 +444,14 @@ export default {
 .delete-box-4 {
 	width: 65px;
 	height: 26px;
-	background: #FFFFFF;
+	background: #ffffff;
 	border-radius: 5px;
-	border: 0.5px solid #6A6A6A;
-	color: #6A6A6A;
+	border: 0.5px solid #6a6a6a;
+	color: #6a6a6a;
 	font-weight: 400;
 	font-size: 10px;
 	text-align: center;
 	line-height: 26px;
 	cursor: pointer;
-}</style>
+}
+</style>
