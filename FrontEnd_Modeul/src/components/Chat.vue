@@ -723,6 +723,7 @@ export default {
 		this.loadParticipant();
 		this.loadDutchMemberList();
 		this.loadDutchList();
+		this.checkDutchHave();
 	},
 	updated() {
 
@@ -735,6 +736,8 @@ export default {
 				this.participantList = dataList.memberList;
 				this.chat = dataList.stuffView;
 				this.formatChatRegDate();
+				this.loadDutchMemberList();
+				this.checkDutchHave();
 				console.log(this.participantList);
 				console.log("this.participantList.memberId: " + this.participantList[0].memberId);
 				console.log("this.chat.memberId:" + this.chat.memberId);
