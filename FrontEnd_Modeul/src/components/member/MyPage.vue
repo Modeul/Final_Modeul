@@ -108,7 +108,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			myMemberId: 110,
+			// myMemberId: 110,
 			loginInfo: '',
 			openModal: false,
 			openModal2: false,
@@ -121,7 +121,7 @@ export default {
 			myHeaders.append("Content-Type", "application/json");
 
 			var raw = JSON.stringify({
-				"id": 110
+				"id": this.userDetails.id
 			});
 
 			var requestOptions = {
@@ -148,7 +148,7 @@ export default {
 		},
 	},
 	mounted() {
-		fetch(`${this.defaultStore.host}/api/member/${this.myMemberId}`)
+		fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;

@@ -102,12 +102,11 @@ export default {
 @import "/css/component/member/stuff/component-list-search.css";
 
 .canvas {
-	max-width: 600px;
-	padding: 0 20px;
-	margin: 0 auto;
-}
-
-.search-header {
+		max-width: 600px;
+		padding: 0 20px;
+		margin: 0 auto;
+	}
+.search-header{
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;

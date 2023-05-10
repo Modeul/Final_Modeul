@@ -402,6 +402,27 @@ export default {
 </script>
 
 <template>
+
+<div class="pc-header-wrap">
+		<div class="header-menu">
+			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<div class="login"><router-link to="/login">로그인</router-link></div>
+		</div>
+		<div class="pc-header">
+			<div class="logo-moduel header-logo"></div>
+			<div class="search-container">
+				<div class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
+					<h1 class="icon search-dodbogi">돋보기</h1>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn-heart"></div>
+				<div class="btn-location"></div>
+			</div>
+		</div>
+	</div>
+
 	<!-- detail : flex-container -->
 	<div class="detail">
 		<header class="detail-header">
@@ -476,21 +497,19 @@ export default {
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
-				<!-- detail-heading : detail-main - item2 -->
-				<section class="canvas detail-heading">
-					<h1 class="d-none">heading</h1>
-					<div class="d-fl detail-edit">
-						<div class="detail-top">
-							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
-								(stuff.deadlineState == 1) ? 'day-left' :
-									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
-						</div>
+				<div class="detail-content-wrap">
+					<!-- detail-heading : detail-main - item2 -->
+					<section class="canvas detail-heading">
+						<h1 class="d-none">heading</h1>
+						<div class="d-fl detail-edit">
+							<div class="detail-top">
+								<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
+								<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+									(stuff.deadlineState == 1) ? 'day-left' :
+										(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+							</div>
 
 						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
-
-
-
 
 					</div>
 					<p class="detail-heading-title">{{ stuff.title }}</p>
@@ -498,39 +517,40 @@ export default {
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
-					<div class="detail-price">{{ stuff.price }}원</div>
+						<div class="detail-price">{{ stuff.price }}원</div>
 
-				</section>
-				<!-- detail-info : detail-main - item3 -->
-				<section class="canvas detail-info">
-					<h1 class="d-none">info</h1>
-					<div class="detail-in">
-						<div class="detail-info-title">인원</div>
-						<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">기한</div>
-						<div class="detail-info-txt">{{ stuff.deadline }}</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">장소</div>
-						<div class="detail-info-txt">{{ stuff.place }}</div>
-					</div>
+					</section>
+					<!-- detail-info : detail-main - item3 -->
+					<section class="canvas detail-info">
+						<h1 class="d-none">info</h1>
+						<div class="detail-in">
+							<div class="detail-info-title">인원</div>
+							<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">기한</div>
+							<div class="detail-info-txt">{{ stuff.deadline }}</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">장소</div>
+							<div class="detail-info-txt">{{ stuff.place }}</div>
+						</div>
 
-				</section>
-				<section class="canvas map">
-					<div @click="toggleMap" v-if="showMap">지도 열기</div>
-					<div @click="toggleMap" v-else>지도 닫기</div>
-					<div id="map"></div>
-				</section>
-				<!-- detail-writing : detail-main - item4 -->
-				<section class="canvas detail-writing">
-					<h1 class="d-none">writing</h1>
-					<!-- <p class="detail-paragraph">
+					</section>
+					<section class="canvas map">
+						<div @click="toggleMap" v-if="showMap">지도 열기</div>
+						<div @click="toggleMap" v-else>지도 닫기</div>
+						<div id="map"></div>
+					</section>
+					<!-- detail-writing : detail-main - item4 -->
+					<section class="canvas detail-writing">
+						<h1 class="d-none">writing</h1>
+						<!-- <p class="detail-paragraph">
 								            {{ stuff.content }}
 								          </p> -->
-					<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
-				</section>
+						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
+					</section>
+				</div>
 			</div>
 		</main>
 		<div class="favorModal" @animationend="aniEndHandler">
@@ -602,9 +622,28 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
+@import "/css/component/admin/member/list-responsive.css";
 
-.detail {
-	margin: 0 auto;
+@media (min-width: 768px) {
+	.detail-main {
+		display: flex;
+		flex-direction: row;
+	}
+
+	main
+	{
+		max-width: 1050px;
+		margin: 0 auto;
+	}
+
+	.detail-img {
+		width: 50%;
+	}
+
+	.detail-content-wrap {
+		width: 50%;
+		margin: auto 0;
+	}
 }
 
 .v-slide-group button {
