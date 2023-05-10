@@ -24,7 +24,7 @@ export default {
 <template>
 	<v-app>
 		<router-view></router-view>
-		<Loader :loading="defaultStore.loadingStatus"></Loader>
+		<Loader></Loader>
 	</v-app>
 </template>
 
