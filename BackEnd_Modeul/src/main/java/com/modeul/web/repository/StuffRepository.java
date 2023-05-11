@@ -46,7 +46,9 @@ public interface StuffRepository {
 	int uploadImage(Image image);
 
 	Long getCountList(Long categoryId, Long memberId);
+	Long getCountList(Long categoryId, Long memberId, String query);
 
+	
 	/* 공구상품 수정 */
 	int update(Stuff stuff);
 

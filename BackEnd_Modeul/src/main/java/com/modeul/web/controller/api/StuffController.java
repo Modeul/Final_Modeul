@@ -62,15 +62,14 @@ public class StuffController {
 			@RequestParam(name = "dc", required = false) String dongCode
 			) {
 		System.out.println("동코드"+dongCode);
-		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
-		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId, dongCode); 
+		// List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
+		List<StuffView> list = service.getRecentViewList(query, categoryId, page, memberId, dongCode); 
 		List<Category> categoryList = categoryService.getList();
 		
-		
-		Long listCount = service.getListCount(categoryId, page, memberId);
+		Long listCount = service.getListCount(categoryId, page, memberId, query);
 
 		Map<String, Object> dataList = new HashMap<>();
-		dataList.put("queryList", queryList);
+		// dataList.put("queryList", queryList);
 		dataList.put("list", list);
 		dataList.put("categoryList", categoryList);
 		dataList.put("listCount", listCount);
