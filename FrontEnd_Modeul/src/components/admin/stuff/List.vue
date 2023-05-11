@@ -70,8 +70,13 @@ export default {
 		queryHandler(e) {
 			this.query = e.target.value
 			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query) || stuff.content.includes(this.query));
+			this.totalPage = Math.floor(this.list.length / this.pageSize);
+					if (this.list.length % this.pageSize > 0) { this.totalPage += 1 };
+			this.pagingList()			
 		},
 		pagingList() {
+			if (this.page > this.totalPage)
+				this.page = 1;
 			let start = (this.page - 1)* this.pageSize;
 			let end = start + this.pageSize;
 			this.pageList = this.list.slice(start, end);
@@ -91,7 +96,6 @@ export default {
 	},
 	mounted() {
 		this.addListHandler();
-		this.pagingList();
 	}
 }
 </script>

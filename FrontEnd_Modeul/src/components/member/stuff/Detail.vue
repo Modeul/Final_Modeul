@@ -441,9 +441,8 @@ export default {
 						<div @click="modalHandler2" class="icon-edit4"></div>
 					</div>
 				</div>
-				<div class="icon-report" v-else>
+				<div class="icon-report" v-else @click="modalHandler3">
 					<div class="d-fl-al fl-dir-col">
-						<div @click="modalHandler3">신고</div>
 					</div>
 				</div>
 				<!-- 취소 확인 모달 -->
