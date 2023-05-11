@@ -21,7 +21,7 @@ export default {
 
 			page: 1,
 			totalPage: 0,
-			pageSize: 5,
+			pageSize: 6,
 			pageList: [],
 
 		}
@@ -71,13 +71,13 @@ export default {
 			this.query = e.target.value
 			this.list = this.listOrigin.filter(stuff => stuff.title.includes(this.query) || stuff.content.includes(this.query));
 			this.totalPage = Math.floor(this.list.length / this.pageSize);
-					if (this.list.length % this.pageSize > 0) { this.totalPage += 1 };
-			this.pagingList()			
+			if (this.list.length % this.pageSize > 0) { this.totalPage += 1 };
+			this.pagingList()
 		},
 		pagingList() {
 			if (this.page > this.totalPage)
 				this.page = 1;
-			let start = (this.page - 1)* this.pageSize;
+			let start = (this.page - 1) * this.pageSize;
 			let end = start + this.pageSize;
 			this.pageList = this.list.slice(start, end);
 			console.log(this.pageList);
@@ -110,8 +110,8 @@ export default {
 			<div class="search-container-admin-sr">
 				<div class="d-fl d-b-none search-form1">
 					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="제목이나 내용으로 검색"
-						:value="query" @input="queryHandler">
+					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="제목이나 내용으로 검색" :value="query"
+						@input="queryHandler">
 				</div>
 			</div>
 		</div>
@@ -129,12 +129,21 @@ export default {
 				</thead>
 				<tbody class="table-body">
 					<tr v-for="s in pageList">
-						<td style="width: 230px;  min-width: 230px;  ">{{ s.title }}</td>
-						<td style="width: 150px;  min-width: 150px;   ">{{ s.categoryName }}</td>
-						<td style="width: 200px;  min-width: 200px;  ">{{ s.place }}</td>
-						<td style="width: calc(100vw - 890px);  min-width: 700px; text-align:left;">{{ s.content }}</td>
-						<td style="width: 20px;   min-width: 20px;  text-align:left;"><button @click="modalHandler"
-								:value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+						<td style="width: 230px;  min-width: 230px;">
+							<router-link :to="{ path: '/member/stuff/' + s.id }"><span></span>{{ s.title }}</router-link>
+						</td>
+						<td style="width: 150px;  min-width: 150px;">
+							<span>{{ s.categoryName }}</span>
+						</td>
+						<td style="width: 200px;  min-width: 200px;">
+							<span>{{ s.place }}</span>
+						</td>
+						<td style="width: calc(100vw - 890px);  min-width: 700px; text-align:left;">
+							<span>{{ s.content }}</span>
+						</td>
+						<td style="width: 20px;   min-width: 20px; text-align:left;">
+							<button @click="modalHandler" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -145,7 +154,7 @@ export default {
 					left
 				</button></div>
 			<div class="nav-items"> <span>{{ page }} / {{ totalPage === 0 ? 1 : totalPage }}</span></div>
-			<div class="nav-items"> <button :disabled="page >= totalPage " @click="nextPage()">
+			<div class="nav-items"> <button :disabled="page >= totalPage" @click="nextPage()">
 					right
 				</button></div>
 		</div>
@@ -176,6 +185,27 @@ export default {
 @import "/css/component/admin/component-admin.css";
 @import "/css/component/admin/stuff/component-stuff-list.css";
 
+
+thead tr {
+	height: 50px;
+}
+
+tbody tr {
+	height: 70px;
+}
+
+table {
+	height: 470px;
+	margin-bottom : 40px;
+}
+
+tbody td span {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
 
 .black-bg {
 	position: fixed;
