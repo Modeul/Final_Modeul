@@ -736,7 +736,7 @@ export default {
 		
 	},
 	beforeRouteLeave() {
-		this.unLoadEvent()
+		this.unLoadEvent();
 	},
 	created() {
 		this.stompConnect();
