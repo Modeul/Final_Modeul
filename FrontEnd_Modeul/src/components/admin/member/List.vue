@@ -13,16 +13,45 @@ export default {
 			query: '',
 			openModal: false,
 			openModal2: false,
-			selectedId: ''
+			selectedId: '',
+
+			page: 1,
+			totalPage: 0,
+			pageSize: 8,
+			pageList: [],
 		}
 	},
 	methods: {
 		async load() {
+			this.defaultStore.loadingStatus = true;
 
 			const response = await fetch(`${this.defaultStore.host}/api/member/list`);
 			const result = await response.json();
 			this.listOrigin = result;
 			this.list = result;
+
+			this.totalPage = Math.floor(result.length / this.pageSize);
+			if (result.length % this.pageSize > 0) { this.totalPage += 1 };
+			this.pagingList();
+			this.defaultStore.loadingStatus = false;
+
+		},
+
+		pagingList() {
+			if (this.page > this.totalPage)
+				this.page = 1;
+			let start = (this.page - 1) * this.pageSize;
+			let end = start + this.pageSize;
+			this.pageList = this.list.slice(start, end);
+			console.log(this.pageList);
+		},
+		nextPage() {
+			this.page += 1;
+			this.pagingList();
+		},
+		prevPage() {
+			this.page -= 1;
+			this.pagingList();
 		},
 
 		deleteBtnHandler(e) {
@@ -61,6 +90,9 @@ export default {
 		queryHandler(e) {
 			this.query = e.target.value
 			this.list = this.listOrigin.filter(member => member.uid.includes(this.query) || member.email.includes(this.query));
+			this.totalPage = Math.floor(this.list.length / this.pageSize);
+			if (this.list.length % this.pageSize > 0) { this.totalPage += 1 };
+			this.pagingList()
 		}
 	},
 	mounted() {
@@ -99,47 +131,57 @@ export default {
 		</div>
 		<div class="admin-search-box">
 			<div class="search-container-admin-sr">
-				<form action="" class="d-fl d-b-none search-form1" method="get">
+				<div class="d-fl d-b-none search-form1">
 					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
 					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="ID 혹은 EMAIL로 검색" :value="query"
 						@input="queryHandler">
-				</form>
+				</div>
 			</div>
 		</div>
-		<table>
-			<thead>
-				<tr>
-					<th>
-						ID
-					</th>
-					<th>
-						이름
-					</th>
-					<th>
-						닉네임
-					</th>
-					<th>
-						EMAIL
-					</th>
-					<th>
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr>
+						<th>
+							ID
+						</th>
+						<th>
+							이름
+						</th>
+						<th>
+							닉네임
+						</th>
+						<th>
+							EMAIL
+						</th>
+						<th>
 
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="item in list" :key="item.name">
-					<td>{{ item.uid }}</td>
-					<td>{{ item.name }}</td>
-					<td>{{ item.nickname }}</td>
-					<td>{{ item.email }}</td>
-					<td> <button @click="deleteBtnHandler" :value="item.id" class="icon-admin3 icon-delete">삭제</button> </td>
-				</tr>
-			</tbody>
-		</table>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="item in pageList" :key="item.name">
+						<td>{{ item.uid }}</td>
+						<td>{{ item.name }}</td>
+						<td>{{ item.nickname }}</td>
+						<td>{{ item.email }}</td>
+						<td> <button @click="deleteBtnHandler" :value="item.id" class="icon-admin3 icon-delete">삭제</button> </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="paging-nav">
+			<div class="nav-items"> <button :disabled="page === 1" @click="prevPage()">
+					left
+				</button></div>
+			<div class="nav-items"> <span>{{ page }} / {{ totalPage === 0 ? 1 : totalPage }}</span></div>
+			<div class="nav-items"> <button :disabled="page >= totalPage" @click="nextPage()">
+					right
+				</button></div>
+		</div>
+
 	</main>
 </template>
-
-
 <style scoped>
 @import "/css/component/component.css";
 @import "/css/component/admin/component-admin.css";
@@ -194,4 +236,37 @@ export default {
 	margin-left: 25px;
 	cursor: pointer;
 }
+
+.paging-nav {
+	margin: 15px auto 0;
+	display: flex;
+	justify-content: center;
+}
+
+.nav-items>button {
+	color: #FFFFFF;
+	background-color: rgba(99, 160, 194, 1);
+	border-radius: 10%;
+	width: 50px;
+}
+
+.nav-items {
+	margin: auto 8px;
+}
+
+
+
+thead tr {
+	height: 50px;
+}
+
+tbody tr {
+	height: 50px;
+}
+
+.table-wrap {
+	height: 470px;
+	margin-bottom: 40px;
+}
+
 </style>

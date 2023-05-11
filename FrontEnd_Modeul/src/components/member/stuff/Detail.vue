@@ -4,6 +4,7 @@ import 'dayjs/locale/ko';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
 
 export default {
 	data() {
@@ -42,6 +43,9 @@ export default {
 			favorOpenModal: false,
 			stuffUser: false,
 		};
+	},
+	components: {
+		PcHeader
 	},
 	methods: {
 		/* 뒤로가기 : 이전페이지로 이동 */
@@ -402,98 +406,75 @@ export default {
 </script>
 
 <template>
-
-<div class="pc-header-wrap">
-		<div class="header-menu">
-			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div class="login"><router-link to="/login">로그인</router-link></div>
-		</div>
-		<div class="pc-header">
-			<div class="logo-moduel header-logo"></div>
-			<div class="search-container">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
-					<h1 class="icon search-dodbogi">돋보기</h1>
-				</div>
-			</div>
-			<div class="btnbox">
-				<div class="btn-heart"></div>
-				<div class="btn-location"></div>
-			</div>
-		</div>
-	</div>
+	<PcHeader></PcHeader>
 
 	<!-- detail : flex-container -->
 	<div class="detail">
-		<header class="detail-header">
-			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
-			<!-- 수정/삭제 모달 버튼 -->
-			<!-- <i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i> -->
-			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
-			<!-- 모달 배경 -->
-			<div v-if="openModal">
-				<div class="icon-edit2" v-if="this.stuffUser">
-					<div class="d-fl-al fl-dir-col">
-						<router-link :to="'./edit/' + stuff.id">
-							<div class="icon-edit3"></div>
-						</router-link>
-						<div @click="modalHandler2" class="icon-edit4"></div>
-					</div>
-				</div>
-				<div class="icon-report" v-else>
-					<div class="d-fl-al fl-dir-col">
-						<div @click="modalHandler3">신고</div>
-					</div>
-				</div>
-				<!-- 취소 확인 모달 -->
-				<div v-if="openModal2" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-						<div class="delete-box-2">
-							<div @click="deleteStuff" class="delete-box-3">삭제</div>
-							<div @click="modalHandler2" class="delete-box-4">취소</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="openModal3" class="black-bg">
-				<div class="report-box">
-					<div class="delete-box-1">신고 하시겠습니까?</div>
-					<div>사유</div>
-					<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
-					<div class="delete-box-2">
-						<div @click="reportStuff" class="delete-box-3">신고</div>
-						<div @click="modalHandler3" class="delete-box-4">취소</div>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="openModal4" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">신고 완료</div>
-					<div class="delete-box-2">
-						<div @click="modalHandler4" class="delete-box-3">닫기</div>
-					</div>
-				</div>
-			</div>
-
-
-
-
-		</header>
 
 		<!-- detail - item1  -->
 		<main>
 			<!-- detail-main : flex-container -->
+			<header class="detail-header">
+				<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
+
+				<!-- 수정/삭제 모달 버튼 -->
+
+				<i @click="modalHandler" class="icon-edit"></i>
+				<!-- 모달 배경 -->
+				<div v-if="openModal">
+					<div class="icon-edit2" v-if="this.stuffUser">
+						<div class="d-fl-al fl-dir-col">
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3"></div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4"></div>
+						</div>
+					</div>
+					<div class="icon-report" v-else @click="modalHandler3">
+						<div class="d-fl-al fl-dir-col">
+						</div>
+					</div>
+					<!-- 취소 확인 모달 -->
+					<div v-if="openModal2" class="black-bg">
+						<div class="delete-box">
+							<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+							<div class="delete-box-2">
+								<div @click="deleteStuff" class="delete-box-3">삭제</div>
+								<div @click="modalHandler2" class="delete-box-4">취소</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal3" class="black-bg">
+					<div class="report-box">
+						<div class="delete-box-1">신고 하시겠습니까?</div>
+						<div>사유</div>
+						<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
+						<div class="delete-box-2">
+							<div @click="reportStuff" class="delete-box-3">신고</div>
+							<div @click="modalHandler3" class="delete-box-4">취소</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal4" class="black-bg">
+					<div class="delete-box">
+						<div class="delete-box-1">신고 완료</div>
+						<div class="delete-box-2">
+							<div @click="modalHandler4" class="delete-box-3">닫기</div>
+						</div>
+					</div>
+				</div>
+			</header>
 			<div class="detail-main">
+
 				<!-- detail-img : detail-main - item1 -->
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -509,11 +490,11 @@ export default {
 										(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
 							</div>
 
-						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
+							<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
 
-					</div>
-					<p class="detail-heading-title">{{ stuff.title }}</p>
-					<!-- <div class="d-fl">
+						</div>
+						<p class="detail-heading-title">{{ stuff.title }}</p>
+						<!-- <div class="d-fl">
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
@@ -622,7 +603,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
-@import "/css/component/admin/member/list-responsive.css";
 
 @media (min-width: 768px) {
 	.detail-main {
@@ -630,19 +610,23 @@ export default {
 		flex-direction: row;
 	}
 
-	main
-	{
+	main {
 		max-width: 1050px;
 		margin: 0 auto;
 	}
 
 	.detail-img {
 		width: 50%;
+		max-height: 525px;
 	}
 
 	.detail-content-wrap {
 		width: 50%;
-		margin: auto 0;
+		margin: auto 0;	
+	}
+
+	.icon.icon-back {
+		display: none;
 	}
 }
 
@@ -698,20 +682,20 @@ export default {
 
 .error-box {
 	position: absolute;
-    background-color: white;
-    width: 70%;
-    height: 40px;
-    text-align: center;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    padding: 0 26px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 500;
+	background-color: white;
+	width: 70%;
+	height: 40px;
+	text-align: center;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	padding: 0 26px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 12px;
+	font-weight: 500;
 	animation-timing-function: ease-in-out;
 	animation: fadeout 4s;
 	animation-fill-mode: forwards;
@@ -720,13 +704,13 @@ export default {
 
 .error-gotofavor {
 	position: absolute;
-    text-align: center;
-    top: 5%;
-    right: 15%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    /* padding: 0 12px; */
-    font-weight: 600;
+	text-align: center;
+	top: 5%;
+	right: 15%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	/* padding: 0 12px; */
+	font-weight: 600;
 	font-size: 10px;
 	animation-timing-function: ease-in-out;
 	animation: fadeout 4s;
@@ -738,12 +722,16 @@ export default {
 @import "/css/component/member/stuff/map-content.css";
 
 @keyframes fadeout {
-        from {
-            opacity: 1;
-        }
-		50%  {opacity: 1;}
-        to {
-            opacity: 0;
-        }
-    }
+	from {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
 </style>

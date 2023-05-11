@@ -30,10 +30,10 @@
 						<h1 class="label-admin">카테고리 관리</h1>
 					</div>
 				</router-link>
-				<router-link to="/admin/report/list">
+				<router-link class="admin-side-wrap" to="/admin/report/list">
 				<div class="iconbox-admin m-t-35px">
 					<!-- <a href="../category/list.html" class="icon-admin1 icon-category">카테고리 관리</a> -->
-					<div div class="icon-admin1 icon-category">신고 관리</div>
+					<div div class="icon-admin1 icon-report">신고 관리</div>
 					<h1 class="label-admin">신고 관리</h1>
 				</div>
 			</router-link>

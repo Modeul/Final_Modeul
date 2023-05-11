@@ -4,6 +4,8 @@ import 'dayjs/locale/ko'
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
+
 export default {
 	data() {
 		return {
@@ -18,6 +20,9 @@ export default {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore()
 		};
+	},
+	components: {
+		PcHeader
 	},
 	computed: {
 	},
@@ -176,7 +181,9 @@ export default {
 </script>
 
 <template>
-	<div class="pc-header-wrap">
+	<PcHeader></PcHeader>
+
+	<!-- <div class="pc-header-wrap">
 		<div class="header-menu">
 			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
 			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
@@ -196,6 +203,7 @@ export default {
 			</div>
 		</div>
 	</div>
+	 -->
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
 			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
@@ -339,6 +347,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
-@import "/css/component/admin/member/list-responsive.css";
+@import "/css/component/admin/member/list-responsive.css";	
 @import "/css/button.css";
 </style>
