@@ -59,6 +59,7 @@ export default {
 			}
 		},
 		queryHandler(e) {
+			e.preventDefault
 			this.query = e.target.value
 			this.list = this.listOrigin.filter(member => member.uid.includes(this.query) || member.email.includes(this.query));
 		}
@@ -99,11 +100,11 @@ export default {
 		</div>
 		<div class="admin-search-box">
 			<div class="search-container-admin-sr">
-				<form action="" class="d-fl d-b-none search-form1" method="get">
+				<div class="d-fl d-b-none search-form1">
 					<h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
 					<input type="search" name="admin-list" class="search-input m-l-6px" placeholder="ID 혹은 EMAIL로 검색" :value="query"
 						@input="queryHandler">
-				</form>
+				</div>
 			</div>
 		</div>
 		<table>

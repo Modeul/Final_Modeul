@@ -37,8 +37,6 @@ main {
   height: 50vw;
   min-height: 200px;
   width: 100%;
-  background-color: #f3f3f3;
-  /* transition: 0.3s; */
   display: flex;
   flex-direction: column;
 }
