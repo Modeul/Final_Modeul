@@ -114,6 +114,10 @@
 				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
 				<!-- <p class="chat-content">{{ m.content }}</p> -->
 				<!-- </div> -->
+				<div class="chat-line-wrap dutch" v-else-if="m.type == 'DUTCH'">
+					<p v-html="getContent(m.content)" class="chat-content"></p>
+					<button class="dutch-final-result-btn" @click="calDrawer = !calDrawer">정산 결과 자세히 보기</button>
+				</div>
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
 				</div>
@@ -372,6 +376,9 @@ export default {
 	},
 
 	methods: {
+		getContent(content) {
+			return (content || "").split('\n').join('<br>');
+		},
 		blurHandler() {
 			console.log(this.memberPriceList);
 		},
@@ -647,6 +654,14 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadDutchMemberList();
+
+					this.stompClient.send('/pub/chat/dutchComplete',
+						JSON.stringify({
+							type: 'DUTCH',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+						})
+					)
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -746,7 +761,7 @@ export default {
 			if(this.checkDutchComplete === false && !this.banishAuthority)
 				this.openDutchCheckModal = !this.openDutchCheckModal;
 			
-		}
+		},
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent()
@@ -1454,6 +1469,37 @@ input::placeholder {
 	width: 100%;
 	display: flex;
 	margin-top: 18px;
+}
+.chat-line-wrap.dutch{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 18px auto auto auto;
+	width: 200px;
+	border-radius: 12px 12px 12px 12px;
+	background-color: #CADEFC;
+	border: 0.5px solid #CAD3E1;
+}
+
+.chat-line-wrap.dutch .chat-content {
+	font-size: 12px;
+	font-weight: 500;
+	color: #1A1A1A;
+	columns: #1A1A1A;
+	word-break: break-all;
+	text-align: center;
+}
+
+
+.dutch-final-result-btn{
+	font-size: 12px;
+	font-weight: 500;
+	color: #327ff3;
+	width: 170px;
+	height:30px;
+	background-color: #bed3fb;
+	border-radius: 6px 6px 6px 6px;
+	margin-bottom: 6px;
 }
 
 .chat-line-wrap.notice .chat-content {
