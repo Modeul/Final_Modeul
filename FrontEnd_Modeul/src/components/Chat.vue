@@ -206,8 +206,8 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8" @input="chipinHandler"
-								placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
+							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8"
+								@input="chipinHandler" placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
 						</div>
 					</section>
 					<div class="calc-members-title">참여 인원</div>
@@ -759,6 +759,16 @@ export default {
 					() => {
 
 					});
+		},
+		noAuthorityDutchHandler() {
+
+			if (this.checkDutchComplete === true && !this.banishAuthority)
+				this.calDrawer = !this.calDrawer;
+
+
+			if (this.checkDutchComplete === false && !this.banishAuthority)
+				this.openDutchCheckModal = !this.openDutchCheckModal;
+
 		},
 		inputFocus(memberId) {
 			if (this.calcSwitch)
