@@ -33,7 +33,7 @@
 
 					<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
 						<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
-						 <input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
+						<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
 
 					</div>
 				</div>
@@ -59,7 +59,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			memberId: 2,
+			memberId: '',
 			page: '',
 			list: [],
 			listCount: '',
@@ -78,6 +78,7 @@ export default {
 			this.openModal = !this.openModal;
 		},
 		toggleFavorite(stuffId) {
+			this.memberId = this.userDetails.id;
 			// this.isfavorite[StuffId] = !this.isfavorite[StuffId];
 			// console.log(`StuffId:${StuffId}`)
 			// console.log(this.isfavorite[StuffId])
@@ -138,6 +139,7 @@ export default {
 		},
 
 		async addListHandler() {
+			this.memberId = this.userDetails.id;
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.memberId}&p=${this.page}&c=${this.categoryId}`)
@@ -193,6 +195,7 @@ export default {
 	mounted() {
 		this.page = 0;
 		this.addListHandler();
+		this.memberId = this.userDetails.id;
 	},
 	components: { vModelCheckbox }
 }
