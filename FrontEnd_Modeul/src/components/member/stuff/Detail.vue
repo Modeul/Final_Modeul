@@ -406,7 +406,6 @@ export default {
 </script>
 
 <template>
-
 	<PcHeader></PcHeader>
 
 	<!-- detail : flex-container -->
@@ -419,34 +418,34 @@ export default {
 			<header class="detail-header">
 				<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
-			<!-- 수정/삭제 모달 버튼 -->
-			
-			<i @click="modalHandler" class="icon-edit"></i> 
-			<!-- 모달 배경 -->
-			<div v-if="openModal">
-				<div class="icon-edit2" v-if="this.stuffUser">
-					<div class="d-fl-al fl-dir-col">
-						<router-link :to="'./edit/' + stuff.id">
-							<div class="icon-edit3"></div>
-						</router-link>
-						<div @click="modalHandler2" class="icon-edit4"></div>
+				<!-- 수정/삭제 모달 버튼 -->
+
+				<i @click="modalHandler" class="icon-edit"></i>
+				<!-- 모달 배경 -->
+				<div v-if="openModal">
+					<div class="icon-edit2" v-if="this.stuffUser">
+						<div class="d-fl-al fl-dir-col">
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3"></div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4"></div>
+						</div>
 					</div>
-				</div>
-				<div class="icon-report" v-else @click="modalHandler3">
-					<div class="d-fl-al fl-dir-col">
+					<div class="icon-report" v-else @click="modalHandler3">
+						<div class="d-fl-al fl-dir-col">
+						</div>
 					</div>
-				</div>
-				<!-- 취소 확인 모달 -->
-				<div v-if="openModal2" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-						<div class="delete-box-2">
-							<div @click="deleteStuff" class="delete-box-3">삭제</div>
-							<div @click="modalHandler2" class="delete-box-4">취소</div>
+					<!-- 취소 확인 모달 -->
+					<div v-if="openModal2" class="black-bg">
+						<div class="delete-box">
+							<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+							<div class="delete-box-2">
+								<div @click="deleteStuff" class="delete-box-3">삭제</div>
+								<div @click="modalHandler2" class="delete-box-4">취소</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
 				<div v-if="openModal3" class="black-bg">
 					<div class="report-box">
@@ -618,6 +617,7 @@ export default {
 
 	.detail-img {
 		width: 50%;
+		max-height: 525px;
 	}
 
 	.detail-content-wrap {
