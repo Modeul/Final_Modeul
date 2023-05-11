@@ -138,13 +138,13 @@ export default {
 						<th style="width: 600px; text-align: left;">신고 사유</th>
 					</tr>
 				</thead>
-				<tbody class="table-body">
+				<tbody class="table-body" style="width: 100%">
 					<tr v-for="s in list">
 						<td style="width: 100px; ">{{ s.id }} <button @click="modalHandler3" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
 						<td style="width: 100px; " v-text=formatDate(s.regdate)></td>
 						<td style="width: 150px; ">{{ s.nickname }}</td>
 						<td style="width: 100px;  color: rgba(114, 153, 190, 1);"><router-link :to="{ path: '/member/stuff/' + s.stuffId }">{{ s.stuffId }}</router-link></td>
-						<td style="width: 100% auto; text-align: left;">{{s.detail}}<button style="float: right;" @click="modalHandler" :value="s.stuffId" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+						<td style="width: 600px; text-align: left;">{{s.detail}}<button style="float: right;" @click="modalHandler" :value="s.stuffId" class="icon-admin3 icon-delete">지우기 버튼</button></td>
 					</tr>
 				</tbody>
 			</table>

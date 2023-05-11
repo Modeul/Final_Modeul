@@ -273,7 +273,7 @@ export default {
 
 .nav-items>button {
 	color: #FFFFFF;
-	background-color: rgb(156, 156, 156);
+	background-color: rgba(99, 160, 194, 1);
 	border-radius: 10%;
 	width: 50px;
 }
