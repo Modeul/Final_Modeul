@@ -34,7 +34,7 @@
 	<div v-if="openDutchCheckModal" class="black-bg">
 		<div class="dutchcheck-modal-box">
 			<div class="dutchcheck-modal-txt">정산이 완료되지 않았습니다.</div>
-			<button @click.prevent="openDutchCheckModal=!openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
+			<button @click.prevent="openDutchCheckModal = !openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
 		</div>
 	</div>
 
@@ -116,8 +116,10 @@
 				<!-- </div> -->
 				<div class="chat-line-wrap dutch" v-else-if="m.type == 'DUTCH'">
 					<p v-html="getContent(m.content)" class="chat-content"></p>
-					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히 보기</button>
-					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과 자세히 보기</button>
+					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히
+						보기</button>
+					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과
+						자세히 보기</button>
 				</div>
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
@@ -169,7 +171,7 @@
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<span>{{ ra.bankName + " "}} </span>
+						<span>{{ ra.bankName + " " }} </span>
 						<span> {{ ra.number }}</span>
 						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
@@ -204,7 +206,7 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" v-model.number="totalPrice" maxlength="8" @input="chipinHandler"
+							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8" @input="chipinHandler"
 								placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
 						</div>
 					</section>
@@ -220,7 +222,7 @@
 								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 								<span v-if="!calcSwitch" class="calc-member-span-price">
 									<input type="text" v-model.number=personalPrice[user.memberId] maxlength="8"
-										pattern="[0-9]*" required placeholder="금액 입력" @keydown="inputCheck"
+										pattern="(\d+,)*\d+" required placeholder="금액 입력" @keydown="inputCheck"
 										@focus="inputFocus(user.memberId)" @blur="inputBlur(user.memberId)"> 원
 								</span>
 							</div>
@@ -243,7 +245,8 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span @click="openDeleteModalHandler" v-if="this.banishAuthority">삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler"
+							v-if="this.banishAuthority">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
@@ -371,14 +374,17 @@ export default {
 			sumDutch: '',
 			dutchList: '',
 			copyModal: false,
-			recentAccountInfo:'',
-			openDutchCheckModal:false,
-			checkDutchComplete:false,
-			stuffLeaderName:'',
+			recentAccountInfo: '',
+			openDutchCheckModal: false,
+			checkDutchComplete: false,
+			stuffLeaderName: '',
 		}
 	},
 
 	methods: {
+		getContent(content) {
+			return (content || "").split('\n').join('<br>');
+		},
 		chipinHandler() {
 			let chipin = Math.floor(this.totalPrice / this.participantList.length);
 
@@ -730,6 +736,19 @@ export default {
 		},
 		copyHandler() {
 			navigator.clipboard.writeText(this.selectBank + this.accountNumber)
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
+		},
+		copyRecentAccountHandler(number) {
+			navigator.clipboard.writeText(number)
 				.then(() => {
 					this.copyModal = false;
 
@@ -1467,7 +1486,8 @@ input::placeholder {
 	display: flex;
 	margin-top: 18px;
 }
-.chat-line-wrap.dutch{
+
+.chat-line-wrap.dutch {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -1488,12 +1508,12 @@ input::placeholder {
 }
 
 
-.dutch-final-result-btn{
+.dutch-final-result-btn {
 	font-size: 12px;
 	font-weight: 500;
 	color: #327ff3;
 	width: 170px;
-	height:30px;
+	height: 30px;
 	background-color: #bed3fb;
 	border-radius: 6px 6px 6px 6px;
 	margin-bottom: 6px;
