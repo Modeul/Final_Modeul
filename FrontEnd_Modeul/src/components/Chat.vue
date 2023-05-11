@@ -131,7 +131,7 @@
 	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 
-		<section class="calc" :class="{ 'd-none': !isAccount }">
+		<Form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
 				<div class="icon">뒤로가기</div>
@@ -144,15 +144,15 @@
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
-				
+
 				<div class="account-input">
-                    <select required class="account-input-box" v-model="selectBank">
-                        <option value="" selected>은행 선택</option>
-                        <option v-for="bank in banks" v-text="bank"></option>
-                    </select>
-                    <input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required> 
-                </div>
-				<div class="account-recent" >
+					<select required class="account-input-box" v-model="selectBank">
+						<option value="" selected>은행 선택</option>
+						<option v-for="bank in banks" v-text="bank"></option>
+					</select>
+					<input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required>
+				</div>
+				<div class="account-recent">
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
@@ -163,10 +163,10 @@
 						aa
 					</div>
 				</div>
-				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
+				<button type="submit" class="calc-button">다음</button>
 
 			</div>
-		</section>
+		</Form>
 
 		<section class="calc" :class="{ 'd-none': !isCalc }">
 			<h1 class="d-none">정산하기</h1>
@@ -193,8 +193,8 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
-								placeholder="총금액을 입력해 주세요.">원
+							<input type="text" v-model.number="totalPrice" maxlength="8" @input="chipinHandler"
+								placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
 						</div>
 					</section>
 					<div class="calc-members-title">참여 인원</div>
@@ -208,8 +208,9 @@
 							<div class="calc-member-price">
 								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 								<span v-if="!calcSwitch" class="calc-member-span-price">
-									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
-										placeholder="금액 입력" @keydown="inputCheck"> 원
+									<input type="text" v-model.number=personalPrice[user.memberId] maxlength="8"
+										pattern="[0-9]*" required placeholder="금액 입력" @keydown="inputCheck"
+										@focus="inputFocus(user.memberId)" @blur="inputBlur(user.memberId)"> 원
 								</span>
 							</div>
 						</div>
@@ -265,7 +266,7 @@
 					<div class="cal-result-account-all">
 						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							<span>{{ selectBank }}  </span>
+							<span>{{ selectBank }} </span>
 							<span>{{ accountNumber }}</span>
 						</div>
 						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
@@ -316,7 +317,8 @@ export default {
 			drawer: null,
 			openModal: false,
 			stompClient: '',
-			participantList: '',
+			participantList: [],
+			personalPrice: {},
 			price: {},
 			chat: {
 				title: "여러가지 나눔",
@@ -338,7 +340,7 @@ export default {
 
 			calcSwitch: true,
 			chipinResult: 0,
-			totalPrice: 0,
+			totalPrice: '',
 			totalPriceComma: '',
 			totalPriceAlert: '',
 			totalText: true,
@@ -358,19 +360,19 @@ export default {
 			sumDutch: '',
 			dutchList: '',
 			copyModal: false,
-			recentAccountInfo:'',
+			recentAccountInfo: '',
 		}
 	},
 
 	methods: {
-		blurHandler() {
-			console.log(this.memberPriceList);
-		},
-
 		chipinHandler() {
-			console.log(this.totalPrice)
-			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-			return this.chipinResult;
+			let chipin = Math.floor(this.totalPrice / this.participantList.length);
+
+			this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+
+			this.participantList.forEach(user =>
+				this.price[user.memberId] = chipin
+			)
 		},
 
 		sendMessage(e) {
@@ -582,9 +584,11 @@ export default {
 		},
 		calc1n() {
 			this.calcSwitch = true;
+			this.price = {};
 		},
 		calcdir() {
 			this.calcSwitch = false;
+			this.price = {};
 		},
 		calculate() {
 			var requestOptions = {
@@ -678,8 +682,8 @@ export default {
 			for (let dL of this.dutchList) {
 				console.log("dL.stuffId:" + dL.stuffId + '\n');
 				if (dL.stuffId == this.$route.params.stuffId) {
-					this.isAccount = !this.isAccount;
-					this.isCalcResult = !this.isCalcResult;
+					this.isAccount = false;
+					this.isCalcResult = true;
 				}
 			}
 		},
@@ -701,7 +705,7 @@ export default {
 			this.openDeleteModalHandler()
 		},
 		copyHandler() {
-			navigator.clipboard.writeText("하나 1231234")
+			navigator.clipboard.writeText(this.selectBank + this.accountNumber)
 				.then(() => {
 					this.copyModal = false;
 
@@ -712,6 +716,21 @@ export default {
 					() => {
 
 					});
+		},
+		inputFocus(memberId) {
+			if (this.calcSwitch)
+				this.totalPrice = this.totalPrice.replace(/,/g, '');
+			else if (typeof this.personalPrice[memberId] === 'string') {
+				this.personalPrice[memberId] = this.personalPrice[memberId].replace(/,/g, '');
+			}
+		},
+		inputBlur(memberId) {
+			if (this.calcSwitch)
+				this.totalPrice = Number(this.totalPrice).toLocaleString();
+			else if (typeof this.personalPrice[memberId] === 'string' || typeof this.personalPrice[memberId] === 'number') {
+				this.price[memberId] = this.personalPrice[memberId];
+				this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
+			}
 		}
 	},
 	beforeRouteLeave() {
@@ -751,9 +770,9 @@ export default {
 
 		// 최근 계좌 목록
 		await fetch(`${this.defaultStore.host}/api/account/recent/${this.myUserId}`)
-		.then(response => response.json())
-		.then(result => {this.recentAccountInfo = result;})
-		.catch(error => console.log('error', error));
+			.then(response => response.json())
+			.then(result => { this.recentAccountInfo = result; })
+			.catch(error => console.log('error', error));
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -907,32 +926,35 @@ export default {
 
 .account-input-box {
 	width: 272px;
-    height: 48px;
-    border: 1px solid #888888;
-    color: #333;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    padding-left: 12px;
+	height: 48px;
+	border: 1px solid #888888;
+	color: #333;
+	border-radius: 10px;
+	margin-bottom: 8px;
+	padding-left: 12px;
 }
+
 select option[value=""][disabled] {
-    display: none;
+	display: none;
 }
+
 .account-input-box::-webkit-input-placeholder {
-  color: #888888;
-  font-size: 16px;
-  text-align:left;
+	color: #888888;
+	font-size: 16px;
+	text-align: left;
 }
+
 .account-recent {
 	padding: 20px 4px;
-    font-size: 14px;
-    flex: none;
-    order: 2;
-    flex-grow: 0;
+	font-size: 14px;
+	flex: none;
+	order: 2;
+	flex-grow: 0;
 }
 
 .account-recent>div:first-child {
-    font-weight: 700;
-    color: #63A0C2;
+	font-weight: 700;
+	color: #63A0C2;
 }
 
 .btn-writing {

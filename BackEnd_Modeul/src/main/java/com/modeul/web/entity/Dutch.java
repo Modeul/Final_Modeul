@@ -15,6 +15,5 @@ public class Dutch {
     private Long stuffId;
     private Long memberId;
     private String price;
-    private String account;
     private LocalDateTime date;
 }
