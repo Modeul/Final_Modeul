@@ -116,7 +116,8 @@
 				<!-- </div> -->
 				<div class="chat-line-wrap dutch" v-else-if="m.type == 'DUTCH'">
 					<p v-html="getContent(m.content)" class="chat-content"></p>
-					<button class="dutch-final-result-btn" @click="calDrawer = !calDrawer">정산 결과 자세히 보기</button>
+					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히 보기</button>
+					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과 자세히 보기</button>
 				</div>
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
