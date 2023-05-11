@@ -162,10 +162,6 @@ export default {
 
 	},
 	mounted() {
-		console.log("!!!!!!!!!!!!!!!!!!!!");
-		console.log(this.$route.path);
-		console.log("!!!!!!!!!!!!!!!!!!!!");
-
 		this.page = 0;
 		this.addListHandler();
 		this.scrollCheck();

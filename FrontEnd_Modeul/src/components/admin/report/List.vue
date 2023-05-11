@@ -103,7 +103,7 @@ export default {
 				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
 				<div class="delete-box-2">
 					<div @click="deleteReport" class="delete-box-3">삭제</div>
-					<div @click="modalHandler" class="delete-box-4">취소</div>
+					<div @click="modalHandler3" class="delete-box-4">취소</div>
 				</div>
 			</div>
 		</div>

@@ -622,7 +622,7 @@ export default {
 
 	.detail-content-wrap {
 		width: 50%;
-		margin: auto 0;
+		margin: auto 0;	
 	}
 
 	.icon.icon-back {
