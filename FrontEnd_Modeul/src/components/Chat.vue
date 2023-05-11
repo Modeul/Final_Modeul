@@ -31,6 +31,13 @@
 		</div>
 	</div>
 
+	<div v-if="openDutchCheckModal" class="black-bg">
+		<div class="dutchcheck-modal-box">
+			<div class="dutchcheck-modal-txt">정산이 완료되지 않았습니다.</div>
+			<button @click.prevent="openDutchCheckModal=!openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
+		</div>
+	</div>
+
 	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
@@ -113,10 +120,11 @@
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
+				<div v-if="banishAuthority" @click="calDrawer = !calDrawer" class="cal-btn">
+					<img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
-						src="/images/member/stuff/cal-result-btn.svg">
+				<div v-if="!banishAuthority" @click="noAuthorityDutchHandler" class="cal-btn">
+					<img src="/images/member/stuff/cal-btn.svg">
 				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
@@ -156,11 +164,9 @@
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<span>{{ ra.bankName }} </span>
+						<span>{{ ra.bankName + " "}} </span>
 						<span> {{ ra.number }}</span>
-					</div>
-					<div @click="AA">
-						aa
+						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
 				</div>
 				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
@@ -231,7 +237,7 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span @click="openDeleteModalHandler">삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler" v-if="this.banishAuthority">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
@@ -272,7 +278,7 @@
 					</div>
 
 					<div class="cal-leader-name">
-						{{ this.stuffLeaderName }}
+						{{ stuffLeaderName }}
 					</div>
 
 				</section>
@@ -359,6 +365,9 @@ export default {
 			dutchList: '',
 			copyModal: false,
 			recentAccountInfo:'',
+			openDutchCheckModal:false,
+			checkDutchComplete:false,
+			stuffLeaderName:'',
 		}
 	},
 
@@ -497,6 +506,7 @@ export default {
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
 				this.stuffLeaderId = this.chat.memberId;
+				// this.stuffLeaderName = this.memberInfo.memberName;
 			}
 		},
 		banishUserHandler() {
@@ -609,8 +619,8 @@ export default {
 		resultDnoneHandler() {
 			console.log("price:" + this.price);
 			this.dutchHandler();
-			this.isCalc = !this.isCalc;
-			this.isCalcResult = !this.isCalcResult;
+			this.isCalc = false;
+			this.isCalcResult = true;
 		},
 		selectBankHandler() {
 			console.log("bank" + this.selectBank);
@@ -678,8 +688,9 @@ export default {
 			for (let dL of this.dutchList) {
 				console.log("dL.stuffId:" + dL.stuffId + '\n');
 				if (dL.stuffId == this.$route.params.stuffId) {
-					this.isAccount = !this.isAccount;
-					this.isCalcResult = !this.isCalcResult;
+					this.isAccount = false;
+					this.isCalcResult = true;
+					this.checkDutchComplete = true;
 				}
 			}
 		},
@@ -712,6 +723,29 @@ export default {
 					() => {
 
 					});
+		},
+		copyRecentAccountHandler(number){
+			navigator.clipboard.writeText(number)
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
+		},
+		noAuthorityDutchHandler(){
+
+			if(this.checkDutchComplete === true && !this.banishAuthority)
+				this.calDrawer = !this.calDrawer;
+			
+			
+			if(this.checkDutchComplete === false && !this.banishAuthority)
+				this.openDutchCheckModal = !this.openDutchCheckModal;
+			
 		}
 	},
 	beforeRouteLeave() {
@@ -1840,5 +1874,48 @@ input::placeholder {
 	to {
 		opacity: 0;
 	}
+}
+
+.dutchcheck-modal-box {
+	width: 253px;
+	height: 113px;
+	background: #FFFFFF;
+	border-radius: 10px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.dutchcheck-modal-txt {
+	font-size: 12px;
+	text-align: center;
+}
+
+.dutchcheck-modal-btn {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+	margin-top: 18px;
+	transition: 0.2s;
+}
+
+.dutchcheck-modal-btn:hover {
+	background-color: #d5d5d566;
 }
 </style>
