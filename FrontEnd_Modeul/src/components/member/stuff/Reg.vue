@@ -293,7 +293,7 @@ export default {
 				var formData = new FormData(this.$refs.form);
 
 				var requestOptions = {
-					method: '',
+					method: 'POST',
 					body: formData,
 					redirect: 'follow'
 				};

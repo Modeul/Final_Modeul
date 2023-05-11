@@ -4,6 +4,8 @@ import 'dayjs/locale/ko'
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
+
 export default {
 	data() {
 		return {
@@ -14,24 +16,39 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
+			query: '',
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore()
 		};
 	},
+	components: {
+		PcHeader
+	},
 	computed: {
 	},
 	methods: {
+		searchInput(query) {
+			this.page = 1;
+			this.query = query;
+
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = this.formatDateList(dataList.list);
+
+					this.listCount = dataList.listCount;
+
+				}).catch(error => console.log('error', error));
+		},
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			console.log(this.categoryId);
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -39,7 +56,7 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -48,7 +65,6 @@ export default {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(dataList);
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
@@ -166,26 +182,9 @@ export default {
 </script>
 
 <template>
-	<div class="pc-header-wrap">
-		<div class="header-menu">
-			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
-			<div v-else @click.prevent="userDetails.logout" class="login">로그아웃</div>
-		</div>
-		<div class="pc-header">
-			<div class="logo-moduel header-logo"></div>
-			<div class="search-container">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요.">
-					<h1 class="icon search-dodbogi">돋보기</h1>
-				</div>
-			</div>
-			<div class="btnbox">
-				<div class="btn-heart"></div>
-				<div class="btn-location"></div>
-			</div>
-		</div>
-	</div>
+	
+	<PcHeader @query="searchInput"></PcHeader>
+
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
 			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
@@ -329,6 +328,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
-@import "/css/component/admin/member/list-responsive.css";
+@import "/css/component/admin/member/list-responsive.css";	
 @import "/css/button.css";
 </style>

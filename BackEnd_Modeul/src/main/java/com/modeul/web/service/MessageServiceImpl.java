@@ -128,4 +128,16 @@ public class MessageServiceImpl implements MessageService {
 
 		return messageView;
 	}
+
+	@Override
+	public MessageView dutchComplete(MessageView messageView) {
+		String content = "정산이 완료되었습니다." + System.lineSeparator() + "정산 결과를 확인해주세요.";
+		messageView.setContent(content);
+
+		Map<String, Object> chatBuffer = chatBuffers.get(messageView.getStuffId());
+		List<MessageView> chatList = (List<MessageView>) chatBuffer.get("buffer");
+		chatList.add(messageView);
+
+		return messageView;
+	}
 }

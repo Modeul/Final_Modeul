@@ -12,11 +12,11 @@ export default {
 			defaultStore: useDefaultStore(),
 			page: '',
 			list: [],
-			queryList: [],
 			categoryId: '',
 			query: '',
 			queryisVal: true,
-			// listCount: ''
+			listCount: '',
+			dongCode: ''
 		}
 	},
 	methods: {
@@ -29,22 +29,33 @@ export default {
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.queryList);
+					this.list = this.formatDateList(dataList.list);
 
 				}).catch(error => console.log('error', error));
 		},
-		addListHandler() {
+
+		async addListHandler() {
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
+
 			this.page++;
-			fetch(`${this.defaultStore.host}/api/stuffs?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
+				// .then(response => {
+				// 	console.log(response)
+				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.queryList);
-					console.log(this.list);
+					console.log(dataList);
+					this.list = this.formatDateList(dataList.list);
+					this.listCount = dataList.listCount;
+					this.categoryList = dataList.categoryList;
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
+
 		},
 		formatDateList(list) {
-			if (list.length == 0)
+			if (list == null)
 				return;
 			let resultList = [];
 			for (let item of list) {
@@ -102,12 +113,11 @@ export default {
 @import "/css/component/member/stuff/component-list-search.css";
 
 .canvas {
-	max-width: 600px;
-	padding: 0 20px;
-	margin: 0 auto;
-}
-
-.search-header {
+		max-width: 600px;
+		padding: 0 20px;
+		margin: 0 auto;
+	}
+.search-header{
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
@@ -131,7 +141,6 @@ export default {
 		</header>
 
 		<main>
-
 			<div class="stuff-list" v-for="stuff in list">
 				<router-link :to="'./' + stuff.id">
 					<div class="d-gr li-gr m-t-13px list-cl">

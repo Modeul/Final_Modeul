@@ -1,5 +1,5 @@
 <script>
-import Loader from './components/common/loader.vue';
+import Loader from './components/common/Loader.vue';
 import { useDefaultStore } from './stores/useDefaultStore';
 
 export default {
@@ -24,7 +24,7 @@ export default {
 <template>
 	<v-app>
 		<router-view></router-view>
-		<Loader :loading="defaultStore.loadingStatus"></Loader>
+		<Loader></Loader>
 	</v-app>
 </template>
 

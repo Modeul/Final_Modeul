@@ -38,7 +38,7 @@ async function load() {
     // ** 컴포지션 API에서 넘기는 방법? 방법이 body 밖에 없는데? body는 POST요청에서만 이용
     // **결론, 'value' 이용!
     // vuex를 composition API에서 이용하기 위해서는 this와 $를 없애자(원래는 'this.$state.host') 
-    const response = await fetch(`${store.state.host}/api/dutchs?p=${page.value}&memberId=${memberId.value}&m=${month.value}`, {
+    const response = await fetch(`${defaultStore.host}/api/dutchs?p=${page.value}&memberId=${memberId.value}&m=${month.value}`, {
         // body:`p=${page}&memberId=${memberId}`
     });
 
@@ -49,7 +49,7 @@ async function load() {
 }
 
 async function loadDutchMemberList() {
-    const response = await fetch(`${store.state.host}/api/dutch/${stuffId.value}`);
+    const response = await fetch(`${defaultStore.host}/api/dutch/${stuffId.value}`);
     const dataList = await response.json();
     model.memberList = dataList.list;
     sumDutchHandler();

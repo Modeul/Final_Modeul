@@ -4,6 +4,7 @@ import 'dayjs/locale/ko';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
 
 export default {
 	data() {
@@ -25,22 +26,26 @@ export default {
 			memberCount: '',
 			isCheckParticipation: '',
 			dialog: false,
-			participantInfo:  {},
-			memberInfo:  '',
-			stuffAuthority:  false,
+			participantInfo: {},
+			memberInfo: '',
+			stuffAuthority: false,
 			stuffView: '',
 			Report: {
 				stuffId: 0,
 				memberId: 113,
-				detail:  '',
+				detail: '',
 			},
 			favoriteList: [],
 			heartStuffId: '',
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
-			favorOpenModal:false,
+			favorOpenModal: false,
+			stuffUser: false,
 		};
+	},
+	components: {
+		PcHeader
 	},
 	methods: {
 		/* 뒤로가기 : 이전페이지로 이동 */
@@ -201,10 +206,10 @@ export default {
 				}
 			}
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if(this.stuffView.memberId === this.memberInfo.id){
+			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -347,7 +352,7 @@ export default {
 					})
 					.catch(error => console.log('error', error));
 				this.zzimModalMsg = "  관심목록에 추가되었습니다."
-				this.favorOpenModal= true;
+				this.favorOpenModal = true;
 			}
 		},
 		checkFavoriteList() {
@@ -357,8 +362,12 @@ export default {
 				}
 			}
 		},
-		aniEndHandler(){
+		aniEndHandler() {
 			this.favorOpenModal = false;
+		},
+		checkStuffUser() {
+			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
+			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
 		}
 	},
 	computed: {
@@ -384,78 +393,83 @@ export default {
 				this.stuffView = data.stuffView;
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
+				console.log(this.stuff);
 			})
 			.catch((error) => console.log("error", error));
 
 		this.checkParticipation();
 		this.checkStuffLeader();
 		this.checkFavoriteList();
+		this.checkStuffUser();
 	},
 };
 </script>
 
 <template>
+	<PcHeader></PcHeader>
+
 	<!-- detail : flex-container -->
 	<div class="detail">
-		<header class="detail-header">
-			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
-			<!-- 수정/삭제 모달 버튼 -->
-			<!-- <i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i> -->
-			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
-			<!-- 모달 배경 -->
-			<div v-if="openModal">
-				<div class="icon-edit2">
-					<div class="d-fl-al fl-dir-col">
-						<router-link :to="'./edit/' + stuff.id">
-							<div class="icon-edit3"></div>
-						</router-link>
-						<div @click="modalHandler2" class="icon-edit4"></div>
-						<div @click="modalHandler3">신고</div>
-					</div>
-				</div>
-				<!-- 취소 확인 모달 -->
-				<div v-if="openModal2" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-						<div class="delete-box-2">
-							<div @click="deleteStuff" class="delete-box-3">삭제</div>
-							<div @click="modalHandler2" class="delete-box-4">취소</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="openModal3" class="black-bg">
-				<div class="report-box">
-					<div class="delete-box-1">신고 하시겠습니까?</div>
-					<div>사유</div>
-					<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
-					<div class="delete-box-2">
-						<div @click="reportStuff" class="delete-box-3">신고</div>
-						<div @click="modalHandler3" class="delete-box-4">취소</div>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="openModal4" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">신고 완료</div>
-					<div class="delete-box-2">
-						<div @click="modalHandler4" class="delete-box-3">닫기</div>
-					</div>
-				</div>
-			</div>
-			
-
-
-
-		</header>
 
 		<!-- detail - item1  -->
 		<main>
 			<!-- detail-main : flex-container -->
+			<header class="detail-header">
+				<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
+
+				<!-- 수정/삭제 모달 버튼 -->
+
+				<i @click="modalHandler" class="icon-edit"></i>
+				<!-- 모달 배경 -->
+				<div v-if="openModal">
+					<div class="icon-edit2" v-if="this.stuffUser">
+						<div class="d-fl-al fl-dir-col">
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3"></div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4"></div>
+						</div>
+					</div>
+					<div class="icon-report" v-else @click="modalHandler3">
+						<div class="d-fl-al fl-dir-col">
+						</div>
+					</div>
+					<!-- 취소 확인 모달 -->
+					<div v-if="openModal2" class="black-bg">
+						<div class="delete-box">
+							<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+							<div class="delete-box-2">
+								<div @click="deleteStuff" class="delete-box-3">삭제</div>
+								<div @click="modalHandler2" class="delete-box-4">취소</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal3" class="black-bg">
+					<div class="report-box">
+						<div class="delete-box-1">신고 하시겠습니까?</div>
+						<div>사유</div>
+						<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
+						<div class="delete-box-2">
+							<div @click="reportStuff" class="delete-box-3">신고</div>
+							<div @click="modalHandler3" class="delete-box-4">취소</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal4" class="black-bg">
+					<div class="delete-box">
+						<div class="delete-box-1">신고 완료</div>
+						<div class="delete-box-2">
+							<div @click="modalHandler4" class="delete-box-3">닫기</div>
+						</div>
+					</div>
+				</div>
+			</header>
 			<div class="detail-main">
+
 				<!-- detail-img : detail-main - item1 -->
 
 				<div class="detail-img">
@@ -464,67 +478,68 @@ export default {
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
-				<!-- detail-heading : detail-main - item2 -->
-				<section class="canvas detail-heading">
-					<h1 class="d-none">heading</h1>
-					<div class="d-fl detail-edit">
-						<div class="detail-top">
-							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
-								(stuff.deadlineState == 1) ? 'day-left' :
-									(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+				<div class="detail-content-wrap">
+					<!-- detail-heading : detail-main - item2 -->
+					<section class="canvas detail-heading">
+						<h1 class="d-none">heading</h1>
+						<div class="d-fl detail-edit">
+							<div class="detail-top">
+								<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
+								<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+									(stuff.deadlineState == 1) ? 'day-left' :
+										(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+							</div>
+
+							<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
+
 						</div>
-
-						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
-
-
-
-
-					</div>
-					<p class="detail-heading-title">{{ stuff.title }}</p>
-					<!-- <div class="d-fl">
+						<p class="detail-heading-title">{{ stuff.title }}</p>
+						<!-- <div class="d-fl">
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
-					<div class="detail-price">{{ stuff.price }}원</div>
+						<div class="detail-price">{{ stuff.price }}원</div>
 
-				</section>
-				<!-- detail-info : detail-main - item3 -->
-				<section class="canvas detail-info">
-					<h1 class="d-none">info</h1>
-					<div class="detail-in">
-						<div class="detail-info-title">인원</div>
-						<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">기한</div>
-						<div class="detail-info-txt">{{ stuff.deadline }}</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">장소</div>
-						<div class="detail-info-txt">{{ stuff.place }}</div>
-					</div>
+					</section>
+					<!-- detail-info : detail-main - item3 -->
+					<section class="canvas detail-info">
+						<h1 class="d-none">info</h1>
+						<div class="detail-in">
+							<div class="detail-info-title">인원</div>
+							<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">기한</div>
+							<div class="detail-info-txt">{{ stuff.deadline }}</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">장소</div>
+							<div class="detail-info-txt">{{ stuff.place }}</div>
+						</div>
 
-				</section>
-				<section class="canvas map">
-					<div @click="toggleMap" v-if="showMap">지도 열기</div>
-					<div @click="toggleMap" v-else>지도 닫기</div>
-					<div id="map"></div>
-				</section>
-				<!-- detail-writing : detail-main - item4 -->
-				<section class="canvas detail-writing">
-					<h1 class="d-none">writing</h1>
-					<!-- <p class="detail-paragraph">
+					</section>
+					<section class="canvas map">
+						<div @click="toggleMap" v-if="showMap">지도 열기</div>
+						<div @click="toggleMap" v-else>지도 닫기</div>
+						<div id="map"></div>
+					</section>
+					<!-- detail-writing : detail-main - item4 -->
+					<section class="canvas detail-writing">
+						<h1 class="d-none">writing</h1>
+						<!-- <p class="detail-paragraph">
 								            {{ stuff.content }}
 								          </p> -->
-					<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
-				</section>
+						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
+					</section>
+				</div>
 			</div>
 		</main>
 		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
-				<router-link :to="'/member/mypage/favorite?memberId='+memberId"><div class="error-gotofavor">관심목록 보기</div></router-link>
+				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+					<div class="error-gotofavor">관심목록 보기</div>
+				</router-link>
 			</div>
 		</div>
 
@@ -589,8 +604,30 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
 
-.detail {
-	margin: 0 auto;
+@media (min-width: 768px) {
+	.detail-main {
+		display: flex;
+		flex-direction: row;
+	}
+
+	main {
+		max-width: 1050px;
+		margin: 0 auto;
+	}
+
+	.detail-img {
+		width: 50%;
+		max-height: 525px;
+	}
+
+	.detail-content-wrap {
+		width: 50%;
+		margin: auto 0;	
+	}
+
+	.icon.icon-back {
+		display: none;
+	}
 }
 
 .v-slide-group button {
@@ -642,55 +679,59 @@ export default {
 	display: inline-block;
 	text-indent: -9999px;
 }
-.error-box{
+
+.error-box {
 	position: absolute;
-    background-color: white;
-    width: 80%;
-    height: 40px;
-    text-align: center;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 500;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	background-color: white;
+	width: 70%;
+	height: 40px;
+	text-align: center;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	padding: 0 26px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 12px;
+	font-weight: 500;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 
 }
 
-.error-gotofavor{
+.error-gotofavor {
 	position: absolute;
-    text-align: center;
-    top: 5%;
-    right: 5%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    padding: 0 12px;
-    font-weight: 600;
+	text-align: center;
+	top: 5%;
+	right: 15%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	/* padding: 0 12px; */
+	font-weight: 600;
 	font-size: 10px;
-	animation-timing-function: ease-in;
-	animation: fadeout 5s;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
 	animation-fill-mode: forwards;
 }
-
-
 </style>
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
 
 @keyframes fadeout {
-        from {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-        }
-    }
+	from {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
 </style>

@@ -32,6 +32,7 @@ public interface StuffService {
 
 	Long getListCount(Long categoryId, int page);
 	Long getListCount(Long categoryId, int page, Long memberId);
+	Long getListCount(Long categoryId, int page, Long memberId, String query);
 
 	int editStuff(Stuff stuff, List<MultipartFile> imgs);
 

@@ -31,6 +31,13 @@
 		</div>
 	</div>
 
+	<div v-if="openDutchCheckModal" class="black-bg">
+		<div class="dutchcheck-modal-box">
+			<div class="dutchcheck-modal-txt">정산이 완료되지 않았습니다.</div>
+			<button @click.prevent="openDutchCheckModal=!openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
+		</div>
+	</div>
+
 	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
@@ -107,16 +114,22 @@
 				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
 				<!-- <p class="chat-content">{{ m.content }}</p> -->
 				<!-- </div> -->
+				<div class="chat-line-wrap dutch" v-else-if="m.type == 'DUTCH'">
+					<p v-html="getContent(m.content)" class="chat-content"></p>
+					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히 보기</button>
+					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과 자세히 보기</button>
+				</div>
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
 				</div>
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
+				<div v-if="banishAuthority" @click="calDrawer = !calDrawer" class="cal-btn">
+					<img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
-						src="/images/member/stuff/cal-result-btn.svg">
+				<div v-if="!banishAuthority" @click="noAuthorityDutchHandler" class="cal-btn">
+					<img src="/images/member/stuff/cal-btn.svg">
 				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
@@ -156,11 +169,9 @@
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<span>{{ ra.bankName }} </span>
+						<span>{{ ra.bankName + " "}} </span>
 						<span> {{ ra.number }}</span>
-					</div>
-					<div @click="AA">
-						aa
+						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
 				</div>
 				<button type="submit" class="calc-button">다음</button>
@@ -232,7 +243,7 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span @click="openDeleteModalHandler">삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler" v-if="this.banishAuthority">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
@@ -273,7 +284,7 @@
 					</div>
 
 					<div class="cal-leader-name">
-						{{ this.stuffLeaderName }}
+						{{ stuffLeaderName }}
 					</div>
 
 				</section>
@@ -360,7 +371,10 @@ export default {
 			sumDutch: '',
 			dutchList: '',
 			copyModal: false,
-			recentAccountInfo: '',
+			recentAccountInfo:'',
+			openDutchCheckModal:false,
+			checkDutchComplete:false,
+			stuffLeaderName:'',
 		}
 	},
 
@@ -499,6 +513,7 @@ export default {
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
 				this.stuffLeaderId = this.chat.memberId;
+				// this.stuffLeaderName = this.memberInfo.memberName;
 			}
 		},
 		banishUserHandler() {
@@ -613,8 +628,8 @@ export default {
 		resultDnoneHandler() {
 			console.log("price:" + this.price);
 			this.dutchHandler();
-			this.isCalc = !this.isCalc;
-			this.isCalcResult = !this.isCalcResult;
+			this.isCalc = false;
+			this.isCalcResult = true;
 		},
 		selectBankHandler() {
 			console.log("bank" + this.selectBank);
@@ -641,6 +656,14 @@ export default {
 				.then(result => {
 					console.log(result);
 					this.loadDutchMemberList();
+
+					this.stompClient.send('/pub/chat/dutchComplete',
+						JSON.stringify({
+							type: 'DUTCH',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+						})
+					)
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -684,6 +707,7 @@ export default {
 				if (dL.stuffId == this.$route.params.stuffId) {
 					this.isAccount = false;
 					this.isCalcResult = true;
+					this.checkDutchComplete = true;
 				}
 			}
 		},
@@ -1443,6 +1467,37 @@ input::placeholder {
 	display: flex;
 	margin-top: 18px;
 }
+.chat-line-wrap.dutch{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 18px auto auto auto;
+	width: 200px;
+	border-radius: 12px 12px 12px 12px;
+	background-color: #CADEFC;
+	border: 0.5px solid #CAD3E1;
+}
+
+.chat-line-wrap.dutch .chat-content {
+	font-size: 12px;
+	font-weight: 500;
+	color: #1A1A1A;
+	columns: #1A1A1A;
+	word-break: break-all;
+	text-align: center;
+}
+
+
+.dutch-final-result-btn{
+	font-size: 12px;
+	font-weight: 500;
+	color: #327ff3;
+	width: 170px;
+	height:30px;
+	background-color: #bed3fb;
+	border-radius: 6px 6px 6px 6px;
+	margin-bottom: 6px;
+}
 
 .chat-line-wrap.notice .chat-content {
 	margin: 0 auto;
@@ -1862,5 +1917,48 @@ input::placeholder {
 	to {
 		opacity: 0;
 	}
+}
+
+.dutchcheck-modal-box {
+	width: 253px;
+	height: 113px;
+	background: #FFFFFF;
+	border-radius: 10px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.dutchcheck-modal-txt {
+	font-size: 12px;
+	text-align: center;
+}
+
+.dutchcheck-modal-btn {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+	margin-top: 18px;
+	transition: 0.2s;
+}
+
+.dutchcheck-modal-btn:hover {
+	background-color: #d5d5d566;
 }
 </style>
