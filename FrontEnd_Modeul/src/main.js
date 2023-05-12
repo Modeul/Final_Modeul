@@ -1,7 +1,7 @@
 import App from "./App.vue";
 import { createApp } from "vue";
-import { createPinia } from 'pinia'
-import piniaPersist from 'pinia-plugin-persist'
+import { createPinia } from "pinia";
+import piniaPersist from "pinia-plugin-persist";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 import "vuetify/styles";
@@ -25,10 +25,10 @@ import Chat from "./components/Chat.vue";
 import FindPwd from "./components/FindPwd.vue";
 import FindId from "./components/FindId.vue";
 
-import MyPage from './components/member/MyPage.vue';
-import MypageEdit from './components/member/MypageEdit.vue';
-import ChangePwd from './components/member/ChangePwd.vue';
-import Favorite from './components/member/Favorite.vue';
+import MyPage from "./components/member/MyPage.vue";
+import MypageEdit from "./components/member/MypageEdit.vue";
+import ChangePwd from "./components/member/ChangePwd.vue";
+import Favorite from "./components/member/Favorite.vue";
 
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
@@ -73,13 +73,13 @@ const routes = [
       { path: "mypage", component: MyPage },
       { path: "mypage/edit", component: MypageEdit },
       { path: "mypage/changepwd", component: ChangePwd },
-			{ path: 'mypage/favorite', component: Favorite },
+      { path: "mypage/favorite", component: Favorite },
       { path: "mypage/myreglist", component: MyRegList },
       { path: "mypage/mydutchlist", component: MyDutchList },
       { path: "stuff/list", component: List },
       { path: "stuff/:id", component: Detail },
       { path: "stuff/reg", component: Reg },
-      { path: "stuff/crawlingreg", component: CrawlingReg },
+      { path: "stuff/crawlingreg/:id", component: CrawlingReg },
       { path: "stuff/edit/:id", component: EditReg },
       { path: "stuff/listsearch", component: ListSearch },
       { path: "stuff/recommends", component: CrawlingList },
