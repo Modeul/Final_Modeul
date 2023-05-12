@@ -38,7 +38,7 @@ export default {
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 
-					this.listCount = dataList.listCount;
+					this.listCount = dataList.listCount;x
 
 				}).catch(error => console.log('error', error));
 		},
