@@ -397,7 +397,7 @@ export default {
 						return false;
 					} else {
 						this.ErrorMsg = "";
-						this.emailDupl = true;
+						// this.emailDupl = true;
 					}
 					if (!this.emailDupl) {
 						this.emailError = "이미 가입된 이메일 입니다.";
