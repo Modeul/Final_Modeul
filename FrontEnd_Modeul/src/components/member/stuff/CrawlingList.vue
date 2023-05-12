@@ -54,15 +54,11 @@ export default {
 		},
 		async addListHandler() {
 
-			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
+			this.defaultStore.loadingStatus = true; 
 			console.log(this.categoryId);
 			console.log(this.query);
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
-				// .then(response => {
-				// 	console.log(response)
-				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
 					if (this.query == null)
@@ -110,9 +106,7 @@ export default {
 			<div class="header-categ-box">
 				<div>
 					<button class="header-categ" @click="categoryHandler">전체</button>
-					<!-- <button class="header-categ">전체</button> -->
 				</div>
-
 				<div v-for="c in category">
 					<button class="header-categ" @click="categoryHandler" name="c" :value="c.categoryId">{{ c.categoryName }}</button>
 				</div>
@@ -122,22 +116,22 @@ export default {
 		<main>
 			<div class="stuff-list" v-for="stuff in list">
 				<a :href="stuff.contenturl" target="_blank">
-						<div class="d-gr li-gr m-t-13px list-cl">
-							<div class="li-pic b-rad-1">
-								<img class="listview-image" :src="stuff.imgurl" alt="img">
-							</div>
-							<div class="li-categ-place">
-								<span class="li-categ-place-categoryName">
-									{{stuff.categoryName}}
-								</span>
-							</div>
-							<router-link :to="'/member/stuff/crawlingreg/'+stuff.id" class="icon-write" v-on:click="regbuttonHandler"></router-link>
-							<div class="li-subj">{{ stuff.title }}</div>
-							<div class="li-member">
-								<span class="li-member-limit"> {{ stuff.price }} ₩</span>
-							</div>
+					<div class="d-gr li-gr m-t-13px list-cl">
+						<div class="li-pic b-rad-1">
+							<img class="listview-image" :src="stuff.imgurl" alt="img">
 						</div>
-					</a>
+						<div class="li-categ-place">
+							<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
+						</div>
+						<router-link :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}">
+							<button class="icon-write" v-on:click="regbuttonHandler" name="id" :value="stuff.id"></button>
+						</router-link>
+						<div class="li-subj">{{ stuff.title }}</div>
+						<div class="li-member">
+							<span class="li-member-limit"> {{ stuff.price }} ₩</span>
+						</div>
+					</div>
+				</a>
 			</div>
 
 			<button class="btn-next more-list" @click="addListHandler"> 더보기 </button>
