@@ -31,10 +31,6 @@ import MyPage from "./components/member/MyPage.vue";
 import MypageEdit from "./components/member/MypageEdit.vue";
 import ChangePwd from "./components/member/ChangePwd.vue";
 import Favorite from "./components/member/Favorite.vue";
-import MyPage from "./components/member/MyPage.vue";
-import MypageEdit from "./components/member/MypageEdit.vue";
-import ChangePwd from "./components/member/ChangePwd.vue";
-import Favorite from "./components/member/Favorite.vue";
 
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
@@ -45,6 +41,7 @@ import Reg from "./components/member/stuff/Reg.vue";
 import EditReg from "./components/member/stuff/EditReg.vue";
 import ListSearch from "./components/member/stuff/ListSearch.vue";
 import CrawlingList from "./components/member/stuff/CrawlingList.vue";
+import CrawlingReg from "./components/member/stuff/CrawlingReg.vue";
 import Gps from "./components/member/stuff/Gps.vue";
 import ParticipationList from "./components/member/participation/List.vue";
 
@@ -95,7 +92,8 @@ const routes = [
           { path: "edit/:id", component: EditReg },
           { path: "listsearch", component: ListSearch },
           { path: "recommends", component: CrawlingList },
-          { path: "gps", component: Gps }
+          { path: "gps", component: Gps },
+          { path: "crawlingreg/:id", component: CrawlingReg }
         ]
       },
       { path: "participation/list", component: ParticipationList }
