@@ -30,6 +30,7 @@ import FindId from "./components/FindId.vue";
 import MyPage from "./components/member/MyPage.vue";
 import MypageEdit from "./components/member/MypageEdit.vue";
 import ChangePwd from "./components/member/ChangePwd.vue";
+import Favorite from "./components/member/Favorite.vue";
 
 import MemberLayout from "./components/member/Layout.vue"; // 그냥 Layout이라고 또 쓸 수도 있다?
 import List from "./components/member/stuff/List.vue";
@@ -75,6 +76,7 @@ const routes = [
 					{ path: "", component: MyPage },
 					{ path: "edit", component: MypageEdit },
 					{ path: "changepwd", component: ChangePwd },
+					{ path: "favorite", component: Favorite },
 					{ path: "myreglist", component: MyRegList },
 					{ path: "mydutchlist", component: MyDutchList },
 				]
