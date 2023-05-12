@@ -27,6 +27,8 @@
 					<div>
 						<input @click.prevent="login()" class="btn-2" type="submit" value="로그인">
 					</div>
+					<div> 또는</div>
+					<GoogleLogin :callback="googleLoginHandler" />
 				</form>
 				<div style="color: red; font-size: 12px; margin-top: 4px; height : 20px;">{{ this.errormsg }}</div>
 			</div>
@@ -58,6 +60,7 @@
 <script>
 import { useUserDetailsStore } from '../stores/useUserDetailsStore';
 import { useDefaultStore } from '../stores/useDefaultStore';
+import { decodeCredential } from 'vue3-google-login';
 
 export default {
 	data() {
@@ -108,6 +111,23 @@ export default {
 					}
 				})
 				.catch(error => console.log('error', error));
+		},
+
+		googleLoginHandler(response) {
+			let userData = decodeCredential(response.credential);
+			console.log(userData);
+
+			// userDetails.username = userData.userName;
+			// userDetails.email = userData.email;
+			// userDetails.roles = userData.["ADMIN", "MEMBER"];
+
+			// let returnURL = route.query.returnURL;
+
+			// if (returnURL) {
+			// 	router.push(returnURL);
+			// } else {
+			// 	router.push("/index");
+			// }
 		}
 	},
 }

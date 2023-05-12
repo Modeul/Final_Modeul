@@ -11,8 +11,8 @@
 
 <!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
   <insert id="insert" parameterType="Member">
-    insert into member(uid,pwd,name,email,nickname)
-    values(#{uid},#{pwd},#{name},#{email},#{nickname})
+    insert into member(uid,pwd,name,email,nickname,address)
+    values(#{uid},#{pwd},#{name},#{email},#{nickname},#{address})
   </insert>
 
 	<select id="getbyId" resultMap="MemberResultMap">

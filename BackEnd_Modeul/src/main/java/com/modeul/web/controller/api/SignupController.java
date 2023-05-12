@@ -27,6 +27,7 @@ public class SignupController {
 	public int addMember(@RequestBody Member member) {
 		
 		int memberCount = service.addMember(member);
+		System.out.println(member);
 		return memberCount;
 	}
 

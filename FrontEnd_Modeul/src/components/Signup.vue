@@ -69,6 +69,20 @@
 						<div class="error-font">{{ this.nicknameError }}</div>
 					</div>
 
+					<div @click.prevent="postCode" class="input-field-2" style="height: 42px;">
+						<label for="address" class="address-label signup-label">
+							<span class="d-none">addr</span>
+							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address" hidden />
+							<div class="input-text-2" v-text="member.address"></div>
+						</label>
+					</div>
+					<div class="input-field-2">
+						<label for="addr2" class="address-label signup-label">
+							<input type="text" id="addr2" name="addr2" class="input-text-2" v-model="addr2"
+								placeholder="상세 주소" />
+						</label>
+					</div>
+
 					<div @input="checkEmailDupl" class="input-field-2">
 						<label for="email" class="email-label signup-label">
 							<span class="d-none">email</span>
@@ -88,8 +102,8 @@
 							<input type="text" id="email" name="reemail" class="input-text-2" placeholder="인증번호를 입력해주세요."
 								v-model="emailconfirm" />
 							<!-- 이메일이 중복이 아닐 때 전송버튼 표시(emailDupl==true) -->
-							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post" id="btn-post"
-								type="button" value="전송" />
+							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post"
+								id="btn-post" type="button" value="전송" />
 							<div v-if="emailConfirmChk" class="btn-check"></div>
 							<!-- <div v-if="!emailConfirmChk" class="btn-x"></div>  -->
 						</label>
@@ -133,8 +147,11 @@ export default {
 				name: "",
 				nickname: "",
 				email: "",
+				address: "주소를 입력해주세요",
 			},
+			addr2: "",
 			// 에러메시지
+			addrError: true,
 			uidError: "",
 			nameError: "",
 			nicknameError: "",
@@ -186,6 +203,10 @@ export default {
 			} else if (!this.nicknameDupl) {
 				this.ErrorMsg = "중복 된 닉네임입니다.";
 			}
+
+			if (this.addrError) {
+				this.ErrorMsg = "주소는 필수 입력사항입니다.";
+			}
 			// email 체크
 			if (!this.member.email) {
 				this.ErrorMsg = "이메일 주소는 필수 입력사항입니다.";
@@ -217,13 +238,15 @@ export default {
 				!this.pwdError &&
 				this.namebtn &&
 				this.nicknameDupl &&
-				!this.emailError
+				!this.emailError &&
+				!this.addrError
 			) {
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
 				console.log(this.member);
-
+				this.member.address = this.member.address + ',' + this.addr2;
+				console.log(this.member.address);
 				var raw = JSON.stringify(this.member);
 
 				var requestOptions = {
@@ -416,6 +439,20 @@ export default {
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},
+
+		postCode() {
+
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.member.address = data.address;
+					// this.dongCode = data.bcode;
+					console.log(this.member.address);
+					this.addrError = false;
+					document.querySelector("#addr2").focus();
+				}
+			}).open();
+		}
 	},
 };
 </script>
