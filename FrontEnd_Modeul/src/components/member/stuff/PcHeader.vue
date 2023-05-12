@@ -36,6 +36,9 @@ export default {
 				</div>
 			</div>
 			<div class="btnbox">
+				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
+					<router-link to="/admin/stuff/list"></router-link>
+				</div>
 				<div class="btn-heart"></div>
 				<div class="btn-location"></div>
 			</div>

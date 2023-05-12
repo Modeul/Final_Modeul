@@ -1,7 +1,9 @@
 <template>
 	<aside class="admin-sidebar">
 		<h1 class="d-none">사이드바</h1>
-		<div class="admin-logo-moduel"></div>	
+		<div class="admin-logo-moduel">
+			<router-link to="/member/stuff/list"></router-link>
+		</div>	
 		<div class="side-menu-wrap">
 			<router-link class="admin-side-wrap" to="/admin/index">
 			<div class="iconbox-admin">
