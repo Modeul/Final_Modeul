@@ -28,8 +28,10 @@ export default {
 	},
 	methods: {
 		searchInput(query) {
+			if(this.query == query.trim())
+				return;
+			this.query = query.trim();
 			this.page = 1;
-			this.query = query;
 
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
 				.then(response => response.json())
