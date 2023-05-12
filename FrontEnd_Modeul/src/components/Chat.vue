@@ -21,6 +21,23 @@
 		</div>
 	</div>
 
+	<div v-if="openDeleteModal" class="black-bg">
+		<div class="delete-box">
+			<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+			<div class="delete-box-2">
+				<div @click="removeDutchHandler" class="delete-box-3">삭제하기</div>
+				<div @click="openDeleteModalHandler" class="delete-box-4">취소</div>
+			</div>
+		</div>
+	</div>
+
+	<div v-if="openDutchCheckModal" class="black-bg">
+		<div class="dutchcheck-modal-box">
+			<div class="dutchcheck-modal-txt">정산이 완료되지 않았습니다.</div>
+			<button @click.prevent="openDutchCheckModal = !openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
+		</div>
+	</div>
+
 	<v-dialog v-model="dialog" width="auto">
 		<v-card>
 			<v-card-text>
@@ -97,16 +114,24 @@
 				<!-- <div class="chat-line-wrap notice" v-else-if="m.type == 'ENTER'" > -->
 				<!-- <p class="chat-content">{{ m.content }}</p> -->
 				<!-- </div> -->
+				<div class="chat-line-wrap dutch" v-else-if="m.type == 'DUTCH'">
+					<p v-html="getContent(m.content)" class="chat-content"></p>
+					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히
+						보기</button>
+					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과
+						자세히 보기</button>
+				</div>
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
 				</div>
 			</div>
 
 			<div class="chat-input-wrap">
-				<div @click="calDrawer = !calDrawer" class="cal-btn"><img src="/images/member/stuff/cal-btn.svg">
+				<div v-if="banishAuthority" @click="calDrawer = !calDrawer" class="cal-btn">
+					<img src="/images/member/stuff/cal-btn.svg">
 				</div>
-				<div @click="isCheckCalResult = !isCheckCalResult" class="cal-result-btn"><img
-						src="/images/member/stuff/cal-result-btn.svg">
+				<div v-if="!banishAuthority" @click="noAuthorityDutchHandler" class="cal-btn">
+					<img src="/images/member/stuff/cal-btn.svg">
 				</div>
 				<div class="chat-input-box">
 					<input class="chat-input" placeholder="메시지를 입력해주세요." v-model="message" @keypress="sendMessage">
@@ -121,7 +146,7 @@
 	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 
-		<section class="calc" :class="{ 'd-none': !isAccount }">
+		<Form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
 				<div class="icon">뒤로가기</div>
@@ -130,28 +155,31 @@
 
 			<div class="calc-contents">
 				<div class="account-title">
-					<span class="account-title-leader">그럴 수 밖에!</span><span> 님의</span><br>
+					<span class="account-title-leader">{{ this.memberInfo.nickname }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
+
 				<div class="account-input">
-					<v-select v-model="selectBank" font-size="20px" label="은행 선택" :items="banks" variant="underlined"
-						style="width: 260px;">
-					</v-select>
-					<v-text-field label="계좌번호" variant="underlined" style="width: 260px;">
-					</v-text-field>
-					<!-- <input class="account-input-box" pl> -->
+					<select required class="account-input-box" v-model="selectBank">
+						<option value="" selected>은행 선택</option>
+						<option v-for="bank in banks" v-text="bank"></option>
+					</select>
+					<input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required>
 				</div>
 				<div class="account-recent">
 					<div>최근 등록 계좌</div>
-					<div>
-						2343242423423
+					<!-- <div>{{this.recentAccountInfo}}</div> -->
+					<div v-for="ra in recentAccountInfo">
+						<span>{{ ra.bankName + " " }} </span>
+						<span> {{ ra.number }}</span>
+						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
 				</div>
-				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
+				<button type="submit" class="calc-button">다음</button>
 
 			</div>
-		</section>
+		</Form>
 
 		<section class="calc" :class="{ 'd-none': !isCalc }">
 			<h1 class="d-none">정산하기</h1>
@@ -160,7 +188,7 @@
 				<div class="calc-header-title">정산하기</div>
 			</header>
 
-			<form class="calc-contents" method="post" @submit.prevent="calculate">
+			<form class="calc-contents" method="post" @submit.prevent="resultDnoneHandler">
 				<div>
 					<section class="calc-method-btn calc-member-line">
 						<h1 class="d-none">정산 방법</h1>
@@ -178,8 +206,8 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
-								placeholder="총금액을 입력해 주세요.">원
+							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8"
+								@input="chipinHandler" placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
 						</div>
 					</section>
 					<div class="calc-members-title">참여 인원</div>
@@ -193,15 +221,16 @@
 							<div class="calc-member-price">
 								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 								<span v-if="!calcSwitch" class="calc-member-span-price">
-									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
-										placeholder="금액 입력" @keydown="inputCheck"> 원
+									<input type="text" v-model.number=personalPrice[user.memberId] maxlength="8"
+										pattern="(\d+,)*\d+" required placeholder="금액 입력" @keydown="inputCheck"
+										@focus="inputFocus(user.memberId)" @blur="inputBlur(user.memberId)"> 원
 								</span>
 							</div>
 						</div>
 					</div>
 					<div v-if="!calcSwitch" class="calc-input-total"><span v-if="!totalText"></span><span
 							v-if="totalText">합계</span>{{ total }}</div>
-					<button type="submit" class="calc-button" @click.prevent="resultDnoneHandler">정산하기</button>
+					<button type="submit" class="calc-button">정산하기</button>
 				</div>
 			</form>
 		</section>
@@ -216,159 +245,21 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span>삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler"
+							v-if="this.banishAuthority">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
 					<h1 class="d-none">main</h1>
-					<div class="cal-user">
+					<div class="cal-user" v-for="m in dutchMemberList">
 						<div class="cal-user-img">
-							<img src="/images/member/chatid113.svg" alt="사용자1">
+							<img :src="'/images/member/' + m.memberImage" alt="사용자1">
 						</div>
 						<div class="cal-user-name">
-							그럴 수박! 에
+							{{ m.memberNickname }}
 						</div>
 						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/chatid110.svg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/chatid111.svg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/portrait-3204843_1920.jpg" alt="사용자2">
-						</div>
-						<div class="cal-user-name">
-							화난 식빵
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/girl-2650375_1920.jpg" alt="사용자3">
-						</div>
-						<div class="cal-user-name">
-							아보카도 도레미
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
-						</div>
-					</div>
-					<div class="cal-user">
-						<div class="cal-user-img">
-							<img src="/images/member/model-429733_1920.jpg" alt="사용자1">
-						</div>
-						<div class="cal-user-name">
-							그럴 수박! 에
-						</div>
-						<div class="cal-user-self-result">
-							111,111원
+							{{ m.price }}원
 						</div>
 					</div>
 				</main>
@@ -379,7 +270,7 @@
 						합계
 					</div>
 					<div>
-						666,666원
+						{{ sumDutch }}원
 					</div>
 				</section>
 
@@ -387,15 +278,16 @@
 					<h1 class="d-none">account</h1>
 
 					<div class="cal-result-account-all">
-						<a class="icon-bank-security">은행명</a>
+						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							하나 32589046473333
+							<span>{{ selectBank }} </span>
+							<span>{{ accountNumber }}</span>
 						</div>
-						<a class="icon-account-paste">복사하기</a>
+						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 					</div>
 
 					<div class="cal-leader-name">
-						한땡땡
+						{{ stuffLeaderName }}
 					</div>
 
 				</section>
@@ -408,6 +300,10 @@
 			</section>
 		</section>
 	</v-navigation-drawer>
+
+	<div v-if="copyModal" class="error-box ani">
+		복사되었습니다.
+	</div>
 </template>
 
 <script>
@@ -416,10 +312,16 @@ import 'dayjs/locale/ko'
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 
+import { useUserDetailsStore } from '../stores/useUserDetailsStore';
+import { useDefaultStore } from '../stores/useDefaultStore';
+
+
 export default {
 
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			calDrawer: null,
 			userName: "",
 			message: "",
@@ -429,7 +331,8 @@ export default {
 			drawer: null,
 			openModal: false,
 			stompClient: '',
-			participantList: '',
+			participantList: [],
+			personalPrice: {},
 			price: {},
 			chat: {
 				title: "여러가지 나눔",
@@ -445,42 +348,51 @@ export default {
 				image: ''
 			},
 			openLeaveModal: false,
+			openDeleteModal: false,
 			banishAuthority: false,
 			showBanish: false,
 
 			calcSwitch: true,
 			chipinResult: 0,
-			totalPrice: 0,
+			totalPrice: '',
 			totalPriceComma: '',
 			totalPriceAlert: '',
 			totalText: true,
 			memberPrice: 0,
-			// memberPriceList: [{'key'}]
+			banks: ['국민은행', '우리은행', '기업은행', '신한은행', 'KEB하나은행',
+				'농협은행', '새마을금고', '외환은행', 'SC제일은행', '한국시티은행',
+				'카카오뱅크', '토스뱅크', '케이뱅크'
 
-			// totalPrice: totalPrice.this.totalPrice.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","),
-
-
-			banks: ['국민은행', '기업은행'
-
-				// { state: 'Nebraska', abbr: 'NE' },
-				// { state: 'California', abbr: 'CA' },
-				// { state: 'New York', abbr: 'NY' },
 			],
 			isAccount: true,
 			isCalc: false,
-			isCalcResult: false
+			isCalcResult: false,
+			selectBank: '',
+			accountNumber: '',
+			stuffLeaderId: '',
+			dutchMemberList: '',
+			sumDutch: '',
+			dutchList: '',
+			copyModal: false,
+			recentAccountInfo: '',
+			openDutchCheckModal: false,
+			checkDutchComplete: false,
+			stuffLeaderName: '',
 		}
 	},
 
 	methods: {
-		blurHandler() {
-			console.log(this.memberPriceList);
+		getContent(content) {
+			return (content || "").split('\n').join('<br>');
 		},
-
 		chipinHandler() {
-			console.log(this.totalPrice)
-			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-			return this.chipinResult;
+			let chipin = Math.floor(this.totalPrice / this.participantList.length);
+
+			this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+
+			this.participantList.forEach(user =>
+				this.price[user.memberId] = chipin
+			)
 		},
 
 		sendMessage(e) {
@@ -517,7 +429,7 @@ export default {
 			}
 		},
 		stompConnect() {
-			const serverURL = `${this.$store.state.host}/ws-stomp`
+			const serverURL = `${this.defaultStore.host}/ws-stomp`
 			let socket = new SockJS(serverURL);
 			this.stompClient = Stomp.over(socket);
 		},
@@ -528,7 +440,7 @@ export default {
 					// 소켓 연결 성공!
 					this.connected = true;
 
-					const response = await fetch(`${this.$store.state.host}/api/chatlog?
+					const response = await fetch(`${this.defaultStore.host}/api/chatlog?
 					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
 					const result = await response.text();
 					if (result != '')
@@ -558,7 +470,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -591,13 +503,13 @@ export default {
 			this.$router.go(-1);
 		},
 		async loadParticipationList() {
-			const response = await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+			const response = await fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.stuffId}`)
 			const dataList = await response.json();
 			this.participantList = dataList.memberList;
 			this.chat = dataList.stuffView;
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.$store.state.host}/api/member/${this.$route.params.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.$route.params.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
 			console.log("this.memberInfo:" + this.memberInfo.id);
@@ -606,6 +518,8 @@ export default {
 			// 방장에게 추방 권한
 			if (this.chat.memberId === this.memberInfo.id) {
 				this.banishAuthority = !this.banishAuthority;
+				this.stuffLeaderId = this.chat.memberId;
+				// this.stuffLeaderName = this.memberInfo.memberName;
 			}
 		},
 		banishUserHandler() {
@@ -615,7 +529,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -661,6 +575,9 @@ export default {
 		modalLeaveCloseHandler() {
 			this.openLeaveModal = !this.openLeaveModal;
 		},
+		openDeleteModalHandler() {
+			this.openDeleteModal = !this.openDeleteModal;
+		},
 		unLoadEvent() {
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
@@ -688,9 +605,11 @@ export default {
 		},
 		calc1n() {
 			this.calcSwitch = true;
+			this.price = {};
 		},
 		calcdir() {
 			this.calcSwitch = false;
+			this.price = {};
 		},
 		calculate() {
 			var requestOptions = {
@@ -700,19 +619,171 @@ export default {
 				body: JSON.stringify(this.price)
 			};
 
-			fetch(`${this.$store.state.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
 				.then(result => {
 					console.log(result);
 				})
-				.catch(error => console.log('error', error));
+				.catch(error => console.log('error', error))
 		},
 		dnoneHandler() {
+			console.log("bank:" + this.selectBank);
+			console.log("accountNumber: " + this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
 		},
 		resultDnoneHandler() {
-			this.isCalc = !this.isCalc;
-			this.isCalcResult = !this.isCalcResult;
+			console.log("price:" + this.price);
+			this.dutchHandler();
+			this.isCalc = false;
+			this.isCalcResult = true;
+		},
+		selectBankHandler() {
+			console.log("bank" + this.selectBank);
+		},
+		dutchHandler() {
+
+			var raw = JSON.stringify({
+				"prices": this.price,
+				"account": {
+					"bankName": this.selectBank,
+					"number": this.accountNumber,
+					"memberId": this.stuffLeaderId.toString()
+				}
+			});
+
+			var requestOptions = {
+				method: 'POST',
+				redirect: 'follow',
+				headers: { 'Content-Type': 'application/json' },
+				body: raw
+			};
+
+			fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+					this.loadDutchMemberList();
+
+					this.stompClient.send('/pub/chat/dutchComplete',
+						JSON.stringify({
+							type: 'DUTCH',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.memberInfo.id,
+						})
+					)
+				})
+				.catch(error => console.log('error', error));
+		},
+		async loadDutchMemberList() {
+			await fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchMemberList = dataList.list;
+					this.sumDutchHandler();
+					this.loadDutchList();
+					this.checkDutchHave();
+				})
+				.catch(error => console.log('error', error));
+		},
+		loadDutchList() {
+			fetch(`${this.defaultStore.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchList = dataList.listView;
+					console.log(this.dutchList);
+				})
+				.catch(error => console.log('error', error));
+		},
+		sumDutchHandler() {
+			let sum = 0;
+
+			for (let dmL of this.dutchMemberList) {
+				console.log("price:" + dmL.price + '\n');
+				sum += parseInt(dmL.price);
+			}
+			this.sumDutch = sum;
+			console.log(this.sumDutch);
+			return this.sumDutch;
+		},
+		checkDutchHave() {
+			console.log("Have dutchList:" + this.dutchList);
+			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
+
+			for (let dL of this.dutchList) {
+				console.log("dL.stuffId:" + dL.stuffId + '\n');
+				if (dL.stuffId == this.$route.params.stuffId) {
+					this.isAccount = false;
+					this.isCalcResult = true;
+					this.checkDutchComplete = true;
+				}
+			}
+		},
+		removeDutchHandler() {
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow',
+			};
+
+			fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
+				.then(result => {
+					console.log(result);
+					this.isAccount = !this.isAccount;
+					this.isCalcResult = !this.isCalcResult;
+					this.calDrawer = !this.calDrawer;
+				})
+				.catch(error => console.log('error', error))
+
+			this.openDeleteModalHandler()
+		},
+		copyHandler() {
+			navigator.clipboard.writeText(this.selectBank + this.accountNumber)
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
+		},
+		copyRecentAccountHandler(number) {
+			navigator.clipboard.writeText(number)
+				.then(() => {
+					this.copyModal = false;
+
+					this.$nextTick(() => {
+						this.copyModal = true;
+					});
+				},
+					() => {
+
+					});
+		},
+		noAuthorityDutchHandler() {
+
+			if (this.checkDutchComplete === true && !this.banishAuthority)
+				this.calDrawer = !this.calDrawer;
+
+
+			if (this.checkDutchComplete === false && !this.banishAuthority)
+				this.openDutchCheckModal = !this.openDutchCheckModal;
+
+		},
+		inputFocus(memberId) {
+			if (this.calcSwitch)
+				this.totalPrice = this.totalPrice.replace(/,/g, '');
+			else if (typeof this.personalPrice[memberId] === 'string') {
+				this.personalPrice[memberId] = this.personalPrice[memberId].replace(/,/g, '');
+			}
+		},
+		inputBlur(memberId) {
+			if (this.calcSwitch)
+				this.totalPrice = Number(this.totalPrice).toLocaleString();
+			else if (typeof this.personalPrice[memberId] === 'string' || typeof this.personalPrice[memberId] === 'number') {
+				this.price[memberId] = this.personalPrice[memberId];
+				this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
+			}
 		}
 	},
 	beforeRouteLeave() {
@@ -722,12 +793,15 @@ export default {
 		this.stompConnect();
 		this.connect();
 		this.loadParticipant();
+		this.loadDutchMemberList();
+		this.loadDutchList();
 	},
 	updated() {
 
 	},
 	async mounted() {
-		await fetch(`${this.$store.state.host}/api/chat/${this.$route.params.stuffId}`)
+
+		await fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.stuffId}`)
 			.then(response => response.json())
 			.then(dataList => {
 				this.participantList = dataList.memberList;
@@ -745,7 +819,13 @@ export default {
 		}, 50);
 
 		this.checkStuffLeader();
+		this.checkDutchHave();
 
+		// 최근 계좌 목록
+		await fetch(`${this.defaultStore.host}/api/account/recent/${this.myUserId}`)
+			.then(response => response.json())
+			.then(result => { this.recentAccountInfo = result; })
+			.catch(error => console.log('error', error));
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -898,24 +978,34 @@ export default {
 }
 
 .account-input-box {
-	width: 236px;
+	width: 272px;
 	height: 48px;
-	background: #FFFFFF;
 	border: 1px solid #888888;
+	color: #333;
 	border-radius: 10px;
 	margin-bottom: 8px;
+	padding-left: 12px;
+}
+
+select option[value=""][disabled] {
+	display: none;
+}
+
+.account-input-box::-webkit-input-placeholder {
+	color: #888888;
+	font-size: 16px;
+	text-align: left;
 }
 
 .account-recent {
-	padding: 16px 4px;
-
+	padding: 20px 4px;
+	font-size: 14px;
 	flex: none;
 	order: 2;
 	flex-grow: 0;
 }
 
 .account-recent>div:first-child {
-	font-size: 14px;
 	font-weight: 700;
 	color: #63A0C2;
 }
@@ -1249,6 +1339,8 @@ input::placeholder {
 	object-fit: cover;
 	border-radius: 50%;
 	overflow: hidden;
+	display: inline-block;
+	text-indent: -999px;
 }
 
 .cal-user-name {
@@ -1403,6 +1495,38 @@ input::placeholder {
 	width: 100%;
 	display: flex;
 	margin-top: 18px;
+}
+
+.chat-line-wrap.dutch {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 18px auto auto auto;
+	width: 200px;
+	border-radius: 12px 12px 12px 12px;
+	background-color: #CADEFC;
+	border: 0.5px solid #CAD3E1;
+}
+
+.chat-line-wrap.dutch .chat-content {
+	font-size: 12px;
+	font-weight: 500;
+	color: #1A1A1A;
+	columns: #1A1A1A;
+	word-break: break-all;
+	text-align: center;
+}
+
+
+.dutch-final-result-btn {
+	font-size: 12px;
+	font-weight: 500;
+	color: #327ff3;
+	width: 170px;
+	height: 30px;
+	background-color: #bed3fb;
+	border-radius: 6px 6px 6px 6px;
+	margin-bottom: 6px;
 }
 
 .chat-line-wrap.notice .chat-content {
@@ -1786,5 +1910,85 @@ input::placeholder {
 
 .v-dialog:deep {
 	font-size: 14px;
+}
+
+.error-box {
+	position: fixed;
+	background-color: #FFF;
+	width: 80%;
+	height: 40px;
+	text-align: center;
+	top: 15%;
+	padding: auto 0;
+	line-height: 40px;
+	/* left: 50%; */
+	/* transform: translate(-50%, -50%); */
+	/* display: flex; */
+	/* align-items: center; */
+	/* padding: 0 12px; */
+	/* box-sizing: border-box; */
+	/* border-radius: 5px; */
+	/* font-size: 12px; */
+	font-weight: bold;
+	z-index: 9999;
+}
+
+.ani {
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
+
+.dutchcheck-modal-box {
+	width: 253px;
+	height: 113px;
+	background: #FFFFFF;
+	border-radius: 10px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.dutchcheck-modal-txt {
+	font-size: 12px;
+	text-align: center;
+}
+
+.dutchcheck-modal-btn {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+	margin-top: 18px;
+	transition: 0.2s;
+}
+
+.dutchcheck-modal-btn:hover {
+	background-color: #d5d5d566;
 }
 </style>

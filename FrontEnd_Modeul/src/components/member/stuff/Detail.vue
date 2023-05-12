@@ -1,28 +1,51 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
+import PcHeader from './PcHeader.vue'
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
 			memberId: 2,
 			stuffId: 1,
 			openModal: false,
 			openModal2: false,
+			openModal3: false,
+			openModal4: false,
 			stuff: {},
 			category: {},
 			imageList: '',
 			participantList: [],
 			memberCount: '',
-			isCheckParticipation:'',
+			isCheckParticipation: '',
 			dialog: false,
-			participantInfo:{},
-			memberInfo:'',
-			stuffAuthority:false,
-			stuffView:'',
+			participantInfo: {},
+			memberInfo: '',
+			stuffAuthority: false,
+			stuffView: '',
+			Report: {
+				stuffId: 0,
+				memberId: 113,
+				detail: '',
+			},
+			favoriteList: [],
+			heartStuffId: '',
+			isfavorite: false,
+			list: [],
+			zzimModalMsg: "",
+			favorOpenModal: false,
+			stuffUser: false,
 		};
+	},
+	components: {
+		PcHeader
 	},
 	methods: {
 		/* 뒤로가기 : 이전페이지로 이동 */
@@ -36,6 +59,13 @@ export default {
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
+		modalHandler3() {
+			this.openModal3 = !this.openModal3;
+		},
+		modalHandler4() {
+			this.openModal4 = !this.openModal4;
+		},
+
 		imageZoomInHandler() {
 			console.log("zoom-in");
 		},
@@ -45,6 +75,31 @@ export default {
 		formatDateStuff() {
 			const deadlineObj = dayjs(this.stuff.deadline).locale('ko');
 			this.stuff.deadline = deadlineObj.format("M월 D일 (dd) HH시까지");
+
+			this.stuff.dDay = dayjs().diff(deadlineObj, 'day');
+			if (parseInt(this.stuff.dDay) < 0) {
+				this.stuff.dDay = 'D' + this.stuff.dDay;
+				this.stuff.deadlineState = 1;
+			}
+			else if (parseInt(this.stuff.dDay) == 0) {
+				this.stuff.dDay = deadlineObj.diff(dayjs(), 'hours')
+				if (parseInt(this.stuff.dDay) > 0) {
+					this.stuff.dDay = '마감 ' + deadlineObj.diff(dayjs(), 'hours') + '시간 전'
+					this.stuff.deadlineState = 2;
+				}
+				else if (parseInt(this.stuff.dDay) == 0) {
+					this.stuff.dDay = '1시간 내 마감';
+					this.stuff.deadlineState = 3;
+				}
+				else {
+					this.stuff.dDay = '마감';
+					this.stuff.deadlineState = 0;
+				}
+			}
+			else {
+				this.stuff.dDay = '마감';
+				this.stuff.deadlineState = 0;
+			}
 		},
 		/* 글 내용 br */
 		getContent(content) {
@@ -57,9 +112,35 @@ export default {
 			};
 			this.$router.push("/member/stuff/list");
 
-			fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+		},
+
+		reportStuff() {
+			var requestOptions = {
+				method: 'POST',
+				redirect: 'follow',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					stuffId: this.$route.params.id,
+					memberId: this.Report.memberId,
+					detail: this.Report.detail,
+				})
+			};
+
+			fetch(`${this.defaultStore.host}/api/reports/stuff`, requestOptions)
+				.then(response => response.text())
+				.then(result => {
+					if (result === 'OK') {
+						console.log(result);
+						this.modalHandler3();
+						this.modalHandler4();
+					}
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -82,13 +163,13 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
-					this.dialog=true;
+					this.dialog = true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -98,7 +179,7 @@ export default {
 				method: 'GET',
 				redirect: 'follow'
 			};
-			fetch(`${this.$store.state.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					this.participantList = data.list;
@@ -107,8 +188,8 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		loadParticipantInfo(){
-			fetch(`${this.$store.state.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
+		loadParticipantInfo() {
+			fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
 				.then(response => response.json())
 				.then(data => {
 					this.participantInfo = data.memberInfo;
@@ -117,18 +198,18 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
-		checkParticipation(){
-			for(let p of this.participantList){
-				console.log("p.memberId: " + p.memberId+'\n');
-				if(p.memberId === this.participantInfo.memberId){
+		checkParticipation() {
+			for (let p of this.participantList) {
+				console.log("p.memberId: " + p.memberId + '\n');
+				if (p.memberId === this.participantInfo.memberId) {
 					this.isCheckParticipation = !this.isCheckParticipation;
 				}
 			}
 		},
-		checkStuffLeader(){
+		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
-			if(this.stuffView.memberId === this.memberInfo.id){
+			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
 		},
@@ -139,13 +220,13 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
-					this.dialog=true;
+					this.dialog = true;
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -204,11 +285,90 @@ export default {
 
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.$store.state.host}/api/member/${this.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.memberId}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:"+ this.memberInfo.id);
+			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
+
+		loadFavoriteList() {
+			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.memberId}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = dataList.list;
+					this.categoryList = dataList.categoryList;
+					this.defaultStore.loadingStatus = false;
+				})
+				.catch(error => console.log("error", error));
+		},
+
+		toggleFavorite() {
+			if (this.isfavorite) {
+				// 이미 등록된 경우, 삭제 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				var raw = JSON.stringify({
+
+					"heartStuffId": this.stuff.id,
+					"memberId": this.memberInfo.id,
+				});
+				var requestOptions = {
+					method: 'DELETE',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				fetch(`${this.defaultStore.host}/api/favorite`, requestOptions)
+					.then(response => {
+						response.text();
+					})
+					.then(result => {
+						console.log("관심삭제");
+						this.isfavorite = !this.isfavorite;
+					})
+					.catch(error => console.log('error', error));
+			} else {
+				// 등록되지 않은 경우, 등록 요청 수행
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+
+				var raw = JSON.stringify({
+					"heartStuffId": this.stuff.id,
+					"memberId": this.memberInfo.id,
+				});
+
+				var requestOptions = {
+					method: 'POST',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
+				fetch(`${this.defaultStore.host}/api/favorite`, requestOptions)
+					.then(response => response.text())
+					.then(result => {
+						this.isfavorite = !this.isfavorite;
+						console.log("관심등록");
+					})
+					.catch(error => console.log('error', error));
+				this.zzimModalMsg = "  관심목록에 추가되었습니다."
+				this.favorOpenModal = true;
+			}
+		},
+		checkFavoriteList() {
+			for (let f of this.list) {
+				if (f.stuffId == this.stuff.id) {
+					this.isfavorite = !this.isfavorite;
+				}
+			}
+		},
+		aniEndHandler() {
+			this.favorOpenModal = false;
+		},
+		checkStuffUser() {
+			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
+			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
+		}
 	},
 	computed: {
 
@@ -217,10 +377,11 @@ export default {
 		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
+		this.loadFavoriteList();
 	},
 	async mounted() {
-		this.$store.commit('LOADING_STATUS', true);
-		await fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`)
+		this.defaultStore.loadingStatus = true;
+		await fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`)
 			.then((response) => response.json())
 			.then((data) => {
 				this.stuff = data.stuff;
@@ -230,119 +391,157 @@ export default {
 				this.memberCount = data.memberCount;
 				this.formatDateStuff();
 				this.stuffView = data.stuffView;
-				this.$store.commit('LOADING_STATUS', false);
+				this.favoriteList = data.favoriteView;
+				this.defaultStore.loadingStatus = false;
+				console.log(this.stuff);
 			})
 			.catch((error) => console.log("error", error));
-		this.$store.commit('LOADING_STATUS', false);
 
 		this.checkParticipation();
 		this.checkStuffLeader();
+		this.checkFavoriteList();
+		this.checkStuffUser();
 	},
 };
 </script>
 
 <template>
+	<PcHeader></PcHeader>
+
 	<!-- detail : flex-container -->
 	<div class="detail">
-		<header class="detail-header">
-			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
-			<!-- 수정/삭제 모달 버튼 -->
-			<i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i>
-			<!-- 모달 배경 -->
-			<div v-if="openModal">
-				<div class="icon-edit2">
-					<div class="d-fl-al fl-dir-col">
-						<router-link :to="'./edit/' + stuff.id">
-							<div class="icon-edit3"></div>
-						</router-link>
-						<div @click="modalHandler2" class="icon-edit4">
-
-						</div>
-					</div>
-				</div>
-				<!-- 취소 확인 모달 -->
-				<div v-if="openModal2" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-						<div class="delete-box-2">
-							<div @click="deleteStuff" class="delete-box-3">삭제</div>
-							<div @click="modalHandler2" class="delete-box-4">취소</div>
-						</div>
-					</div>
-				</div>
-
-			</div>
-
-
-
-		</header>
 
 		<!-- detail - item1  -->
 		<main>
 			<!-- detail-main : flex-container -->
+			<header class="detail-header">
+				<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
+
+				<!-- 수정/삭제 모달 버튼 -->
+
+				<i @click="modalHandler" class="icon-edit"></i>
+				<!-- 모달 배경 -->
+				<div v-if="openModal">
+					<div class="icon-edit2" v-if="this.stuffUser">
+						<div class="d-fl-al fl-dir-col">
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3"></div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4"></div>
+						</div>
+					</div>
+					<div class="icon-report" v-else @click="modalHandler3">
+						<div class="d-fl-al fl-dir-col">
+						</div>
+					</div>
+					<!-- 취소 확인 모달 -->
+					<div v-if="openModal2" class="black-bg">
+						<div class="delete-box">
+							<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+							<div class="delete-box-2">
+								<div @click="deleteStuff" class="delete-box-3">삭제</div>
+								<div @click="modalHandler2" class="delete-box-4">취소</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal3" class="black-bg">
+					<div class="report-box">
+						<div class="delete-box-1">신고 하시겠습니까?</div>
+						<div>사유</div>
+						<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
+						<div class="delete-box-2">
+							<div @click="reportStuff" class="delete-box-3">신고</div>
+							<div @click="modalHandler3" class="delete-box-4">취소</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal4" class="black-bg">
+					<div class="delete-box">
+						<div class="delete-box-1">신고 완료</div>
+						<div class="delete-box-2">
+							<div @click="modalHandler4" class="delete-box-3">닫기</div>
+						</div>
+					</div>
+				</div>
+			</header>
 			<div class="detail-main">
+
 				<!-- detail-img : detail-main - item1 -->
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
-				<!-- detail-heading : detail-main - item2 -->
-				<section class="canvas detail-heading">
-					<h1 class="d-none">heading</h1>
-					<div class="d-fl detail-edit">
-						<div class="detail-top">
-							<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
-							<div class="detail-status">모집중</div>
+				<div class="detail-content-wrap">
+					<!-- detail-heading : detail-main - item2 -->
+					<section class="canvas detail-heading">
+						<h1 class="d-none">heading</h1>
+						<div class="d-fl detail-edit">
+							<div class="detail-top">
+								<div class="detail-category" :value="stuff.categoryId">{{ category.name }}</div>
+								<div class="detail-status" :class="(stuff.deadlineState == 0) ? 'expired' :
+									(stuff.deadlineState == 1) ? 'day-left' :
+										(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
+							</div>
+
+							<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
+
 						</div>
-
-						<div class="icon-heart">하트</div>
-
-					</div>
-					<p class="detail-heading-title">{{ stuff.title }}</p>
-					<!-- <div class="d-fl">
+						<p class="detail-heading-title">{{ stuff.title }}</p>
+						<!-- <div class="d-fl">
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
-					<div class="detail-price">{{ stuff.price }}원</div>
+						<div class="detail-price">{{ stuff.price }}원</div>
 
-				</section>
-				<!-- detail-info : detail-main - item3 -->
-				<section class="canvas detail-info">
-					<h1 class="d-none">info</h1>
-					<div class="detail-in">
-						<div class="detail-info-title">인원</div>
-						<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">기한</div>
-						<div class="detail-info-txt">{{ stuff.deadline }}</div>
-					</div>
-					<div class="detail-in">
-						<div class="detail-info-title">장소</div>
-						<div class="detail-info-txt">{{ stuff.place }}</div>
-					</div>
+					</section>
+					<!-- detail-info : detail-main - item3 -->
+					<section class="canvas detail-info">
+						<h1 class="d-none">info</h1>
+						<div class="detail-in">
+							<div class="detail-info-title">인원</div>
+							<div class="detail-info-txt">{{ memberCount }} / {{ stuff.numPeople }} 명</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">기한</div>
+							<div class="detail-info-txt">{{ stuff.deadline }}</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">장소</div>
+							<div class="detail-info-txt">{{ stuff.place }}</div>
+						</div>
 
-				</section>
-				<section class="canvas map">
-					<div @click="toggleMap" v-if="showMap">지도 열기</div>
-					<div @click="toggleMap" v-else>지도 닫기</div>
-					<div id="map"></div>
-				</section>
-				<!-- detail-writing : detail-main - item4 -->
-				<section class="canvas detail-writing">
-					<h1 class="d-none">writing</h1>
-					<!-- <p class="detail-paragraph">
+					</section>
+					<section class="canvas map">
+						<div @click="toggleMap" v-if="showMap">지도 열기</div>
+						<div @click="toggleMap" v-else>지도 닫기</div>
+						<div id="map"></div>
+					</section>
+					<!-- detail-writing : detail-main - item4 -->
+					<section class="canvas detail-writing">
+						<h1 class="d-none">writing</h1>
+						<!-- <p class="detail-paragraph">
 								            {{ stuff.content }}
 								          </p> -->
-					<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
-				</section>
+						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
+					</section>
+				</div>
 			</div>
 		</main>
+		<div class="favorModal" @animationend="aniEndHandler">
+			<div v-if="favorOpenModal == true">
+				<div class="error-box">{{ zzimModalMsg }}</div>
+				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+					<div class="error-gotofavor">관심목록 보기</div>
+				</router-link>
+			</div>
+		</div>
 
 		<!-- detail-join : detail - itme2  -->
 
@@ -362,22 +561,15 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button
-						class="detail-join-button"
-						v-if="!isCheckParticipation"
-						@click="participationHandler"
-					>
-					참여하기
+					<button class="detail-join-button" v-if="!isCheckParticipation" @click="participationHandler">
+						참여하기
 					</button>
 
 					<div class="join-button-wrap" v-if="isCheckParticipation">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId" class="detail-chat-button">채팅하기</router-link>
-						<button
-							class="detail-cancel-button"
-							@click="cancelParticipationHandler"
-							v-if="!stuffAuthority"
-						>
-						참여취소
+						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId"
+							class="detail-chat-button">채팅하기</router-link>
+						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
+							참여취소
 						</button>
 					</div>
 				</div>
@@ -389,7 +581,7 @@ export default {
 							참여되었습니다.
 						</v-card-text>
 						<v-card-actions>
-						<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
+							<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
@@ -412,8 +604,30 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
 
-.detail {
-	margin: 0 auto;
+@media (min-width: 768px) {
+	.detail-main {
+		display: flex;
+		flex-direction: row;
+	}
+
+	main {
+		max-width: 1050px;
+		margin: 0 auto;
+	}
+
+	.detail-img {
+		width: 50%;
+		max-height: 525px;
+	}
+
+	.detail-content-wrap {
+		width: 50%;
+		margin: auto 0;	
+	}
+
+	.icon.icon-back {
+		display: none;
+	}
 }
 
 .v-slide-group button {
@@ -440,12 +654,84 @@ export default {
 /* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
 개발자모드에서 보여지는 css 계층의 값 변경 가능*/
 
-.v-dialog :deep{
+.v-dialog :deep {
 	font-size: 14px;
+}
+
+.filledHeart {
+	background-image: url("/images/member/stuff/filled-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 100%;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+	text-indent: -9999px;
+}
+
+.emptyHeart {
+	background-image: url("/images/member/stuff/empty-heart.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 100%;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+	text-indent: -9999px;
+}
+
+.error-box {
+	position: absolute;
+	background-color: white;
+	width: 70%;
+	height: 40px;
+	text-align: center;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	padding: 0 26px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 12px;
+	font-weight: 500;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
+	animation-fill-mode: forwards;
+
+}
+
+.error-gotofavor {
+	position: absolute;
+	text-align: center;
+	top: 5%;
+	right: 15%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	/* padding: 0 12px; */
+	font-weight: 600;
+	font-size: 10px;
+	animation-timing-function: ease-in-out;
+	animation: fadeout 4s;
+	animation-fill-mode: forwards;
 }
 </style>
 
 <style>
 @import "/css/component/member/stuff/map-content.css";
 
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
 </style>

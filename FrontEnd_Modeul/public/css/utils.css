@@ -71,7 +71,9 @@
 .m-t-13{ 
     margin-top: 13px;
 } 
-
+.m-t-28px{
+    margin-top: 28px;
+}
 /* gps, index, login에서 사용 */
 .m-t-35px{
     margin-top: 35px;

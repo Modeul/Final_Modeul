@@ -1,14 +1,20 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
 			page: '',
 			list: [],
 			openModal: null,
 			openModal2: null,
+			openModal3: null,
 			deleteValid: null,
 			deleteId: '',
 		}
@@ -16,17 +22,33 @@ export default {
 	methods: {
 		async addListHandler() {
 
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 
-			await fetch(`${this.$store.state.host}/api/stuffAll`)
+			await fetch(`${this.defaultStore.host}/api/reports/stuff`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
 					console.log(dataList);
-					this.$store.commit('LOADING_STATUS', false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
 
+		},
+		async deleteReport() {
+			this.openModal3 = true;
+			var requestOptions = {
+				method: 'DELETE',
+				redirect: 'follow'
+			};
+			// this.$router.push("/member/stuff/list");
+			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
+				.then(response => response.text())
+				.then(result => console.log(result))
+				.catch(error => console.log('error', error));
+			console.log("삭제완료");
+			this.openModal3 = false;
+			this.addListHandler();
+			this.openModal2 = true;
 		},
 		async deleteStuff() {
 			this.openModal = true;
@@ -35,7 +57,7 @@ export default {
 				redirect: 'follow'
 			};
 			// this.$router.push("/member/stuff/list");
-			await fetch(`${this.$store.state.host}/api/stuff/${this.deleteId}`, requestOptions)
+			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
@@ -48,9 +70,19 @@ export default {
 			this.deleteId = e.target.value;
 			this.openModal = !this.openModal;
 		},
+		modalHandler3(e){
+			this.deleteId = e.target.value;
+			this.openModal3 = !this.openModal3;
+		},
 		modalHandler2() {
 			this.openModal2 = !this.openModal2;
 		},
+		formatDate(date){
+
+				let regdate = dayjs(date).locale('ko');
+				let formatDate = regdate.format('YYYY-M-D HH:mm');
+				return formatDate;
+		}
 	},
 
 	mounted() {
@@ -61,7 +93,20 @@ export default {
 
 <template>
 	<main>
+		<h1 class="d-none">신고 관리 목록</h1>
+		<div class="admin-header">
+			<span>신고 관리</span>
+		</div>
 		<!-- 취소 확인 모달 -->
+		<div v-if="openModal3" class="black-bg">
+			<div class="delete-box">
+				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+				<div class="delete-box-2">
+					<div @click="deleteReport" class="delete-box-3">삭제</div>
+					<div @click="modalHandler3" class="delete-box-4">취소</div>
+				</div>
+			</div>
+		</div>
 		<div v-if="openModal" class="black-bg">
 			<div class="delete-box">
 				<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
@@ -86,19 +131,20 @@ export default {
 			<table class="admin-categ-table">
 				<thead class="table-head">
 					<tr>
-						<th style="width: 200px; text-align:left;">번호</th>
-						<th style="width: 150px; text-align:left;">신고 일</th>
-						<th style="width: 200px; text-align:left;">신고 자</th>
-						<th style="width: 700px; text-align:left;">신고 글</th>
+						<th style="width: 100px;">번호</th>
+						<th style="width: 100px;">신고 일</th>
+						<th style="width: 150px;">신고 자</th>
+						<th style="width: 100px;">신고 글</th>
+						<th style="width: 600px; text-align: left;">신고 사유</th>
 					</tr>
 				</thead>
-				<tbody class="table-body">
+				<tbody class="table-body" style="width: 100%">
 					<tr v-for="s in list">
-						<td style="width: 200px; text-align:left;">{{ s.id }}</td>
-						<td style="width: 150px; text-align:left;">{{ s.regDate }}</td>
-						<td style="width: 200px; text-align:left;">{{ s.nickname }}</td>
-						<td style="width: 700px; text-align:left;"><router-link :to="{ path: '/member/stuff/' + s.stuffId }"></router-link></td>
-						<td><button @click="modalHandler" :value="s.stuffId" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+						<td style="width: 100px; ">{{ s.id }} <button @click="modalHandler3" :value="s.id" class="icon-admin3 icon-delete">지우기 버튼</button></td>
+						<td style="width: 100px; " v-text=formatDate(s.regdate)></td>
+						<td style="width: 150px; ">{{ s.nickname }}</td>
+						<td style="width: 100px;  color: rgba(114, 153, 190, 1);"><router-link :to="{ path: '/member/stuff/' + s.stuffId }">{{ s.stuffId }}</router-link></td>
+						<td style="width: 600px; text-align: left;">{{s.detail}}<button style="float: right;" @click="modalHandler" :value="s.stuffId" class="icon-admin3 icon-delete">지우기 버튼</button></td>
 					</tr>
 				</tbody>
 			</table>

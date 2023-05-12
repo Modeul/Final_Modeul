@@ -9,12 +9,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 import com.modeul.web.entity.Member;
 import com.modeul.web.repository.MemberRepository;
 
-@Service
+// @Service
 public class ModeulUserDetailService implements UserDetailsService {
     
     @Autowired

@@ -57,4 +57,13 @@ public class MessageController {
 
 		messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), message);
 	}
+
+	@MessageMapping("/chat/dutchComplete")
+	public void dutchComplete(@RequestBody MessageView messageView, SimpMessageHeaderAccessor headerAccessor)
+			throws JsonProcessingException {
+
+				MessageView message = service.dutchComplete(messageView);
+
+		messagingTemplate.convertAndSend("/sub/chat/room/" + messageView.getStuffId(), message);
+	}
 }

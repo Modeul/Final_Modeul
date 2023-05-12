@@ -1,6 +1,7 @@
 package com.modeul.web.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -39,4 +40,9 @@ public interface ParticipationRepository {
     void putCalResultMsg(Message message);
 
     int insertCalculatedAmount(@Param("stuffId") Long stuffId, @Param("memberId") Long memberId, @Param("price") Integer price);
+
+    void insertAccount(@Param("stuffId") Long stuffId, String account);
+
+    String getAccount(Long leaderId);
+
 }

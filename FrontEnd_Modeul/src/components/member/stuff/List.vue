@@ -1,7 +1,10 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
 
 export default {
 	data() {
@@ -13,30 +16,49 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
+			query: '',
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore()
 		};
+	},
+	components: {
+		PcHeader
 	},
 	computed: {
 	},
 	methods: {
+		searchInput(query) {
+			if(this.query == query.trim())
+				return;
+			this.query = query.trim();
+			this.page = 1;
+
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.list = this.formatDateList(dataList.list);
+
+					this.listCount = dataList.listCount;
+
+				}).catch(error => console.log('error', error));
+		},
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			console.log(this.categoryId);
-			fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
-			this.$store.commit('LOADING_STATUS', true); // 해당 함수 true/false 로 어디서나 추가 가능
-			// setTimeout(() => { this.$store.commit('LOADING_STATUS', false); }, 400); //settimout은 지워도 됨
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.$store.state.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -45,8 +67,7 @@ export default {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(dataList);
-					this.$store.commit('LOADING_STATUS', false);
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
 
@@ -151,11 +172,10 @@ export default {
 
 		document.addEventListener("scroll", (e) => {
 
-			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
 					this.addListHandler();
 				}
-
 			}
 		})
 
@@ -164,25 +184,9 @@ export default {
 </script>
 
 <template>
-	<div class="pc-header-wrap">
-		<div class="header-menu">
-			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div class="login"><router-link to="/login">로그인</router-link></div>
-		</div>
-		<div class="pc-header">
-			<div class="logo-moduel header-logo"></div>
-			<div class="search-container">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요.">
-					<h1 class="icon search-dodbogi">돋보기</h1>
-				</div>
-			</div>
-			<div class="btnbox">
-				<div class="btn-heart"></div>
-				<div class="btn-location"></div>
-			</div>
-		</div>
-	</div>
+	
+	<PcHeader @query="searchInput"></PcHeader>
+
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
 			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
@@ -220,7 +224,7 @@ export default {
 								<router-link to="/member/stuff/list">HOME</router-link>
 							</span>
 							<span class="sidebar-padding">
-								<router-link to="/member/stuff/crawlinglist">추천상품</router-link>
+								<router-link to="/member/stuff/recommends">추천상품</router-link>
 							</span>
 							<span class="sidebar-padding">
 								<router-link to="/member/stuff/listsearch">검색하기</router-link>
@@ -300,7 +304,7 @@ export default {
 			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
 				<div class="reg-stuff d-none"></div>
-			</router-link> 
+			</router-link>
 		</main>
 
 		<nav class="navi-bar d-fl-jf">
@@ -326,5 +330,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
+@import "/css/component/admin/member/list-responsive.css";	
 @import "/css/button.css";
 </style>

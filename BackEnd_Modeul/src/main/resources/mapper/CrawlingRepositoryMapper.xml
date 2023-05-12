@@ -16,29 +16,26 @@
 
 	<!-- VIEW 이용할 때, on 조건 중 id 뭐로 연결할 건지 다시 생각! VIEW 테이블 자체는 조건절이 없었다. -->
 	<!--- MariaDB의 SQL문에 $는 '' 없이 SQL문에 값이 그냥 들어가고 #은 ''를 붙여서 SQL문에 값이 들어간다. -->
+	<select id="findbyId" resultMap="crawlingResultMap">
+		select *
+		from crawling
+		where id = #{id}
+	</select>
+
 	<select id="findAll" resultMap="crawlingResultMap">
 		select *
 		from crawling
 		<trim prefix="WHERE" prefixOverrides="AND | OR">
-			<!-- <if test="query != null">
+			<if test="query != null">
 				title like '%${query}%'
-			</if> -->
+			</if>
 			<if test="categoryId != null">
 				and category_id = #{categoryId}
 			</if>
-			<!-- <if test="size != null and offset != null">
-				limit ${size} offset ${offset}
-			</if> -->
 		</trim>
-		<!-- <if test="orderField != null and orderDir != null">
-			order by ${orderField} ${orderDir}		 -->
-				<!-- orderField랑 orderDir, limit, offset 
-				값 필수라서 trim 안함 -->
-		<!-- </if> -->
-
-		<!-- <if test="size != null and offset != null">
+		<if test="size != null and offset != null">
 			limit ${size} offset ${offset}
-		</if> -->
+		</if>
 	</select>
 
 	<select id="getCountList" resultType="Long">
@@ -50,5 +47,9 @@
 		</if>
 	</select>
 
-
+	<select id="findCategory" resultMap="crawlingResultMap">
+		SELECT DISTINCT categoryname , category_id
+		FROM crawling
+	</select>
+	
 </mapper>

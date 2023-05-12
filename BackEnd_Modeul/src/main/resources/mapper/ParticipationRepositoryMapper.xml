@@ -108,5 +108,18 @@
     VALUES (#{stuffId}, #{memberId},#{price})
 	</insert>
 
+  <update id="insertAccount" parameterType="Participation">
+    UPDATE participation
+    SET account = #{account}
+    WHERE stuff_id = #{stuffId} 
+	</update>
+
+  <select id="getAccount" resultType="String">
+    select account
+    from participation
+    <!-- where member_id = #{leaderId} -->
+    where stuff_id = #{leaderId}
+  </select>
+
 
 </mapper>
