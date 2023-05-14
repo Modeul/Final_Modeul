@@ -141,7 +141,8 @@ const pinia = createPinia();
 pinia.use(piniaPersist);
 
 // 이제는 .js파일이 아니라 뷰엔진(변환기!!)이 들어간 .vue 파일을 이용한다.
-createApp(App).use(router).use(vuetify).use(pinia).use(vue3GoogleLogin, {
-	clientId: 'YOUR_GOOGLE_CLIENT_ID' //입력 필요
-  })
-mount("#app");
+createApp(App).use(router).use(vuetify).use(pinia)
+// .use(vue3GoogleLogin, {
+// 	clientId: 'YOUR_GOOGLE_CLIENT_ID' //입력 필요
+//   })
+.mount("#app");

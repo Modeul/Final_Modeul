@@ -184,29 +184,7 @@ export default {
 	methods: {
 		async submit() {
 			this.ErrorMsg = "";
-			// uid 체크
-			if (!this.member.uid) {
-				this.ErrorMsg = "아이디는 필수 입력사항입니다.";
-				this.uidbtn = false;
-			} else if (!this.uidDupl) {
-				this.ErrorMsg = "중복 된 아이디입니다.";
-			}
-			// name 체크
-			if (!this.member.name) {
-				this.ErrorMsg = "이름은 필수 입력사항입니다.";
-				this.namebtn = false;
-			}
-			// nickname 체크
-			if (!this.member.nickname) {
-				this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
-				this.nicknamebtn = false;
-			} else if (!this.nicknameDupl) {
-				this.ErrorMsg = "중복 된 닉네임입니다.";
-			}
 
-			if (this.addrError) {
-				this.ErrorMsg = "주소는 필수 입력사항입니다.";
-			}
 			// email 체크
 			if (!this.member.email) {
 				this.ErrorMsg = "이메일 주소는 필수 입력사항입니다.";
@@ -218,6 +196,22 @@ export default {
 			} else if (!this.emailConfirmChk) {
 				this.ErrorMsg = "이메일 인증번호를 확인해주세요.";
 			}
+			
+			if (this.addrError) {
+				this.ErrorMsg = "주소는 필수 입력사항입니다.";
+			}
+			// nickname 체크
+			if (!this.member.nickname) {
+				this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
+				this.nicknamebtn = false;
+			} else if (!this.nicknameDupl) {
+				this.ErrorMsg = "중복 된 닉네임입니다.";
+			}
+			// name 체크
+			if (!this.member.name) {
+				this.ErrorMsg = "이름은 필수 입력사항입니다.";
+				this.namebtn = false;
+			}
 			// pwd 체크
 			if (!this.member.pwd) {
 				this.pwdbtn = false;
@@ -226,6 +220,13 @@ export default {
 				this.ErrorMsg = "비밀번호가 일치하지 않습니다.";
 			} else if (!this.isValidPwd(this.member.pwd)) {
 				this.ErrorMsg = "비밀번호를 확인해주세요. (8자리 이상 영문+숫자)";
+			}
+			// uid 체크
+			if (!this.member.uid) {
+				this.ErrorMsg = "아이디는 필수 입력사항입니다.";
+				this.uidbtn = false;
+			} else if (!this.uidDupl) {
+				this.ErrorMsg = "중복 된 아이디입니다.";
 			}
 			// 만약 ErrorMsg 가 있다면 모달창 띄우기
 			if (this.ErrorMsg) {
@@ -319,6 +320,14 @@ export default {
 			this.namebtn = true;
 			return true;
 		},
+		isValidEmail(){
+			const hasEmail = /^[A-Za-z0-9]+$/.test(this.member.email);
+			if (!hasEmail) {
+				this.emailError = "이메일은 영문만 가능합니다.";
+				this.emailbtn = false;
+				return false;
+			}
+		},
 		// 이메일 인증번호 발송
 		async checkEmail() {
 			var myHeaders = new Headers();
@@ -403,6 +412,7 @@ export default {
 		},
 		// 이메일 중복 검사
 		async checkEmailDupl() {
+			this.isValidEmail();
 			this.emailDupl = "";
 			this.emailError = "";
 			this.emailCheckError = "";
@@ -413,7 +423,7 @@ export default {
 				.then((result) => {
 					if (result == "false") this.emailDupl = false;
 					else this.emailDupl = true;
-					const emailRegex = /\S+@\S+\.\S+/.test(this.member.email);
+					const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(this.member.email);
 					if (!emailRegex) {
 						this.emailbtn = false;
 						this.emailCheckError = "올바른 이메일 형식으로 입력해주세요.";
