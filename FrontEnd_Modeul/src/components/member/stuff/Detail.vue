@@ -426,16 +426,13 @@ export default {
 				<!-- 모달 배경 -->
 				<div v-if="openModal">
 					<div class="icon-edit2" v-if="this.stuffUser">
-						<div class="d-fl-al fl-dir-col">
-							<router-link :to="'./edit/' + stuff.id">
-								<div class="icon-edit3"></div>
-							</router-link>
-							<div @click="modalHandler2" class="icon-edit4"></div>
+						<div class="box">
+							<router-link :to="'./edit/' + stuff.id"><div class="icon-edit3"><div class="icon"></div>수정 하기</div></router-link>
+							<div @click="modalHandler2" class="icon-edit4"><div class="icon"></div>삭제 하기</div>
 						</div>
 					</div>
 					<div class="icon-report" v-else @click="modalHandler3">
-						<div class="d-fl-al fl-dir-col">
-						</div>
+						<div class="icon"></div>신고 하기
 					</div>
 					<!-- 취소 확인 모달 -->
 					<div v-if="openModal2" class="black-bg">
