@@ -355,8 +355,18 @@ input[id="menuicon"]:checked + label + div {
   object-fit: cover;
 }
 
+.search-form {
+  width: 1fr;
+}
+
 .search-form .search-input {
   text-align: left;
-  height: 25px;
-  width: 90%;
+  width: calc(100% - 36px);
+	font-size: 12px;
+}
+
+.icon.icon-search,
+.icon.icon-search-cancel
+{
+	margin: 4px 0 0 12px;
 }

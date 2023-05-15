@@ -259,7 +259,7 @@
 							{{ m.memberNickname }}
 						</div>
 						<div class="cal-user-self-result">
-							{{ m.price }}원
+							{{ formatPrice(m.price) }}원
 						</div>
 					</div>
 				</main>
@@ -270,7 +270,7 @@
 						합계
 					</div>
 					<div>
-						{{ sumDutch }}원
+						{{ formatPrice(sumDutch) }}원
 					</div>
 				</section>
 
@@ -388,7 +388,10 @@ export default {
 		chipinHandler() {
 			let chipin = Math.floor(this.totalPrice / this.participantList.length);
 
-			this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+			if (isNaN(chipin))
+				this.totalPrice = '';
+			else
+				this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 
 			this.participantList.forEach(user =>
 				this.price[user.memberId] = chipin
@@ -784,6 +787,9 @@ export default {
 				this.price[memberId] = this.personalPrice[memberId];
 				this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
 			}
+		},
+		formatPrice(price){
+			return Number(price).toLocaleString();
 		}
 	},
 	beforeRouteLeave() {
