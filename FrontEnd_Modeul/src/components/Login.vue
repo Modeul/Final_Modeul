@@ -16,13 +16,13 @@
 						<label for="uid" class="uid-label login-label">
 							<span class="d-none">uid</span>
 						</label>
-						<input type="text" class="input-text" placeholder="아이디를 입력해주세요" v-model="uid" autofocus>
+						<input type="text" class="input-text" placeholder="아이디" v-model="uid" autofocus>
 					</div>
 					<div class="input-field-1 m-t-1">
 						<label for="password" class="password-label login-label">
 							<span class="d-none">uid</span>
 						</label>
-						<input type="password" class="input-text" placeholder="비밀번호를 입력해주세요" v-model="pwd">
+						<input type="password" class="input-text" placeholder="비밀번호" v-model="pwd">
 					</div>
 					<div>
 						<input @click.prevent="login()" class="btn-2" type="submit" value="로그인">
@@ -43,13 +43,17 @@
 						<span class="find-text">비밀번호 찾기</span>
 					</router-link>
 				</div>
-
+				<div class="google-login">
+					<div class="google-icon"></div>
+					<div class="text">Google 계정 로그인</div>
+				</div>
 				<div class="signup-box">
-					<span class="signup-text2">Modeul이 처음이세요?</span>
+					<span class="signup-text2">Modeul이 처음이세요?&nbsp;&nbsp;</span>
 					<router-link to="signup" class="signup-text">
 						<h2 class="fromCenter">회원가입</h2>
 					</router-link>
 				</div>
+
 			</div>
 
 		</main>
