@@ -10,6 +10,14 @@
 	.search-container {
 		display: flex;
 	}
+
+	.list-wrap {
+		margin: 0 auto;
+		width: 1050px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
 }
 
 @media (min-width: 768px) {
