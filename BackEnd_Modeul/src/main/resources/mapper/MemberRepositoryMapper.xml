@@ -25,6 +25,7 @@
 	<select id="findAll" resultMap="MemberResultMap">
 	  select *
 	  	from member
+			where level = 1
   </select>
   
   <select id="getUid" resultType="String">
