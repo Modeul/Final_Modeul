@@ -85,7 +85,6 @@ export default {
 
 <style scoped>
 @import url(/css/component/member/stuff/component-crawlinglist.css);
-@import url(/css/component/member/stuff/component-list-search.css);
 </style>
 <template>
 	<div>
@@ -123,7 +122,7 @@ export default {
 						<div class="li-categ-place">
 							<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
 						</div>
-						<router-link :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}">
+						<router-link class="d-gr" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
 							<button class="icon-write" v-on:click="regbuttonHandler" name="id" :value="stuff.id"></button>
 						</router-link>
 						<div class="li-subj">{{ stuff.title }}</div>
@@ -140,7 +139,7 @@ export default {
 					<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 				</div>
 				<div class="navi-icon">
-					<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+					<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 				</div>
 				<div>
 					<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
