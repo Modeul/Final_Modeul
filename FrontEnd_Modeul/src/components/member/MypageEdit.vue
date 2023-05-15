@@ -59,6 +59,16 @@
 				</div>
 				<span class="error-txt">{{ this.ErrorMsg }}</span>
 			</div>
+
+			<div @click.prevent="postCode" class="input-field" style="height: 42px;">
+				<div class="address-icon"></div>
+				<input type="text" id="address" class="input-addr" v-model="addr" hidden />
+				<div class="input-text-2" v-text="addr"></div>
+			</div>
+			<div class="input-field">
+				<div class="address-icon"></div>
+				<input type="text" class="input-addr2" v-model="addr2" placeholder="상세 주소" />
+			</div>
 		</div>
 		<div v-if="this.nicknamebtn" @click.prevent="submit" class="btn-save">
 			저장하기
@@ -82,6 +92,10 @@ export default {
 			file: [],
 			openModal: false,
 			openModal2: false,
+			addr: '',
+			addr2: '',
+			coordX: '',
+			coordY: '',
 		};
 	},
 	methods: {
@@ -106,7 +120,10 @@ export default {
 
 				var raw = JSON.stringify({
 					"id": this.loginInfo.id,
-					"nickname": this.loginInfo.nickname
+					"nickname": this.loginInfo.nickname,
+					"address": this.addr + ',' + this.addr2,
+					"coordX": this.coordX,
+					"coordY": this.coordY
 				});
 
 				var requestOptions = {
@@ -182,8 +199,31 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					this.loginInfo = data;
+					[this.addr, this.addr2] = data.address.split(',');
 					console.log(data);
 				})
+		},
+		postCode() {
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.addr = data.address;
+					// this.dongCode = data.bcode;
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.coordX = result.x;
+							this.coordY = result.y;
+							// this.addrError = false;
+							document.querySelector(".input-addr2").focus();
+						}
+					});
+
+				}
+			}).open();
 		}
 	},
 	mounted() {
@@ -324,6 +364,14 @@ export default {
 	display: inline-block;
 	background-size: contain;
 	background-image: url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Crect width='25' height='25' fill='url(%23pattern0)'/%3E%3Cdefs%3E%3Cpattern id='pattern0' patternContentUnits='objectBoundingBox' width='1' height='1'%3E%3Cuse xlink:href='%23image0_126_665' transform='scale(0.0208333)'/%3E%3C/pattern%3E%3Cimage id='image0_126_665' width='48' height='48' xlink:href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAiZJREFUaEPtmY0xBEEQhd9FgAgQASJABkRABogAESADIiADZCADRIAIqK9qV82N2Z3ZuZ49WzVddXV7d/PTr1//zdxME5fZxPVXBbBsBq0ZWJV0LulYEs+ufEp6kHQmiWcTsQZwL+kgotmTpH0T7SXTGMDiH4mKrVmxYMnAnqTHBsCzJD67guV3my9ggM8LSwXgmLAykONP1YWqC+X4jTOny4WopqeBapq6XSyNpq7TjqNyX0u69CeGAFw07cDQTdzx1gDatQGAfr8SAkA19fuYoWBKAXiTtBkD8J3gYiFAJVuJTp1CDOQCAJTbLnSxFmInxvBoAGCBYKMjXfG0+mraaZLD0HZ6NAAxS+b+XgHkWs5qXmWgz5IE7FYTmHcJAcp5+ShCjX/kLMYAGeXKUeZF0k5EuZRK76f3YgBeJW14CseOizDAq0/842gxAORzP98fNvneKoBZpxgAitaJo+m7pO2EOBgKrhgAFMGnoZxGi2fe+wSXW4+Mod1wpSiAodb8V0HMPQ8u07bfZCGs19frLB0ACnNiw226zg3cgd50XF7hQn7m8ln0L73MXAiFSZ2pBx4OH7GYSHFBMwBUXS5wU+XPETB1YqkgTilC7t63kngtKmYMLKpI7vwKINdyVvMqA1aWzF1nEAOhDjN3Y+t5NItzRbDU1aK14u16SVeLDKZfIefHusZSivrrYnnqydy9KIMs/+AYC8zcPhXAUszubDp5Bn4AITeSMeOKBiYAAAAASUVORK5CYII='/%3E%3C/defs%3E%3C/svg%3E%0A");
+}
+
+.address-icon::before {
+	content: "\e88a";
+	font-family: 'Material Icons';
+	font-size: 25px;
+	/* margin-right: 8px; */
+	margin-left: 12px;
 }
 
 .mypage-input .input-field .text {
