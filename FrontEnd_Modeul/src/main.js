@@ -144,4 +144,4 @@ pinia.use(piniaPersist);
 createApp(App).use(router).use(vuetify).use(pinia).use(vue3GoogleLogin, {
 	clientId: 'YOUR_GOOGLE_CLIENT_ID' //입력 필요
   })
-mount("#app");
+.mount("#app");

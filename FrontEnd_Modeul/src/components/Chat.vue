@@ -1129,7 +1129,7 @@ select option[value=""][disabled] {
 }
 
 input::placeholder {
-	text-align: right;
+	text-align: left;
 }
 
 .calc-member-price {

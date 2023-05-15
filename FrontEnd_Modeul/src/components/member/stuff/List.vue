@@ -12,6 +12,10 @@ export default {
 			page: '',
 			dongCode: '',
 			dongName: '',
+			myDongCode:'',
+			myDongName:'',
+			myCoordX: '',
+			myCoordY: '',
 			list: [],
 			categoryList: [],
 			categoryId: '',
@@ -53,12 +57,13 @@ export default {
 					this.categoryList = dataList.categoryList;
 				}).catch(error => console.log('error', error));
 		},
-		async addListHandler() {
+		async addListHandler(c) {
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
+			
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -74,7 +79,7 @@ export default {
 		},
 		scrollCheck() {
 			if (window.innerHeight >= 718) {
-				this.addListHandler();
+				this.addListHandler('');
 			}
 		},
 
@@ -128,20 +133,25 @@ export default {
 
 		onChage(v) {
 			if (v.target.value === 'cur') {
-				this.getDongInfo();
-			} else {
+				this.getDongInfo(null, null);
+			} else if (v.target.value === 'my'){
+				this.addListHandler(this.myDongCode);
+				console.log(this.myDongCode);
+			} else{
 				this.dongCode = '';
 				this.dongName = '';
-				this.addListHandler();
+				this.addListHandler(this.dongCode);
 			}
 
 
 		},
 
-		getDongInfo() {
+		getDongInfo(x,y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-			const watchID = navigator.geolocation.getCurrentPosition((position) => {
+
+			if (x == null) {
+				const watchID = navigator.geolocation.getCurrentPosition((position) => {
 				let lat = position.coords.latitude;
 				let lng = position.coords.longitude;
 
@@ -155,26 +165,58 @@ export default {
 					if (status === kakao.maps.services.Status.OK) {
 
 						this.dongCode = result[0].code;
-
-						this.addListHandler();
+						console.log(this.dongCode);
+						this.addListHandler(this.dongCode);
 					}
 				});
 
 			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+
+			} else {
+
+				geocoder.coord2Address(x, y, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.myDongName = result[0].address.region_3depth_name;
+					}
+				});
+				geocoder.coord2RegionCode(x, y, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.myDongCode = result[0].code;
+
+						
+					}
+				});
+
+
+			}
+			
+			
+		},
+		getMemberCoordInfo(){
+			fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.myCoordX = dataList.coordX;
+					this.myCoordY = dataList.coordY;
+					this.getDongInfo(this.myCoordX, this.myCoordY);
+				}).catch(error => console.log('error', error));
 		},
 
 	},
 	mounted() {
 		this.page = 0;
-		this.addListHandler();
+		this.addListHandler('');
 		this.scrollCheck();
-		// this.getDongInfo();
+		this.getMemberCoordInfo();
+		console.log("마운트 "+ this.myCoordX);
 
 		document.addEventListener("scroll", (e) => {
 
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler();
+					this.addListHandler('');
 				}
 			}
 		})
@@ -198,10 +240,9 @@ export default {
 		<header class="d-fl-al header-jc">
 			<select class="selectbox-set" @change="onChage($event)">
 				<option value="" default>전체</option>
-				<option value="">신설동</option>
+				<option value="my">{{ myDongName }}</option>
 				<option value="cur">현재위치</option>
 			</select>
-			<div> {{ dongName }}</div>
 
 			<div>
 				<!-- <a class="icon icon-menu">메뉴</a> -->

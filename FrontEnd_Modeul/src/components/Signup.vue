@@ -72,7 +72,8 @@
 					<div @click.prevent="postCode" class="input-field-2" style="height: 42px;">
 						<label for="address" class="address-label signup-label">
 							<span class="d-none">addr</span>
-							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address" hidden />
+							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address"
+								hidden />
 							<div class="input-text-2" v-text="member.address"></div>
 						</label>
 					</div>
@@ -148,6 +149,8 @@ export default {
 				nickname: "",
 				email: "",
 				address: "주소를 입력해주세요",
+				coordX: "",
+				coordY: "",
 			},
 			addr2: "",
 			// 에러메시지
@@ -441,15 +444,25 @@ export default {
 		},
 
 		postCode() {
-
+			const geocoder = new daum.maps.services.Geocoder();
 			new daum.Postcode({
 				oncomplete: (data) => {
 
 					this.member.address = data.address;
 					// this.dongCode = data.bcode;
-					console.log(this.member.address);
-					this.addrError = false;
-					document.querySelector("#addr2").focus();
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.member.coordX = result.x;
+							this.member.coordY = result.y;
+							console.log(this.member.coordX);
+							this.addrError = false;
+							document.querySelector("#addr2").focus();
+						}
+					});
+
 				}
 			}).open();
 		}

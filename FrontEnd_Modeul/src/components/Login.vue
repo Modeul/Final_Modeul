@@ -27,8 +27,8 @@
 					<div>
 						<input @click.prevent="login()" class="btn-2" type="submit" value="로그인">
 					</div>
-					<div> 또는</div>
-					<GoogleLogin :callback="googleLoginHandler" />
+					<!-- <div> 또는</div>
+					<GoogleLogin :callback="googleLoginHandler" /> -->
 				</form>
 				<div style="color: red; font-size: 12px; margin-top: 4px; height : 20px;">{{ this.errormsg }}</div>
 			</div>
