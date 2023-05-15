@@ -12,7 +12,7 @@ export default {
 	},
 	methods: {
 		queryHandler(e) {
-			this.$emit('query', e.target.value);
+			this.$emit('queryEmit', e.target.value);
 		}
 	}
 }

@@ -6,6 +6,10 @@
 	.pc-header-wrap {
 		display: none;
 	}
+
+	.search-container {
+		display: flex;
+	}
 }
 
 @media (min-width: 768px) {
