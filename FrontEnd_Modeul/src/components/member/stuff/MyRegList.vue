@@ -15,7 +15,7 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
-			myMemberId: '2',
+			myMemberId: '',
 		};
 	},
 	computed: {
@@ -104,6 +104,7 @@ export default {
 		},
 	},
 	mounted() {
+		this.myMemberId = this.userDetails.id;
 		this.page = 0;
 		this.addListHandler();
 
