@@ -34,14 +34,13 @@ export default {
 					return;
 			this.query = queryEmit.trim();
 			this.page = 1;
-
+			this.defaultStore.loadingStatus = true;
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
-
 					this.listCount = dataList.listCount;
-
+					this.defaultStore.loadingStatus = false;
 				}).catch(error => console.log('error', error));
 		},
 		categoryHandler(e) {
