@@ -196,11 +196,14 @@ export default {
 
 	<section class="canvas">
 		<header class="d-fl-al header-jc">
-			<select class="selectbox-set" @change="onChage($event)">
-				<option value="" default>전체</option>
-				<option value="">신설동</option>
-				<option value="cur">현재위치</option>
-			</select>
+			<div class="gps-box">
+				<div class="icon icon-location"></div>
+				<select class="selectbox-set" @change="onChage($event)">
+					<option value="" default>전체</option>
+					<option value="">신설동</option>
+					<option value="cur">현재위치</option>
+				</select>
+			</div>
 			<div> {{ dongName }}</div>
 
 			<div>

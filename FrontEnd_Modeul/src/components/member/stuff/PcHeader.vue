@@ -39,8 +39,13 @@ export default {
 				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
 					<router-link to="/admin/stuff/list"></router-link>
 				</div>
-				<div class="btn-heart"></div>
+				<div class="btn-heart">
+					<router-link to="/member/favorite"></router-link>
+				</div>
 				<div class="btn-location"></div>
+				<div class="btn-mypage">
+				<router-link to="/member/mypage"></router-link>
+				</div>
 			</div>
 		</div>
 	</div>
