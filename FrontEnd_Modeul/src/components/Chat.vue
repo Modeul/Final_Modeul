@@ -146,7 +146,7 @@
 	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 
-		<Form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
+		<form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
 				<div class="icon">뒤로가기</div>
@@ -179,7 +179,7 @@
 				<button type="submit" class="calc-button">다음</button>
 
 			</div>
-		</Form>
+		</form>
 
 		<section class="calc" :class="{ 'd-none': !isCalc }">
 			<h1 class="d-none">정산하기</h1>
@@ -259,7 +259,7 @@
 							{{ m.memberNickname }}
 						</div>
 						<div class="cal-user-self-result">
-							{{ m.price }}원
+							{{ formatPrice(m.price) }}원
 						</div>
 					</div>
 				</main>
@@ -270,7 +270,7 @@
 						합계
 					</div>
 					<div>
-						{{ sumDutch }}원
+						{{ formatPrice(sumDutch) }}원
 					</div>
 				</section>
 
@@ -388,7 +388,10 @@ export default {
 		chipinHandler() {
 			let chipin = Math.floor(this.totalPrice / this.participantList.length);
 
-			this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+			if (isNaN(chipin))
+				this.totalPrice = '';
+			else
+				this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 
 			this.participantList.forEach(user =>
 				this.price[user.memberId] = chipin
@@ -784,6 +787,9 @@ export default {
 				this.price[memberId] = this.personalPrice[memberId];
 				this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
 			}
+		},
+		formatPrice(price){
+			return Number(price).toLocaleString();
 		}
 	},
 	beforeRouteLeave() {

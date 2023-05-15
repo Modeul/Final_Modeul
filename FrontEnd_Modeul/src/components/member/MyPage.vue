@@ -65,7 +65,7 @@
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
 			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 			</div>
 			<div>
 				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>

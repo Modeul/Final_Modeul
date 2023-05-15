@@ -65,10 +65,7 @@
 					<!-- 이미지 업로드  -->
 					<div class="file-box">
 						<label for="file">
-							<div class="btn-file">{{ imageList.length }}/6</div>
-							<div class="btn-uploaded-files" v-for="item in imageList">
-								<img class="uploaded-files" :src="item" />
-							</div>
+								<img class="uploaded-crawlingimg" :src="this.stuff.imageList.name" />
 						</label>
 
 						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
@@ -180,6 +177,8 @@ export default {
 			showMap: false,
 			mapStatus: false,
 			mapNav: false,
+			crawlingData : [],
+			id:'',
 
 			croodX: 0,
 			croodY: 0,
@@ -231,6 +230,28 @@ export default {
 				this.stuff.numPeople--;
 		},
 
+		// 선택한 데이터 받아오기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+		loadCrawlingData() {
+			this.id = this.$route.params.id;
+			var requestOptions = {
+				method: 'GET',
+				redirect: 'follow'
+			};
+			fetch(`${this.defaultStore.host}/api/stuff/crawlingreg/${this.id}`, requestOptions)
+				.then(response => response.json())
+				.then(data => {
+					this.crawlingData = data;
+					console.log(this.crawlingData) // Proxy객체로 반환됨.
+					// Proxy를 Object로 변환
+      				// this.crawlingData = JSON.parse(JSON.stringify(this.crawlingData));
+					console.log(this.crawlingData.crawlingData.title);
+					this.stuff.title = this.crawlingData.crawlingData.title || '';
+					this.stuff.price = this.crawlingData.crawlingData.price || '';
+					this.stuff.url = this.crawlingData.crawlingData.contenturl || '';
+					this.stuff.imageList.name = this.crawlingData.crawlingData.imgurl || '';
+				})
+				.catch(error => console.log('error', error));
+		},
 		/* selectbox에 카테고리 목록 불러오기 */
 		loadCategory() {
 			var requestOptions = {
@@ -311,6 +332,7 @@ export default {
 					.catch(error => console.log('error', error));
 
 				this.$router.replace('/member/stuff/list')
+				console.log(this.stuff.imageList.name)
 			}
 		},
 
@@ -445,6 +467,7 @@ export default {
 	},
 	mounted() {
 		this.loadCategory();
+		this.loadCrawlingData();
 
 	},
 }

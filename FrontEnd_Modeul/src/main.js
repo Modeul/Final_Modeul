@@ -1,7 +1,7 @@
 import App from "./App.vue";
 import { createApp } from "vue";
-import { createPinia } from 'pinia'
-import piniaPersist from 'pinia-plugin-persist'
+import { createPinia } from "pinia";
+import piniaPersist from "pinia-plugin-persist";
 import { createRouter, createWebHashHistory } from "vue-router";
 import vue3GoogleLogin from 'vue3-google-login'
 
@@ -12,12 +12,12 @@ import * as directives from "vuetify/directives";
 
 import "@mdi/font/css/materialdesignicons.css";
 
-import { useUserDetailsStore } from './stores/useUserDetailsStore.js'
+import { useUserDetailsStore } from "./stores/useUserDetailsStore.js";
 
 const vuetify = createVuetify({
-	components,
-	directives
-	// theme: { defaultTheme: 'light' },
+  components,
+  directives
+  // theme: { defaultTheme: 'light' },
 });
 
 import Layout from "./components/Layout.vue";
@@ -42,6 +42,7 @@ import Reg from "./components/member/stuff/Reg.vue";
 import EditReg from "./components/member/stuff/EditReg.vue";
 import ListSearch from "./components/member/stuff/ListSearch.vue";
 import CrawlingList from "./components/member/stuff/CrawlingList.vue";
+import CrawlingReg from "./components/member/stuff/CrawlingReg.vue";
 import Gps from "./components/member/stuff/Gps.vue";
 import ParticipationList from "./components/member/participation/List.vue";
 
@@ -56,85 +57,83 @@ import Analytics from "./components/admin/analytics/List.vue";
 import ReportList from "./components/admin/report/List.vue";
 
 const routes = [
-	{
-		path: "/",
-		component: Layout,
-		children: [
-			{ path: "", component: Index },
-			{ path: "login", component: Login },
-			{ path: "login/findpwd", component: FindPwd },
-			{ path: "login/findid", component: FindId },
-			{ path: "signup", component: Signup },
-			{ path: "chat/:stuffId/:memberId", component: Chat }
-		]
-	},
-	{
-		path: "/member",
-		component: MemberLayout,
-		children: [
-			{
-				path: "mypage", children: [
-					{ path: "", component: MyPage },
-					{ path: "edit", component: MypageEdit },
-					{ path: "changepwd", component: ChangePwd },
-					{ path: "favorite", component: Favorite },
-					{ path: "myreglist", component: MyRegList },
-					{ path: "mydutchlist", component: MyDutchList },
-				]
-			},
-			{
-				path: "stuff", children: [
-					{ path: "list", component: List },
-					{ path: ":id", component: Detail },
-					{ path: "reg", component: Reg },
-					{ path: "edit/:id", component: EditReg },
-					{ path: "listsearch", component: ListSearch },
-					{ path: "recommends", component: CrawlingList },
-					{ path: "gps", component: Gps },
-				]
-			},
-			{ path: "participation/list", component: ParticipationList }
-		], beforeEnter(to, from, next) {
+  {
+    path: "/",
+    component: Layout,
+    children: [
+      { path: "", component: Index },
+      { path: "login", component: Login },
+      { path: "login/findpwd", component: FindPwd },
+      { path: "login/findid", component: FindId },
+      { path: "signup", component: Signup },
+      { path: "chat/:stuffId/:memberId", component: Chat }
+    ]
+  },
+  {
+    path: "/member",
+    component: MemberLayout,
+    children: [
+      {
+        path: "mypage",
+        children: [
+          { path: "", component: MyPage },
+          { path: "edit", component: MypageEdit },
+          { path: "changepwd", component: ChangePwd },
+          { path: "favorite", component: Favorite },
+          { path: "myreglist", component: MyRegList },
+          { path: "mydutchlist", component: MyDutchList }
+        ]
+      },
+      {
+        path: "stuff",
+        children: [
+          { path: "list", component: List },
+          { path: ":id", component: Detail },
+          { path: "reg", component: Reg },
+          { path: "edit/:id", component: EditReg },
+          { path: "listsearch", component: ListSearch },
+          { path: "recommends", component: CrawlingList },
+          { path: "gps", component: Gps },
+          { path: "crawlingreg/:id", component: CrawlingReg }
+        ]
+      },
+      { path: "participation/list", component: ParticipationList }
+    ],
+    beforeEnter(to, from, next) {
+      let userDetails = useUserDetailsStore();
 
-			let userDetails = useUserDetailsStore();
-	
-			if (!userDetails.isAuthenticated)
-				next('/login');
-			else
-				next();
-		}
-	},
-	{ path: "/admin/login", component: AdminLogin },
-	{
-		path: "/admin",
-		component: AdminLayout,
-		children: [
-			{ path: "index", component: AdminIndex },
-			{ path: "member/list", component: MemberList },
-			{ path: "stuff/list", component: StuffList },
-			{ path: "category/list", component: CategoryList },
-			{ path: "report/list", component: ReportList },
-		], beforeEnter(to, from, next) {
+      if (!userDetails.isAuthenticated) next("/login");
+      else next();
+    }
+  },
+  { path: "/admin/login", component: AdminLogin },
+  {
+    path: "/admin",
+    component: AdminLayout,
+    children: [
+      { path: "index", component: AdminIndex },
+      { path: "member/list", component: MemberList },
+      { path: "stuff/list", component: StuffList },
+      { path: "category/list", component: CategoryList },
+      { path: "report/list", component: ReportList }
+    ],
+    beforeEnter(to, from, next) {
+      let userDetails = useUserDetailsStore();
 
-			let userDetails = useUserDetailsStore();
-	
-			let url = `/login?returnURL=${to.path}`
-	
-			if (!userDetails.isAuthenticated)
-				next(url);
-			else if (userDetails.hasRole("ADMIN"))
-				next();
-			else
-				next("/error/403");
-		}
-	}
+      let url = `/login?returnURL=${to.path}`;
+
+      if (!userDetails.isAuthenticated) next(url);
+      else if (userDetails.hasRole("ADMIN")) next();
+      else next("/error/403");
+    }
+  }
 ];
 
 const router = createRouter({
-	// 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-	// router 기록!
-	history: createWebHashHistory(),
-	routes // short for `routes: routes`
+  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
+  // router 기록!
+  history: createWebHashHistory(),
+  routes // short for `routes: routes`
 });
 
 const pinia = createPinia();

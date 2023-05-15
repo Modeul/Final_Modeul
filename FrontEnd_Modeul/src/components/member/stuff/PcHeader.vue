@@ -12,7 +12,7 @@ export default {
 	},
 	methods: {
 		queryHandler(e) {
-			this.$emit('query', e.target.value);
+			this.$emit('queryEmit', e.target.value);
 		}
 	}
 }
@@ -23,7 +23,7 @@ export default {
 		<div class="header-menu">
 			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
 			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
-			<div v-else @click.prevent="userDetails.logout" class="login">로그아웃</div>
+			<div v-else @click.prevent="userDetails.logout" class="login"><router-link to="/login">로그아웃</router-link></div>
 		</div>
 		<div class="pc-header">
 			<div class="logo-moduel header-logo">
@@ -39,8 +39,13 @@ export default {
 				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
 					<router-link to="/admin/stuff/list"></router-link>
 				</div>
-				<div class="btn-heart"></div>
+				<div class="btn-heart">
+					<router-link to="/member/favorite"></router-link>
+				</div>
 				<div class="btn-location"></div>
+				<div class="btn-mypage">
+				<router-link to="/member/mypage"></router-link>
+				</div>
 			</div>
 		</div>
 	</div>

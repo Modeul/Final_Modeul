@@ -23,26 +23,27 @@
 	</select>
 
 	<select id="findAll" resultMap="MemberResultMap">
-		select *
-		from member
-	</select>
-
-	<select id="getUid" resultType="String">
-		select uid
-		from member
-		where
-		name=#{name}
-		and
-		email=#{email}
-	</select>
-
-	<select id="getbyUid" resultType="String">
-		select uid
-		from
-		member
-		where
-		uid = #{uid}
-	</select>
+	  select *
+	  	from member
+			where level = 1
+  </select>
+  
+  <select id="getUid" resultType="String">
+  	select uid 
+	from member 
+	where 
+	name=#{name} 
+	and 
+	email=#{email}
+  </select>
+  
+   <select id="getbyUid" resultType="String">
+	  select uid
+	  from
+	  member
+	  where
+	  uid = #{uid}
+  </select>
 
 	<select id="getPwdByUid" resultType="Member">
 		select *

@@ -20,6 +20,7 @@ export default {
 			openModal3: false,
 			openModal4: false,
 			stuff: {},
+			stuffPrice: 0,
 			category: {},
 			imageList: '',
 			participantList: [],
@@ -385,6 +386,7 @@ export default {
 			.then((response) => response.json())
 			.then((data) => {
 				this.stuff = data.stuff;
+				this.stuffPrice = Number(data.stuff.price).toLocaleString();
 				this.category = data.category;
 				this.imageList = data.imageList;
 				this.participantList = data.participantList;
@@ -498,7 +500,7 @@ export default {
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
-						<div class="detail-price">{{ stuff.price }}원</div>
+						<div class="detail-price">{{ stuffPrice }}원</div>
 
 					</section>
 					<!-- detail-info : detail-main - item3 -->
