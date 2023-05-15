@@ -452,10 +452,15 @@ export default {
 						if(result.type == 'ENTER' || result.type == 'LEAVE')
 							this.loadParticipationList();
 						if(result.type == 'BANISH'){
-							if(result.memberId == this.userDetails.id)
+							if(result.memberId == this.userDetails.id){
+								this.$router.go('/member/stuff/list');
 								this.dialog = true;
+							}
 							this.loadParticipationList();
 						}
+						if(result.type == 'DUTCH')
+							this.loadDutchMemberList();
+						
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(result);
 					});
@@ -781,11 +786,11 @@ export default {
 		},
 		noAuthorityDutchHandler() {
 
-			if (this.checkDutchComplete === true && !this.banishAuthority)
+			if (!this.banishAuthority && this.checkDutchComplete === true)
 				this.calDrawer = !this.calDrawer;
 
 
-			if (this.checkDutchComplete === false && !this.banishAuthority)
+			if (!this.banishAuthority && this.checkDutchComplete === false)
 				this.openDutchCheckModal = !this.openDutchCheckModal;
 
 		},
