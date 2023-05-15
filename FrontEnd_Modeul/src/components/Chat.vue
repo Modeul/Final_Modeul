@@ -146,7 +146,7 @@
 	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 
-		<Form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
+		<form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
 				<div class="icon">뒤로가기</div>
@@ -179,7 +179,7 @@
 				<button type="submit" class="calc-button">다음</button>
 
 			</div>
-		</Form>
+		</form>
 
 		<section class="calc" :class="{ 'd-none': !isCalc }">
 			<h1 class="d-none">정산하기</h1>

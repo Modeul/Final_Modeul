@@ -162,7 +162,7 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"id": this.myMemberId,
+					"id": this.loginInfo.id,
 					"pwd": this.newPwd
 				});
 
