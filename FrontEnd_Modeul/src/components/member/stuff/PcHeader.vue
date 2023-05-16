@@ -3,6 +3,7 @@ import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
+	props:["dongName"],
 	data() {
 		return {
 			userDetails: useUserDetailsStore(),
@@ -13,7 +14,8 @@ export default {
 	methods: {
 		queryHandler(e) {
 			this.$emit('queryEmit', e.target.value);
-		}
+		},
+		
 	}
 }
 </script>
@@ -29,6 +31,18 @@ export default {
 			<div class="logo-moduel header-logo">
 				<router-link to="/member/stuff/list"></router-link>
 			</div>
+
+			<div class="gps-box">
+				<div class="icon icon-location"></div>
+				<!-- <select class="selectbox-set" @change="onChange($event)"> -->
+					<select class="selectbox-set" @change="this.$emit('change', $event)">
+					<option value="" default>전체</option>
+					<option value="my">{{ dongName }}</option>
+					<option value="cur">현재위치</option>
+				</select>
+			</div>
+
+
 			<div class="search-container" v-if="$route.path == '/member/stuff/list'">
 				<div class="d-fl d-b-none search-form">
 					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">

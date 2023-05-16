@@ -425,8 +425,14 @@ export default {
 				<div v-if="openModal">
 					<div class="icon-edit2" v-if="this.stuffUser">
 						<div class="box">
-							<router-link :to="'./edit/' + stuff.id"><div class="icon-edit3"><div class="icon"></div>수정 하기</div></router-link>
-							<div @click="modalHandler2" class="icon-edit4"><div class="icon"></div>삭제 하기</div>
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3">
+									<div class="icon"></div>수정 하기
+								</div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4">
+								<div class="icon"></div>삭제 하기
+							</div>
 						</div>
 					</div>
 					<div class="icon-report" v-else @click="modalHandler3">
@@ -471,7 +477,8 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList"
+							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -563,8 +570,7 @@ export default {
 					</button>
 
 					<div class="join-button-wrap" v-if="isCheckParticipation">
-						<router-link :to="'../../chat/' + stuff.id"
-							class="detail-chat-button">채팅하기</router-link>
+						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
 						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
 							참여취소
 						</button>
@@ -619,11 +625,15 @@ export default {
 
 	.detail-content-wrap {
 		width: 50%;
-		margin: auto 0;	
+		margin: auto 0;
 	}
 
 	.icon.icon-back {
 		display: none;
+	}
+
+	#map {
+		width: inherit;
 	}
 }
 
@@ -730,5 +740,4 @@ export default {
 	to {
 		opacity: 0;
 	}
-}
-</style>
+}</style>

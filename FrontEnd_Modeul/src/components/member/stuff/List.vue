@@ -11,6 +11,7 @@ export default {
 		return {
 			page: '',
 			dongCode: '',
+			serchDong: '',
 			dongName: '',
 			myDongCode:'',
 			myDongName:'',
@@ -39,7 +40,7 @@ export default {
 			this.query = queryEmit.trim();
 			this.page = 1;
 			this.defaultStore.loadingStatus = true;
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -50,7 +51,7 @@ export default {
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -131,16 +132,16 @@ export default {
 			return resultList;
 		},
 
-		onChage(v) {
+		onChange(v) {
 			if (v.target.value === 'cur') {
 				this.getDongInfo(null, null);
 			} else if (v.target.value === 'my'){
 				this.addListHandler(this.myDongCode);
 				console.log(this.myDongCode);
 			} else{
-				this.dongCode = '';
+				this.serchDong = '';
 				this.dongName = '';
-				this.addListHandler(this.dongCode);
+				this.addListHandler(this.serchDong);
 			}
 
 
@@ -165,8 +166,9 @@ export default {
 					if (status === kakao.maps.services.Status.OK) {
 
 						this.dongCode = result[0].code;
+						this.serchDong = this.dongCode;
 						console.log(this.dongCode);
-						this.addListHandler(this.dongCode);
+						this.addListHandler(this.serchDong);
 					}
 				});
 
@@ -216,7 +218,7 @@ export default {
 
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler('');
+					this.addListHandler(this.serchDong);
 				}
 			}
 		})
@@ -226,7 +228,7 @@ export default {
 </script>
 
 <template>
-	<PcHeader @queryEmit="searchInput"></PcHeader>
+	<PcHeader @queryEmit="searchInput" :dongName="myDongName" @change="onChange"></PcHeader>
 
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
@@ -239,7 +241,7 @@ export default {
 		<header class="d-fl-al header-jc">
 			<div class="gps-box">
 				<div class="icon icon-location"></div>
-				<select class="selectbox-set" @change="onChage($event)">
+				<select class="selectbox-set" @change="onChange($event)">
 					<option value="" default>전체</option>
 					<option value="my">{{ myDongName }}</option>
 					<option value="cur">현재위치</option>

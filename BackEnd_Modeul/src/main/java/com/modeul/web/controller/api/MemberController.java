@@ -68,7 +68,7 @@ public class MemberController {
 
 	@PutMapping("update")
 	public int editMember(@RequestBody Member member){
-
+		
 		return memberService.updateMember(member);
 	}
 
