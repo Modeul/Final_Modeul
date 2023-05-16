@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.modeul.web.entity.Favorite;
 import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.repository.FavoriteRepository;
 @Service
@@ -67,6 +68,13 @@ public class FavoriteServiceImpl implements FavoriteService {
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
+
+
+
+    @Override
+    public Favorite getListBystuffIdmemberId(Long stuffId, Long memberId) {
+        return favoriteRepository.findListBystuffIdmemberId(stuffId, memberId);
+    }
 
     
 
