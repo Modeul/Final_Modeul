@@ -127,7 +127,7 @@
 .li-subj {
   grid-area: subj;
   font-size: 0.9rem;
-	width: 100%;
+  width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
   display: -webkit-box;
@@ -362,11 +362,10 @@ input[id="menuicon"]:checked + label + div {
 .search-form .search-input {
   text-align: left;
   width: calc(100% - 36px);
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .icon.icon-search,
-.icon.icon-search-cancel
-{
-	margin: 4px 0 0 12px;
+.icon.icon-search-cancel {
+  margin: 4px 0 0 12px;
 }
