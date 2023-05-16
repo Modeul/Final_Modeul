@@ -539,7 +539,7 @@ export default {
 		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
-				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+				<router-link to="/member/mypage/favorite">
 					<div class="error-gotofavor">관심목록 보기</div>
 				</router-link>
 			</div>
@@ -699,7 +699,7 @@ export default {
 	font-size: 12px;
 	font-weight: 500;
 	animation-timing-function: ease-in-out;
-	animation: fadeout 1s;
+	animation: fadeout 3s;
 	animation-fill-mode: forwards;
 
 }
@@ -714,7 +714,7 @@ export default {
 	font-weight: 600;
 	font-size: 10px;
 	animation-timing-function: ease-in-out;
-	animation: fadeout 1s;
+	animation: fadeout 3s;
 	animation-fill-mode: forwards;
 }
 
