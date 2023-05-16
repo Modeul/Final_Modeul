@@ -11,7 +11,7 @@ import com.modeul.web.entity.ParticipationView;
 public interface ParticipationService {
     int addParticipation(Participation participation);
 
-    List<ParticipationView> getByMemberId(Long memberId, String orderField, int page);
+    List<ParticipationView> getByMemberId(Long memberId, String orderField, String orderDir, int page);
     List<ParticipationMemberView> getMemberBystuffId(Long stuffId);
 
     /* 상세 페이지의 참여 취소 기능 */
