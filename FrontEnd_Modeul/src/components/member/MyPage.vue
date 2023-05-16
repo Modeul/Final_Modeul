@@ -29,7 +29,7 @@
                 <router-link to="/member/participation/list">
                     <li>
                         <img src="/images/member/stuff/cart.svg">
-                        <span>참여 딜 목록</span>
+                        <span>참여목록</span>
                     </li>
                 </router-link>
                 <router-link to="/member/mypage/favorite">
@@ -41,7 +41,7 @@
                 <router-link to="/member/mypage/mydutchlist">
                     <li>
                         <img src="/images/member/stuff/dutch.svg">
-                        <span>정산 내역 목록</span>
+                        <span>정산내역</span>
                     </li>
                 </router-link>
                 <router-link to="/member/mypage/changepwd">
