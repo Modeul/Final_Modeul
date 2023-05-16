@@ -127,7 +127,7 @@
 .li-subj {
   grid-area: subj;
   font-size: 0.9rem;
-  width: 180px;
+	width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
   display: -webkit-box;
