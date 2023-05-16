@@ -3,7 +3,7 @@
 
 		<header>
 			<div class="header-container">
-				<h1 class="logo-main logo-moduel logo-size1 m-t-138px">mo_deul</h1>
+				<h1 class="logo-main logo-moduel logo-size1 m-t-80px">mo_deul</h1>
 			</div>
 		</header>
 

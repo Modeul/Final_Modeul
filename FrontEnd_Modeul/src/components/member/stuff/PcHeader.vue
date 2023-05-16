@@ -28,9 +28,9 @@ export default {
 	<div class="pc-header-wrap">
 		<div class="header-menu">
 			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<span v-else>{{ loginMember.nickname }} 님 안녕하세요.</span>
+			<div v-else class="info"> <p class="text">{{ loginMember.nickname }}</p> &nbsp;님 안녕하세요.&nbsp;&nbsp;</div>
 			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
-			<div v-else @click.prevent="userDetails.logout" class="login"><router-link to="/login">로그아웃</router-link></div>
+			<div v-else @click.prevent="userDetails.logout" class="logout"><router-link to="/login"></router-link></div>
 		</div>
 		<div class="pc-header">
 			<div class="logo-moduel header-logo">
