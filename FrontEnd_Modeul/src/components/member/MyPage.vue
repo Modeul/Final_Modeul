@@ -161,6 +161,7 @@ export default {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
 }
 
 .header {

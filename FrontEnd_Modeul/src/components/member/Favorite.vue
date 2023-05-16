@@ -204,25 +204,23 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
 @import url(/css/button.css);
-@import url(/css/style.css);
-@import url(/css/component/component.css);
 
 .canvas {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px;
 }
-.favorite {
+/* .favorite {
 	display: flex;
 	flex-direction: column;
-	/* align-items: center; */
 	padding: 0;
 	position: relative;
 	
 	height: 740px;
 	background: #FFFFFF;
 	margin: 0 auto;
-}
+} */
 
 .header {
 	display: flex;
@@ -232,8 +230,6 @@ export default {
 	gap: 10px;
 	width: 100%;
 	margin-top: 25px;
-    padding-bottom: 10px;
-	border-bottom: 0.3px #d5d5d5 solid;
 }
 
 .back {
@@ -243,16 +239,9 @@ export default {
 	margin-top: 9px;
 }
 
-
-.title{
-    font-size: 1.125em;
-    line-height: 26px;
-    text-align: center;
-    color: #222222;
-	margin: 0px auto;
-    padding-right: 23px;
-	margin-bottom: 12px;
-	font-weight: 500;
+.favorite .header .title {
+	margin: 0 auto;
+	padding-right: 23px;
 }
 
 .stuff-list {

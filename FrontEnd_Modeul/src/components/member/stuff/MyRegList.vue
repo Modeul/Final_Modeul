@@ -184,19 +184,12 @@ export default {
 @import "/css/component/member/stuff/component-list.css";
 @import "/css/button.css";
 
-.canvas {
-	max-width: 600px;
-	padding: 0 20px;
-	margin: 0 auto;
-}
-
 .header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
-
 	width: 100%;
 	margin-top: 25px;
 }
@@ -220,5 +213,6 @@ export default {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
 }
 </style>
