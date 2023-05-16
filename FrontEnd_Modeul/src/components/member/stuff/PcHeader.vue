@@ -7,13 +7,19 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			query: ''
+			query: '',
+			loginMember: ''
 		};
 	},
 	methods: {
 		queryHandler(e) {
 			this.$emit('queryEmit', e.target.value);
 		}
+	},
+	async mounted() {
+		const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
+		const result = await response.json();
+		this.loginMember = result;
 	}
 }
 </script>
@@ -22,6 +28,7 @@ export default {
 	<div class="pc-header-wrap">
 		<div class="header-menu">
 			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<span v-else>{{ loginMember.nickname }} 님 안녕하세요.</span>
 			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
 			<div v-else @click.prevent="userDetails.logout" class="login"><router-link to="/login">로그아웃</router-link></div>
 		</div>
