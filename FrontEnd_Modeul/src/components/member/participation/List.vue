@@ -200,6 +200,9 @@ export default {
 	padding: 0 20px;
 	margin: 0 auto;
 }
+.f-weight{
+	font-weight: 500;
+}
 </style>
 
 

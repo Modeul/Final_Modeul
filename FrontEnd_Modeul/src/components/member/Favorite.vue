@@ -1,47 +1,49 @@
 <template>
-	<section class="favorite canvas">
-		<header class="header">
-			<router-link to="/member/mypage" class="back"></router-link>
-			<div class="title">관심 목록</div>
-		</header>
+	<div class="canvas">
+		<section class="favorite">
+			<header class="header">
+				<router-link to="/member/mypage" class="back"></router-link>
+				<div class="title">관심 목록</div>
+			</header>
 
-		<div class="stuff-list" v-for="f in list" :key="f.stuffId">
-			<router-link :to="'/member/stuff/' + f.stuffId">
-				<div class="d-gr li-gr m-t-13px list-cl">
-					<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
-					<div class="li-pic b-rad-1">
-						<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
-						<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
-							alt="img">
-						<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
-							alt="img">
-						<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg"
-							alt="img">
-						<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+			<div class="stuff-list" v-for="f in list" :key="f.stuffId">
+				<router-link :to="'/member/stuff/' + f.stuffId">
+					<div class="d-gr li-gr m-t-13px list-cl">
+						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
+						<div class="li-pic b-rad-1">
+							<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
+							<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
+								alt="img">
+							<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
+								alt="img">
+							<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg"
+								alt="img">
+							<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+						</div>
+						<div class="li-categ-place">
+
+							<span class="li-categ-place-p">
+								{{ f.stuffPlace }}
+							</span>
+						</div>
+						<div class="li-dday" :class="(f.deadlineState == 0) ? 'expired' :
+							(f.deadlineState == 1) ? 'day-left' :
+								(f.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ f.dDay }}</div>
+						<div class="li-subj">{{ f.stuffTitle }}</div>
+
+
+						<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
+							<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
+							<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
+
+						</div>
 					</div>
-					<div class="li-categ-place">
+				</router-link>
+			</div>
+			<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 
-						<span class="li-categ-place-p">
-							{{ f.stuffPlace }}
-						</span>
-					</div>
-					<div class="li-dday" :class="(f.deadlineState == 0) ? 'expired' :
-						(f.deadlineState == 1) ? 'day-left' :
-							(f.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ f.dDay }}</div>
-					<div class="li-subj">{{ f.stuffTitle }}</div>
-
-
-					<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
-						<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
-						<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
-
-					</div>
-				</div>
-			</router-link>
-		</div>
-		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
-
-	</section>
+		</section>
+	</div>
 </template>
 
 
@@ -245,6 +247,8 @@ export default {
 .favorite .header .title {
 	margin: 20px auto;
     padding-right: 23px;
+	font-weight: 500;
+	font-size: 1.125em;
 }
 
 .title{
