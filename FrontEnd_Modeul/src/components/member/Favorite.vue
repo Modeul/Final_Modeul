@@ -224,39 +224,35 @@ export default {
 	margin: 0 auto;
 }
 
-.favorite .header {
+.header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
 	width: 100%;
-	height: 88px;
-	padding-top: 25px;
+	margin-top: 25px;
     padding-bottom: 10px;
 	border-bottom: 0.3px #d5d5d5 solid;
 }
 
-.favorite .header .back {
+.back {
 	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
 	width: 23.04px;
 	height: 24px;
 	margin-top: 9px;
 }
 
-.favorite .header .title {
-	margin: 20px auto;
-    padding-right: 23px;
-	font-weight: 500;
-	font-size: 1.125em;
-}
 
 .title{
-    font-weight: bold;
     font-size: 1.125em;
     line-height: 26px;
     text-align: center;
-    color: #222222;  
+    color: #222222;
+	margin: 0px auto;
+    padding-right: 23px;
+	margin-bottom: 12px;
+	font-weight: 500;
 }
 
 .stuff-list {
@@ -305,8 +301,8 @@ export default {
 	background-size: 100%;
 	position: relative;
 	right: -45px;
-	width: 25px;
-	height: 25px;
+	width: 24px;
+	height: 24px;
 	display: inline-block;
 	text-indent: -9999px;
 }
@@ -319,8 +315,8 @@ export default {
 	background-size: 100%;
 	position: relative;
 	right: -45px;
-	width: 25px;
-	height: 25px;
+	width: 24px;
+	height: 24px;
 	display: inline-block;
 	text-indent: -9999px;
 }</style>
