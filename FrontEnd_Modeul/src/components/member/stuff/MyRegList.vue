@@ -205,8 +205,6 @@ export default {
 	color: #333;
 	margin: 0 auto;
 	padding-right: 23px;
-    font-weight: 500;
-	font-size: 1.125em;
 }
 
 .canvas {
