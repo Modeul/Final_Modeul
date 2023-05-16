@@ -206,6 +206,10 @@ export default {
 	min-width: 360px
 }
 
+.li-gr {
+    grid-template-columns: 70px 8px minmax(174px, auto) 0px 70px;
+}
+
 .back {
 	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
 	width: 23.04px;

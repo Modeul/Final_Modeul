@@ -229,6 +229,7 @@ export default {
 	gap: 10px;
 	width: 100%;
 	margin-top: 25px;
+	margin-bottom: 12px;
 }
 
 .back {
@@ -268,8 +269,8 @@ export default {
 }
 
 .li-gr {
-	/* grid-template-columns: 68px 10px 100px 74px 8px 70px; */
-	grid-template-columns: 60px 8px minmax(174px, auto) 8px 70px;
+	
+	grid-template-columns: 68px 8px minmax(174px, auto) 0px 70px;
 	grid-template-rows: 36px 12px 12px;
 	grid-template-areas:
 		"pic . subj . dday"
@@ -277,8 +278,7 @@ export default {
 		"pic . ct . heart ";
 
 	align-items: center;
-	/* grid-row-gap: 1%; */
-	/* grid-column-gap: 10px; */
+	
 }
 
 .filled-heart {
