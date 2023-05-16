@@ -4,6 +4,7 @@ import { createPinia } from "pinia";
 import piniaPersist from "pinia-plugin-persist";
 import { createRouter, createWebHashHistory } from "vue-router";
 import vue3GoogleLogin from 'vue3-google-login'
+import { decodeCredential } from 'vue3-google-login'
 
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -167,7 +168,7 @@ pinia.use(piniaPersist);
 
 // 이제는 .js파일이 아니라 뷰엔진(변환기!!)이 들어간 .vue 파일을 이용한다.
 createApp(App).use(router).use(vuetify).use(pinia)
-// .use(vue3GoogleLogin, {
-// 	clientId: 'YOUR_GOOGLE_CLIENT_ID' //입력 필요
-//   })
+.use(vue3GoogleLogin, {
+	clientId: '795034312186-55p1uq4gccthiuc9raeqt51ph1uk1qri.apps.googleusercontent.com'
+})
 .mount("#app");

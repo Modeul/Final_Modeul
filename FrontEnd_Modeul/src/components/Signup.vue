@@ -69,18 +69,18 @@
 						<div class="error-font">{{ this.nicknameError }}</div>
 					</div>
 
-					<div @click.prevent="postCode" class="input-field-2" style="height: 42px;">
+					<div @click.prevent="postCode" class="input-field-2">
 						<label for="address" class="address-label signup-label">
 							<span class="d-none">addr</span>
 							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address"
 								hidden />
-							<div class="input-text-2" v-text="member.address"></div>
+							<div class="input-text-3" v-text="member.address"></div>
 						</label>
 					</div>
-					<div class="input-field-2">
+					<div class="input-field-2 m-t-18">
 						<label for="addr2" class="address-label signup-label">
 							<input type="text" id="addr2" name="addr2" class="input-text-2" v-model="addr2"
-								placeholder="상세 주소" />
+								placeholder="상세 주소를 입력해주세요." />
 						</label>
 					</div>
 
