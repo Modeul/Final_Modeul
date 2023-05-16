@@ -9,11 +9,10 @@
 
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="orderHandler" name="orderField" >전체</button>
-				</div>
-
-				<div v-for="o in orderField">
-					<button class="header-categ" @click="orderHandler" name="orderField" :value="o.id">{{ o.name }}</button>
+					<button @click="orderHandler" class="header-categ participation" name="orderField" value="participation_date">최신순</button>
+					<button @click="orderHandler" class="header-categ deadline" value="stuff_deadline">마감일순</button>
+					<!-- <button @click="orderHandler" name="orderField" value="participation_date" :class="(this.orderField == "participation_date")?'selected':'header-categ'">최신순</button>
+					<button @click="orderHandler" name="orderField" value="stuff_deadline" :class="(this.orderField == "stuff_deadline")?'selected':'header-categ'">마감일순</button> -->
 				</div>
 			</div>
 		</nav>
@@ -96,23 +95,7 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			// orderField: {
-			// 	"name":[
-			// 		"participation_date",
-			// 		"stuff_deadline"]
-			// }
-			orderField: {
-				"id":[1,2],
-				"value":["participation_date","stuff_deadline"],
-				"name":["최신순","마감일순"]
-			}
-			// orderField: {
-			// 	1:"participation_date",
-			// 	2:"stuff_deadline"
-			// }
-
-			// orderField:["participation_date","stuff_deadline"]
-			
+			orderField:'participation_date'
 		}
 	},
 	methods: {
@@ -121,14 +104,12 @@ export default {
 		},
 		orderHandler(e) {
 			this.page = 1;
-			this.categoryId = e.target.value;
-			console.log(this.categoryId);
+			this.orderField = e.target.value;
+			console.log(this.orderField);
 			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
-					// this.categoryList = dataList.categoryList;
-					// this.listCount = dataList.listCount;    // 이거 API 하나 더 추가
 					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
@@ -219,6 +200,26 @@ export default {
 .f-weight{
 	font-weight: 500;
 }
+
+.header-categ:not([value]) {
+  background-color: #b9d9f8;
+  color: #40709e;
+}
+
+.header-categ[value="participation_date"] {
+  background-color: #f5cd81;
+  color: #ffffff;
+}
+
+.header-categ[value="stuff_deadline"] {
+  background-color: #08b8b8;
+  color: #ffffff;
+}
+
+.header-categ.deadline{
+	margin:5px;
+}
+
 </style>
 
 
