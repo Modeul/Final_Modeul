@@ -1,46 +1,48 @@
 <template>
-	<div class="favorite">
-		<div class="header">
-			<router-link to="/member/mypage" class="back"></router-link>
-			<div class="title">관심 목록</div>
-		</div>
+	<div class="canvas">
+		<section class="favorite">
+			<header class="header">
+				<router-link to="/member/mypage" class="back"></router-link>
+				<div class="title">관심 목록</div>
+			</header>
 
-		<div class="stuff-list" v-for="f in list" :key="f.stuffId">
-			<router-link :to="'/member/stuff/' + f.stuffId">
-				<div class="d-gr li-gr m-t-13px list-cl">
-					<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
-					<div class="li-pic b-rad-1">
-						<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
-						<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
-							alt="img">
-						<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
-							alt="img">
-						<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg"
-							alt="img">
-						<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+			<div class="stuff-list" v-for="f in list" :key="f.stuffId">
+				<router-link :to="'/member/stuff/' + f.stuffId">
+					<div class="d-gr li-gr m-t-13px list-cl">
+						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
+						<div class="li-pic b-rad-1">
+							<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
+							<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
+								alt="img">
+							<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
+								alt="img">
+							<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg"
+								alt="img">
+							<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+						</div>
+						<div class="li-categ-place">
+
+							<span class="li-categ-place-p">
+								{{ f.stuffPlace }}
+							</span>
+						</div>
+						<div class="li-dday" :class="(f.deadlineState == 0) ? 'expired' :
+							(f.deadlineState == 1) ? 'day-left' :
+								(f.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ f.dDay }}</div>
+						<div class="li-subj">{{ f.stuffTitle }}</div>
+
+
+						<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
+							<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
+							<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
+
+						</div>
 					</div>
-					<div class="li-categ-place">
+				</router-link>
+			</div>
+			<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 
-						<span class="li-categ-place-p">
-							{{ f.stuffPlace }}
-						</span>
-					</div>
-					<div class="li-dday" :class="(f.deadlineState == 0) ? 'expired' :
-						(f.deadlineState == 1) ? 'day-left' :
-							(f.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ f.dDay }}</div>
-					<div class="li-subj">{{ f.stuffTitle }}</div>
-
-
-					<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
-						<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
-						<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
-
-					</div>
-				</div>
-			</router-link>
-		</div>
-		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
-
+		</section>
 	</div>
 </template>
 
@@ -200,18 +202,24 @@ export default {
 </script>
 
 <style scoped>
-@import url(/css/component/member/stuff/component-list.css);
+@import "/css/component/member/stuff/component-list.css";
 @import url(/css/button.css);
 @import url(/css/style.css);
 @import url(/css/component/component.css);
 
+.canvas {
+	max-width: 600px;
+	padding: 0 20px;
+	margin: 0 auto;
+}
 .favorite {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	/* align-items: center; */
 	padding: 0;
 	position: relative;
-	width: 360px;
+	
+	height: 740px;
 	background: #FFFFFF;
 	margin: 0 auto;
 }
@@ -222,8 +230,10 @@ export default {
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
-	width: 312px;
+	width: 100%;
 	height: 88px;
+	padding-top: 25px;
+    padding-bottom: 10px;
 	border-bottom: 0.3px #d5d5d5 solid;
 }
 
@@ -235,7 +245,18 @@ export default {
 }
 
 .favorite .header .title {
-	margin-left: 86px;
+	margin: 20px auto;
+    padding-right: 23px;
+	font-weight: 500;
+	font-size: 1.125em;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 1.125em;
+    line-height: 26px;
+    text-align: center;
+    color: #222222;  
 }
 
 .stuff-list {
@@ -263,12 +284,13 @@ export default {
 }
 
 .li-gr {
-	grid-template-columns: 68px 10px 100px 74px 8px 70px;
+	/* grid-template-columns: 68px 10px 100px 74px 8px 70px; */
+	grid-template-columns: 60px 8px minmax(174px, auto) 8px 70px;
 	grid-template-rows: 36px 12px 12px;
 	grid-template-areas:
-		"pic . subj subj . dday"
-		"pic . . . . ."
-		"pic . ct ct . heart ";
+		"pic . subj . dday"
+		"pic . . . ."
+		"pic . ct . heart ";
 
 	align-items: center;
 	/* grid-row-gap: 1%; */

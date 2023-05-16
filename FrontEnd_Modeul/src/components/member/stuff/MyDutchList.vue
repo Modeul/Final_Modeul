@@ -1,10 +1,10 @@
 <script setup>
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko'
-import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 
 
 // Vue3 Composition API으로 작성해보기**
@@ -13,7 +13,7 @@ const route = useRoute();
 const todayMonth = new dayjs().locale('ko').format("M");
 
 let page = ref(1);
-let memberId = ref(2);
+let memberId = ref();
 let month = ref(todayMonth);
 let calDrawer = ref(false);
 let stuffId = ref();
@@ -126,6 +126,7 @@ function showCalcResultHandler(d) {
 }
 
 onMounted(() => {
+    memberId.value = userDetails.id;
     load();
 })
 
