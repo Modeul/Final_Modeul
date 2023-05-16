@@ -55,10 +55,12 @@
 					<span class="text">&nbsp;또는&nbsp;</span>
 					<hr>
 				</div>
+				<GoogleLogin :callback="customLoginHandler" popup-type="TOKEN">
 				<div class="google-login">
-					<div class="google-icon"></div>
-					<div class="text">Google 계정 로그인</div>
-				</div>
+						<div class="google-icon"></div>
+						<div class="text">Google 계정 로그인</div>
+					</div>
+				</GoogleLogin>
 			</div>
 
 		</main>
@@ -137,7 +139,23 @@ export default {
 			// } else {
 			// 	router.push("/index");
 			// }
-		}
+		},
+		async customLoginHandler(response) {
+			await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`)
+				.then(res => res.json())
+				.then(credential => {
+					console.log(credential);
+					// 전역 객체(global object)에 인증정보를 담기
+					this.userDetails.email = credential.email;
+					this.userDetails.roles = ["ADMIN", "MEMBER"];
+					console.log(this.userDetails);
+				})
+				.catch(e => {
+					console.log("error");
+				});
+			// router.push("/signupWithGoogle");
+		},
+
 	},
 }
 </script>
