@@ -50,7 +50,7 @@ export default {
 	methods: {
 		/* 뒤로가기 : 이전페이지로 이동 */
 		goback() {
-			this.$router.go(-1);
+			this.$router.push('list');
 		},
 		/* 모달 이벤트 */
 		modalHandler() {
@@ -628,6 +628,10 @@ export default {
 
 	.icon.icon-back {
 		display: none;
+	}
+
+	#map {
+		width: inherit;
 	}
 }
 

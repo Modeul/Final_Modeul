@@ -44,4 +44,6 @@ public interface MemberService {
 
 	List<Member> getMemberList();
 
+    Member getMemberByEmail(String email);
+
 }

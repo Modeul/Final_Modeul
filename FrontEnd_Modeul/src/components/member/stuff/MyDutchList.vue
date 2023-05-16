@@ -1,7 +1,7 @@
 <script setup>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { onMounted, reactive, ref } from 'vue';
+import { nextTick, onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
@@ -20,6 +20,7 @@ let stuffId = ref();
 let sumDutch = ref();
 let userDetails = useUserDetailsStore();
 let defaultStore = useDefaultStore();
+let copyModal = ref(false);
 
 console.log(stuffId.value);
 
@@ -125,10 +126,29 @@ function showCalcResultHandler(d) {
 	calDrawer.value = !calDrawer.value;
 }
 
+function copyHandler() {
+	navigator.clipboard.writeText("dd")
+		.then(() => {
+			copyModal.value = false;
+
+			nextTick(() => {
+				copyModal.value = true;
+			});
+		},
+			() => {
+
+			});
+}
+
+function formatPrice(price) {
+	return Number(price).toLocaleString();
+}
+
 onMounted(() => {
-    memberId.value = userDetails.id;
-    load();
+	memberId.value = userDetails.id;
+	load();
 })
+
 
 </script>
 
@@ -173,7 +193,7 @@ onMounted(() => {
 					<div class="li-subj">{{ d.stuffTitle }}</div>
 
 					<div class="li-price">
-						{{ d.price }} 원
+						{{ formatPrice(d.price) }} 원
 					</div>
 				</div>
 
@@ -203,7 +223,7 @@ onMounted(() => {
 								{{ m.memberNickname }}
 							</div>
 							<div class="cal-user-self-result">
-								{{ m.price }}원
+								{{ formatPrice(m.price) }}원
 							</div>
 						</div>
 					</main>
@@ -214,7 +234,7 @@ onMounted(() => {
 							합계
 						</div>
 						<div>
-							{{ sumDutch }}원
+							{{ formatPrice(sumDutch) }}원
 						</div>
 					</section>
 
@@ -226,7 +246,7 @@ onMounted(() => {
 							<div class="cal-leader-account">
 								하나 32589046473333
 							</div>
-							<a class="icon-account-paste">복사하기</a>
+							<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 						</div>
 
 						<div class="cal-leader-name">
@@ -243,6 +263,10 @@ onMounted(() => {
 				</section>
 			</section>
 		</v-navigation-drawer>
+	</div>
+
+	<div v-if="copyModal" class="error-box ani">
+		복사되었습니다.
 	</div>
 </template>
 
@@ -701,5 +725,42 @@ select:focus {
 	color: #FFFFFF;
 	font-size: 14px;
 	font-weight: bold;
+}
+
+.error-box {
+	position: fixed;
+	background-color: #FFF;
+	width: 80%;
+	height: 40px;
+	text-align: center;
+	top: 15%;
+	padding: auto 0;
+	line-height: 40px;
+	/* left: 50%; */
+	/* transform: translate(-50%, -50%); */
+	/* display: flex; */
+	/* align-items: center; */
+	/* padding: 0 12px; */
+	/* box-sizing: border-box; */
+	/* border-radius: 5px; */
+	/* font-size: 12px; */
+	font-weight: bold;
+	z-index: 9999;
+}
+
+.ani {
+	animation-timing-function: ease-in;
+	animation: fadeout 5s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
 }
 </style>

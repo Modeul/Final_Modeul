@@ -11,7 +11,12 @@ export default {
 		return {
 			page: '',
 			dongCode: '',
+			serchDong: '',
 			dongName: '',
+			myDongCode: '',
+			myDongName: '',
+			myCoordX: '',
+			myCoordY: '',
 			list: [],
 			categoryList: [],
 			categoryId: '',
@@ -34,8 +39,8 @@ export default {
 					return;
 			this.query = queryEmit.trim();
 			this.page = 1;
-
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
+			this.defaultStore.loadingStatus = true;
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -47,7 +52,7 @@ export default {
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -128,55 +133,99 @@ export default {
 			return resultList;
 		},
 
-		onChage(v) {
+		onChange(v) {
 			if (v.target.value === 'cur') {
-				this.getDongInfo();
-			} else {
-				this.dongCode = '';
+				this.getDongInfo(null, null);
+			} else if (v.target.value === 'my') {
+				this.addListHandler(this.myDongCode);
+				console.log(this.myDongCode);
+			} else{
+				this.serchDong = '';
 				this.dongName = '';
-				this.addListHandler();
+				this.addListHandler(this.serchDong);
 			}
 
 
 		},
 
-		getDongInfo() {
+		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-			const watchID = navigator.geolocation.getCurrentPosition((position) => {
-				let lat = position.coords.latitude;
-				let lng = position.coords.longitude;
 
-				geocoder.coord2Address(lng, lat, (result, status) => {
-					if (status === kakao.maps.services.Status.OK) {
+			if (x == null) {
+				const watchID = navigator.geolocation.getCurrentPosition((position) => {
+					let lat = position.coords.latitude;
+					let lng = position.coords.longitude;
 
-						this.dongName = result[0].address.region_3depth_name;
-					}
-				});
-				geocoder.coord2RegionCode(lng, lat, (result, status) => {
-					if (status === kakao.maps.services.Status.OK) {
+					geocoder.coord2Address(lng, lat, (result, status) => {
+						if (status === kakao.maps.services.Status.OK) {
+
+							this.dongName = result[0].address.region_3depth_name;
+						}
+					});
+					geocoder.coord2RegionCode(lng, lat, (result, status) => {
+						if (status === kakao.maps.services.Status.OK) {
 
 						this.dongCode = result[0].code;
-
-						this.addListHandler();
+						this.serchDong = this.dongCode;
+						console.log(this.dongCode);
+						this.addListHandler(this.serchDong);
 					}
 				});
 
-			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+				}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+
+			} else {
+
+				geocoder.coord2Address(x, y, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.myDongName = result[0].address.region_3depth_name;
+					}
+				});
+				geocoder.coord2RegionCode(x, y, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.myDongCode = result[0].code;
+
+
+					}
+				});
+
+
+			}
+
+
+		},
+		getMemberCoordInfo() {
+			fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.myCoordX = dataList.coordX;
+					this.myCoordY = dataList.coordY;
+					this.getDongInfo(this.myCoordX, this.myCoordY);
+				}).catch(error => console.log('error', error));
+		},
+		scrollHandler(){
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
 
 	},
 	mounted() {
+		this.target = document.querySelector('.top-btn');
+		this.target.addEventListener('scroll', this.handleScroll);
+
 		this.page = 0;
 		this.addListHandler();
 		this.scrollCheck();
-		// this.getDongInfo();
+		this.getMemberCoordInfo();
+		console.log("마운트 " + this.myCoordX);
 
 		document.addEventListener("scroll", (e) => {
 
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler();
+					this.addListHandler(this.serchDong);
 				}
 			}
 		})
@@ -186,7 +235,7 @@ export default {
 </script>
 
 <template>
-	<PcHeader @queryEmit="searchInput"></PcHeader>
+	<PcHeader @queryEmit="searchInput" :dongName="myDongName" @change="onChange"></PcHeader>
 
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
@@ -199,7 +248,7 @@ export default {
 		<header class="d-fl-al header-jc">
 			<div class="gps-box">
 				<div class="icon icon-location"></div>
-				<select class="selectbox-set" @change="onChage($event)">
+				<select class="selectbox-set" @change="onChange($event)">
 					<option value="" default>전체</option>
 					<option value="">신설동</option>
 					<option value="cur">현재위치</option>
@@ -258,11 +307,13 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c"
+						:class="(this.categoryId != '') ? 'header-categ' : 'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
+					<button @click="categoryHandler" name="c" :value="c.id"
+						:class="(this.categoryId == c.id) ? 'selected' : 'header-categ'">{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -279,12 +330,12 @@ export default {
 							<div class="li-pic b-rad-1">
 								<img v-if="stuff.imageName != null" class="listview-image"
 									:src="'/images/member/stuff/' + stuff.imageName" alt="img">
-								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
-									alt="img">
-								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
-									alt="img">
-								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
-									alt="img">
+								<img v-else-if="stuff.categoryId == '1'" class="listview-image"
+									src="/images/member/stuff/category1.svg" alt="img">
+								<img v-else-if="stuff.categoryId == '2'" class="listview-image"
+									src="/images/member/stuff/category2.svg" alt="img">
+								<img v-else-if="stuff.categoryId == '3'" class="listview-image"
+									src="/images/member/stuff/category3.svg" alt="img">
 								<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 							</div>
 							<div class="li-categ-place">
@@ -311,10 +362,6 @@ export default {
 					</router-link>
 				</div>
 			</div>
-
-			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff d-none"></div>
-			</router-link>
 		</main>
 
 		<nav class="navi-bar d-fl-jf">
@@ -335,6 +382,11 @@ export default {
 			</div>
 		</nav>
 	</section>
+
+	<div>
+		<router-link to="/member/stuff/reg" class="pc-reg-stuff"></router-link>
+	</div>
+	<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 

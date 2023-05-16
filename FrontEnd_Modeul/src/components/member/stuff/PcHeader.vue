@@ -3,6 +3,7 @@ import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
+	props: ["dongName"],
 	data() {
 		return {
 			userDetails: useUserDetailsStore(),
@@ -28,7 +29,9 @@ export default {
 	<div class="pc-header-wrap">
 		<div class="header-menu">
 			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div v-else class="info"> <p class="text">{{ loginMember.nickname }}</p> &nbsp;님 안녕하세요.&nbsp;&nbsp;</div>
+			<div v-else class="info">
+				<p class="text">{{ loginMember.nickname }}</p> &nbsp;님 안녕하세요.&nbsp;&nbsp;
+			</div>
 			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
 			<div v-else @click.prevent="userDetails.logout" class="logout"><router-link to="/login"></router-link></div>
 		</div>
@@ -36,10 +39,22 @@ export default {
 			<div class="logo-moduel header-logo">
 				<router-link to="/member/stuff/list"></router-link>
 			</div>
-			<div class="search-container" v-if="$route.path == '/member/stuff/list'">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
-					<h1 class="icon search-dodbogi">돋보기</h1>
+
+			<div class="filter" v-if="$route.path == '/member/stuff/list'">
+				<div class="gps-box">
+					<div class="icon icon-location"></div>
+					<!-- <select class="selectbox-set" @change="onChange($event)"> -->
+					<select class="selectbox-set" @change="this.$emit('change', $event)">
+						<option value="" default>전체</option>
+						<option value="my">{{ dongName }}</option>
+						<option value="cur">현재위치</option>
+					</select>
+				</div>
+				<div class="search-container">
+					<div class="d-fl d-b-none search-form">
+						<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
+						<h1 class="icon search-dodbogi">돋보기</h1>
+					</div>
 				</div>
 			</div>
 			<div class="btnbox">
@@ -52,9 +67,8 @@ export default {
 				<div class="btn-heart">
 					<router-link to="/member/mypage/favorite"></router-link>
 				</div>
-				<div class="btn-location"></div>
 				<div class="btn-mypage">
-				<router-link to="/member/mypage"></router-link>
+					<router-link to="/member/mypage"></router-link>
 				</div>
 			</div>
 		</div>

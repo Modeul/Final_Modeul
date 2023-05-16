@@ -54,6 +54,19 @@ public class MemberController {
 		return new ResponseEntity<Map<String, Object>>(dto, HttpStatus.OK);
 	}
 
+	@PostMapping("googleLogin")
+	public ResponseEntity<Map<String, Object>> googleLogin(@RequestBody Member member) {
+		Map<String, Object> dto = new HashMap<>();
+        dto.put("loginMember", null);
+
+		//이메일로 db에서 멤버 가져오기
+		Member loginMember = memberService.getMemberByEmail(member.getEmail());
+		dto.put("loginMember", loginMember);
+
+		return new ResponseEntity<Map<String, Object>>(dto, HttpStatus.OK);
+	}
+
+
 	@GetMapping("{id}")
 	public Member getMember(@PathVariable("id") int id){
 
@@ -68,7 +81,7 @@ public class MemberController {
 
 	@PutMapping("update")
 	public int editMember(@RequestBody Member member){
-
+		
 		return memberService.updateMember(member);
 	}
 
