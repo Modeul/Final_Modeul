@@ -509,11 +509,13 @@ main {
 }
 
 .noImg {
-  height: 200px;
-  width: 360px;
+  height: 100%;
+  width: 100%;
   margin: auto;
   box-sizing: border-box;
   background-image: url(/images/member/stuff/noimg.svg);
+  background-size: cover;
+  background-position: center center;
 }
 
 #map {
