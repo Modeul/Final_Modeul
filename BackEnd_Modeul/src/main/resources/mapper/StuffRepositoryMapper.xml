@@ -136,10 +136,13 @@
 		</selectKey>
 	</insert>
 
-	
 	<insert id="uploadImage" parameterType="Image">
-		insert into image(name, stuff_id)
-		values(#{name}, #{stuffId})
+   			insert into image(name, stuff_id)
+    		values(#{name}, #{stuffId})
+	</insert>
+	<insert id="uploadImgurl" parameterType="Image">
+    		insert into image(name, stuff_id)
+    		values(#{imgurl}, #{stuffId})
 	</insert>
 
 	<!-- 상품 정보 수정, 나중에 categoryId 추가하기!! -->

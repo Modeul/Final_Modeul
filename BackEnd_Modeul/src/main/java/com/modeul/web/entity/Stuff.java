@@ -23,6 +23,7 @@ public class Stuff {
 	private LocalDateTime regDate;
 	private String numPeople;
 	private String url;
+	private String imgurl;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDateTime deadline;

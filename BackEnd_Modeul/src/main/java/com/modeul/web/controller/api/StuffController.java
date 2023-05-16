@@ -205,14 +205,15 @@ public class StuffController {
 		
 		Crawling crawlingData = crawlingservice.getById(id);
 
-
-
 		Map<String, Object> data = new HashMap<>();
 		data.put("crawlingData", crawlingData);
-		// data.put("participantList", participantList);
-		// data.put("memberCount", memberCount);
-		// data.put("stuffView", stuffView);
 
 		return data;
+	}
+	@PostMapping("/stuff/crawlingupload")
+	public String regCrawlingStuff(Stuff stuff) {
+		service.regCrawlingStuff(stuff);
+
+		return "ok";
 	}
 }
