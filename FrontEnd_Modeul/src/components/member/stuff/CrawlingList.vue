@@ -11,11 +11,10 @@ export default {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
 			page: '',
+			query:'',
 			list: [],
 			category: [],
 			categoryId:'',
-			queryList:[],
-			categoryList:[]
 		};
 	},
 	components: {
@@ -36,7 +35,7 @@ export default {
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = dataList.queryList;
+					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					console.log(this.list)
 				}).catch(error => console.log('error', error));
@@ -51,26 +50,21 @@ export default {
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = dataList.categoryList;
+					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
-					// console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
 
 			this.defaultStore.loadingStatus = true; 
-			console.log(this.categoryId);
-			console.log(this.query);
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
-					if (this.query == null)
-						this.list = dataList.crawlingList;
-					else this.list = dataList.queryList;
+					this.list = dataList.list;
 					if (this.categoryId == 1 || this.categoryId == 2 || this.categoryId == 3 ||this.categoryId == 4)
-						this.list = dataList.categoryList;
+					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
 					this.defaultStore.loadingStatus = false;
@@ -79,11 +73,23 @@ export default {
 				.catch(error => console.log('error', error));
 				
 		},
+		scrollCheck() {
+			if (window.innerHeight >= 718) {
+				this.addListHandler();
+			}
+		},
 	},
 	mounted() {
 		this.page = 0;
 		this.addListHandler();
-
+		this.scrollCheck();
+		document.addEventListener("scroll", (e) => {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+				if (this.listCount !== 0) {
+					this.addListHandler();
+				}
+			}
+		})
 	}
 }
 </script>
@@ -148,7 +154,7 @@ export default {
 				</div>
 			</div>
 
-			<button class="btn-next more-list" @click="addListHandler"> 더보기 </button>
+			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 </button> -->
 			<nav class="navi-bar d-fl-jf">
 				<div class="navi-icon">
 					<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
