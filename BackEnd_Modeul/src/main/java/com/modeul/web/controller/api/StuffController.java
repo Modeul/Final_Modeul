@@ -81,7 +81,7 @@ public class StuffController {
 	public List<StuffView> getListAll() {
 
 		return service.getViewAll();
-	}
+	} 
 
 	@GetMapping("/stuff/categories")
 	public List<Category> getCategoryList() {

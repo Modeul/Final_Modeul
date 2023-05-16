@@ -1,4 +1,4 @@
-package com.modeul.web.controller.api;
+package com.modeul.web.controller;
 
 import java.util.List;
 
@@ -21,21 +21,18 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    // 계좌 등록
-    @PostMapping("/account")
-    public int inputAccount(
-        @RequestBody Account account){
-
-            int accountCount = accountService.addAccount(account);
-
-        return accountCount;
+    @GetMapping("/account/{stuffId}")
+    public Account getAccount(
+        @PathVariable("stuffId") Long stuffId){
+        Account account = accountService.getAccountById(stuffId);
+        return account;
     }
 
     // 최근 계좌 
     @GetMapping("/account/recent/{memberId}")
     public List<Account> getAccountList(
-        @PathVariable("memberId") Long memberId
-    ){  
+        @PathVariable("memberId") Long memberId){  
+
         return accountService.getViewById(memberId);
     }
     

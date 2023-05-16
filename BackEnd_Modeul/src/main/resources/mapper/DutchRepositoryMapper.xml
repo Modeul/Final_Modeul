@@ -69,8 +69,8 @@
     </insert>
 
     <insert id="insertAccount" parameterType="map">
-      insert into account(bank_name, number, member_id)
-      values (#{bankName}, #{number},#{memberId})
+      insert into account(bank_name, number, member_id, stuff_id)
+      values (#{bankName}, #{number},#{memberId},#{stuffId})
     </insert>
 
     <delete id="deleteDutch">

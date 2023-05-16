@@ -44,7 +44,7 @@
 				추방되었습니다.
 			</v-card-text>
 			<v-card-actions>
-				<v-btn color="#63A0C2" block @click="banishedHandler">확인</v-btn>
+				<v-btn color="#63A0C2" block>확인</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -155,7 +155,7 @@
 
 			<div class="calc-contents">
 				<div class="account-title">
-					<span class="account-title-leader">{{ this.stuffLeaderNic }}</span><span> 님의</span><br>
+					<span class="account-title-leader">{{ this.memberInfo.nickname }}</span><span> 님의</span><br>
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
@@ -369,8 +369,6 @@ export default {
 			selectBank: '',
 			accountNumber: '',
 			stuffLeaderId: '',
-			stuffLeaderNic:'',
-			stuffLeaderName:'',
 			dutchMemberList: '',
 			sumDutch: '',
 			dutchList: '',
@@ -455,8 +453,10 @@ export default {
 							this.loadParticipationList();
 						if(result.type == 'BANISH'){
 							if(result.memberId == this.userDetails.id){
-								this.$router.go('/member/stuff/list');
 								this.dialog = true;
+								setTimeout(() => {
+									this.$router.go('/member/stuff/list');
+								}, 1500);
 							}
 							this.loadParticipationList();
 						}
@@ -554,6 +554,7 @@ export default {
 					this.stompClient.send('/pub/chat/exitUser',
 						JSON.stringify({
 							type: 'BANISH',
+							sender: this.banishUser.nickname,
 							stuffId: this.$route.params.stuffId,
 							memberId: this.banishUser.id,
 						})
@@ -580,10 +581,10 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		banishedHandler(){
-			this.dialog = false;
-			this.$router.go('/member/stuff/list')
-		},
+		// banishedHandler(){
+		// 	this.dialog = false;
+		// 	this.$router.go('/member/stuff/list')
+		// },
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
 			this.banishUser.id = user.memberId;
@@ -605,6 +606,7 @@ export default {
 			this.openDeleteModal = !this.openDeleteModal;
 		},
 		unLoadEvent() {
+			if(!this.dialog)
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
 					type: 'LEAVE',
@@ -656,21 +658,12 @@ export default {
 			console.log("accountNumber: " + this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
-
-
-		},
-		accountDnoneHandler() {
-			console.log("bank:" + this.selectBank);
-			console.log("accountNumber: " + this.accountNumber);
-			this.isAccount = !this.isAccount;
-			this.isCalc = !this.isCalc;
-			this.inputAccountHandler();
-
-			
 		},
 		resultDnoneHandler() {
 			console.log("price:" + this.price);
 			this.dutchHandler();
+			this.getAccount();
+			console.log(this.selectBank);
 			this.isCalc = false;
 			this.isCalcResult = true;
 		},
@@ -684,7 +677,8 @@ export default {
 				"account": {
 					"bankName": this.selectBank,
 					"number": this.accountNumber,
-					"memberId": this.stuffLeaderId.toString()
+					"memberId": this.stuffLeaderId.toString(),
+					"stuffId": this.$route.params.stuffId,
 				}
 			});
 
@@ -825,14 +819,24 @@ export default {
 		formatPrice(price){
 			return Number(price).toLocaleString();
 		},
-		inputAccountHandler(){
+		getAccount(){
+			var myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/json");
 
+			var requestOptions = {
+			method: 'GET',
+			headers: myHeaders,
+			redirect: 'follow'
+			};
+
+			fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`, requestOptions)
+			.then(response => response.text())
+			.then(result => console.log(result))
+			.catch(error => console.log('error', error));
 		}
-		
 	},
 	beforeRouteLeave() {
-		this.unLoadEvent();
-		// 더치 결과가 있다면 calc-state = true;
+		this.unLoadEvent()
 	},
 	created() {
 		this.loadParticipant();
@@ -913,9 +917,6 @@ export default {
 		totalPriceAlert: function () {
 			if (this.totalPrice > 999999)
 				return console.log("over");
-		},
-		saveAccountInfo: function() {
-
 		}
 	},
 }
