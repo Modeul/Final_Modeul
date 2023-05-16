@@ -61,7 +61,7 @@
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
 			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 			</div>
 			<div>
 				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
@@ -89,7 +89,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			memberId: 2,
+			memberId: '',
 			page: '',
 			categoryList: [],
 			participationList: [],
@@ -184,6 +184,7 @@ export default {
 		},
 	},
 	mounted() {
+		this.memberId = this.userDetails.id;
 		this.page = 0;
 		this.addListHandler();
 	},

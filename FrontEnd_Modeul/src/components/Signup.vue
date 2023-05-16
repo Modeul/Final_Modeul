@@ -69,6 +69,21 @@
 						<div class="error-font">{{ this.nicknameError }}</div>
 					</div>
 
+					<div @click.prevent="postCode" class="input-field-2" style="height: 42px;">
+						<label for="address" class="address-label signup-label">
+							<span class="d-none">addr</span>
+							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address"
+								hidden />
+							<div class="input-text-2" v-text="member.address"></div>
+						</label>
+					</div>
+					<div class="input-field-2">
+						<label for="addr2" class="address-label signup-label">
+							<input type="text" id="addr2" name="addr2" class="input-text-2" v-model="addr2"
+								placeholder="상세 주소" />
+						</label>
+					</div>
+
 					<div @input="checkEmailDupl" class="input-field-2">
 						<label for="email" class="email-label signup-label">
 							<span class="d-none">email</span>
@@ -88,8 +103,8 @@
 							<input type="text" id="email" name="reemail" class="input-text-2" placeholder="인증번호를 입력해주세요."
 								v-model="emailconfirm" />
 							<!-- 이메일이 중복이 아닐 때 전송버튼 표시(emailDupl==true) -->
-							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post" id="btn-post"
-								type="button" value="전송" />
+							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post"
+								id="btn-post" type="button" value="전송" />
 							<div v-if="emailConfirmChk" class="btn-check"></div>
 							<!-- <div v-if="!emailConfirmChk" class="btn-x"></div>  -->
 						</label>
@@ -133,8 +148,13 @@ export default {
 				name: "",
 				nickname: "",
 				email: "",
+				address: "주소를 입력해주세요",
+				coordX: "",
+				coordY: "",
 			},
+			addr2: "",
 			// 에러메시지
+			addrError: true,
 			uidError: "",
 			nameError: "",
 			nicknameError: "",
@@ -167,25 +187,7 @@ export default {
 	methods: {
 		async submit() {
 			this.ErrorMsg = "";
-			// uid 체크
-			if (!this.member.uid) {
-				this.ErrorMsg = "아이디는 필수 입력사항입니다.";
-				this.uidbtn = false;
-			} else if (!this.uidDupl) {
-				this.ErrorMsg = "중복 된 아이디입니다.";
-			}
-			// name 체크
-			if (!this.member.name) {
-				this.ErrorMsg = "이름은 필수 입력사항입니다.";
-				this.namebtn = false;
-			}
-			// nickname 체크
-			if (!this.member.nickname) {
-				this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
-				this.nicknamebtn = false;
-			} else if (!this.nicknameDupl) {
-				this.ErrorMsg = "중복 된 닉네임입니다.";
-			}
+
 			// email 체크
 			if (!this.member.email) {
 				this.ErrorMsg = "이메일 주소는 필수 입력사항입니다.";
@@ -197,6 +199,22 @@ export default {
 			} else if (!this.emailConfirmChk) {
 				this.ErrorMsg = "이메일 인증번호를 확인해주세요.";
 			}
+			
+			if (this.addrError) {
+				this.ErrorMsg = "주소는 필수 입력사항입니다.";
+			}
+			// nickname 체크
+			if (!this.member.nickname) {
+				this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
+				this.nicknamebtn = false;
+			} else if (!this.nicknameDupl) {
+				this.ErrorMsg = "중복 된 닉네임입니다.";
+			}
+			// name 체크
+			if (!this.member.name) {
+				this.ErrorMsg = "이름은 필수 입력사항입니다.";
+				this.namebtn = false;
+			}
 			// pwd 체크
 			if (!this.member.pwd) {
 				this.pwdbtn = false;
@@ -205,6 +223,13 @@ export default {
 				this.ErrorMsg = "비밀번호가 일치하지 않습니다.";
 			} else if (!this.isValidPwd(this.member.pwd)) {
 				this.ErrorMsg = "비밀번호를 확인해주세요. (8자리 이상 영문+숫자)";
+			}
+			// uid 체크
+			if (!this.member.uid) {
+				this.ErrorMsg = "아이디는 필수 입력사항입니다.";
+				this.uidbtn = false;
+			} else if (!this.uidDupl) {
+				this.ErrorMsg = "중복 된 아이디입니다.";
 			}
 			// 만약 ErrorMsg 가 있다면 모달창 띄우기
 			if (this.ErrorMsg) {
@@ -217,13 +242,15 @@ export default {
 				!this.pwdError &&
 				this.namebtn &&
 				this.nicknameDupl &&
-				!this.emailError
+				!this.emailError &&
+				!this.addrError
 			) {
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
 				console.log(this.member);
-
+				this.member.address = this.member.address + ',' + this.addr2;
+				console.log(this.member.address);
 				var raw = JSON.stringify(this.member);
 
 				var requestOptions = {
@@ -295,6 +322,14 @@ export default {
 			this.nameError = "";
 			this.namebtn = true;
 			return true;
+		},
+		isValidEmail(){
+			const hasEmail = /^[A-Za-z0-9]+$/.test(this.member.email);
+			if (!hasEmail) {
+				this.emailError = "이메일은 영문만 가능합니다.";
+				this.emailbtn = false;
+				return false;
+			}
 		},
 		// 이메일 인증번호 발송
 		async checkEmail() {
@@ -380,6 +415,7 @@ export default {
 		},
 		// 이메일 중복 검사
 		async checkEmailDupl() {
+			this.isValidEmail();
 			this.emailDupl = "";
 			this.emailError = "";
 			this.emailCheckError = "";
@@ -390,14 +426,14 @@ export default {
 				.then((result) => {
 					if (result == "false") this.emailDupl = false;
 					else this.emailDupl = true;
-					const emailRegex = /\S+@\S+\.\S+/.test(this.member.email);
+					const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(this.member.email);
 					if (!emailRegex) {
 						this.emailbtn = false;
 						this.emailCheckError = "올바른 이메일 형식으로 입력해주세요.";
 						return false;
 					} else {
 						this.ErrorMsg = "";
-						this.emailDupl = true;
+						// this.emailDupl = true;
 					}
 					if (!this.emailDupl) {
 						this.emailError = "이미 가입된 이메일 입니다.";
@@ -416,6 +452,30 @@ export default {
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},
+
+		postCode() {
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.member.address = data.address;
+					// this.dongCode = data.bcode;
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.member.coordX = result.x;
+							this.member.coordY = result.y;
+							console.log(this.member.coordX);
+							this.addrError = false;
+							document.querySelector("#addr2").focus();
+						}
+					});
+
+				}
+			}).open();
+		}
 	},
 };
 </script>

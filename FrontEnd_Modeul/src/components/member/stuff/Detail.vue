@@ -20,6 +20,7 @@ export default {
 			openModal3: false,
 			openModal4: false,
 			stuff: {},
+			stuffPrice: 0,
 			category: {},
 			imageList: '',
 			participantList: [],
@@ -31,8 +32,6 @@ export default {
 			stuffAuthority: false,
 			stuffView: '',
 			Report: {
-				stuffId: 0,
-				memberId: 113,
 				detail: '',
 			},
 			favoriteList: [],
@@ -127,7 +126,7 @@ export default {
 				},
 				body: JSON.stringify({
 					stuffId: this.$route.params.id,
-					memberId: this.Report.memberId,
+					memberId: this.userDetails.id,
 					detail: this.Report.detail,
 				})
 			};
@@ -151,7 +150,7 @@ export default {
 
 			var raw = JSON.stringify({
 				// memberid:this.stuff.memberId,
-				memberId: this.memberId,
+				memberId: this.userDetails.id,
 				stuffId: this.stuff.id,
 				// stuffId:this.stuffId
 			});
@@ -189,7 +188,7 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		loadParticipantInfo() {
-			fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
+			fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(data => {
 					this.participantInfo = data.memberInfo;
@@ -220,7 +219,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.userDetails.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -285,14 +284,14 @@ export default {
 
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.defaultStore.host}/api/member/${this.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
 			const data = await response.json();
 			this.memberInfo = data;
 			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
 
 		loadFavoriteList() {
-			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.memberId}`)
+			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.list;
@@ -385,6 +384,7 @@ export default {
 			.then((response) => response.json())
 			.then((data) => {
 				this.stuff = data.stuff;
+				this.stuffPrice = Number(data.stuff.price).toLocaleString();
 				this.category = data.category;
 				this.imageList = data.imageList;
 				this.participantList = data.participantList;
@@ -424,16 +424,13 @@ export default {
 				<!-- 모달 배경 -->
 				<div v-if="openModal">
 					<div class="icon-edit2" v-if="this.stuffUser">
-						<div class="d-fl-al fl-dir-col">
-							<router-link :to="'./edit/' + stuff.id">
-								<div class="icon-edit3"></div>
-							</router-link>
-							<div @click="modalHandler2" class="icon-edit4"></div>
+						<div class="box">
+							<router-link :to="'./edit/' + stuff.id"><div class="icon-edit3"><div class="icon"></div>수정 하기</div></router-link>
+							<div @click="modalHandler2" class="icon-edit4"><div class="icon"></div>삭제 하기</div>
 						</div>
 					</div>
 					<div class="icon-report" v-else @click="modalHandler3">
-						<div class="d-fl-al fl-dir-col">
-						</div>
+						<div class="icon"></div>신고 하기
 					</div>
 					<!-- 취소 확인 모달 -->
 					<div v-if="openModal2" class="black-bg">
@@ -498,7 +495,7 @@ export default {
 						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
 						<div class="ed-text" @click="deleteStuff">삭제</div>
 					</div> -->
-						<div class="detail-price">{{ stuff.price }}원</div>
+						<div class="detail-price">{{ stuffPrice }}원</div>
 
 					</section>
 					<!-- detail-info : detail-main - item3 -->
@@ -566,7 +563,7 @@ export default {
 					</button>
 
 					<div class="join-button-wrap" v-if="isCheckParticipation">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId"
+						<router-link :to="'../../chat/' + stuff.id"
 							class="detail-chat-button">채팅하기</router-link>
 						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
 							참여취소

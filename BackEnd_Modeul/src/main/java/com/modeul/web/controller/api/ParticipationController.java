@@ -31,9 +31,6 @@ import com.modeul.web.service.StuffService;
 public class ParticipationController {
 
     @Autowired
-    private DutchService dutchService;
-
-    @Autowired
     private ParticipationService participationService;
 
     @Autowired
@@ -139,16 +136,5 @@ public class ParticipationController {
         System.out.println("prices: "+prices);
         // participationService.calculatedAmount(stuffId, prices);
         return true;
-    }
-
-    @PostMapping("/dutch/{stuffId}")
-    public String addDutch(
-            @PathVariable("stuffId") Long stuffId,
-            @RequestBody Map<String, Object> dutch) {
-        System.out.println("stuffId: "+stuffId);
-        System.out.println("dutch: "+dutch);
-
-        dutchService.addAllDutch(stuffId, dutch);
-        return "ok";
     }
 }

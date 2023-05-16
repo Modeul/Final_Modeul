@@ -32,7 +32,7 @@
                         <span>참여 딜 목록</span>
                     </li>
                 </router-link>
-                <router-link to="/member/mypage/favorite?memberId=2">
+                <router-link to="/member/mypage/favorite">
                     <li>
                         <img src="/images/member/stuff/heart_plus.svg">
                         <span>관심목록</span>
@@ -50,13 +50,13 @@
                         <span>비밀번호 변경</span>
                     </li>
                 </router-link>
-                <li>
+                <li @click="modalHandler2">
                     <img src="/images/member/stuff/logout.svg">
-                    <span @click="modalHandler2">로그아웃</span>
+                    <span>로그아웃</span>
                 </li>
-                <li>
+                <li @click="modalHandler">
                     <img src="/images/member/stuff/out.svg">
-                    <span @click="modalHandler">탈퇴하기</span>
+                    <span>탈퇴하기</span>
                 </li>
             </ul>
         </section>
@@ -65,7 +65,7 @@
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
 			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 			</div>
 			<div>
 				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
@@ -93,7 +93,7 @@
 		<div class="delete-box">
 			<div class="delete-box-1">정말로 로그아웃 하시겠습니까?</div>
 			<div class="delete-box-2">
-				<div @click="logout" class="delete-box-3">로그아웃</div>
+				<div @click="userDetails.logout" class="delete-box-3"> <router-link to="/login">로그아웃</router-link></div>
 				<div @click="modalHandler2" class="delete-box-4">취소</div>
 			</div>
 		</div>
@@ -135,10 +135,7 @@ export default {
 				.then(response => response.text())
 				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
-			this.$router.replace('/index');
-		},
-		logout() {
-
+			this.$router.replace('/');
 		},
 		modalHandler() {
 			this.openModal = !this.openModal;

@@ -1,30 +1,31 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.modeul.web.repository.MemberRepository">
 
-<resultMap id="MemberResultMap" type="Member">
-	<result property="regDate" column="reg_date" />
-</resultMap>
+	<resultMap id="MemberResultMap" type="Member">
+		<result property="regDate" column="reg_date" />
+		<result property="coordX" column="coord_x" />
+		<result property="coordY" column="coord_y" />
+	</resultMap>
 
-<!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
-  <insert id="insert" parameterType="Member">
-    insert into member(uid,pwd,name,email,nickname)
-    values(#{uid},#{pwd},#{name},#{email},#{nickname})
-  </insert>
+	<!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
+	<insert id="insert" parameterType="Member">
+		insert into member(uid,pwd,name,email,nickname,address,coord_x,coord_y)
+		values(#{uid},#{pwd},#{name},#{email},#{nickname},#{address},#{coordX},#{coordY})
+	</insert>
 
 	<select id="getbyId" resultMap="MemberResultMap">
-	  select *
-	  	from member
-	  where
-	  	id = #{id}
-  </select>
+		select *
+		from member
+		where
+		id = #{id}
+	</select>
 
 	<select id="findAll" resultMap="MemberResultMap">
 	  select *
 	  	from member
+			where level = 1
   </select>
   
   <select id="getUid" resultType="String">
@@ -44,21 +45,21 @@
 	  uid = #{uid}
   </select>
 
-   <select id="getPwdByUid" resultType="Member">
-	  select *
-	  from
-	  member
-	  where
-	  uid = #{uid}
-  </select>
-  
-  <select id="getByEmail" resultType="String">
-	  select email
-	  from
-	  member
-	  where
-	  email = #{email}
-  </select>
+	<select id="getPwdByUid" resultType="Member">
+		select *
+		from
+		member
+		where
+		uid = #{uid}
+	</select>
+
+	<select id="getByEmail" resultType="String">
+		select email
+		from
+		member
+		where
+		email = #{email}
+	</select>
 
 	<select id="getByName" resultType="String">
 		select name
@@ -66,35 +67,33 @@
 		member
 		where
 		name = #{name}
-  	</select>
-  
-  <select id="getByNickname" resultType="String">
-	  select nickname
-	  from
-	  member
-	  where
-	  nickname = #{nickname}
-  </select>
+	</select>
 
-   <select id="getEmailByUid" resultType="String">
-	  select email
-	  from
-	  member
-	  where
-	  uid = #{uid}
-  </select>
+	<select id="getByNickname" resultType="String">
+		select nickname
+		from
+		member
+		where
+		nickname = #{nickname}
+	</select>
 
-  <select id="getEmailByName" resultType="String">
-	  select email
-	  from
-	  member
-	  where
-	  name = #{name}
-  </select>
+	<select id="getEmailByUid" resultType="String">
+		select email
+		from
+		member
+		where
+		uid = #{uid}
+	</select>
 
-	<update id="update" parameterType="Member">
-		update member
-		<set>
+	<select id="getEmailByName" resultType="String">
+		select email
+		from
+		member
+		where
+		name = #{name}
+	</select>
+
+	<update id="update" parameterType="Member"> update member <set>
 			<if test="pwd != null">
 				pwd = #{pwd},
 			</if>
@@ -116,19 +115,19 @@
 			<if test="level != null">
 				level = #{level}
 			</if>
-		</set>
-		where id=#{id}
-	</update>
+			<if test="coordX != null">
+				coord_x = #{coordX}
+			</if>
+			<if test="coordX != null">
+				coord_y = #{coordY}
+			</if>
+		</set> where id=#{id} </update>
 
-	<update id="updatePwd" parameterType="Member">
-		update member
-		<set>
+	<update id="updatePwd" parameterType="Member"> update member <set>
 			<if test="pwd != null">
 				pwd = #{pwd},
 			</if>
-		</set>
-		where uid=#{uid}
-	</update>
+		</set> where uid=#{uid} </update>
 
 	<update id="updateImg" parameterType="Image">
 		update member
@@ -143,14 +142,15 @@
 
 	<!-- <update id="delete" parameterType="Member">
 		update member
-		set pwd = '',
+		set pwd
+	= '',
 			uid = '',
 			name = '',
 			email = '',
 			address = '',
-			nickname = '',
+	nickname = '',
 			level = '1'
 		where id=#{id}
 	</update> -->
-	
+
 </mapper>

@@ -62,15 +62,14 @@ public class StuffController {
 			@RequestParam(name = "dc", required = false) String dongCode
 			) {
 		System.out.println("동코드"+dongCode);
-		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
-		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId, dongCode); 
+		// List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
+		List<StuffView> list = service.getRecentViewList(query, categoryId, page, memberId, dongCode); 
 		List<Category> categoryList = categoryService.getList();
 		
-		
-		Long listCount = service.getListCount(categoryId, page, memberId);
+		Long listCount = service.getListCount(categoryId, page, memberId, query);
 
 		Map<String, Object> dataList = new HashMap<>();
-		dataList.put("queryList", queryList);
+		// dataList.put("queryList", queryList);
 		dataList.put("list", list);
 		dataList.put("categoryList", categoryList);
 		dataList.put("listCount", listCount);
@@ -200,16 +199,16 @@ public class StuffController {
 
 		return dataList;
 	}
-	@GetMapping("/stuff/recommend/reg/{id}")
+	@GetMapping("/stuff/crawlingreg/{id}")
 	public Map<String, Object> getCrwalingReg(@PathVariable("id") long id) {
 
 		
-		Crawling stuff = crawlingservice.getById(id);
+		Crawling crawlingData = crawlingservice.getById(id);
 
 
 
 		Map<String, Object> data = new HashMap<>();
-		data.put("stuff", stuff);
+		data.put("crawlingData", crawlingData);
 		// data.put("participantList", participantList);
 		// data.put("memberCount", memberCount);
 		// data.put("stuffView", stuffView);

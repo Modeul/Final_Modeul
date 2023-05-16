@@ -18,6 +18,17 @@
   align-items: stretch;
   top: -3px;
   border-radius: 10px;
-  width: 100%;
+  width: 95%;
   margin-top: 15px;
+}
+.search-form {
+  background: #f4f2f2f7;
+  opacity: 1;
+  position: relative;
+  border: 0 solid rgba(230, 228, 228, 0.62);
+  border-radius: 10px;
+  height: 28px;
+  overflow: hidden;
+  margin: auto 0;
+  width: 95%;
 }

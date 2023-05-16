@@ -181,6 +181,13 @@ public class StuffServiceImpl implements StuffService {
 		return result;
 	}
 
+	public Long getListCount(Long categoryId, int page, Long memberId, String query) {
+
+		Long countList = repository.getCountList(categoryId, memberId, query) - (page * pageSize);
+		Long result = countList <= 0 ? 0 : countList;
+		return result;
+	}
+
 
 	@Override
 	public List<StuffView> getRecentViewList(String query, Long categoryId, int page) {

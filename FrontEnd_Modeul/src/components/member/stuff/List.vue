@@ -12,11 +12,16 @@ export default {
 			page: '',
 			dongCode: '',
 			dongName: '',
+			myDongCode:'',
+			myDongName:'',
+			myCoordX: '',
+			myCoordY: '',
 			list: [],
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
 			query: '',
+			searchToggle: false,
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore()
 		};
@@ -27,16 +32,19 @@ export default {
 	computed: {
 	},
 	methods: {
-		searchInput(e) {
+		searchInput(queryEmit) {
+			if (!this.searchToggle)
+				if (this.query == queryEmit.trim())
+					return;
+			this.query = queryEmit.trim();
 			this.page = 1;
-			e.preventDefault();
-			this.query = e.target.value;
-
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+			this.defaultStore.loadingStatus = true;
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.queryList);
-
+					this.list = this.formatDateList(dataList.list);
+					this.listCount = dataList.listCount;
+					this.defaultStore.loadingStatus = false;
 				}).catch(error => console.log('error', error));
 		},
 		categoryHandler(e) {
@@ -50,12 +58,12 @@ export default {
 					this.categoryList = dataList.categoryList;
 				}).catch(error => console.log('error', error));
 		},
-		async addListHandler() {
+		async addListHandler(c) {
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
-
+			
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -71,7 +79,7 @@ export default {
 		},
 		scrollCheck() {
 			if (window.innerHeight >= 718) {
-				this.addListHandler();
+				this.addListHandler('');
 			}
 		},
 
@@ -125,20 +133,25 @@ export default {
 
 		onChage(v) {
 			if (v.target.value === 'cur') {
-				this.getDongInfo();
-			} else {
+				this.getDongInfo(null, null);
+			} else if (v.target.value === 'my'){
+				this.addListHandler(this.myDongCode);
+				console.log(this.myDongCode);
+			} else{
 				this.dongCode = '';
 				this.dongName = '';
-				this.addListHandler();
+				this.addListHandler(this.dongCode);
 			}
 
 
 		},
 
-		getDongInfo() {
+		getDongInfo(x,y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-			const watchID = navigator.geolocation.getCurrentPosition((position) => {
+
+			if (x == null) {
+				const watchID = navigator.geolocation.getCurrentPosition((position) => {
 				let lat = position.coords.latitude;
 				let lng = position.coords.longitude;
 
@@ -152,26 +165,58 @@ export default {
 					if (status === kakao.maps.services.Status.OK) {
 
 						this.dongCode = result[0].code;
-
-						this.addListHandler();
+						console.log(this.dongCode);
+						this.addListHandler(this.dongCode);
 					}
 				});
 
 			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+
+			} else {
+
+				geocoder.coord2Address(x, y, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.myDongName = result[0].address.region_3depth_name;
+					}
+				});
+				geocoder.coord2RegionCode(x, y, (result, status) => {
+					if (status === kakao.maps.services.Status.OK) {
+
+						this.myDongCode = result[0].code;
+
+						
+					}
+				});
+
+
+			}
+			
+			
+		},
+		getMemberCoordInfo(){
+			fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.myCoordX = dataList.coordX;
+					this.myCoordY = dataList.coordY;
+					this.getDongInfo(this.myCoordX, this.myCoordY);
+				}).catch(error => console.log('error', error));
 		},
 
 	},
 	mounted() {
 		this.page = 0;
-		this.addListHandler();
+		this.addListHandler('');
 		this.scrollCheck();
-		// this.getDongInfo();
+		this.getMemberCoordInfo();
+		console.log("마운트 "+ this.myCoordX);
 
 		document.addEventListener("scroll", (e) => {
 
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler();
+					this.addListHandler('');
 				}
 			}
 		})
@@ -181,29 +226,8 @@ export default {
 </script>
 
 <template>
-	<PcHeader></PcHeader>
+	<PcHeader @queryEmit="searchInput"></PcHeader>
 
-	<!-- <div class="pc-header-wrap">
-		<div class="header-menu">
-			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
-			<div v-else @click.prevent="userDetails.logout" class="login">로그아웃</div>
-		</div>
-		<div class="pc-header">
-			<div class="logo-moduel header-logo"></div>
-			<div class="search-container">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
-					<h1 class="icon search-dodbogi">돋보기</h1>
-				</div>
-			</div>
-			<div class="btnbox">
-				<div class="btn-heart"></div>
-				<div class="btn-location"></div>
-			</div>
-		</div>
-	</div>
-	 -->
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
 			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
@@ -213,17 +237,28 @@ export default {
 
 	<section class="canvas">
 		<header class="d-fl-al header-jc">
-			<select class="selectbox-set" @change="onChage($event)">
-				<option value="" default>전체</option>
-				<option value="">신설동</option>
-				<option value="cur">현재위치</option>
-			</select>
-			<div> {{ dongName }}</div>
+			<div class="gps-box">
+				<div class="icon icon-location"></div>
+				<select class="selectbox-set" @change="onChage($event)">
+					<option value="" default>전체</option>
+					<option value="my">{{ myDongName }}</option>
+					<option value="cur">현재위치</option>
+				</select>
+			</div>
+			<Transition name="fade">
+				<div v-if="searchToggle" class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." v-model="query"
+						@keyup.enter="searchInput(query)">
+					<h1 class="icon search-dodbogi">돋보기</h1>
+				</div>
+				<div v-else> {{ dongName }}</div>
+			</Transition>
 
 			<div>
 				<!-- <a class="icon icon-menu">메뉴</a> -->
-				<a class="icon icon-alarm">알림</a>
-				<a class="icon">
+				<div v-if="!searchToggle" class="icon icon-search" @click="searchToggle = !searchToggle"></div>
+				<div v-else class="icon icon-search-cancel" @click="searchToggle = !searchToggle"></div>
+				<!-- <a class="icon">
 					<input type="checkbox" id="menuicon">
 					<label for="menuicon">
 						<span></span>
@@ -257,7 +292,7 @@ export default {
 							</span>
 						</div>
 					</div>
-				</a>
+				</a> -->
 			</div>
 		</header>
 
@@ -329,7 +364,7 @@ export default {
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
 			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 			</div>
 			<div>
 				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
@@ -347,6 +382,16 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
-@import "/css/component/admin/member/list-responsive.css";	
+@import "/css/component/admin/member/list-responsive.css";
 @import "/css/button.css";
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
 </style>

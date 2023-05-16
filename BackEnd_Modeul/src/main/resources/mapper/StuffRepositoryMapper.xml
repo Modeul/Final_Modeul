@@ -112,6 +112,9 @@
 			<if test="memberId != null">
 				and member_id = #{memberId}
 			</if>
+			<if test="query != null">
+				and title like '%${query}%'
+			</if>
 		</trim>
 	</select>
 

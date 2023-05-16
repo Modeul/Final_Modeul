@@ -34,7 +34,7 @@
 	<div v-if="openDutchCheckModal" class="black-bg">
 		<div class="dutchcheck-modal-box">
 			<div class="dutchcheck-modal-txt">정산이 완료되지 않았습니다.</div>
-			<button @click.prevent="openDutchCheckModal=!openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
+			<button @click.prevent="openDutchCheckModal = !openDutchCheckModal" class="dutchcheck-modal-btn">확인</button>
 		</div>
 	</div>
 
@@ -44,7 +44,7 @@
 				추방되었습니다.
 			</v-card-text>
 			<v-card-actions>
-				<v-btn color="#63A0C2" block @click="dialog = false">확인</v-btn>
+				<v-btn color="#63A0C2" block @click="banishedHandler">확인</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -101,10 +101,10 @@
 
 		<div class="chat-canvas">
 			<div v-for="m in messageView">
-				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(myUserId == m.memberId) ? 'mine' : 'others'">
-					<img v-if="!(myUserId == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
+				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(userDetails.id == m.memberId) ? 'mine' : 'others'">
+					<img v-if="!(userDetails.id == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
 					<div class="chat-box">
-						<p v-if="!(myUserId == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
+						<p v-if="!(userDetails.id == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
 						<div class="chat-content-wrap">
 							<p class="chat-content">{{ m.content }}</p>
 							<p class="chat-time">{{ m.sendDate }}</p>
@@ -116,8 +116,10 @@
 				<!-- </div> -->
 				<div class="chat-line-wrap dutch" v-else-if="m.type == 'DUTCH'">
 					<p v-html="getContent(m.content)" class="chat-content"></p>
-					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히 보기</button>
-					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과 자세히 보기</button>
+					<button class="dutch-final-result-btn" v-if="banishAuthority" @click="calDrawer = !calDrawer">정산 결과 자세히
+						보기</button>
+					<button class="dutch-final-result-btn" v-if="!banishAuthority" @click="noAuthorityDutchHandler">정산 결과
+						자세히 보기</button>
 				</div>
 				<div class="chat-line-wrap notice" v-else>
 					<p class="chat-content">{{ m.content }}</p>
@@ -144,7 +146,7 @@
 	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 
-		<section class="calc" :class="{ 'd-none': !isAccount }">
+		<form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
 			<h1 class="d-none">정산하기</h1>
 			<header class="calc-header">
 				<div class="icon">뒤로가기</div>
@@ -157,27 +159,27 @@
 					<span>계좌 정보를</span><br>
 					<span>입력해주세요.</span>
 				</div>
-				
+
 				<div class="account-input">
-                    <select required class="account-input-box" v-model="selectBank">
-                        <option value="" selected>은행 선택</option>
-                        <option v-for="bank in banks" v-text="bank"></option>
-                    </select>
-                    <input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required> 
-                </div>
-				<div class="account-recent" >
+					<select required class="account-input-box" v-model="selectBank">
+						<option value="" selected>은행 선택</option>
+						<option v-for="bank in banks" v-text="bank"></option>
+					</select>
+					<input placeholder="계좌번호" class="account-input-box" v-model="accountNumber" pattern="[0-9]*" required>
+				</div>
+				<div class="account-recent">
 					<div>최근 등록 계좌</div>
 					<!-- <div>{{this.recentAccountInfo}}</div> -->
 					<div v-for="ra in recentAccountInfo">
-						<span>{{ ra.bankName + " "}} </span>
+						<span>{{ ra.bankName + " " }} </span>
 						<span> {{ ra.number }}</span>
 						<a class="icon-account-paste" @click.prevent="copyRecentAccountHandler(ra.number)">복사하기</a>
 					</div>
 				</div>
-				<button type="submit" class="calc-button" @click.prevent="dnoneHandler">다음</button>
+				<button type="submit" class="calc-button">다음</button>
 
 			</div>
-		</section>
+		</form>
 
 		<section class="calc" :class="{ 'd-none': !isCalc }">
 			<h1 class="d-none">정산하기</h1>
@@ -204,8 +206,8 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" v-model.number="totalPrice" @input="chipinHandler"
-								placeholder="총금액을 입력해 주세요.">원
+							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8"
+								@input="chipinHandler" placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
 						</div>
 					</section>
 					<div class="calc-members-title">참여 인원</div>
@@ -219,8 +221,9 @@
 							<div class="calc-member-price">
 								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 								<span v-if="!calcSwitch" class="calc-member-span-price">
-									<input type="text" v-model=price[user.memberId] maxlength="8" pattern="[0-9]*" required
-										placeholder="금액 입력" @keydown="inputCheck"> 원
+									<input type="text" v-model.number=personalPrice[user.memberId] maxlength="8"
+										pattern="(\d+,)*\d+" required placeholder="금액 입력" @keydown="inputCheck"
+										@focus="inputFocus(user.memberId)" @blur="inputBlur(user.memberId)"> 원
 								</span>
 							</div>
 						</div>
@@ -242,7 +245,8 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span @click="openDeleteModalHandler" v-if="this.banishAuthority">삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler"
+							v-if="this.banishAuthority">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
@@ -255,7 +259,7 @@
 							{{ m.memberNickname }}
 						</div>
 						<div class="cal-user-self-result">
-							{{ m.price }}원
+							{{ formatPrice(m.price) }}원
 						</div>
 					</div>
 				</main>
@@ -266,7 +270,7 @@
 						합계
 					</div>
 					<div>
-						{{ sumDutch }}원
+						{{ formatPrice(sumDutch) }}원
 					</div>
 				</section>
 
@@ -276,7 +280,7 @@
 					<div class="cal-result-account-all">
 						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							<span>{{ selectBank }}  </span>
+							<span>{{ selectBank }} </span>
 							<span>{{ accountNumber }}</span>
 						</div>
 						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
@@ -322,12 +326,12 @@ export default {
 			userName: "",
 			message: "",
 			recvList: [],
-			myUserId: this.$route.params.memberId,
 			stuffId: '',
 			drawer: null,
 			openModal: false,
 			stompClient: '',
-			participantList: '',
+			participantList: [],
+			personalPrice: {},
 			price: {},
 			chat: {
 				title: "여러가지 나눔",
@@ -349,7 +353,7 @@ export default {
 
 			calcSwitch: true,
 			chipinResult: 0,
-			totalPrice: 0,
+			totalPrice: '',
 			totalPriceComma: '',
 			totalPriceAlert: '',
 			totalText: true,
@@ -371,10 +375,10 @@ export default {
 			sumDutch: '',
 			dutchList: '',
 			copyModal: false,
-			recentAccountInfo:'',
-			openDutchCheckModal:false,
-			checkDutchComplete:false,
-			stuffLeaderName:'',
+			recentAccountInfo: '',
+			openDutchCheckModal: false,
+			checkDutchComplete: false,
+			stuffLeaderName: '',
 		}
 	},
 
@@ -382,14 +386,17 @@ export default {
 		getContent(content) {
 			return (content || "").split('\n').join('<br>');
 		},
-		blurHandler() {
-			console.log(this.memberPriceList);
-		},
-
 		chipinHandler() {
-			console.log(this.totalPrice)
-			this.chipinResult = ((this.totalPrice / this.participantList.length).toFixed(2)).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-			return this.chipinResult;
+			let chipin = Math.floor(this.totalPrice / this.participantList.length);
+
+			if (isNaN(chipin))
+				this.totalPrice = '';
+			else
+				this.chipinResult = String(chipin).replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+
+			this.participantList.forEach(user =>
+				this.price[user.memberId] = chipin
+			)
 		},
 
 		sendMessage(e) {
@@ -420,8 +427,6 @@ export default {
 					content: this.message,
 				};
 
-				this.myUserId = this.memberInfo.id;
-
 				this.stompClient.send("/pub/chat/message", JSON.stringify(chatMessage));
 			}
 		},
@@ -438,15 +443,28 @@ export default {
 					this.connected = true;
 
 					const response = await fetch(`${this.defaultStore.host}/api/chatlog?
-					stuffId=${this.$route.params.stuffId}&memberId=${this.$route.params.memberId}`)
+					stuffId=${this.$route.params.stuffId}&memberId=${this.userDetails.id}`)
 					const result = await response.text();
 					if (result != '')
 						this.messageView = JSON.parse(result)
 
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
+						const result = JSON.parse(res.body)
+						if(result.type == 'ENTER' || result.type == 'LEAVE')
+							this.loadParticipationList();
+						if(result.type == 'BANISH'){
+							if(result.memberId == this.userDetails.id){
+								this.$router.go('/member/stuff/list');
+								this.dialog = true;
+							}
+							this.loadParticipationList();
+						}
+						if(result.type == 'DUTCH')
+							this.loadDutchMemberList();
+						
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-						this.messageView.push(JSON.parse(res.body));
+						this.messageView.push(result);
 					});
 
 					// 2. 초기 설정 메세지 바로 보내준다. 위의 send 이벤트에 의해서 사용자 메세지가 전송된다,
@@ -467,7 +485,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.$route.params.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.userDetails.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					console.log(result);
@@ -506,7 +524,7 @@ export default {
 			this.chat = dataList.stuffView;
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.defaultStore.host}/api/member/${this.$route.params.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
 			const data = await response.json();
 			this.memberInfo = data;
 			console.log("this.memberInfo:" + this.memberInfo.id);
@@ -532,12 +550,19 @@ export default {
 					console.log(result);
 					this.openModal = !this.openModal;
 					this.loadParticipationList();
-					this.dialog = true;
+
+					this.stompClient.send('/pub/chat/exitUser',
+						JSON.stringify({
+							type: 'BANISH',
+							stuffId: this.$route.params.stuffId,
+							memberId: this.banishUser.id,
+						})
+					)
 
 					// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
 					// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
 
-					// if(this.banishUser.id === this.$route.params.memberId){
+					// if(this.banishUser.id === this.userDetails.id){
 					//  this.$router.go(0);
 					//  this.stompClient.disconnect((frame) => {
 					//          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
@@ -554,6 +579,10 @@ export default {
 
 				})
 				.catch(error => console.log('error', error));
+		},
+		banishedHandler(){
+			this.dialog = false;
+			this.$router.go('/member/stuff/list')
 		},
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
@@ -602,9 +631,11 @@ export default {
 		},
 		calc1n() {
 			this.calcSwitch = true;
+			this.price = {};
 		},
 		calcdir() {
 			this.calcSwitch = false;
+			this.price = {};
 		},
 		calculate() {
 			var requestOptions = {
@@ -680,7 +711,7 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 		loadDutchList() {
-			fetch(`${this.defaultStore.host}/api/dutchs?memberId=${this.$route.params.memberId}`)
+			fetch(`${this.defaultStore.host}/api/dutchs?memberId=${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.dutchList = dataList.listView;
@@ -730,7 +761,7 @@ export default {
 			this.openDeleteModalHandler()
 		},
 		copyHandler() {
-			navigator.clipboard.writeText("하나 1231234")
+			navigator.clipboard.writeText(this.selectBank + this.accountNumber)
 				.then(() => {
 					this.copyModal = false;
 
@@ -742,7 +773,7 @@ export default {
 
 					});
 		},
-		copyRecentAccountHandler(number){
+		copyRecentAccountHandler(number) {
 			navigator.clipboard.writeText(number)
 				.then(() => {
 					this.copyModal = false;
@@ -755,26 +786,44 @@ export default {
 
 					});
 		},
-		noAuthorityDutchHandler(){
+		noAuthorityDutchHandler() {
 
-			if(this.checkDutchComplete === true && !this.banishAuthority)
+			if (!this.banishAuthority && this.checkDutchComplete === true)
 				this.calDrawer = !this.calDrawer;
-			
-			
-			if(this.checkDutchComplete === false && !this.banishAuthority)
+
+
+			if (!this.banishAuthority && this.checkDutchComplete === false)
 				this.openDutchCheckModal = !this.openDutchCheckModal;
-			
+
 		},
+		inputFocus(memberId) {
+			if (this.calcSwitch)
+				this.totalPrice = this.totalPrice.replace(/,/g, '');
+			else if (typeof this.personalPrice[memberId] === 'string') {
+				this.personalPrice[memberId] = this.personalPrice[memberId].replace(/,/g, '');
+			}
+		},
+		inputBlur(memberId) {
+			if (this.calcSwitch)
+				this.totalPrice = Number(this.totalPrice).toLocaleString();
+			else if (typeof this.personalPrice[memberId] === 'string' || typeof this.personalPrice[memberId] === 'number') {
+				this.price[memberId] = this.personalPrice[memberId];
+				this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
+			}
+		},
+		formatPrice(price){
+			return Number(price).toLocaleString();
+		}
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent();
 		// 더치 결과가 있다면 calc-state = true;
 	},
 	created() {
-		this.stompConnect();
-		this.connect();
 		this.loadParticipant();
 		this.loadDutchMemberList();
+		this.stompConnect();
+		this.connect();
 		this.loadDutchList();
 	},
 	updated() {
@@ -794,6 +843,9 @@ export default {
 			})
 			.catch(error => console.log('error', error));
 
+		console.log(this.userDetails.id);
+		console.log(this.participantList);
+
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
 			window.scrollTo({ top: document.body.scrollHeight });
@@ -803,10 +855,10 @@ export default {
 		this.checkDutchHave();
 
 		// 최근 계좌 목록
-		await fetch(`${this.defaultStore.host}/api/account/recent/${this.myUserId}`)
-		.then(response => response.json())
-		.then(result => {this.recentAccountInfo = result;})
-		.catch(error => console.log('error', error));
+		await fetch(`${this.defaultStore.host}/api/account/recent/${this.userDetails.id}`)
+			.then(response => response.json())
+			.then(result => { this.recentAccountInfo = result; })
+			.catch(error => console.log('error', error));
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -963,32 +1015,35 @@ export default {
 
 .account-input-box {
 	width: 272px;
-    height: 48px;
-    border: 1px solid #888888;
-    color: #333;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    padding-left: 12px;
+	height: 48px;
+	border: 1px solid #888888;
+	color: #333;
+	border-radius: 10px;
+	margin-bottom: 8px;
+	padding-left: 12px;
 }
+
 select option[value=""][disabled] {
-    display: none;
+	display: none;
 }
+
 .account-input-box::-webkit-input-placeholder {
-  color: #888888;
-  font-size: 16px;
-  text-align:left;
+	color: #888888;
+	font-size: 16px;
+	text-align: left;
 }
+
 .account-recent {
 	padding: 20px 4px;
-    font-size: 14px;
-    flex: none;
-    order: 2;
-    flex-grow: 0;
+	font-size: 14px;
+	flex: none;
+	order: 2;
+	flex-grow: 0;
 }
 
 .account-recent>div:first-child {
-    font-weight: 700;
-    color: #63A0C2;
+	font-weight: 700;
+	color: #63A0C2;
 }
 
 .btn-writing {
@@ -1110,7 +1165,7 @@ select option[value=""][disabled] {
 }
 
 input::placeholder {
-	text-align: right;
+	text-align: left;
 }
 
 .calc-member-price {
@@ -1477,7 +1532,8 @@ input::placeholder {
 	display: flex;
 	margin-top: 18px;
 }
-.chat-line-wrap.dutch{
+
+.chat-line-wrap.dutch {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -1498,12 +1554,12 @@ input::placeholder {
 }
 
 
-.dutch-final-result-btn{
+.dutch-final-result-btn {
 	font-size: 12px;
 	font-weight: 500;
 	color: #327ff3;
 	width: 170px;
-	height:30px;
+	height: 30px;
 	background-color: #bed3fb;
 	border-radius: 6px 6px 6px 6px;
 	margin-bottom: 6px;
@@ -1816,7 +1872,7 @@ input::placeholder {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1007;
+	z-index: 1300;
 }
 
 .delete-box {
@@ -1834,7 +1890,7 @@ input::placeholder {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	z-index: 1007;
+	z-index: 1301;
 
 }
 
