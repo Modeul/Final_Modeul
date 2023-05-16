@@ -44,6 +44,7 @@ public interface StuffRepository {
 
 	/* 공구상픔 이미지 등록 */
 	int uploadImage(Image image);
+	int uploadImgurl(String imgurl , Long stuffId);
 
 	Long getCountList(Long categoryId, Long memberId);
 	Long getCountList(Long categoryId, Long memberId, String query);

@@ -316,6 +316,30 @@ public class StuffServiceImpl implements StuffService {
 		});
 	}
 
+	@Transactional
+	@Override
+	public void regCrawlingStuff(Stuff stuff) {
+
+
+		int insertCount = repository.insert(stuff);
+		
+
+		if (stuff.getImgurl() == "" || stuff.getImgurl() == null)
+			return;
+
+		repository.uploadImgurl(stuff.getImgurl(),stuff.getId());
+		
+		Participation participation = new Participation();
+		participation.setStuffId(stuff.getId());
+		participation.setMemberId(stuff.getMemberId());
+
+
+		int participationCount = participationRepository.insert(participation);
+		System.out.printf("participationCount: %d\n", participationCount);
+
+
+	}
+
 
 
 }

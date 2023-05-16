@@ -1,46 +1,48 @@
 <template>
-	<div class="favorite">
-		<div class="header">
-			<router-link to="/member/mypage" class="back"></router-link>
-			<div class="title">관심 목록</div>
-		</div>
+	<div class="canvas">
+		<section class="favorite">
+			<header class="header">
+				<router-link to="/member/mypage" class="back"></router-link>
+				<div class="title">관심 목록</div>
+			</header>
 
-		<div class="stuff-list" v-for="f in list" :key="f.stuffId">
-			<router-link :to="'/member/stuff/' + f.stuffId">
-				<div class="d-gr li-gr m-t-13px list-cl">
-					<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
-					<div class="li-pic b-rad-1">
-						<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
-						<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
-							alt="img">
-						<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
-							alt="img">
-						<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg"
-							alt="img">
-						<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+			<div class="stuff-list" v-for="f in list" :key="f.stuffId">
+				<router-link :to="'/member/stuff/' + f.stuffId">
+					<div class="d-gr li-gr m-t-13px list-cl">
+						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
+						<div class="li-pic b-rad-1">
+							<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
+							<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
+								alt="img">
+							<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
+								alt="img">
+							<img v-else-if="f.categoryId == '3'" class="listview-image" src="/public/images/member/stuff/category3.svg"
+								alt="img">
+							<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
+						</div>
+						<div class="li-categ-place">
+
+							<span class="li-categ-place-p">
+								{{ f.stuffPlace }}
+							</span>
+						</div>
+						<div class="li-dday" :class="(f.deadlineState == 0) ? 'expired' :
+							(f.deadlineState == 1) ? 'day-left' :
+								(f.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ f.dDay }}</div>
+						<div class="li-subj">{{ f.stuffTitle }}</div>
+
+
+						<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
+							<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
+							<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
+
+						</div>
 					</div>
-					<div class="li-categ-place">
+				</router-link>
+			</div>
+			<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 
-						<span class="li-categ-place-p">
-							{{ f.stuffPlace }}
-						</span>
-					</div>
-					<div class="li-dday" :class="(f.deadlineState == 0) ? 'expired' :
-						(f.deadlineState == 1) ? 'day-left' :
-							(f.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ f.dDay }}</div>
-					<div class="li-subj">{{ f.stuffTitle }}</div>
-
-
-					<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
-						<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
-						<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
-
-					</div>
-				</div>
-			</router-link>
-		</div>
-		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
-
+		</section>
 	</div>
 </template>
 
@@ -66,7 +68,6 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			isfavorite: {},
-			heartStuffId: '',
 			stuffId: '',
 			valiError: "",
 			openModal: false,
@@ -87,8 +88,8 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"heartStuffId": stuffId,
-					"memberId": this.memberId,
+					stuffId: stuffId,
+					memberId: this.memberId,
 				});
 
 				var requestOptions = {
@@ -114,8 +115,8 @@ export default {
 
 				var raw = JSON.stringify({
 
-					"heartStuffId": stuffId,
-					"memberId": this.memberId,
+					stuffId: stuffId,
+					memberId: this.memberId,
 				});
 				var requestOptions = {
 					method: 'DELETE',
@@ -200,34 +201,38 @@ export default {
 </script>
 
 <style scoped>
-@import url(/css/component/member/stuff/component-list.css);
+@import "/css/component/member/stuff/component-list.css";
 @import url(/css/button.css);
-@import url(/css/style.css);
-@import url(/css/component/component.css);
 
-.favorite {
+.canvas {
+	max-width: 600px;
+	padding: 0 20px;
+	margin: 0 auto;
+	min-width: 360px;
+}
+/* .favorite {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	padding: 0;
 	position: relative;
-	width: 360px;
+	
+	height: 740px;
 	background: #FFFFFF;
 	margin: 0 auto;
-}
+} */
 
-.favorite .header {
+.header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
-	width: 312px;
-	height: 88px;
-	border-bottom: 0.3px #d5d5d5 solid;
+	width: 100%;
+	margin-top: 25px;
+	margin-bottom: 12px;
 }
 
-.favorite .header .back {
+.back {
 	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
 	width: 23.04px;
 	height: 24px;
@@ -235,7 +240,8 @@ export default {
 }
 
 .favorite .header .title {
-	margin-left: 86px;
+	margin: 0 auto;
+	padding-right: 23px;
 }
 
 .stuff-list {
@@ -263,16 +269,16 @@ export default {
 }
 
 .li-gr {
-	grid-template-columns: 68px 10px 100px 74px 8px 70px;
+	
+	grid-template-columns: 68px 8px minmax(174px, auto) 0px 70px;
 	grid-template-rows: 36px 12px 12px;
 	grid-template-areas:
-		"pic . subj subj . dday"
-		"pic . . . . ."
-		"pic . ct ct . heart ";
+		"pic . subj . dday"
+		"pic . . . ."
+		"pic . ct . heart ";
 
 	align-items: center;
-	/* grid-row-gap: 1%; */
-	/* grid-column-gap: 10px; */
+	
 }
 
 .filled-heart {
@@ -283,8 +289,8 @@ export default {
 	background-size: 100%;
 	position: relative;
 	right: -45px;
-	width: 25px;
-	height: 25px;
+	width: 24px;
+	height: 24px;
 	display: inline-block;
 	text-indent: -9999px;
 }
@@ -297,8 +303,8 @@ export default {
 	background-size: 100%;
 	position: relative;
 	right: -45px;
-	width: 25px;
-	height: 25px;
+	width: 24px;
+	height: 24px;
 	display: inline-block;
 	text-indent: -9999px;
 }</style>

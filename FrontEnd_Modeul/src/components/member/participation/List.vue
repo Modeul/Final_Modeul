@@ -1,19 +1,23 @@
 <template>
-	<section class="canvas">
-		<header>
-			<router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+	<section class="canvas p-rel">
+
+		<header class="header">
+			<div>
+				<router-link to="/member/mypage" class="back"></router-link>
+			</div>
+			<div class="title">참여 목록</div>
 		</header>
 
 		<nav>
-			<h1 class="m-t-4 f-size-2 f-weight">공동구매에<br><span class="f-color-2">{{ stuffCount }}건</span> 참여하고 있어요</h1>
+			<h1 class="m-t-2 f-size-2 f-weight">공동구매에<br><span class="f-color-2">{{ stuffCount }}건</span> 참여하고 있어요</h1>
 
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -199,6 +203,36 @@ export default {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
+}
+
+.li-gr {
+    grid-template-columns: 70px 8px minmax(174px, auto) 0px 70px;
+}
+
+.back {
+	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
+	width: 23.04px;
+	height: 24px;
+	margin-top: 9px;
+}
+
+.canvas .header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 0px;
+	gap: 10px;
+	width: 100%;
+	margin-top: 25px;
+}
+
+.header .title {
+	margin: 0 auto;
+	padding-right: 23px;
+}
+.f-weight{
+	font-weight: 500;
 }
 </style>
 

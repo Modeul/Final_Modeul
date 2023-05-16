@@ -8,14 +8,19 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			query: ''
+			query: '',
+			loginMember: ''
 		};
 	},
 	methods: {
 		queryHandler(e) {
 			this.$emit('queryEmit', e.target.value);
-		},
-		
+		}
+	},
+	async mounted() {
+		const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
+		const result = await response.json();
+		this.loginMember = result;
 	}
 }
 </script>
@@ -24,8 +29,9 @@ export default {
 	<div class="pc-header-wrap">
 		<div class="header-menu">
 			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
+			<div v-else class="info"> <p class="text">{{ loginMember.nickname }}</p> &nbsp;님 안녕하세요.&nbsp;&nbsp;</div>
 			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
-			<div v-else @click.prevent="userDetails.logout" class="login"><router-link to="/login">로그아웃</router-link></div>
+			<div v-else @click.prevent="userDetails.logout" class="logout"><router-link to="/login"></router-link></div>
 		</div>
 		<div class="pc-header">
 			<div class="logo-moduel header-logo">
@@ -54,7 +60,7 @@ export default {
 					<router-link to="/admin/stuff/list"></router-link>
 				</div>
 				<div class="btn-heart">
-					<router-link to="/member/favorite"></router-link>
+					<router-link to="/member/mypage/favorite"></router-link>
 				</div>
 				<div class="btn-location"></div>
 				<div class="btn-mypage">

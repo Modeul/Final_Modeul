@@ -127,8 +127,8 @@
 	<!-- 공구상품글 등록  -->
 	<insert id="insert" parameterType="Stuff">
 		insert into stuff(title, place, num_people, deadline, price, url,
-		content, category_id, coord_x, coord_y, dong_code)
-		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId}, #{coordX}, #{coordY}, #{dongCode})
+		content, category_id, coord_x, coord_y, dong_code, member_id)
+		values(#{title},#{place},#{numPeople},#{deadline},#{price},#{url},#{content}, #{categoryId}, #{coordX}, #{coordY}, #{dongCode}, #{memberId})
 		<selectKey resultType="long" keyProperty="id" order="AFTER">
 
 			select last_insert_id()
@@ -136,10 +136,13 @@
 		</selectKey>
 	</insert>
 
-	
 	<insert id="uploadImage" parameterType="Image">
-		insert into image(name, stuff_id)
-		values(#{name}, #{stuffId})
+   			insert into image(name, stuff_id)
+    		values(#{name}, #{stuffId})
+	</insert>
+	<insert id="uploadImgurl" parameterType="Image">
+    		insert into image(name, stuff_id)
+    		values(#{imgurl}, #{stuffId})
 	</insert>
 
 	<!-- 상품 정보 수정, 나중에 categoryId 추가하기!! -->

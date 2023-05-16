@@ -13,8 +13,8 @@ export default {
 			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
-			memberId: 2,
-			stuffId: 1,
+			memberId: '',
+			stuffId: '',
 			openModal: false,
 			openModal2: false,
 			openModal3: false,
@@ -35,7 +35,8 @@ export default {
 				detail: '',
 			},
 			favoriteList: [],
-			heartStuffId: '',
+			favoriteInfo: {},
+			//heartStuffId: '',
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
@@ -198,12 +199,10 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			for (let p of this.participantList) {
-				console.log("p.memberId: " + p.memberId + '\n');
-				if (p.memberId === this.participantInfo.memberId) {
-					this.isCheckParticipation = !this.isCheckParticipation;
-				}
-			}
+			if (this.participantInfo)
+				this.isCheckParticipation = true;
+			else
+				this.isCheckParticipation = false;
 		},
 		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
@@ -290,15 +289,15 @@ export default {
 			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
 
-		loadFavoriteList() {
-			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.userDetails.id}`)
+		loadFavoriteInfo() {
+			fetch(error => console.log("errr", error));
+			fetch(`${this.defaultStore.host}/api/favorite/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
-				.then(dataList => {
-					this.list = dataList.list;
-					this.categoryList = dataList.categoryList;
-					this.defaultStore.loadingStatus = false;
+				.then(data => {
+					this.favoriteInfo = data.favoriteInfo;
+					console.log(this.favoriteInfo);
 				})
-				.catch(error => console.log("error", error));
+				.catch(error => console.log('error', error));
 		},
 
 		toggleFavorite() {
@@ -309,8 +308,8 @@ export default {
 
 				var raw = JSON.stringify({
 
-					"heartStuffId": this.stuff.id,
-					"memberId": this.memberInfo.id,
+					stuffId: this.stuff.id,
+					memberId: this.userDetails.id,
 				});
 				var requestOptions = {
 					method: 'DELETE',
@@ -333,8 +332,8 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"heartStuffId": this.stuff.id,
-					"memberId": this.memberInfo.id,
+					stuffId: this.stuff.id,
+					memberId: this.userDetails.id,
 				});
 
 				var requestOptions = {
@@ -355,11 +354,10 @@ export default {
 			}
 		},
 		checkFavoriteList() {
-			for (let f of this.list) {
-				if (f.stuffId == this.stuff.id) {
-					this.isfavorite = !this.isfavorite;
-				}
-			}
+			if (this.favoriteInfo)
+				this.isfavorite = true;
+			else
+				this.isfavorite = false;
 		},
 		aniEndHandler() {
 			this.favorOpenModal = false;
@@ -376,7 +374,7 @@ export default {
 		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
-		this.loadFavoriteList();
+		this.loadFavoriteInfo();
 	},
 	async mounted() {
 		this.defaultStore.loadingStatus = true;
@@ -499,9 +497,9 @@ export default {
 						</div>
 						<p class="detail-heading-title">{{ stuff.title }}</p>
 						<!-- <div class="d-fl">
-						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-						<div class="ed-text" @click="deleteStuff">삭제</div>
-					</div> -->
+							<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
+							<div class="ed-text" @click="deleteStuff">삭제</div>
+						</div> -->
 						<div class="detail-price">{{ stuffPrice }}원</div>
 
 					</section>
@@ -523,16 +521,16 @@ export default {
 
 					</section>
 					<section class="canvas map">
-						<div @click="toggleMap" v-if="showMap">지도 열기</div>
-						<div @click="toggleMap" v-else>지도 닫기</div>
+						<div class="map-txt" @click="toggleMap" v-if="showMap">지도 열기</div>
+						<div class="map-txt" @click="toggleMap" v-else>지도 닫기</div>
 						<div id="map"></div>
 					</section>
 					<!-- detail-writing : detail-main - item4 -->
 					<section class="canvas detail-writing">
 						<h1 class="d-none">writing</h1>
 						<!-- <p class="detail-paragraph">
-								            {{ stuff.content }}
-								          </p> -->
+									            {{ stuff.content }}
+									          </p> -->
 						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
 					</section>
 				</div>
@@ -541,7 +539,7 @@ export default {
 		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
-				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+				<router-link to="/member/mypage/favorite">
 					<div class="error-gotofavor">관심목록 보기</div>
 				</router-link>
 			</div>
@@ -687,6 +685,7 @@ export default {
 	text-indent: -9999px;
 }
 
+
 .error-box {
 	position: absolute;
 	background-color: white;
@@ -704,7 +703,7 @@ export default {
 	font-size: 12px;
 	font-weight: 500;
 	animation-timing-function: ease-in-out;
-	animation: fadeout 4s;
+	animation: fadeout 3s;
 	animation-fill-mode: forwards;
 
 }
@@ -716,12 +715,28 @@ export default {
 	right: 15%;
 	transform: translate(-50%, -50%);
 	display: flex;
-	/* padding: 0 12px; */
 	font-weight: 600;
 	font-size: 10px;
 	animation-timing-function: ease-in-out;
-	animation: fadeout 4s;
+	animation: fadeout 3s;
 	animation-fill-mode: forwards;
+}
+
+.map-txt{
+	cursor: pointer;
+    color: #727272;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.map-txt::before{
+	content: "\e55b";
+	font-family: 'Material Icons';
+	font-size: 16px;
+	margin-right: 2px;	
 }
 </style>
 

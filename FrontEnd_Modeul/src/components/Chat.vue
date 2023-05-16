@@ -44,7 +44,7 @@
 				추방되었습니다.
 			</v-card-text>
 			<v-card-actions>
-				<v-btn color="#63A0C2" block @click="banishedHandler">확인</v-btn>
+				<v-btn color="#63A0C2" block>확인</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -453,8 +453,10 @@ export default {
 							this.loadParticipationList();
 						if(result.type == 'BANISH'){
 							if(result.memberId == this.userDetails.id){
-								this.$router.go('/member/stuff/list');
 								this.dialog = true;
+								setTimeout(() => {
+									this.$router.go('/member/stuff/list');
+								}, 1500);
 							}
 							this.loadParticipationList();
 						}
@@ -552,6 +554,7 @@ export default {
 					this.stompClient.send('/pub/chat/exitUser',
 						JSON.stringify({
 							type: 'BANISH',
+							sender: this.banishUser.nickname,
 							stuffId: this.$route.params.stuffId,
 							memberId: this.banishUser.id,
 						})
@@ -578,10 +581,10 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		banishedHandler(){
-			this.dialog = false;
-			this.$router.go('/member/stuff/list')
-		},
+		// banishedHandler(){
+		// 	this.dialog = false;
+		// 	this.$router.go('/member/stuff/list')
+		// },
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
 			this.banishUser.id = user.memberId;
@@ -603,6 +606,7 @@ export default {
 			this.openDeleteModal = !this.openDeleteModal;
 		},
 		unLoadEvent() {
+			if(!this.dialog)
 			this.stompClient.send('/pub/chat/exitUser',
 				JSON.stringify({
 					type: 'LEAVE',

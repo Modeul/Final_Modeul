@@ -67,9 +67,6 @@
 						<label for="file">
 								<img class="uploaded-crawlingimg" :src="this.stuff.imageList.name" />
 						</label>
-
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
-							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -246,7 +243,7 @@ export default {
       				// this.crawlingData = JSON.parse(JSON.stringify(this.crawlingData));
 					console.log(this.crawlingData.crawlingData.title);
 					this.stuff.title = this.crawlingData.crawlingData.title || '';
-					this.stuff.price = this.crawlingData.crawlingData.price || '';
+					this.stuff.price = this.crawlingData.crawlingData.price.replace(/,/g, '') || '';
 					this.stuff.url = this.crawlingData.crawlingData.contenturl || '';
 					this.stuff.imageList.name = this.crawlingData.crawlingData.imgurl || '';
 				})
@@ -279,7 +276,7 @@ export default {
 				this.openModal = true;
 				return;
 			} else if (!this.isValidTitle(this.stuff.title)) {
-				this.valiError = "제목을 20자 이하로 입력해주세요.";
+				this.valiError = "제목을 100자 이하로 입력해주세요.";
 				this.openModal = true;
 				return;
 			}
@@ -319,6 +316,7 @@ export default {
 
 			if (!this.valiError) {
 				var formData = new FormData(this.$refs.form);
+				formData.append('imgurl' , this.stuff.imageList.name);
 
 				var requestOptions = {
 					method: 'POST',
@@ -326,40 +324,19 @@ export default {
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/crawlingupload`, requestOptions)
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
 
 				this.$router.replace('/member/stuff/list')
-				console.log(this.stuff.imageList.name)
+				console.log(this.stuff.imageList.name);
 			}
 		},
 
-		// 썸네일 조작
-		uploadImage(e) {
-			this.files = e.target.files;
-
-			if (this.files.length > 6) {
-				this.valiError = "이미지는 최대 6개까지 선택할 수 있습니다.";
-				this.openModal = true;
-				return;
-			}
-
-			// 취소 버튼을 눌렀을 때 이미지 초기화 방지
-			if (this.files.length <= 0) {
-				return;
-			}
-
-			this.imageList = [];
-
-			for (let file of this.files) {
-				this.imageList.push(URL.createObjectURL(file));
-			}
-		},
 		// 제목 체크
 		isValidTitle() {
-			if (this.stuff.title.length > 20) {
+			if (this.stuff.title.length > 100) {
 				return false;
 			}
 			return true;
