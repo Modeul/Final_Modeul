@@ -112,25 +112,71 @@ h2:hover:after { transform: scaleX(1); }
   font-weight: 400;
   font-size: 12px;
   line-height: 11.72px;
+  width: 280px;
   color: #898989;
   text-align: center;
   display: flex;
   white-space: nowrap;
+  justify-content: flex-end;
+}
+.find-box .find-box-2{
+  display: flex;
+  width: 110px;
+  margin-top: 4px;
+}
+.error {
+  text-align: center;
+  color: red; 
+  font-size: 12px; 
+  margin-top: 30px; 
+  height: 18px;
 }
 .google-login{
   display: flex;
   justify-content: center;
   width: 320px;
   height: 44px;
-  margin-top: 12px;
+  margin-top: 26px;
   background: #FFFFFF;
   border: 0.5px solid #B4B4B4;
   border-radius: 7px;
+}
+.google-login:hover{
+  background-color: #f7f7f7;
+  cursor: pointer;
 }
 .google-login .text{
   margin-top: 6px;
   font-size: 14px;
   font-weight: 500;
+}
+hr {
+	width: 133px;
+  border: #d2d2d2 0.001px solid;
+}
+.find-container .text{
+  font-size: 12px;
+  color: #7a7878;
+}
+.btn-signup{
+  width: 320px;
+  height: 44px;
+  background: #ffffff;
+  border: #222222 1px solid;
+  border-radius: 7px;
+  margin-top: 10px;
+  margin-bottom: 26px;
+
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 13.86px;
+  color: #222222;
+  transition: 0.3s;
+}
+.btn-signup:hover{
+  background: #7299BE;
+  color: #FFFFFF;
+  border: none;
 }
 .google-icon{
   width: 20px;
