@@ -23,27 +23,27 @@
 	</select>
 
 	<select id="findAll" resultMap="MemberResultMap">
-	  select *
-	  	from member
-			where level = 1
-  </select>
-  
-  <select id="getUid" resultType="String">
-  	select uid 
-	from member 
-	where 
-	name=#{name} 
-	and 
-	email=#{email}
-  </select>
-  
-   <select id="getbyUid" resultType="String">
-	  select uid
-	  from
-	  member
-	  where
-	  uid = #{uid}
-  </select>
+		select *
+		from member
+		where level = 1
+	</select>
+
+	<select id="getUid" resultType="String">
+		select uid
+		from member
+		where
+		name=#{name}
+		and
+		email=#{email}
+	</select>
+
+	<select id="getbyUid" resultType="String">
+		select uid
+		from
+		member
+		where
+		uid = #{uid}
+	</select>
 
 	<select id="getPwdByUid" resultType="Member">
 		select *
@@ -93,35 +93,38 @@
 		name = #{name}
 	</select>
 
-	<update id="update" parameterType="Member"> update member <set>
-			<if test="pwd != null">
-				pwd = #{pwd},
-			</if>
+	<update id="update" parameterType="Member">
+		update member <trim prefix="SET"
+			suffixOverrides=",">
 			<if test="name != null">
 				name = #{name},
 			</if>
-			<if test="email != null">
+			<if
+				test="email != null">
 				email = #{email},
 			</if>
-			<if test="address != null">
+			<if
+				test="address != null">
 				address = #{address},
 			</if>
-			<if test="phone != null">
-				phone = #{phone},
-			</if>
-			<if test="nickname != null">
+			<if
+				test="nickname != null">
 				nickname = #{nickname},
 			</if>
-			<if test="level != null">
-				level = #{level}
+			<if
+				test="level != null">
+				level = #{level},
 			</if>
-			<if test="coordX != null">
-				coord_x = #{coordX}
+			<if
+				test="coordX != null">
+				coord_x = #{coordX},
 			</if>
-			<if test="coordX != null">
+			<if
+				test="coordY != null">
 				coord_y = #{coordY}
 			</if>
-		</set> where id=#{id} </update>
+		</trim> where id=#{id} 
+		</update>
 
 	<update id="updatePwd" parameterType="Member"> update member <set>
 			<if test="pwd != null">

@@ -33,7 +33,7 @@
 		
 	</select> -->
 
-	 <select id="findViewByStuffId" resultMap="FavoriteViewResultMap">
+	<select id="findViewByStuffId" resultMap="FavoriteViewResultMap">
 		select * 
 		from favorite_view
 		where stuff_id = #{stuffId}
@@ -51,6 +51,13 @@
 				limit ${size} offset ${offset}
 			</if>
 	</select>
+
+	<select id="findListBystuffIdmemberId" resultMap="FavoriteResultMap">
+		select * 
+		from favorite
+		where stuff_id = #{stuffId}
+		and member_Id = #{memberId}
+  	</select>
 
 	<select id="getCountList" resultType="Long" parameterType="FavoriteView">
 		select count(id)

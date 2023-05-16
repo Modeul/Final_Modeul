@@ -124,11 +124,11 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -184,19 +184,12 @@ export default {
 @import "/css/component/member/stuff/component-list.css";
 @import "/css/button.css";
 
-.canvas {
-	max-width: 600px;
-	padding: 0 20px;
-	margin: 0 auto;
-}
-
 .header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
-
 	width: 100%;
 	margin-top: 25px;
 }
@@ -212,13 +205,12 @@ export default {
 	color: #333;
 	margin: 0 auto;
 	padding-right: 23px;
-    font-weight: 500;
-	font-size: 1.125em;
 }
 
 .canvas {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
 }
 </style>

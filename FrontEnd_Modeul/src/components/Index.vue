@@ -3,7 +3,7 @@
         <header>
             <h1 class="d-none">제목입니다.</h1>
             <div class="header-container d-fl-jf">
-                <h1 class="logo-main logo-moduel m-t-138px">mo_deul</h1>
+                <h1 class="logo-main logo-moduel m-t-80px">mo_deul</h1>
             </div>
         </header>
         <!--  -->

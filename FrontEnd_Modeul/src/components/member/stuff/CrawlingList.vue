@@ -104,10 +104,10 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
 				</div>
 				<div v-for="c in category">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.categoryId">{{ c.categoryName }}</button>
+					<button  @click="categoryHandler" name="c" :value="c.categoryId" :class="(this.categoryId == c.categoryId)?'selected':'header-categ'" >{{ c.categoryName }}</button>
 				</div>
 			</div>
 		</nav>

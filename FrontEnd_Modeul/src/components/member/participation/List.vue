@@ -1,19 +1,22 @@
 <template>
-	<section class="canvas">
-		<header>
-			<router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+	<section class="canvas p-rel">
+
+		<header class="header">
+			<div>
+				<router-link to="/member/mypage" class="back"></router-link>
+			</div>
+			<div class="title">참여 목록</div>
 		</header>
 
 		<nav>
-			<h1 class="m-t-4 f-size-2 f-weight">공동구매에<br><span class="f-color-2">{{ stuffCount }}건</span> 참여하고 있어요</h1>
+			<h1 class="m-t-2 f-size-2 f-weight">공동구매에<br><span class="f-color-2">{{ stuffCount }}건</span> 참여하고 있어요</h1>
 
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
-				</div>
-
-				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button @click="orderHandler" class="header-categ participation" name="orderField" value="participation_date">최신순</button>
+					<button @click="orderHandler" class="header-categ deadline" value="stuff_deadline">마감일순</button>
+					<!-- <button @click="orderHandler" name="orderField" value="participation_date" :class="(this.orderField == "participation_date")?'selected':'header-categ'">최신순</button>
+					<button @click="orderHandler" name="orderField" value="stuff_deadline" :class="(this.orderField == "stuff_deadline")?'selected':'header-categ'">마감일순</button> -->
 				</div>
 			</div>
 		</nav>
@@ -96,24 +99,22 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			//listCount:''
+			orderField:'participation_date'
 		}
 	},
 	methods: {
 		goback() {
 			this.$router.go(-1);
 		},
-		categoryHandler(e) {
+		orderHandler(e) {
 			this.page = 1;
-			this.categoryId = e.target.value;
-			console.log(this.categoryId);
-			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			this.orderField = e.target.value;
+			console.log(this.orderField);
+			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
-					// this.listCount = dataList.listCount;    // 이거 API 하나 더 추가
-					console.log(this.list)
+					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -121,12 +122,12 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					console.log(dataList);
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
+					// this.categoryList = dataList.categoryList;
 					this.stuffCount = dataList.stuffCount;
 					// this.listCount = dataList.listCount;
 					console.log(this.participationList);
@@ -199,10 +200,57 @@ export default {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
+}
+
+.li-gr {
+    grid-template-columns: 70px 8px minmax(174px, auto) 0px 70px;
+}
+
+.back {
+	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
+	width: 23.04px;
+	height: 24px;
+	margin-top: 9px;
+}
+
+.canvas .header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 0px;
+	gap: 10px;
+	width: 100%;
+	margin-top: 25px;
+}
+
+.header .title {
+	margin: 0 auto;
+	padding-right: 23px;
 }
 .f-weight{
 	font-weight: 500;
 }
+
+.header-categ:not([value]) {
+  background-color: #b9d9f8;
+  color: #40709e;
+}
+
+.header-categ[value="participation_date"] {
+  background-color: #f5cd81;
+  color: #ffffff;
+}
+
+.header-categ[value="stuff_deadline"] {
+  background-color: #08b8b8;
+  color: #ffffff;
+}
+
+.header-categ.deadline{
+	margin:5px;
+}
+
 </style>
 
 

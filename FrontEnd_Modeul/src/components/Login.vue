@@ -3,7 +3,7 @@
 
 		<header>
 			<div class="header-container">
-				<h1 class="logo-main logo-moduel logo-size1 m-t-138px">mo_deul</h1>
+				<h1 class="logo-main logo-moduel logo-size1 m-t-80px">mo_deul</h1>
 			</div>
 		</header>
 
@@ -16,44 +16,51 @@
 						<label for="uid" class="uid-label login-label">
 							<span class="d-none">uid</span>
 						</label>
-						<input type="text" class="input-text" placeholder="아이디" v-model="uid" autofocus>
+						<input type="text" class="input-text" placeholder="아이디를 입력해주세요." v-model="uid" autofocus>
 					</div>
 					<div class="input-field-1 m-t-1">
 						<label for="password" class="password-label login-label">
 							<span class="d-none">uid</span>
 						</label>
-						<input type="password" class="input-text" placeholder="비밀번호" v-model="pwd">
+						<input type="password" class="input-text" placeholder="비밀번호를 입력해주세요." v-model="pwd">
 					</div>
+					<div class="find-box">
+						<div class="find-box-2">
+							<router-link to="/login/findid">
+								<span class="find-text">아이디 찾기</span>
+							</router-link>
+							<span class="find-text2">|</span>
+							<router-link to="/login/findpwd">
+								<span class="find-text">비밀번호 찾기</span>
+							</router-link>
+						</div>
+					</div>
+					<div class="error">{{ this.errormsg }}</div>
 					<div>
 						<input @click.prevent="login()" class="btn-2" type="submit" value="로그인">
+					</div>
+					<div>
+						<router-link to="signup" class="signup-text">
+							<input class="btn-signup" type="submit" value="회원가입">
+						</router-link>
 					</div>
 					<!-- <div> 또는</div>
 					<GoogleLogin :callback="googleLoginHandler" /> -->
 				</form>
-				<div style="color: red; font-size: 12px; margin-top: 4px; height : 20px;">{{ this.errormsg }}</div>
 			</div>
 			<!-- 아이디찾기 ~ 플렉스 -->
 			<div class="find-container">
-				<div class="find-box">
-					<router-link to="/login/findid">
-						<span class="find-text">아이디 찾기</span>
-					</router-link>
-					<span class="find-text2">|</span>
-					<router-link to="/login/findpwd">
-						<span class="find-text">비밀번호 찾기</span>
-					</router-link>
+				<div class="d-fl">
+					<hr>
+					<span class="text">&nbsp;또는&nbsp;</span>
+					<hr>
 				</div>
+				<GoogleLogin :callback="customLoginHandler" popup-type="TOKEN">
 				<div class="google-login">
-					<div class="google-icon"></div>
-					<div class="text">Google 계정 로그인</div>
-				</div>
-				<div class="signup-box">
-					<span class="signup-text2">Modeul이 처음이세요?&nbsp;&nbsp;</span>
-					<router-link to="signup" class="signup-text">
-						<h2 class="fromCenter">회원가입</h2>
-					</router-link>
-				</div>
-
+						<div class="google-icon"></div>
+						<div class="text">Google 계정 로그인</div>
+					</div>
+				</GoogleLogin>
 			</div>
 
 		</main>
@@ -132,7 +139,23 @@ export default {
 			// } else {
 			// 	router.push("/index");
 			// }
-		}
+		},
+		async customLoginHandler(response) {
+			await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`)
+				.then(res => res.json())
+				.then(credential => {
+					console.log(credential);
+					// 전역 객체(global object)에 인증정보를 담기
+					this.userDetails.email = credential.email;
+					this.userDetails.roles = ["ADMIN", "MEMBER"];
+					console.log(this.userDetails);
+				})
+				.catch(e => {
+					console.log("error");
+				});
+			// router.push("/signupWithGoogle");
+		},
+
 	},
 }
 </script>

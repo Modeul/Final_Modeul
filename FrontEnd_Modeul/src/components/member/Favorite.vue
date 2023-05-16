@@ -68,7 +68,6 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			isfavorite: {},
-			heartStuffId: '',
 			stuffId: '',
 			valiError: "",
 			openModal: false,
@@ -89,8 +88,8 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"heartStuffId": stuffId,
-					"memberId": this.memberId,
+					stuffId: stuffId,
+					memberId: this.memberId,
 				});
 
 				var requestOptions = {
@@ -116,8 +115,8 @@ export default {
 
 				var raw = JSON.stringify({
 
-					"heartStuffId": stuffId,
-					"memberId": this.memberId,
+					stuffId: stuffId,
+					memberId: this.memberId,
 				});
 				var requestOptions = {
 					method: 'DELETE',
@@ -204,40 +203,36 @@ export default {
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
 @import url(/css/button.css);
-@import url(/css/style.css);
-@import url(/css/component/component.css);
 
 .canvas {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px;
 }
-.favorite {
+/* .favorite {
 	display: flex;
 	flex-direction: column;
-	/* align-items: center; */
 	padding: 0;
 	position: relative;
 	
 	height: 740px;
 	background: #FFFFFF;
 	margin: 0 auto;
-}
+} */
 
-.favorite .header {
+.header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
 	width: 100%;
-	height: 88px;
-	padding-top: 25px;
-    padding-bottom: 10px;
-	border-bottom: 0.3px #d5d5d5 solid;
+	margin-top: 25px;
+	margin-bottom: 12px;
 }
 
-.favorite .header .back {
+.back {
 	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
 	width: 23.04px;
 	height: 24px;
@@ -245,18 +240,8 @@ export default {
 }
 
 .favorite .header .title {
-	margin: 20px auto;
-    padding-right: 23px;
-	font-weight: 500;
-	font-size: 1.125em;
-}
-
-.title{
-    font-weight: bold;
-    font-size: 1.125em;
-    line-height: 26px;
-    text-align: center;
-    color: #222222;  
+	margin: 0 auto;
+	padding-right: 23px;
 }
 
 .stuff-list {
@@ -284,8 +269,8 @@ export default {
 }
 
 .li-gr {
-	/* grid-template-columns: 68px 10px 100px 74px 8px 70px; */
-	grid-template-columns: 60px 8px minmax(174px, auto) 8px 70px;
+	
+	grid-template-columns: 68px 8px minmax(174px, auto) 0px 70px;
 	grid-template-rows: 36px 12px 12px;
 	grid-template-areas:
 		"pic . subj . dday"
@@ -293,8 +278,7 @@ export default {
 		"pic . ct . heart ";
 
 	align-items: center;
-	/* grid-row-gap: 1%; */
-	/* grid-column-gap: 10px; */
+	
 }
 
 .filled-heart {
@@ -305,8 +289,8 @@ export default {
 	background-size: 100%;
 	position: relative;
 	right: -45px;
-	width: 25px;
-	height: 25px;
+	width: 24px;
+	height: 24px;
 	display: inline-block;
 	text-indent: -9999px;
 }
@@ -319,8 +303,8 @@ export default {
 	background-size: 100%;
 	position: relative;
 	right: -45px;
-	width: 25px;
-	height: 25px;
+	width: 24px;
+	height: 24px;
 	display: inline-block;
 	text-indent: -9999px;
 }</style>

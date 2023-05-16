@@ -51,7 +51,7 @@ blockquote:before, blockquote:after, q:before, q:after { content:""; }
 blockquote,q { quotes:"" ""; }
 
 /* 수평선*/
-hr { display:none; }
+/* hr { display:none; } */
 
 blockquote {
     margin: 0 0 1rem;
