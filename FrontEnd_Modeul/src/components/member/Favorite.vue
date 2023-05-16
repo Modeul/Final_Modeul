@@ -213,7 +213,7 @@ export default {
 .favorite {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	/* align-items: center; */
 	padding: 0;
 	position: relative;
 	
@@ -230,6 +230,8 @@ export default {
 	gap: 10px;
 	width: 100%;
 	height: 88px;
+	padding-top: 25px;
+    padding-bottom: 10px;
 	border-bottom: 0.3px #d5d5d5 solid;
 }
 
