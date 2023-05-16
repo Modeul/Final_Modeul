@@ -13,7 +13,7 @@ export default {
 			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
-			memberId:'',
+			memberId: '',
 			stuffId: '',
 			openModal: false,
 			openModal2: false,
@@ -35,7 +35,7 @@ export default {
 				detail: '',
 			},
 			favoriteList: [],
-			favoriteInfo:{},
+			favoriteInfo: {},
 			//heartStuffId: '',
 			isfavorite: false,
 			list: [],
@@ -199,11 +199,11 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-            if (this.participantInfo)
-                this.isCheckParticipation = true;
-            else
-                this.isCheckParticipation = false;
-        },
+			if (this.participantInfo)
+				this.isCheckParticipation = true;
+			else
+				this.isCheckParticipation = false;
+		},
 		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
@@ -354,10 +354,10 @@ export default {
 			}
 		},
 		checkFavoriteList() {
-				if (this.favoriteInfo.stuffId ==this.$route.params.id) {
-					this.isfavorite = !this.isfavorite;
-				}
-			
+			if (this.favoriteInfo)
+				this.isfavorite = true;
+			else
+				this.isfavorite = false;
 		},
 		aniEndHandler() {
 			this.favorOpenModal = false;
@@ -423,8 +423,14 @@ export default {
 				<div v-if="openModal">
 					<div class="icon-edit2" v-if="this.stuffUser">
 						<div class="box">
-							<router-link :to="'./edit/' + stuff.id"><div class="icon-edit3"><div class="icon"></div>수정 하기</div></router-link>
-							<div @click="modalHandler2" class="icon-edit4"><div class="icon"></div>삭제 하기</div>
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3">
+									<div class="icon"></div>수정 하기
+								</div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4">
+								<div class="icon"></div>삭제 하기
+							</div>
 						</div>
 					</div>
 					<div class="icon-report" v-else @click="modalHandler3">
@@ -469,7 +475,8 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList"
+							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -490,9 +497,9 @@ export default {
 						</div>
 						<p class="detail-heading-title">{{ stuff.title }}</p>
 						<!-- <div class="d-fl">
-						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-						<div class="ed-text" @click="deleteStuff">삭제</div>
-					</div> -->
+							<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
+							<div class="ed-text" @click="deleteStuff">삭제</div>
+						</div> -->
 						<div class="detail-price">{{ stuffPrice }}원</div>
 
 					</section>
@@ -521,6 +528,9 @@ export default {
 					<!-- detail-writing : detail-main - item4 -->
 					<section class="canvas detail-writing">
 						<h1 class="d-none">writing</h1>
+						<!-- <p class="detail-paragraph">
+									            {{ stuff.content }}
+									          </p> -->
 						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
 					</section>
 				</div>
@@ -558,8 +568,7 @@ export default {
 					</button>
 
 					<div class="join-button-wrap" v-if="isCheckParticipation">
-						<router-link :to="'../../chat/' + stuff.id"
-							class="detail-chat-button">채팅하기</router-link>
+						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
 						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
 							참여취소
 						</button>
@@ -614,7 +623,7 @@ export default {
 
 	.detail-content-wrap {
 		width: 50%;
-		margin: auto 0;	
+		margin: auto 0;
 	}
 
 	.icon.icon-back {
@@ -671,6 +680,7 @@ export default {
 	display: inline-block;
 	text-indent: -9999px;
 }
+
 
 .error-box {
 	position: absolute;
@@ -741,5 +751,4 @@ export default {
 	to {
 		opacity: 0;
 	}
-}
-</style>
+}</style>
