@@ -52,7 +52,7 @@
                 </router-link>
                 <li @click="modalHandler2">
                     <img src="/images/member/stuff/logout.svg">
-                    <span>로그아웃</span>
+                    <spanq>로그아웃</spanq>
                 </li>
                 <li @click="modalHandler">
                     <img src="/images/member/stuff/out.svg">

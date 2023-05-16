@@ -210,7 +210,7 @@ export default {
 	padding: 0 20px;
 	margin: 0 auto;
 }
-/* .favorite {
+.favorite {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -251,7 +251,7 @@ export default {
     line-height: 26px;
     text-align: center;
     color: #222222;  
-  }
+}
 
 .stuff-list {
 

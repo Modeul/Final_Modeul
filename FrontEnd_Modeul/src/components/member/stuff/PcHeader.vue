@@ -40,7 +40,7 @@ export default {
 					<router-link to="/admin/stuff/list"></router-link>
 				</div>
 				<div class="btn-heart">
-					<router-link to="/member/favorite"></router-link>
+					<router-link to="/member/mypage/favorite"></router-link>
 				</div>
 				<div class="btn-location"></div>
 				<div class="btn-mypage">
