@@ -581,10 +581,6 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		// banishedHandler(){
-		// 	this.dialog = false;
-		// 	this.$router.go('/member/stuff/list')
-		// },
 		modalBanishHandler(user) {
 			this.openModal = !this.openModal;
 			this.banishUser.id = user.memberId;
