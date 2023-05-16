@@ -198,11 +198,8 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			for (let p of this.participantList) {
-				console.log("p.memberId: " + p.memberId + '\n');
-				if (p.memberId === this.participantInfo.memberId) {
-					this.isCheckParticipation = !this.isCheckParticipation;
-				}
+			if (this.userDetails.id === this.participantInfo.memberId) {
+				this.isCheckParticipation = !this.isCheckParticipation;
 			}
 		},
 		checkStuffLeader() {

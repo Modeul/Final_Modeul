@@ -45,9 +45,6 @@
     select * 
     from participation_view
     where member_id = #{memberId}
-    <if test="categoryId != null">
-				and category_id = #{categoryId}
-    </if>
     <if test="orderField != null and orderDir != null">
 			order by ${orderField} ${orderDir}
 		</if>

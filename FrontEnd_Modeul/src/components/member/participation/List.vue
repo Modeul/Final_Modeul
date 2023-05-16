@@ -9,11 +9,11 @@
 
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
+					<button class="header-categ" @click="orderHandler" name="orderField" >전체</button>
 				</div>
 
-				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+				<div v-for="o in orderField">
+					<button class="header-categ" @click="orderHandler" name="orderField" :value="o.id">{{ o.name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -96,24 +96,40 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			//listCount:''
+			// orderField: {
+			// 	"name":[
+			// 		"participation_date",
+			// 		"stuff_deadline"]
+			// }
+			orderField: {
+				"id":[1,2],
+				"value":["participation_date","stuff_deadline"],
+				"name":["최신순","마감일순"]
+			}
+			// orderField: {
+			// 	1:"participation_date",
+			// 	2:"stuff_deadline"
+			// }
+
+			// orderField:["participation_date","stuff_deadline"]
+			
 		}
 	},
 	methods: {
 		goback() {
 			this.$router.go(-1);
 		},
-		categoryHandler(e) {
+		orderHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
 			console.log(this.categoryId);
-			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
+					// this.categoryList = dataList.categoryList;
 					// this.listCount = dataList.listCount;    // 이거 API 하나 더 추가
-					console.log(this.list)
+					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -121,12 +137,12 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					console.log(dataList);
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
+					// this.categoryList = dataList.categoryList;
 					this.stuffCount = dataList.stuffCount;
 					// this.listCount = dataList.listCount;
 					console.log(this.participationList);
