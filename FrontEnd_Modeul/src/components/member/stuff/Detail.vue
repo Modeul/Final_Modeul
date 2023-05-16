@@ -13,8 +13,8 @@ export default {
 			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
-			memberId: 2,
-			stuffId: 1,
+			memberId:'',
+			stuffId: '',
 			openModal: false,
 			openModal2: false,
 			openModal3: false,
@@ -35,7 +35,8 @@ export default {
 				detail: '',
 			},
 			favoriteList: [],
-			heartStuffId: '',
+			favoriteInfo:{},
+			//heartStuffId: '',
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
@@ -198,13 +199,11 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			for (let p of this.participantList) {
-				console.log("p.memberId: " + p.memberId + '\n');
-				if (p.memberId === this.participantInfo.memberId) {
-					this.isCheckParticipation = !this.isCheckParticipation;
-				}
-			}
-		},
+            if (this.participantInfo)
+                this.isCheckParticipation = true;
+            else
+                this.isCheckParticipation = false;
+        },
 		checkStuffLeader() {
 			console.log(this.stuffView.memberId);
 			console.log(this.memberInfo.id);
@@ -290,15 +289,15 @@ export default {
 			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
 
-		loadFavoriteList() {
-			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.userDetails.id}`)
+		loadFavoriteInfo() {
+			fetch(error => console.log("errr", error));
+			fetch(`${this.defaultStore.host}/api/favorite/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
-				.then(dataList => {
-					this.list = dataList.list;
-					this.categoryList = dataList.categoryList;
-					this.defaultStore.loadingStatus = false;
+				.then(data => {
+					this.favoriteInfo = data.favoriteInfo;
+					console.log(this.favoriteInfo);
 				})
-				.catch(error => console.log("error", error));
+				.catch(error => console.log('error', error));
 		},
 
 		toggleFavorite() {
@@ -309,8 +308,8 @@ export default {
 
 				var raw = JSON.stringify({
 
-					"heartStuffId": this.stuff.id,
-					"memberId": this.memberInfo.id,
+					stuffId: this.stuff.id,
+					memberId: this.userDetails.id,
 				});
 				var requestOptions = {
 					method: 'DELETE',
@@ -333,8 +332,8 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"heartStuffId": this.stuff.id,
-					"memberId": this.memberInfo.id,
+					stuffId: this.stuff.id,
+					memberId: this.userDetails.id,
 				});
 
 				var requestOptions = {
@@ -355,11 +354,10 @@ export default {
 			}
 		},
 		checkFavoriteList() {
-			for (let f of this.list) {
-				if (f.stuffId == this.stuff.id) {
+				if (this.favoriteInfo.stuffId ==this.$route.params.id) {
 					this.isfavorite = !this.isfavorite;
 				}
-			}
+			
 		},
 		aniEndHandler() {
 			this.favorOpenModal = false;
@@ -376,7 +374,7 @@ export default {
 		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
-		this.loadFavoriteList();
+		this.loadFavoriteInfo();
 	},
 	async mounted() {
 		this.defaultStore.loadingStatus = true;

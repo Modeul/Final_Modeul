@@ -68,7 +68,6 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			isfavorite: {},
-			heartStuffId: '',
 			stuffId: '',
 			valiError: "",
 			openModal: false,
@@ -89,8 +88,8 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"heartStuffId": stuffId,
-					"memberId": this.memberId,
+					stuffId: stuffId,
+					memberId: this.memberId,
 				});
 
 				var requestOptions = {
@@ -116,8 +115,8 @@ export default {
 
 				var raw = JSON.stringify({
 
-					"heartStuffId": stuffId,
-					"memberId": this.memberId,
+					stuffId: stuffId,
+					memberId: this.memberId,
 				});
 				var requestOptions = {
 					method: 'DELETE',
