@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.modeul.web.entity.Category;
+import com.modeul.web.entity.Favorite;
 import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.service.CategoryService;
 import com.modeul.web.service.FavoriteService;
@@ -46,12 +47,26 @@ public class FavoriteController {
 		return dataList;
 	}
 
+    @GetMapping("/favorite/{stuffId}/{memberId}")
+    public Map<String, Object> getList(
+        @PathVariable("stuffId") Long stuffId,
+        @PathVariable("memberId") Long memberId){
+
+        Favorite favoriteInfo = favoriteService.getListBystuffIdmemberId(stuffId,memberId);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("favoriteInfo", favoriteInfo);
+        System.out.println(favoriteInfo);
+            return data;
+
+    }
+
     
     //찜등록
     @PostMapping("/favorite")
     public void addFavorite(@RequestBody Map<String, Long> request){
         Long memberId = request.get("memberId");
-        Long stuffId = request.get("heartStuffId");
+        Long stuffId = request.get("stuffId");
         favoriteService.addFavorite(memberId,stuffId);
         
       
@@ -61,7 +76,7 @@ public class FavoriteController {
     @DeleteMapping("/favorite")
     public void removeFavorite(@RequestBody Map<String, Long> request){
         Long memberId = request.get("memberId");
-        Long stuffId = request.get("heartStuffId");
+        Long stuffId = request.get("stuffId");
         favoriteService.removeFavorite(memberId,stuffId);
     }
 }
