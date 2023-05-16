@@ -25,6 +25,7 @@ const vuetify = createVuetify({
 import Layout from "./components/Layout.vue";
 import Index from "./components/Index.vue";
 import Signup from "./components/Signup.vue";
+import GoogleSignup from "./components/GoogleSignup.vue";
 import Login from "./components/Login.vue";
 import Chat from "./components/Chat.vue";
 import FindPwd from "./components/FindPwd.vue";
@@ -67,7 +68,8 @@ const routes = [
       { path: "login", component: Login },
       { path: "login/findpwd", component: FindPwd },
       { path: "login/findid", component: FindId },
-      { path: "signup", component: Signup }
+      { path: "signup", component: Signup },
+      { path: "GoogleSignup", component: GoogleSignup }
     ]
   },
   {
