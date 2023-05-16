@@ -656,6 +656,17 @@ export default {
 			console.log("accountNumber: " + this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
+
+
+		},
+		accountDnoneHandler() {
+			console.log("bank:" + this.selectBank);
+			console.log("accountNumber: " + this.accountNumber);
+			this.isAccount = !this.isAccount;
+			this.isCalc = !this.isCalc;
+			this.inputAccountHandler();
+
+			
 		},
 		resultDnoneHandler() {
 			console.log("price:" + this.price);
@@ -813,7 +824,11 @@ export default {
 		},
 		formatPrice(price){
 			return Number(price).toLocaleString();
+		},
+		inputAccountHandler(){
+
 		}
+		
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent();
