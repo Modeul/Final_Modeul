@@ -203,6 +203,9 @@ export default {
 					this.getDongInfo(this.myCoordX, this.myCoordY);
 				}).catch(error => console.log('error', error));
 		},
+		scrollHandler(){
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		},
 
 	},
 	mounted() {
@@ -356,10 +359,6 @@ export default {
 					</router-link>
 				</div>
 			</div>
-
-			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff d-none"></div>
-			</router-link>
 		</main>
 
 		<nav class="navi-bar d-fl-jf">
@@ -384,7 +383,7 @@ export default {
 	<div>
 		<router-link to="/member/stuff/reg" class="pc-reg-stuff"></router-link>
 	</div>
-	<div class="top-btn"></div>
+	<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 
