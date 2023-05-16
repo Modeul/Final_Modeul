@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.modeul.web.entity.Favorite;
 import com.modeul.web.entity.FavoriteView;
 
 @Mapper
@@ -31,5 +32,7 @@ public interface FavoriteRepository {
     FavoriteView findViewByStuffId(Long stuffId);
 
     Long getCountList(Long categoryId, Long memberId);
+
+    Favorite findListBystuffIdmemberId(Long stuffId, Long memberId);
 
 }
