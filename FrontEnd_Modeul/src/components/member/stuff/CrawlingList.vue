@@ -1,6 +1,8 @@
 <script>
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
+import PcHeader from './PcHeader.vue'
+
 
 
 export default {
@@ -15,6 +17,9 @@ export default {
 			queryList:[],
 			categoryList:[]
 		};
+	},
+	components: {
+		PcHeader
 	},
 	computed: {
 	},
@@ -87,6 +92,14 @@ export default {
 @import url(/css/component/member/stuff/component-crawlinglist.css);
 </style>
 <template>
+	<PcHeader @queryEmit="searchInput"></PcHeader>
+	<div class="pc-carousel">
+		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
+			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
+			<v-carousel-item src="https://gcdn.market09.kr/data/banner/1682557050291.jpg"></v-carousel-item>
+		</v-carousel>
+	</div>
+
 	<div>
         <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
     </div>
@@ -96,7 +109,7 @@ export default {
                 <div class="search-container">
                     <div class="d-fl d-b-none search-form">
                         <h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-                        <input id="search-bar" class="search-input m-l-6px" name="q" @keyup.enter="searchInput" placeholder="검색어 입력">
+                        <input id="search-bar" class="search-input m-l-6px" name="q" @keyup.enter="searchInput" placeholder="검색어를 입력해주세요.">
                     </div>
 				</div>
 		</header>
@@ -113,24 +126,26 @@ export default {
 		</nav>
 
 		<main>
-			<div class="stuff-list" v-for="stuff in list">
-				<a :href="stuff.contenturl" target="_blank">
-					<div class="d-gr li-gr m-t-13px list-cl">
-						<div class="li-pic b-rad-1">
-							<img class="listview-image" :src="stuff.imgurl" alt="img">
+			<div class="list-wrap">
+				<div class="stuff-list" v-for="stuff in list">
+					<a :href="stuff.contenturl" target="_blank">
+						<div class="d-gr li-gr m-t-13px list-cl">
+							<div class="li-pic b-rad-1">
+								<img class="listview-image" :src="stuff.imgurl" alt="img">
+							</div>
+							<div class="li-categ-place">
+								<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
+							</div>
+							<router-link class="d-gr" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
+								<button class="icon-write" v-on:click="regbuttonHandler" name="id" :value="stuff.id"></button>
+							</router-link>
+							<div class="li-subj">{{ stuff.title }}</div>
+							<div class="li-member">
+								<span class="li-member-limit"> {{ stuff.price }} ₩</span>
+							</div>
 						</div>
-						<div class="li-categ-place">
-							<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
-						</div>
-						<router-link class="d-gr" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
-							<button class="icon-write" v-on:click="regbuttonHandler" name="id" :value="stuff.id"></button>
-						</router-link>
-						<div class="li-subj">{{ stuff.title }}</div>
-						<div class="li-member">
-							<span class="li-member-limit"> {{ stuff.price }} ₩</span>
-						</div>
-					</div>
-				</a>
+					</a>
+				</div>
 			</div>
 
 			<button class="btn-next more-list" @click="addListHandler"> 더보기 </button>
