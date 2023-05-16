@@ -12,8 +12,8 @@ export default {
 			page: '',
 			dongCode: '',
 			dongName: '',
-			myDongCode:'',
-			myDongName:'',
+			myDongCode: '',
+			myDongName: '',
 			myCoordX: '',
 			myCoordY: '',
 			list: [],
@@ -61,7 +61,7 @@ export default {
 		async addListHandler(c) {
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
-			
+
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
 				// .then(response => {
@@ -134,10 +134,10 @@ export default {
 		onChage(v) {
 			if (v.target.value === 'cur') {
 				this.getDongInfo(null, null);
-			} else if (v.target.value === 'my'){
+			} else if (v.target.value === 'my') {
 				this.addListHandler(this.myDongCode);
 				console.log(this.myDongCode);
-			} else{
+			} else {
 				this.dongCode = '';
 				this.dongName = '';
 				this.addListHandler(this.dongCode);
@@ -146,31 +146,31 @@ export default {
 
 		},
 
-		getDongInfo(x,y) {
+		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
 
 			if (x == null) {
 				const watchID = navigator.geolocation.getCurrentPosition((position) => {
-				let lat = position.coords.latitude;
-				let lng = position.coords.longitude;
+					let lat = position.coords.latitude;
+					let lng = position.coords.longitude;
 
-				geocoder.coord2Address(lng, lat, (result, status) => {
-					if (status === kakao.maps.services.Status.OK) {
+					geocoder.coord2Address(lng, lat, (result, status) => {
+						if (status === kakao.maps.services.Status.OK) {
 
-						this.dongName = result[0].address.region_3depth_name;
-					}
-				});
-				geocoder.coord2RegionCode(lng, lat, (result, status) => {
-					if (status === kakao.maps.services.Status.OK) {
+							this.dongName = result[0].address.region_3depth_name;
+						}
+					});
+					geocoder.coord2RegionCode(lng, lat, (result, status) => {
+						if (status === kakao.maps.services.Status.OK) {
 
-						this.dongCode = result[0].code;
-						console.log(this.dongCode);
-						this.addListHandler(this.dongCode);
-					}
-				});
+							this.dongCode = result[0].code;
+							console.log(this.dongCode);
+							this.addListHandler(this.dongCode);
+						}
+					});
 
-			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+				}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
 
 			} else {
 
@@ -185,16 +185,16 @@ export default {
 
 						this.myDongCode = result[0].code;
 
-						
+
 					}
 				});
 
 
 			}
-			
-			
+
+
 		},
-		getMemberCoordInfo(){
+		getMemberCoordInfo() {
 			fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -206,11 +206,14 @@ export default {
 
 	},
 	mounted() {
+		this.target = document.querySelector('.top-btn');
+		this.target.addEventListener('scroll', this.handleScroll);
+
 		this.page = 0;
 		this.addListHandler('');
 		this.scrollCheck();
 		this.getMemberCoordInfo();
-		console.log("마운트 "+ this.myCoordX);
+		console.log("마운트 " + this.myCoordX);
 
 		document.addEventListener("scroll", (e) => {
 
@@ -298,11 +301,13 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c"
+						:class="(this.categoryId != '') ? 'header-categ' : 'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
+					<button @click="categoryHandler" name="c" :value="c.id"
+						:class="(this.categoryId == c.id) ? 'selected' : 'header-categ'">{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -319,12 +324,12 @@ export default {
 							<div class="li-pic b-rad-1">
 								<img v-if="stuff.imageName != null" class="listview-image"
 									:src="'/images/member/stuff/' + stuff.imageName" alt="img">
-								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
-									alt="img">
-								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
-									alt="img">
-								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
-									alt="img">
+								<img v-else-if="stuff.categoryId == '1'" class="listview-image"
+									src="/images/member/stuff/category1.svg" alt="img">
+								<img v-else-if="stuff.categoryId == '2'" class="listview-image"
+									src="/images/member/stuff/category2.svg" alt="img">
+								<img v-else-if="stuff.categoryId == '3'" class="listview-image"
+									src="/images/member/stuff/category3.svg" alt="img">
 								<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 							</div>
 							<div class="li-categ-place">
@@ -375,6 +380,11 @@ export default {
 			</div>
 		</nav>
 	</section>
+
+	<div>
+		<router-link to="/member/stuff/reg" class="pc-reg-stuff"></router-link>
+	</div>
+	<div class="top-btn"></div>
 </template>
 
 
