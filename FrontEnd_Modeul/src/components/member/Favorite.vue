@@ -1,9 +1,9 @@
 <template>
-	<div class="favorite">
-		<div class="header">
+	<section class="favorite canvas">
+		<header class="header">
 			<router-link to="/member/mypage" class="back"></router-link>
 			<div class="title">관심 목록</div>
-		</div>
+		</header>
 
 		<div class="stuff-list" v-for="f in list" :key="f.stuffId">
 			<router-link :to="'/member/stuff/' + f.stuffId">
@@ -41,7 +41,7 @@
 		</div>
 		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 
-	</div>
+	</section>
 </template>
 
 
@@ -200,21 +200,26 @@ export default {
 </script>
 
 <style scoped>
-@import url(/css/component/member/stuff/component-list.css);
+@import "/css/component/member/stuff/component-list.css";
 @import url(/css/button.css);
 @import url(/css/style.css);
 @import url(/css/component/component.css);
 
-.favorite {
+.canvas {
+	max-width: 600px;
+	padding: 0 20px;
+	margin: 0 auto;
+}
+/* .favorite {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	padding: 0;
 	position: relative;
-	width: 360px;
+	
 	height: 740px;
 	background: #FFFFFF;
-}
+} */
 
 .favorite .header {
 	display: flex;
@@ -222,7 +227,7 @@ export default {
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
-	width: 312px;
+	width: 100%;
 	height: 88px;
 	border-bottom: 0.3px #d5d5d5 solid;
 }
@@ -235,8 +240,17 @@ export default {
 }
 
 .favorite .header .title {
-	margin-left: 86px;
+	margin: 20px auto;
+    padding-right: 23px;
 }
+
+.title{
+    font-weight: bold;
+    font-size: 1.125em;
+    line-height: 26px;
+    text-align: center;
+    color: #222222;  
+  }
 
 .stuff-list {
 
@@ -263,12 +277,13 @@ export default {
 }
 
 .li-gr {
-	grid-template-columns: 68px 10px 100px 74px 8px 70px;
+	/* grid-template-columns: 68px 10px 100px 74px 8px 70px; */
+	grid-template-columns: 60px 8px minmax(174px, auto) 8px 70px;
 	grid-template-rows: 36px 12px 12px;
 	grid-template-areas:
-		"pic . subj subj . dday"
-		"pic . . . . ."
-		"pic . ct ct . heart ";
+		"pic . subj . dday"
+		"pic . . . ."
+		"pic . ct . heart ";
 
 	align-items: center;
 	/* grid-row-gap: 1%; */

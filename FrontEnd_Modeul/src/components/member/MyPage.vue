@@ -32,7 +32,7 @@
                         <span>참여 딜 목록</span>
                     </li>
                 </router-link>
-                <router-link to="/member/mypage/favorite?memberId=2">
+                <router-link :to="'/member/mypage/favorite?memberId=' + this.loginInfo.id">
                     <li>
                         <img src="/images/member/stuff/heart_plus.svg">
                         <span>관심목록</span>
