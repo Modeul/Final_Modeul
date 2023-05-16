@@ -768,6 +768,7 @@ export default {
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent();
+		// 더치 결과가 있다면 calc-state = true;
 	},
 	created() {
 		this.stompConnect();
