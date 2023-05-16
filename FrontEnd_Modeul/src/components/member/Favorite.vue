@@ -59,7 +59,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			//memberId: '',
+			// memberId: '',
 			page: '',
 			list: [],
 			listCount: '',
@@ -212,8 +212,8 @@ export default {
 	padding: 0;
 	position: relative;
 	width: 360px;
-	height: 740px;
 	background: #FFFFFF;
+	margin: 0 auto;
 }
 
 .favorite .header {

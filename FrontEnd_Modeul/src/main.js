@@ -13,11 +13,12 @@ import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css";
 
 import { useUserDetailsStore } from "./stores/useUserDetailsStore.js";
+import { useDefaultStore } from "./stores/useDefaultStore.js"
 
 const vuetify = createVuetify({
-  components,
-  directives
-  // theme: { defaultTheme: 'light' },
+	components,
+	directives
+	// theme: { defaultTheme: 'light' },
 });
 
 import Layout from "./components/Layout.vue";
@@ -57,83 +58,108 @@ import Analytics from "./components/admin/analytics/List.vue";
 import ReportList from "./components/admin/report/List.vue";
 
 const routes = [
-  {
-    path: "/",
-    component: Layout,
-    children: [
-      { path: "", component: Index },
-      { path: "login", component: Login },
-      { path: "login/findpwd", component: FindPwd },
-      { path: "login/findid", component: FindId },
-      { path: "signup", component: Signup },
-      { path: "chat/:stuffId/:memberId", component: Chat }
-    ]
-  },
-  {
-    path: "/member",
-    component: MemberLayout,
-    children: [
-      {
-        path: "mypage",
-        children: [
-          { path: "", component: MyPage },
-          { path: "edit", component: MypageEdit },
-          { path: "changepwd", component: ChangePwd },
-          { path: "favorite", component: Favorite },
-          { path: "myreglist", component: MyRegList },
-          { path: "mydutchlist", component: MyDutchList }
-        ]
-      },
-      {
-        path: "stuff",
-        children: [
-          { path: "list", component: List },
-          { path: ":id", component: Detail },
-          { path: "reg", component: Reg },
-          { path: "edit/:id", component: EditReg },
-          { path: "listsearch", component: ListSearch },
-          { path: "recommends", component: CrawlingList },
-          { path: "gps", component: Gps },
-          { path: "crawlingreg/:id", component: CrawlingReg }
-        ]
-      },
-      { path: "participation/list", component: ParticipationList }
-    ],
-    beforeEnter(to, from, next) {
-      let userDetails = useUserDetailsStore();
+	{
+		path: "/",
+		component: Layout,
+		children: [
+			{ path: "", component: Index },
+			{ path: "login", component: Login },
+			{ path: "login/findpwd", component: FindPwd },
+			{ path: "login/findid", component: FindId },
+			{ path: "signup", component: Signup },
+		]
+	},
+	{
+		path: "/chat",
+		children: [
+			{
+				path: ":stuffId", component: Chat,
+				/** 로그인한 아이디가 stuffId에 참여한 경우만 채팅 참가 가능 */
+				async beforeEnter(to, from, next) {
+					let userDetails = useUserDetailsStore();
+					let defaultStore = useDefaultStore();
+					const stuffId = to.path.split('/')[2];
+					if (!userDetails.isAuthenticated)
+						next('/login');
+					else {
+						const response = await fetch(`${defaultStore.host}/api/participation/stuff/${stuffId}`)
+						const result = await response.json();
+						const participantList = result.list.map(item => item.memberId)
+						if (participantList.indexOf(userDetails.id) == -1)
+							next(`/member/stuff/${stuffId}`); // -> 접근불가페이지로!
+						next();
+					}
+				}
+			}
+		]
+	},
+	{
+		path: "/member",
+		component: MemberLayout,
+		children: [
+			{
+				path: "mypage", children: [
+					{ path: "", component: MyPage },
+					{ path: "edit", component: MypageEdit },
+					{ path: "changepwd", component: ChangePwd },
+					{ path: "favorite", component: Favorite },
+					{ path: "myreglist", component: MyRegList },
+					{ path: "mydutchlist", component: MyDutchList },
+				]
+			},
+			{
+				path: "stuff", children: [
+					{ path: "list", component: List },
+					{ path: ":id", component: Detail },
+					{ path: "reg", component: Reg },
+					{ path: "edit/:id", component: EditReg },
+					{ path: "listsearch", component: ListSearch },
+					{ path: "recommends", component: CrawlingList },
+					{ path: "gps", component: Gps },
+				]
+			},
+			{ path: "participation/list", component: ParticipationList }
+		], beforeEnter(to, from, next) {
 
-      if (!userDetails.isAuthenticated) next("/login");
-      else next();
-    }
-  },
-  { path: "/admin/login", component: AdminLogin },
-  {
-    path: "/admin",
-    component: AdminLayout,
-    children: [
-      { path: "index", component: AdminIndex },
-      { path: "member/list", component: MemberList },
-      { path: "stuff/list", component: StuffList },
-      { path: "category/list", component: CategoryList },
-      { path: "report/list", component: ReportList }
-    ],
-    beforeEnter(to, from, next) {
-      let userDetails = useUserDetailsStore();
+			let userDetails = useUserDetailsStore();
 
-      let url = `/login?returnURL=${to.path}`;
+			if (!userDetails.isAuthenticated)
+				next('/login');
+			else
+				next();
+		}
+	},
+	{ path: "/admin/login", component: AdminLogin },
+	{
+		path: "/admin",
+		component: AdminLayout,
+		children: [
+			{ path: "index", component: AdminIndex },
+			{ path: "member/list", component: MemberList },
+			{ path: "stuff/list", component: StuffList },
+			{ path: "category/list", component: CategoryList },
+			{ path: "report/list", component: ReportList },
+		], beforeEnter(to, from, next) {
 
-      if (!userDetails.isAuthenticated) next(url);
-      else if (userDetails.hasRole("ADMIN")) next();
-      else next("/error/403");
-    }
-  }
+			let userDetails = useUserDetailsStore();
+
+			let url = `/login?returnURL=${to.path}`
+
+			if (!userDetails.isAuthenticated)
+				next(url);
+			else if (userDetails.hasRole("ADMIN"))
+				next();
+			else
+				next("/error/403");
+		}
+	}
 ];
 
 const router = createRouter({
-  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-  // router 기록!
-  history: createWebHashHistory(),
-  routes // short for `routes: routes`
+	// 4. Provide the history implementation to use. We are using the hash history for simplicity here.
+	// router 기록!
+	history: createWebHashHistory(),
+	routes // short for `routes: routes`
 });
 
 const pinia = createPinia();

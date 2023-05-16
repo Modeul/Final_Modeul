@@ -89,7 +89,7 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			memberId: 2,
+			memberId: '',
 			page: '',
 			categoryList: [],
 			participationList: [],
@@ -184,6 +184,7 @@ export default {
 		},
 	},
 	mounted() {
+		this.memberId = this.userDetails.id;
 		this.page = 0;
 		this.addListHandler();
 	},
