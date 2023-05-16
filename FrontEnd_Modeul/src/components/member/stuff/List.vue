@@ -255,7 +255,6 @@ export default {
 			</Transition>
 
 			<div>
-				<!-- <a class="icon icon-menu">메뉴</a> -->
 				<div v-if="!searchToggle" class="icon icon-search" @click="searchToggle = !searchToggle"></div>
 				<div v-else class="icon icon-search-cancel" @click="searchToggle = !searchToggle"></div>
 				<!-- <a class="icon">
@@ -299,11 +298,11 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
@@ -353,7 +352,6 @@ export default {
 				</div>
 			</div>
 
-			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
 			<router-link to="/member/stuff/reg">
 				<div class="reg-stuff d-none"></div>
 			</router-link>

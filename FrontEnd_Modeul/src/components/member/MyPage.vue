@@ -322,4 +322,10 @@ section {
 	margin-left: 25px;
 	cursor: pointer;
 }
+
+@media (min-width: 768px) {
+	.navi-bar {
+		display: none;
+	}
+}
 </style>
