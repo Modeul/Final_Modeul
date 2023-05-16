@@ -13,11 +13,10 @@
 
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
-				</div>
-
-				<div v-for="c in categoryList">
-					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
+					<button @click="orderHandler" class="header-categ participation" name="orderField" value="participation_date">최신순</button>
+					<button @click="orderHandler" class="header-categ deadline" value="stuff_deadline">마감일순</button>
+					<!-- <button @click="orderHandler" name="orderField" value="participation_date" :class="(this.orderField == "participation_date")?'selected':'header-categ'">최신순</button>
+					<button @click="orderHandler" name="orderField" value="stuff_deadline" :class="(this.orderField == "stuff_deadline")?'selected':'header-categ'">마감일순</button> -->
 				</div>
 			</div>
 		</nav>
@@ -100,24 +99,22 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			//listCount:''
+			orderField:'participation_date'
 		}
 	},
 	methods: {
 		goback() {
 			this.$router.go(-1);
 		},
-		categoryHandler(e) {
+		orderHandler(e) {
 			this.page = 1;
-			this.categoryId = e.target.value;
-			console.log(this.categoryId);
-			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			this.orderField = e.target.value;
+			console.log(this.orderField);
+			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
-					// this.listCount = dataList.listCount;    // 이거 API 하나 더 추가
-					console.log(this.list)
+					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -125,12 +122,12 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&o=${this.orderField}`)
 				.then(response => response.json())
 				.then(dataList => {
 					console.log(dataList);
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
+					// this.categoryList = dataList.categoryList;
 					this.stuffCount = dataList.stuffCount;
 					// this.listCount = dataList.listCount;
 					console.log(this.participationList);
@@ -234,6 +231,26 @@ export default {
 .f-weight{
 	font-weight: 500;
 }
+
+.header-categ:not([value]) {
+  background-color: #b9d9f8;
+  color: #40709e;
+}
+
+.header-categ[value="participation_date"] {
+  background-color: #f5cd81;
+  color: #ffffff;
+}
+
+.header-categ[value="stuff_deadline"] {
+  background-color: #08b8b8;
+  color: #ffffff;
+}
+
+.header-categ.deadline{
+	margin:5px;
+}
+
 </style>
 
 
