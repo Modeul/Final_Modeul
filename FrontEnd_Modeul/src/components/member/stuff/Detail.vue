@@ -42,6 +42,7 @@ export default {
 			zzimModalMsg: "",
 			favorOpenModal: false,
 			stuffUser: false,
+			isCheckNumPeople: true,
 		};
 	},
 	components: {
@@ -150,10 +151,8 @@ export default {
 			myHeaders.append("Content-Type", "application/json");
 
 			var raw = JSON.stringify({
-				// memberid:this.stuff.memberId,
 				memberId: this.userDetails.id,
 				stuffId: this.stuff.id,
-				// stuffId:this.stuffId
 			});
 
 			var requestOptions = {
@@ -199,7 +198,7 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			if (this.participantInfo)
+			if (this.participantInfo.memberId == this.userDetails.id)
 				this.isCheckParticipation = true;
 			else
 				this.isCheckParticipation = false;
@@ -365,7 +364,15 @@ export default {
 		checkStuffUser() {
 			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
 			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
-		}
+		},
+		checkNumPeople(){
+			if(this.memberCount < parseInt(this.stuff.numPeople)){
+				this.isCheckNumPeople = true;
+			}
+			else{
+				this.isCheckNumPeople = false;
+			}
+		},
 	},
 	computed: {
 
@@ -392,6 +399,7 @@ export default {
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
 				console.log(this.stuff);
+				this.checkNumPeople();
 			})
 			.catch((error) => console.log("error", error));
 
@@ -563,11 +571,13 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button class="detail-join-button" v-if="!isCheckParticipation" @click="participationHandler">
+					<button class="detail-join-button" v-if="!isCheckParticipation && isCheckNumPeople" @click="participationHandler">
 						참여하기
 					</button>
-
-					<div class="join-button-wrap" v-if="isCheckParticipation">
+					<button class="detail-join-end-button" v-else-if="!isCheckParticipation && !isCheckNumPeople" @click="">
+						참여마감
+					</button>
+					<div class="join-button-wrap" v-else-if="isCheckParticipation">
 						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
 						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
 							참여취소

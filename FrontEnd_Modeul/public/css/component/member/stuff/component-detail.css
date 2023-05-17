@@ -214,6 +214,23 @@ main {
   transition: 0.5s;
 }
 
+.detail-join-end-button {
+  align-self: center;
+  width: 62px;
+  height: 28px;
+  border-radius: 7px;
+  font-size: 13px;
+  white-space: nowrap;
+  background-color: #d8d8d8;
+  color: #fff;
+  font-size: 0.7em;
+  font-weight: 600;
+}
+.detail-join-end-button:hover {
+  background-color: #8a8d8f;
+  transition: 0.5s;
+}
+
 .detail-cancel-button {
   width: 62px;
   height: 28px;
