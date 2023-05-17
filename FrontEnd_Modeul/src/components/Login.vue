@@ -56,7 +56,7 @@
 					<hr>
 				</div>
 				<GoogleLogin :callback="customLoginHandler" popup-type="TOKEN">
-				<div class="google-login">
+					<div class="google-login">
 						<div class="google-icon"></div>
 						<div class="text">Google 계정 로그인</div>
 					</div>
@@ -83,6 +83,7 @@ export default {
 			errormsg: "",
 			loginMember: {},
 			userDetails: useUserDetailsStore(),
+			credential: ""
 		}
 	},
 	methods: {
@@ -124,39 +125,60 @@ export default {
 				.catch(error => console.log('error', error));
 		},
 
-		googleLoginHandler(response) {
-			let userData = decodeCredential(response.credential);
-			console.log(userData);
-
-			// userDetails.username = userData.userName;
-			// userDetails.email = userData.email;
-			// userDetails.roles = userData.["ADMIN", "MEMBER"];
-
-			// let returnURL = route.query.returnURL;
-
-			// if (returnURL) {
-			// 	router.push(returnURL);
-			// } else {
-			// 	router.push("/index");
-			// }
-		},
 		async customLoginHandler(response) {
 			await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`)
 				.then(res => res.json())
 				.then(credential => {
-					console.log(credential);
-					// 전역 객체(global object)에 인증정보를 담기
-					this.userDetails.email = credential.email;
-					this.userDetails.roles = ["ADMIN", "MEMBER"];
-					console.log(this.userDetails);
+					this.userDetails.email = credential.email
 				})
 				.catch(e => {
 					console.log("error");
 				});
-			// router.push("/signupWithGoogle");
+			this.checkEmail();
 		},
+		async checkEmail() {
+			await fetch(`${this.defaultStore.host}/api/signup/checkEmail?email=${this.userDetails.email}`)
+				.then(response => response.json())
+				.then(result => {
+					console.log(result);
+					if (result)// 이메일 없으면 true
+						this.$router.push("/googlesignup");
+					else if (!result) {
+						this.getMemberByEmail();
+					}
+				})
+		},
+		async getMemberByEmail() {
+			var myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/json");
 
+			var raw = JSON.stringify({
+				"email": this.userDetails.email
+			});
+
+			var requestOptions = {
+				method: 'POST',
+				headers: myHeaders,
+				body: raw,
+				redirect: 'follow'
+			};
+			// credential의 이메일로 db에서 member객체 가져오기
+			await fetch(`${this.defaultStore.host}/api/member/googleLogin`, requestOptions)
+				.then(res => res.json())
+				.then(result => {
+					this.userDetails.id = result.loginMember.id;
+					this.userDetails.uid = result.loginMember.uid;
+					let level = result.loginMember.level;
+					if (level == 1)
+						this.userDetails.roles = ["MEMBER"]
+					else if (level == 2)
+						this.userDetails.roles = ["ADMIN", "MEMBER"]
+				})
+			this.$router.push('/member/stuff/list');
+		}
 	},
+
+
 }
 </script>
 

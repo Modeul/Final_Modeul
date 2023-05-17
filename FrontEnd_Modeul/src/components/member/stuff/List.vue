@@ -44,8 +44,9 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
+
 					this.listCount = dataList.listCount;
-					this.defaultStore.loadingStatus = false;
+
 				}).catch(error => console.log('error', error));
 		},
 		categoryHandler(e) {
@@ -59,12 +60,12 @@ export default {
 					this.categoryList = dataList.categoryList;
 				}).catch(error => console.log('error', error));
 		},
-		async addListHandler(c) {
+		async addListHandler() {
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -80,7 +81,7 @@ export default {
 		},
 		scrollCheck() {
 			if (window.innerHeight >= 718) {
-				this.addListHandler('');
+				this.addListHandler();
 			}
 		},
 
@@ -215,7 +216,7 @@ export default {
 		this.target.addEventListener('scroll', this.handleScroll);
 
 		this.page = 0;
-		this.addListHandler('');
+		this.addListHandler();
 		this.scrollCheck();
 		this.getMemberCoordInfo();
 		console.log("마운트 " + this.myCoordX);
@@ -249,7 +250,7 @@ export default {
 				<div class="icon icon-location"></div>
 				<select class="selectbox-set" @change="onChange($event)">
 					<option value="" default>전체</option>
-					<option value="my">{{ myDongName }}</option>
+					<option value="">신설동</option>
 					<option value="cur">현재위치</option>
 				</select>
 			</div>

@@ -197,5 +197,11 @@ public class MemberServiceImpl implements MemberService {
 		return repository.findAll();
 	}
 
+	@Override
+	public Member getMemberByEmail(String email) {
+
+		return repository.getMemberByEmail(email);
+	}
+
 
 }

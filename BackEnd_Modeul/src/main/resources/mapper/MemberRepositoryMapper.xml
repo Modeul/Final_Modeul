@@ -143,6 +143,14 @@
 		where id=#{id}
 	</delete>
 
+	<select id="getMemberByEmail" resultType="Member">
+		select *
+		from
+		member
+		where
+		email = #{email}
+	</select>
+
 	<!-- <update id="delete" parameterType="Member">
 		update member
 		set pwd
