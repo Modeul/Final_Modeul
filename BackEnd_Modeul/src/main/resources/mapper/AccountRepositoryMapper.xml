@@ -9,6 +9,7 @@
 		<result property="bankName" column="bank_name" />
 		<result property="regDate" column="reg_date" />
 		<result property="memberId" column="member_id" />
+    <result property="stuffId" column="stuff_id" />
 	</resultMap>
 
 
@@ -17,6 +18,12 @@
 		insert into account(bank_name,number,member_id)
 		values(#{bankName}, #{number}, #{memberId})
 	</insert>
+
+  <select id="findAccountById" resultMap="accountViewResultMap">
+    select *
+    from account 
+    where stuff_id = #{stuffId}
+  </select>
 
   <!-- 최근 계좌 정보 get -->
   <select id="findViewById" resultMap="accountViewResultMap">

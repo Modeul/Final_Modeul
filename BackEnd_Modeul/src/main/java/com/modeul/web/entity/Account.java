@@ -17,4 +17,5 @@ public class Account {
     private String number;
     private LocalDateTime regDate;
     private Long memberId;
+    private Long stuffId;
 }
