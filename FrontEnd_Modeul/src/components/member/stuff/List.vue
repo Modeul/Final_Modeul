@@ -139,6 +139,7 @@ export default {
 				this.getDongInfo(null, null);
 			} else if (v.target.value === 'my') {
 				this.serchDong =  this.myDongCode;
+				this.dongName = this.myDongName;
 				this.addListHandler(this.serchDong);
 			} else{
 				this.serchDong = '';
@@ -254,6 +255,7 @@ export default {
 					<option value="my">{{ myDongName }}</option>
 					<option value="cur">현재위치</option>
 				</select>
+				<div class="select__arrow"></div>
 			</div>
 			<Transition name="fade">
 				<div v-if="searchToggle" class="d-fl d-b-none search-form">
@@ -261,7 +263,7 @@ export default {
 						@keyup.enter="searchInput(query)">
 					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
-				<div v-else> {{ dongName }}</div>
+				<div v-else-if="dongName" > {{ dongName }}</div>
 			</Transition>
 
 			<div>
