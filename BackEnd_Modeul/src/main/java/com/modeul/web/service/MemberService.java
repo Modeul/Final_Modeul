@@ -16,6 +16,8 @@ public interface MemberService {
 
 	int addMember(Member member);
 
+	int addGoogleMember(Member member);
+
 	int changePwdByUid(Member member);
 
 	Boolean checkUid(String uid);
