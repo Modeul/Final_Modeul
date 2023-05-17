@@ -20,6 +20,8 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Autowired
     ParticipationRepository repository;
 
+    static int pageSize = 8;
+
     @Override
     public int addParticipation(Participation participation) {
         return repository.insert(participation);
@@ -28,7 +30,7 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     public List<ParticipationView> getByMemberId(Long memberId, String orderField, String orderDir, int page) {
 
-        int size = page * 7;
+        int size = page * 8;
 
         return repository.findByMemberId(memberId, orderField, orderDir, size, 0);
     }
@@ -99,6 +101,13 @@ public class ParticipationServiceImpl implements ParticipationService {
     public String getAccount(Long leaderId) {
         
         return repository.getAccount(leaderId);
+    }
+
+    @Override
+    public Long getCountList(Long memberId, int page) {
+        Long countList = repository.findCountList(memberId) - (page * pageSize);
+		Long result = countList <= 0 ? 0 : countList;
+		return result;
     }
 
 }

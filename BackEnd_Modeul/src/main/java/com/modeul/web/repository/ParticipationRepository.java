@@ -44,4 +44,6 @@ public interface ParticipationRepository {
 
     String getAccount(Long leaderId);
 
+    Long findCountList(Long memberId);
+
 }

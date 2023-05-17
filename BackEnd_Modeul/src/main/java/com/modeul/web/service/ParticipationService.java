@@ -32,4 +32,6 @@ public interface ParticipationService {
     void inputAccount(Long stuffId, String account);
 
     String getAccount(Long leaderId);
+
+    Long getCountList(Long memberId, int page);
 }
