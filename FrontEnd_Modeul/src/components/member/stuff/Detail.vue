@@ -368,6 +368,16 @@ export default {
 		checkStuffUser() {
 			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
 			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
+		},
+		urlHandler(url) {
+			const httpPattern = /^http:\/\//;
+			const wwwPattern = /^www\./;
+			let output = false;
+			if (wwwPattern.test(url))
+				output = 'http://' + url;
+			else if (httpPattern.test(url))
+				output = url;
+			return output;
 		}
 	},
 	computed: {
@@ -522,8 +532,8 @@ export default {
 						</div>
 						<div class="detail-in">
 							<div class="detail-info-title">링크</div>
-							<div v-if="stuff.url == ''" class="detail-info-txt"> 게시된 링크가 없습니다. </div>
-							<div v-else class="detail-info-txt"><a :href="stuff.url">{{ stuff.url }}</a></div>
+							<div v-if="urlHandler(stuff.url)" class="detail-info-txt"><a :href="urlHandler(stuff.url)" target="_blank">{{ stuff.url }}</a></div>
+							<div v-else class="detail-info-txt"> 게시된 링크가 없습니다. </div>
 						</div>
 
 					</section>
