@@ -1515,6 +1515,10 @@ input::placeholder {
 .v-app-bar .chat-title {
 	font-size: 14px;
 	font-weight: 700;
+	width: 210px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .v-app-bar .chat-participant-count {
