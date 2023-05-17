@@ -3,6 +3,7 @@ package com.modeul.web.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,6 +202,81 @@ public class MemberServiceImpl implements MemberService {
 	public Member getMemberByEmail(String email) {
 
 		return repository.getMemberByEmail(email);
+	}
+
+	@Override
+	public int addGoogleMember(Member member) {
+		
+		//랜덤 패스워드 생성
+		String ranPwd = createPwd(); 
+		String encodedPassword = passwordEncoder.encode(ranPwd);
+		//랜덤 아이디 생성
+		String ranUid = "G-"+createUid();
+		//멤버 객체에 패스워드 넣어주기
+		member.setPwd(encodedPassword);
+		//멤버 객체에 아이디 넣어주기
+		member.setUid(ranUid);
+		return repository.insert(member);
+	}
+
+	@Override
+	public String createUid() {
+		StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 8; i++) { // 인증코드 : 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+
+            switch (index) {
+                case 0:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+
+                case 1:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    // A~Z
+                    break;
+
+                case 2:
+                    key.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+
+            }
+
+        }
+        return key.toString();
+	}
+
+	@Override
+	public String createPwd() {
+		StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 8; i++) { // 인증코드 : 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+
+            switch (index) {
+                case 0:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+
+                case 1:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    // A~Z
+                    break;
+
+                case 2:
+                    key.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+
+            }
+
+        }
+        return key.toString();
 	}
 
 
