@@ -110,11 +110,14 @@ export default {
 				method: 'DELETE',
 				redirect: 'follow'
 			};
-			this.$router.push("/member/stuff/list");
+			this.defaultStore.loadingStatus = true;
 
 			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => {
+					this.defaultStore.loadingStatus = false
+					this.$router.push("/member/stuff/list");
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -475,8 +478,7 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -722,21 +724,22 @@ export default {
 	animation-fill-mode: forwards;
 }
 
-.map-txt{
+.map-txt {
 	cursor: pointer;
-    color: #727272;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	color: #727272;
+	font-size: 12px;
+	font-weight: 500;
+	margin-top: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
-.map-txt::before{
+
+.map-txt::before {
 	content: "\e55b";
 	font-family: 'Material Icons';
 	font-size: 16px;
-	margin-right: 2px;	
+	margin-right: 2px;
 }
 </style>
 
@@ -755,4 +758,5 @@ export default {
 	to {
 		opacity: 0;
 	}
-}</style>
+}
+</style>
