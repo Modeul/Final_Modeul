@@ -210,9 +210,15 @@ public class MemberServiceImpl implements MemberService {
 		//랜덤 패스워드 생성
 		String ranPwd = createPwd(); 
 		String encodedPassword = passwordEncoder.encode(ranPwd);
-		//랜덤 아이디 생성
-		String ranUid = "G-"+createUid();
-		//멤버 객체에 패스워드 넣어주기
+		// 랜덤 아이디 생성
+		String ranUid = "";
+		boolean isdup = false;
+		do {
+			ranUid = "G-" + createUid();
+			isdup = (repository.getbyUid(ranUid) != null ? true : false);
+		} while (isdup);
+		
+		// 멤버 객체에 패스워드 넣어주기
 		member.setPwd(encodedPassword);
 		//멤버 객체에 아이디 넣어주기
 		member.setUid(ranUid);
