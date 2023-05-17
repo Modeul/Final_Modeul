@@ -60,12 +60,12 @@ export default {
 					this.categoryList = dataList.categoryList;
 				}).catch(error => console.log('error', error));
 		},
-		async addListHandler() {
+		async addListHandler(c) {
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
 				// .then(response => {
 				// 	console.log(response)
 				// 	return response.json()})
@@ -81,7 +81,7 @@ export default {
 		},
 		scrollCheck() {
 			if (window.innerHeight >= 718) {
-				this.addListHandler();
+				this.addListHandler(this.serchDong);
 			}
 		},
 
@@ -151,7 +151,7 @@ export default {
 		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-
+			console.log("x"+x);
 			if (x == null) {
 				const watchID = navigator.geolocation.getCurrentPosition((position) => {
 					let lat = position.coords.latitude;
@@ -187,7 +187,7 @@ export default {
 					if (status === kakao.maps.services.Status.OK) {
 
 						this.myDongCode = result[0].code;
-
+						console.log(this.myDongCode);
 
 					}
 				});
@@ -216,7 +216,7 @@ export default {
 		this.target.addEventListener('scroll', this.handleScroll);
 
 		this.page = 0;
-		this.addListHandler();
+		this.addListHandler('');
 		this.scrollCheck();
 		this.getMemberCoordInfo();
 		console.log("마운트 " + this.myCoordX);
