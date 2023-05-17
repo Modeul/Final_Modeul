@@ -280,8 +280,8 @@
 					<div class="cal-result-account-all">
 						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							<span>{{ selectBank }} </span>
-							<span>{{ accountNumber }}</span>
+							<span>{{ this.selectBank }} </span>
+							<span>{{ this.accountNumber }}</span>
 						</div>
 						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 					</div>
@@ -662,10 +662,10 @@ export default {
 		resultDnoneHandler() {
 			console.log("price:" + this.price);
 			this.dutchHandler();
-			this.getAccount();
-			console.log(this.selectBank);
+			
 			this.isCalc = false;
 			this.isCalcResult = true;
+			this.getAccount();
 		},
 		selectBankHandler() {
 			console.log("bank" + this.selectBank);
@@ -831,7 +831,10 @@ export default {
 
 			fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`, requestOptions)
 			.then(response => response.text())
-			.then(result => console.log(result))
+			.then(result => {
+				this.selectBank = result.bankName;
+				this.accountNumber = result.number;
+			})
 			.catch(error => console.log('error', error));
 		}
 	},
