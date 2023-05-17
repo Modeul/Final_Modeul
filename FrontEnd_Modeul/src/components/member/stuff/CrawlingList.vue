@@ -12,6 +12,7 @@ export default {
 			defaultStore: useDefaultStore(),
 			page: '',
 			query:'',
+			searchToggle: false,
 			list: [],
 			category: [],
 			categoryId:'',
@@ -27,10 +28,12 @@ export default {
 			console.log(e.target.value);
 
 		},
-		searchInput(e){
+		searchInput(queryEmit){
+			if (!this.searchToggle)
+				if (this.query == queryEmit.trim())
+					return;
+			this.query = queryEmit.trim();
 			this.page = 1;
-			e.preventDefault();
-            this.query = e.target.value;
 			console.log(this.query);
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
@@ -53,6 +56,7 @@ export default {
 					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
+					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -62,8 +66,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = dataList.list;
-					if (this.categoryId == 1 || this.categoryId == 2 || this.categoryId == 3 ||this.categoryId == 4)
 					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
@@ -77,6 +79,9 @@ export default {
 			if (window.innerHeight >= 718) {
 				this.addListHandler();
 			}
+		},
+		scrollHandler(){
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
 	},
 	mounted() {
@@ -96,6 +101,18 @@ export default {
 
 <style scoped>
 @import url(/css/component/member/stuff/component-crawlinglist.css);
+@import url(/css/component/admin/member/list-responsive.css);
+
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
 </style>
 <template>
 	<PcHeader @queryEmit="searchInput"></PcHeader>
@@ -106,18 +123,19 @@ export default {
 		</v-carousel>
 	</div>
 
-	<div>
-        <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
-    </div>
-	<section class="canvas p-rel b-rad-2">
-		        <!-- 검색창 들어가는 부분 -->
-        <header class="d-fl-al">
-                <div class="search-container">
-                    <div class="d-fl d-b-none search-form">
-                        <h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-                        <input id="search-bar" class="search-input m-l-6px" name="q" @keyup.enter="searchInput" placeholder="검색어를 입력해주세요.">
-                    </div>
+	<section class="canvas">
+		<header class="d-fl-al header-jc">
+			<Transition name="fade">
+				<div v-if="searchToggle" class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" name="q" placeholder="검색어를 입력해주세요." v-model="query"
+						@keyup.enter="searchInput(query)">
+					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
+			</Transition>
+			<div>
+				<div v-if="!searchToggle" class="icon icon-search" @click="searchToggle = !searchToggle"></div>
+				<div v-else class="icon icon-search-cancel" @click="searchToggle = !searchToggle"></div>
+			</div>
 		</header>
 
 		<nav>
@@ -176,6 +194,7 @@ export default {
 
 		
 	</section>
+<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 
