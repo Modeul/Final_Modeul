@@ -411,4 +411,5 @@ export default {
 
 .modal-btn:hover {
 	background-color: #d5d5d566;
-}</style>
+}
+</style>
