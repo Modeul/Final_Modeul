@@ -21,6 +21,7 @@ let sumDutch = ref();
 let userDetails = useUserDetailsStore();
 let defaultStore = useDefaultStore();
 let copyModal = ref(false);
+let listCount = ref();
 
 console.log(stuffId.value);
 
@@ -34,7 +35,7 @@ console.log("page:" + page.value);
 console.log("memberId:" + memberId.value);
 
 async function load() {
-
+	page.value++;
 	// 쿼리스트링을 Composition API에서는 어떻게 SpringBoot로 비동기 처리하여 요청하지? 
 	// ** 컴포지션 API에서 넘기는 방법? 방법이 body 밖에 없는데? body는 POST요청에서만 이용
 	// **결론, 'value' 이용!
@@ -46,6 +47,7 @@ async function load() {
 	const dataList = await response.json(); // 여기 await 중요!
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
+	listCount = ref(dataList.listCount);
 	console.log("model.months:" + model.months);
 }
 
@@ -145,6 +147,7 @@ function formatPrice(price) {
 }
 
 onMounted(() => {
+	page.value = 0;
 	memberId.value = userDetails.id;
 	load();
 })
@@ -199,6 +202,7 @@ onMounted(() => {
 
 			</div>
 		</div>
+		<button class="btn-next more-list" @click="load()"> 더보기 <span> +{{ listCount }}</span></button>
 		<!-- ** 정산 결과 모달 ** -->
 		<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px; " v-model="calDrawer" location="bottom"
 			temporary>
@@ -361,7 +365,7 @@ select:focus {
 
 
 .li-gr {
-	grid-template-columns: 60px 8px minmax(174px, auto) 8px 70px;
+	grid-template-columns: 60px 8px minmax(174px, auto) 8px 75px;
 	grid-template-rows: 36px 12px 12px;
 	grid-template-areas:
 		"pic . subj . dday"

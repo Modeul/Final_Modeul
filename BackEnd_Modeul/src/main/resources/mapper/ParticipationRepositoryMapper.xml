@@ -118,5 +118,12 @@
     where stuff_id = #{leaderId}
   </select>
 
+  <select id="findCountList" resultType="Long" parameterType="ParticipationView">
+    select count(member_id)
+    from
+    participation_view
+    where member_id = #{memberId}
+  </select>
+
 
 </mapper>

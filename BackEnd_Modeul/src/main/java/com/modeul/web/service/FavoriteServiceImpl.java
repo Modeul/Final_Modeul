@@ -17,7 +17,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     private FavoriteRepository favoriteRepository;
 
 
-    static int pageSize = 7;
+    static int pageSize = 8;
 
 
     // @Override
@@ -32,7 +32,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
 	public List<FavoriteView> getFavoriteByMemberId(Long memberId,Long categoryId, int page) {
-		int size = page * 7;
+		int size = page * 8;
 
 		return favoriteRepository.findViewById( memberId,categoryId, "favorite_date", "desc", size, 0);
 	}
