@@ -52,7 +52,8 @@ export default {
 								<option value="cur">현재위치</option>
 							</select>
 						</div>
-						<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
+						<div class="vertical"></div>
+						<input id="search-bar" class="search-input" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
 						<h1 class="icon search-dodbogi">돋보기</h1>
 					</div>
 				</div>
