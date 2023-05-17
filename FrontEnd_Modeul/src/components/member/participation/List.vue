@@ -13,10 +13,12 @@
 
 			<div class="header-categ-box">
 				<div>
-					<button @click="orderHandler" class="header-categ participation" name="orderField" value="participation_date">최신참여순</button>
-					<button @click="orderHandler" class="header-categ deadline" value="stuff_deadline">마감일순</button>
-					<!-- <button @click="orderHandler" name="orderField" value="participation_date" :class="(this.orderField == "participation_date")?'selected':'header-categ'">최신순</button>
-					<button @click="orderHandler" name="orderField" value="stuff_deadline" :class="(this.orderField == "stuff_deadline")?'selected':'header-categ'">마감일순</button> -->
+					<button @click="orderHandler" class="header-categ participation" name="orderField" value="participation_date">
+						최근참여순
+					</button>
+					<button @click="orderHandler" class="header-categ deadline" value="stuff_deadline">
+						마감일순
+					</button>
 				</div>
 			</div>
 		</nav>
@@ -57,7 +59,7 @@
 				</router-link>
 			</div>
 
-			<button class="btn-next more-list" @click="addListHandler"> 더보기 <span> {{ listCount }}</span></button>
+			<button class="btn-next more-list" @click="addListHandler"> 더보기+<span> {{ listCount }}</span></button>
 		</main>
 		<nav class="navi-bar d-fl-jf">
 			<div class="navi-icon">
@@ -123,6 +125,7 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
+					this.listCount = dataList.listCount;
 					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
@@ -136,9 +139,8 @@ export default {
 				.then(dataList => {
 					console.log(dataList);
 					this.participationList = this.formatDateList(dataList.list);
-					// this.categoryList = dataList.categoryList;
 					this.stuffCount = dataList.stuffCount;
-					// this.listCount = dataList.listCount;
+					this.listCount = dataList.listCount;
 					console.log(this.participationList);
 					this.defaultStore.loadingStatus = false;
 				})
