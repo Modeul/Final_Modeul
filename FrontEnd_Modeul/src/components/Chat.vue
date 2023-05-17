@@ -522,6 +522,7 @@ export default {
 			const dataList = await response.json();
 			this.participantList = dataList.memberList;
 			this.chat = dataList.stuffView;
+			this.formatChatRegDate();
 		},
 		async loadParticipant() {
 			const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
@@ -834,6 +835,7 @@ export default {
 				this.participantList = dataList.memberList;
 				this.chat = dataList.stuffView;
 				this.formatChatRegDate();
+
 				console.log(this.participantList);
 				console.log("this.participantList.memberId: " + this.participantList[0].memberId);
 				console.log("this.chat.memberId:" + this.chat.memberId);
@@ -1513,6 +1515,10 @@ input::placeholder {
 .v-app-bar .chat-title {
 	font-size: 14px;
 	font-weight: 700;
+	width: 210px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .v-app-bar .chat-participant-count {

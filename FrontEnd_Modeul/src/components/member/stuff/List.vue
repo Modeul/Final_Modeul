@@ -44,9 +44,8 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
-
 					this.listCount = dataList.listCount;
-
+					this.defaultStore.loadingStatus = false;
 				}).catch(error => console.log('error', error));
 		},
 		categoryHandler(e) {
