@@ -134,6 +134,7 @@ export default {
 		},
 
 		onChange(v) {
+			this.page = 1;
 			if (v.target.value === 'cur') {
 				this.getDongInfo(null, null);
 			} else if (v.target.value === 'my') {
@@ -225,7 +226,7 @@ export default {
 
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler(this.serchDong); 
+					this.addListHandler(this.serchDong);
 				}
 			}
 		})
@@ -250,7 +251,7 @@ export default {
 				<div class="icon icon-location"></div>
 				<select class="selectbox-set" @change="onChange($event)">
 					<option value="" default>전체</option>
-					<option value="">신설동</option>
+					<option value="my">{{ myDongName }}</option>
 					<option value="cur">현재위치</option>
 				</select>
 			</div>
