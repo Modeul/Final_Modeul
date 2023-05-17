@@ -144,7 +144,10 @@ export default {
                     "name": this.member.name,
                     "email": this.userDetails.email,
                     "nickname": this.member.nickname,
-                    "address": this.member.address
+                    "address": this.member.address,
+					"coordX": this.member.coordX,
+					"coordY": this.member.coordY,
+
                 });
 
                 var requestOptions = {
@@ -152,7 +155,7 @@ export default {
                     headers: myHeaders,
                     body: raw,
                     redirect: 'follow'
-                };
+                }; 
 
                 fetch(`${this.defaultStore.host}/api/signup/google`, requestOptions)
                     .then(response => response.json())
