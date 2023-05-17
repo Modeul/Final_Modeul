@@ -136,8 +136,8 @@ export default {
 			if (v.target.value === 'cur') {
 				this.getDongInfo(null, null);
 			} else if (v.target.value === 'my') {
-				this.addListHandler(this.myDongCode);
-				console.log(this.myDongCode);
+				this.serchDong =  this.myDongCode;
+				this.addListHandler(this.serchDong);
 			} else{
 				this.serchDong = '';
 				this.dongName = '';
@@ -224,7 +224,7 @@ export default {
 
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler(this.serchDong);
+					this.addListHandler(this.serchDong); 
 				}
 			}
 		})
