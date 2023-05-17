@@ -42,6 +42,7 @@ export default {
 			zzimModalMsg: "",
 			favorOpenModal: false,
 			stuffUser: false,
+			isCheckNumPeople: true,
 		};
 	},
 	components: {
@@ -110,11 +111,14 @@ export default {
 				method: 'DELETE',
 				redirect: 'follow'
 			};
-			this.$router.push("/member/stuff/list");
+			this.defaultStore.loadingStatus = true;
 
 			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => {
+					this.defaultStore.loadingStatus = false
+					this.$router.push("/member/stuff/list");
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -150,10 +154,8 @@ export default {
 			myHeaders.append("Content-Type", "application/json");
 
 			var raw = JSON.stringify({
-				// memberid:this.stuff.memberId,
 				memberId: this.userDetails.id,
 				stuffId: this.stuff.id,
-				// stuffId:this.stuffId
 			});
 
 			var requestOptions = {
@@ -199,7 +201,7 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			if (this.participantInfo)
+			if (this.participantInfo.memberId == this.userDetails.id)
 				this.isCheckParticipation = true;
 			else
 				this.isCheckParticipation = false;
@@ -365,6 +367,24 @@ export default {
 		checkStuffUser() {
 			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
 			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
+		},
+		checkNumPeople(){
+			if(this.memberCount < parseInt(this.stuff.numPeople)){
+				this.isCheckNumPeople = true;
+			}
+			else{
+				this.isCheckNumPeople = false;
+			}
+		},
+		urlHandler(url) {
+			const httpPattern = /^http:\/\//;
+			const wwwPattern = /^www\./;
+			let output = false;
+			if (wwwPattern.test(url))
+				output = 'http://' + url;
+			else if (httpPattern.test(url))
+				output = url;
+			return output;
 		}
 	},
 	computed: {
@@ -392,6 +412,7 @@ export default {
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
 				console.log(this.stuff);
+				this.checkNumPeople();
 			})
 			.catch((error) => console.log("error", error));
 
@@ -475,8 +496,7 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -517,6 +537,11 @@ export default {
 						<div class="detail-in">
 							<div class="detail-info-title">장소</div>
 							<div class="detail-info-txt">{{ stuff.place }}</div>
+						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">링크</div>
+							<div v-if="urlHandler(stuff.url)" class="detail-info-txt"><a :href="urlHandler(stuff.url)" target="_blank">{{ stuff.url }}</a></div>
+							<div v-else class="detail-info-txt"> 게시된 링크가 없습니다. </div>
 						</div>
 
 					</section>
@@ -563,11 +588,13 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button class="detail-join-button" v-if="!isCheckParticipation" @click="participationHandler">
+					<button class="detail-join-button" v-if="!isCheckParticipation && isCheckNumPeople" @click="participationHandler">
 						참여하기
 					</button>
-
-					<div class="join-button-wrap" v-if="isCheckParticipation">
+					<button class="detail-join-end-button" v-else-if="!isCheckParticipation && !isCheckNumPeople" @click="">
+						참여마감
+					</button>
+					<div class="join-button-wrap" v-else-if="isCheckParticipation">
 						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
 						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
 							참여취소
@@ -722,21 +749,22 @@ export default {
 	animation-fill-mode: forwards;
 }
 
-.map-txt{
+.map-txt {
 	cursor: pointer;
-    color: #727272;
-    font-size: 12px;
-    font-weight: 500;
-    margin-top: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	color: #727272;
+	font-size: 12px;
+	font-weight: 500;
+	margin-top: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
-.map-txt::before{
+
+.map-txt::before {
 	content: "\e55b";
 	font-family: 'Material Icons';
 	font-size: 16px;
-	margin-right: 2px;	
+	margin-right: 2px;
 }
 </style>
 
@@ -755,4 +783,5 @@ export default {
 	to {
 		opacity: 0;
 	}
-}</style>
+}
+</style>

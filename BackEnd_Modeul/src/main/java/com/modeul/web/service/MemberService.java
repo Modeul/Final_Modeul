@@ -16,6 +16,8 @@ public interface MemberService {
 
 	int addMember(Member member);
 
+	int addGoogleMember(Member member);
+
 	int changePwdByUid(Member member);
 
 	Boolean checkUid(String uid);
@@ -44,4 +46,9 @@ public interface MemberService {
 
 	List<Member> getMemberList();
 
+    Member getMemberByEmail(String email);
+
+	String createUid();
+
+	String createPwd();
 }

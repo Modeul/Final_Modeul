@@ -123,6 +123,13 @@
 					</div>
 				</div>
 
+				<div v-if="openModal2" class="black-bg">
+                    <div class="findpwd-modal-box">
+                        <div class="modal-txt">가입 완료</div>
+                        <button @click.prevent="move" class="modal-btn">확인</button>
+                    </div>
+                </div>
+
 			</div>
 			<!-- flex 끝 -->
 		</main>
@@ -182,6 +189,7 @@ export default {
 			emailconfirmbtn: false,
 			// 모달
 			openModal: false,
+			openModal2: false,
 		};
 	},
 	methods: {
@@ -264,7 +272,7 @@ export default {
 					.then((result) => console.log(result))
 					.catch((error) => console.log("error", error));
 				console.log("%가입완료");
-				this.$router.push('/login');
+				this.toggleModal2();
 			}
 		},
 		// pwd 검사
@@ -452,7 +460,12 @@ export default {
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},
-
+		toggleModal2() {
+            this.openModal2 = !this.openModal2;
+        },
+        move(){
+            this.$router.push('/login');
+        },
 		postCode() {
 			const geocoder = new daum.maps.services.Geocoder();
 			new daum.Postcode({
@@ -483,4 +496,46 @@ export default {
 @import url(/css/component/component.css);
 @import url(/css/component/component-sign-up.css);
 @import url(/css/button.css);
+.findpwd-modal-box {
+	width: 253px;
+	height: 113px;
+	background: #FFFFFF;
+	border-radius: 10px;
+	color: #000000;
+	font-weight: 400;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.modal-txt {
+	font-size: 12px;
+	text-align: center;
+}
+
+.modal-btn {
+	width: 65px;
+	height: 26px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: 0.5px solid #6A6A6A;
+	color: #6A6A6A;
+	font-weight: 400;
+	font-size: 10px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+	margin-top: 18px;
+	transition: 0.2s;
+}
+
+.modal-btn:hover {
+	background-color: #d5d5d566;
+}
 </style>

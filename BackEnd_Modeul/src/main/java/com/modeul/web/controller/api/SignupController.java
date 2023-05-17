@@ -30,6 +30,13 @@ public class SignupController {
 		System.out.println(member);
 		return memberCount;
 	}
+	@PostMapping("google")
+	public int addGoogleMember(@RequestBody Member member) {
+		
+		int memberCount = service.addGoogleMember(member);
+		System.out.println(member);
+		return memberCount;
+	}
 
 	// 이메일 인증 (RequestParam)
 	@PostMapping("mailConfirm")

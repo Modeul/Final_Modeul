@@ -41,23 +41,27 @@ export default {
 			</div>
 
 			<div class="filter" v-if="$route.path == '/member/stuff/list'">
-				<div class="gps-box">
-					<div class="icon icon-location"></div>
-					<!-- <select class="selectbox-set" @change="onChange($event)"> -->
-					<select class="selectbox-set" @change="this.$emit('change', $event)">
-						<option value="" default>전체</option>
-						<option value="my">{{ dongName }}</option>
-						<option value="cur">현재위치</option>
-					</select>
-				</div>
 				<div class="search-container">
 					<div class="d-fl d-b-none search-form">
-						<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
+						<div class="gps-box">
+							<div class="icon icon-location"></div>
+							<!-- <select class="selectbox-set" @change="onChange($event)"> -->
+							<select class="selectbox-set" @change="this.$emit('change', $event)">
+								<option value="" default>전체</option>
+								<option value="my">{{ dongName }}</option>
+								<option value="cur">현재위치</option>
+							</select>
+						</div>
+						<div class="vertical"></div>
+						<input id="search-bar" class="search-input" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
 						<h1 class="icon search-dodbogi">돋보기</h1>
 					</div>
 				</div>
 			</div>
 			<div class="btnbox">
+				<div class="btn-crawling">
+					<router-link to="/member/stuff/recommends"></router-link>
+				</div>
 				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
 					<router-link to="/admin/stuff/list"></router-link>
 				</div>

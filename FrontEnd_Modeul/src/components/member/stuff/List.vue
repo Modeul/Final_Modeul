@@ -80,7 +80,7 @@ export default {
 		},
 		scrollCheck() {
 			if (window.innerHeight >= 718) {
-				this.addListHandler('');
+				this.addListHandler(this.serchDong);
 			}
 		},
 
@@ -133,11 +133,12 @@ export default {
 		},
 
 		onChange(v) {
+			this.page = 1;
 			if (v.target.value === 'cur') {
 				this.getDongInfo(null, null);
 			} else if (v.target.value === 'my') {
-				this.addListHandler(this.myDongCode);
-				console.log(this.myDongCode);
+				this.serchDong =  this.myDongCode;
+				this.addListHandler(this.serchDong);
 			} else{
 				this.serchDong = '';
 				this.dongName = '';
@@ -150,7 +151,7 @@ export default {
 		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-
+			console.log("x"+x);
 			if (x == null) {
 				const watchID = navigator.geolocation.getCurrentPosition((position) => {
 					let lat = position.coords.latitude;
@@ -186,7 +187,7 @@ export default {
 					if (status === kakao.maps.services.Status.OK) {
 
 						this.myDongCode = result[0].code;
-
+						console.log(this.myDongCode);
 
 					}
 				});

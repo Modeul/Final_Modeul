@@ -46,20 +46,21 @@ public class ParticipationController {
         return "ok";
     }
 
-    @GetMapping("/participations/{memberId}")
+    @GetMapping("/participations")
     public Map<String, Object> getList(
-            @PathVariable("memberId") Long memberId,
+            Long memberId,
             @RequestParam(name = "p", defaultValue = "1") int page,
-            @RequestParam(name = "o", required = false) String orderField) {
+            @RequestParam(name = "of", required = false) String orderField,
+            @RequestParam(name = "od", required = false) String orderDir) {
 
-        List<ParticipationView> list = participationService.getByMemberId(memberId, orderField, page);
-        // List<Category> categoryList = categoryService.getList();
+        List<ParticipationView> list = participationService.getByMemberId(memberId, orderField, orderDir, page);
         int stuffCount = participationService.getStuffCountBymemberId(memberId);
+        Long listCount = participationService.getCountList(memberId, page);
 
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("list", list);
-        // dataList.put("categoryList", categoryList);
         dataList.put("stuffCount", stuffCount);
+        dataList.put("listCount", listCount);
 
         return dataList;
     }

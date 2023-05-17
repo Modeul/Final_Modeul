@@ -40,4 +40,6 @@ public interface MemberRepository {
 	String getEmailByName(Member member);
 
 	String getUid(String name,String email);
+
+    Member getMemberByEmail(String email);
 }

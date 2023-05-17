@@ -33,4 +33,6 @@ public interface DutchRepository {
 
     // 더치정보 삭제
     int deleteDutch(Long stuffId);
+
+    Long findCountList(int month, Long memberId);
 }

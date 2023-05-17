@@ -21,6 +21,8 @@ public class DutchServiceImpl implements DutchService {
     @Autowired
     private DutchRepository repository;
 
+    static int pageSize = 8;
+
     @Override
     public List<DutchView> getViewBymemberId(Long memberId, int page, int month) {
 
@@ -110,5 +112,12 @@ public class DutchServiceImpl implements DutchService {
 
         return repository.deleteDutch(stuffId);
     }
+
+    @Override
+	public Long getListCount(Long memberId, int page, int month) {
+        Long countList = repository.findCountList(month, memberId) - (page * pageSize);
+		Long result = countList <= 0 ? 0 : countList;
+		return result;
+	}
 
 }

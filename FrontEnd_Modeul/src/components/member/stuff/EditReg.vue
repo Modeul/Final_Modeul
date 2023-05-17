@@ -119,13 +119,15 @@ export default {
 					body: formData,
 					redirect: 'follow'
 				};
-
+				// this.defaultStore.loadingStatus = true;
 				await fetch(`${this.defaultStore.host}/api/stuff/update/${this.$route.params.id}`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
+					.then(result => {
+						// this.defaultStore.loadingStatus = false;
+						this.$router.replace('/member/stuff/' + this.stuff.id);
+					})
 					.catch(error => console.log('error', error));
 
-				this.$router.replace('/member/stuff/' + this.stuff.id);
 			}
 		},
 

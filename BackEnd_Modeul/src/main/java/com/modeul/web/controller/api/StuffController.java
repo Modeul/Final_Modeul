@@ -183,17 +183,13 @@ public class StuffController {
 			@RequestParam(name="c", required=false) Long categoryId,
 			@RequestParam(name="cname", required=false) String categoryName) {
 		
-		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
-		List<Crawling> queryList = crawlingservice.getViewAll(query , page , categoryId);
+		List<Crawling> list = crawlingservice.getViewAll(query , page , categoryId);
 		List<Crawling> category = crawlingservice.getCategoryNameList(page , categoryName);
-		List<Crawling> categoryList = crawlingservice.getViewAll(page , categoryId);
 		Long listCount = crawlingservice.getListCount(categoryId, page);
 		Map<String, Object> dataList = new HashMap<>();
-		dataList.put("crawlingList", crawlingList);
-		dataList.put("queryList", queryList);
+		dataList.put("list", list);
 		dataList.put("listCount", listCount);
 		dataList.put("category", category);
-		dataList.put("categoryList", categoryList);
 
 		return dataList;
 	}
