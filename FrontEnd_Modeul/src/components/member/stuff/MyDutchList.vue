@@ -34,8 +34,25 @@ let model = reactive({
 console.log("page:" + page.value);
 console.log("memberId:" + memberId.value);
 
-async function load() {
+async function addListHandler() {
 	page.value++;
+	// 쿼리스트링을 Composition API에서는 어떻게 SpringBoot로 비동기 처리하여 요청하지? 
+	// ** 컴포지션 API에서 넘기는 방법? 방법이 body 밖에 없는데? body는 POST요청에서만 이용
+	// **결론, 'value' 이용!
+	// vuex를 composition API에서 이용하기 위해서는 this와 $를 없애자(원래는 'this.$state.host') 
+	const response = await fetch(`${defaultStore.host}/api/dutchs?p=${page.value}&memberId=${memberId.value}&m=${month.value}`, {
+		// body:`p=${page}&memberId=${memberId}`
+	});
+
+	const dataList = await response.json(); // 여기 await 중요!
+	model.list = formatDateList(dataList.list);
+	model.months = dataList.months;
+	listCount = ref(dataList.listCount);
+	console.log("model.months:" + model.months);
+}
+
+async function selectMonthList() {
+	page = ref(1);
 	// 쿼리스트링을 Composition API에서는 어떻게 SpringBoot로 비동기 처리하여 요청하지? 
 	// ** 컴포지션 API에서 넘기는 방법? 방법이 body 밖에 없는데? body는 POST요청에서만 이용
 	// **결론, 'value' 이용!
@@ -117,7 +134,7 @@ async function sumDutchHandler() {
 
 function selectMonthHandler() {
 	console.log(month.value);
-	load();
+	selectMonthList();
 }
 
 function showCalcResultHandler(d) {
@@ -147,9 +164,9 @@ function formatPrice(price) {
 }
 
 onMounted(() => {
-	page.value = 0;
+	page = ref(0);
 	memberId.value = userDetails.id;
-	load();
+	addListHandler();
 })
 
 
@@ -202,7 +219,7 @@ onMounted(() => {
 
 			</div>
 		</div>
-		<button class="btn-next more-list" @click="load()"> 더보기 <span> +{{ listCount }}</span></button>
+		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 		<!-- ** 정산 결과 모달 ** -->
 		<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px; " v-model="calDrawer" location="bottom"
 			temporary>
