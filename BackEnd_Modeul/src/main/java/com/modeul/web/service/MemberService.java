@@ -48,4 +48,7 @@ public interface MemberService {
 
     Member getMemberByEmail(String email);
 
+	String createUid();
+
+	String createPwd();
 }

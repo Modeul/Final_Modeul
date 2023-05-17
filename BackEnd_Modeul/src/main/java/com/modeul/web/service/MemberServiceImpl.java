@@ -219,7 +219,8 @@ public class MemberServiceImpl implements MemberService {
 		return repository.insert(member);
 	}
 
-	private String createUid() {
+	@Override
+	public String createUid() {
 		StringBuffer key = new StringBuffer();
         Random rnd = new Random();
 
@@ -248,7 +249,8 @@ public class MemberServiceImpl implements MemberService {
         return key.toString();
 	}
 
-	private String createPwd() {
+	@Override
+	public String createPwd() {
 		StringBuffer key = new StringBuffer();
         Random rnd = new Random();
 
