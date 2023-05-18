@@ -9,7 +9,11 @@ export default {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
 			query: '',
-			loginMember: ''
+			loginMember: '',
+			upHere1:false,
+			upHere2:false,
+			upHere3:false,
+			upHere4:false
 		};
 	},
 	methods: {
@@ -58,24 +62,57 @@ export default {
 					</div>
 				</div>
 			</div>
-			<div class="btnbox">
-				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
-					<router-link to="/admin/stuff/list"></router-link>
+			<div class="btn-wrap">
+				<div class="btnbox">
+					<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting" v-if="userDetails.hasRole('ADMIN')" to="/admin/stuff/list"></router-link>
+					<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling" to="/member/stuff/recommends"></router-link>
+					<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart" to="/member/mypage/favorite"></router-link>
+					<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage" to="/member/mypage"></router-link>
 				</div>
-				<div class="btn-crawling">
-					<router-link to="/member/stuff/recommends"></router-link>
-				</div>
-				<div class="btn-heart">
-					<router-link to="/member/mypage/favorite"></router-link>
-				</div>
-				<div class="btn-mypage">
-					<router-link to="/member/mypage"></router-link>
+					<div class="set-txt" v-show="upHere1">
+						<img src="/images/member/setting.svg" alt="">
+					</div>
+					<div class="crawling-txt" v-show="upHere2">
+						<img src="/images/member/crawling.svg" alt="">
+					</div>
+					<div class="heart-txt" v-show="upHere3">
+						<img src="/images/member/heart.svg" alt="">
+					</div>
+					<div class="mypage-txt" v-show="upHere4">
+						<img src="/images/member/mypage.svg" alt="">
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 </template>
 
 <style scoped>
 @import "/css/component/admin/member/list-responsive.css";
+.btn-wrap{
+	position: relative;
+	top: 0;
+	right:0;
+}
+.btn-txt-box{
+	display: flex;
+	position: absolute;
+	width: 100%;
+    height: 100%;
+}
+.set-txt{
+	position: absolute;
+	left:-13.57%;
+}
+.crawling-txt{
+	position: absolute;
+	left:12%;
+}
+.heart-txt{
+	position: absolute;
+	left:39%;
+}
+.mypage-txt{
+	position: absolute;
+	right:-14%;
+}
 </style>
