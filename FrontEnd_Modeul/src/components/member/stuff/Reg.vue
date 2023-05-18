@@ -71,7 +71,8 @@
 							</div>
 						</label>
 
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
+							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -87,7 +88,8 @@
 					<select class="category-box" name="categoryId">
 						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
-						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id v-text="c.name">
+						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
+							v-text="c.name">
 						</option>
 
 					</select>
@@ -102,19 +104,22 @@
 					<div class="select-box2 d-fl">
 						<label for="" class="input-field-txt">인원</label>
 						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
+							<input class="btn-minus" id="people-count" type="button" value=""
+								@click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
+							<input type="text" class="people-count-num" name="numPeople" id="result"
+								v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
+							<input class="btn-plus" id="people-count" type="button" value=""
+								@click.prevent="numPeoplePlusHandler">
 						</div>
 					</div>
 
 					<!-- 마감일 설정 -->
 					<div id="btn-date" class="select-box d-fl jf-sb">
 						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
-							name="deadline" v-model="stuff.deadline">
+						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
+							aria-required="true" name="deadline" v-model="stuff.deadline">
 
 					</div>
 
@@ -126,7 +131,7 @@
 					<div class="select-box" @click.prevent="postCode">
 						<label for="place" class="input-field-txt">장소</label>
 						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" hidden>
-						<div class="input-field">{{ stuff.place }}</div>
+						<div class="input-field input-address">{{ stuff.place }}</div>
 					</div>
 					<div class="select-box toggle-map" v-if="mapNav">
 						<div v-if="showMap" @click="toggleMap">지도 열기</div>
@@ -242,7 +247,6 @@ export default {
 		// 파일 업로드시, 이벤트 처리
 		async upload() {
 
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -283,6 +287,31 @@ export default {
 				this.valiError = "날짜를 입력하세요.";
 				this.openModal = true;
 				return;
+			} else if (this.stuff.url) {
+				this.stuff.url = this.stuff.url.toLowerCase();
+				console.log("소문자 변환");
+				if (this.stuff.url.startsWith('h')) {
+					let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 주소를 입력하세요.";
+						this.openModal = true;
+						console.log("h 필터");
+						return;
+					}
+				} else if (this.stuff.url.startsWith('w')) {
+					let regex = /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 주소를 입력하세요.";
+						this.openModal = true;
+						console.log("w 필터");
+						return;
+					}
+				} else {
+					console.log("나머지");
+					this.valiError = "올바른 형식의 주소를 입력하세요.";
+					this.openModal = true;
+					return;
+				}
 			} else if (!this.stuff.content) {
 				this.valiError = "내용을 입력하세요.";
 				this.openModal = true;
@@ -291,7 +320,7 @@ export default {
 
 			if (!this.valiError) {
 				var formData = new FormData(this.$refs.form);
-				formData.append("memberId",this.userDetails.id);
+				formData.append("memberId", this.userDetails.id);
 
 				var requestOptions = {
 					method: 'POST',

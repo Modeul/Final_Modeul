@@ -104,7 +104,32 @@ export default {
 				this.valiError = "날짜를 입력하세요.";
 				this.openModal = true;
 				return;
-			} else if (!this.stuff.content) {
+			} else if (this.stuff.url) {
+				this.stuff.url = this.stuff.url.toLowerCase();
+				console.log("소문자 변환");
+				if (this.stuff.url.startsWith('h')) {
+					let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 주소를 입력하세요.";
+						this.openModal = true;
+						console.log("h 필터");
+						return;
+					}
+				} else if (this.stuff.url.startsWith('w')) {
+					let regex = /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 주소를 입력하세요.";
+						this.openModal = true;
+						console.log("w 필터");
+						return;
+					}
+				} else {
+					console.log("나머지");
+					this.valiError = "올바른 형식의 주소를 입력하세요.";
+					this.openModal = true;
+					return;
+				}
+			}else if (!this.stuff.content) {
 				this.valiError = "내용을 입력하세요.";
 				this.openModal = true;
 				return;
