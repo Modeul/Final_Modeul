@@ -641,20 +641,6 @@ export default {
 			this.calcSwitch = false;
 			this.price = {};
 		},
-		calculate() {
-			var requestOptions = {
-				method: 'PUT',
-				redirect: 'follow',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(this.price)
-			};
-
-			fetch(`${this.defaultStore.host}/api/calc/${this.$route.params.stuffId}`, requestOptions)
-				.then(result => {
-					console.log(result);
-				})
-				.catch(error => console.log('error', error))
-		},
 		dnoneHandler() {
 			console.log("bank:" + this.selectBank);
 			console.log("accountNumber: " + this.accountNumber);
@@ -750,7 +736,7 @@ export default {
 			console.log("Have dutchList:" + this.dutchList);
 			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
 			
-			if (this.dutchInfo.stuffId == this.$route.params.id) {	// 2
+			if (this.dutchInfo.stuffId == this.$route.params.stuffId) {	
 				this.isAccount = false;
 				this.isCalcResult = true;
 				this.checkDutchComplete = true;

@@ -17,6 +17,12 @@
 .select-box-list {
   margin-top: 80px;
 }
+.input-address{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+}
 
 .categ-eff {
   background-color: #f0f2f3;

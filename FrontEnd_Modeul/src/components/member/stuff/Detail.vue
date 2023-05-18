@@ -394,14 +394,18 @@ export default {
 				this.isDutchComplete = false;
 		},
 		urlHandler(url) {
-			const httpPattern = /^http(s):\/\//;
-			const wwwPattern = /^www\./;
-			let output = false;
-			if (wwwPattern.test(url))
-				output = 'http://' + url;
-			else if (httpPattern.test(url))
-				output = url;
-			return output;
+			// const httpPattern = /^http(s):\/\//;
+			// const wwwPattern = /^www\./;
+			if(url.startsWith('w')){
+				url = 'https://' + url;
+			}
+			// let output = false;
+			// if (wwwPattern.test(url))
+				// output = 'http://' + url;
+			// else if (httpPattern.test(url))
+			// 	output = url;
+			// return output;
+			return url;
 		}
 	},
 	computed: {
@@ -558,7 +562,8 @@ export default {
 						</div>
 						<div class="detail-in">
 							<div class="detail-info-title">링크</div>
-							<div v-if="urlHandler(stuff.url)" class="detail-info-txt"><div><a class="detail-info-txt-a" :href="urlHandler(stuff.url)" target="_blank">{{ stuff.url }}</a></div></div>
+							<div v-if="stuff.url" class="detail-info-txt"><a class="detail-info-txt-a" :href="urlHandler(stuff.url)" target="_blank">{{ stuff.url }}</a></div>
+							<!-- <div v-if="stuff.url" class="detail-info-txt"><a class="detail-info-txt-a" :href="stuff.url" target="_blank">{{stuff.url}}</a></div> -->
 							<div v-else class="detail-info-txt"> 게시된 링크가 없습니다. </div>
 						</div>
 
