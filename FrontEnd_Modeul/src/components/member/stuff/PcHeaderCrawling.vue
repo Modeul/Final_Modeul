@@ -3,7 +3,7 @@ import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
-	props: ["dongName"],
+	// props: ["dongName"],
 	data() {
 		return {
 			userDetails: useUserDetailsStore(),
@@ -13,6 +13,12 @@ export default {
 		};
 	},
 	methods: {
+		handleChange(e) {
+  		  const selectedOption = e.target.value;
+    		if (selectedOption === "main") {
+      		this.$router.push("/member/stuff/list"); // "/list"는 실제 경로에 맞게 수정해야 합니다.
+    		}
+  		},
 		queryHandler(e) {
 			this.$emit('queryEmit', e.target.value);
 		}
@@ -40,30 +46,26 @@ export default {
 				<router-link to="/member/stuff/list"></router-link>
 			</div>
 
-			<div class="filter" v-if="$route.path == '/member/stuff/list'">
+			<div class="filter" v-if="$route.path == '/member/stuff/recommends'">
 				<div class="search-container">
 					<div class="d-fl d-b-none search-form">
-						<div class="gps-box">
-							<div class="icon icon-location"></div>
-							<!-- <select class="selectbox-set" @change="onChange($event)"> -->
-							<select class="selectbox-set" @change="this.$emit('change', $event)">
-								<option value="" default>전체</option>
-								<option value="my">{{ dongName }}</option>
-								<option value="cur">현재위치</option>
+						<div class="icon icon-crawling"></div>
+							<select class="selectbox-set" @change="handleChange, this.$emit('change',$event)">
+								<option value="" default>추천상품</option>
+								<option value="main">메인화면</option>
 							</select>
-						</div>
 						<div class="vertical"></div>
 						<input id="search-bar" class="search-input" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
 						<h1 class="icon search-dodbogi">돋보기</h1>
 					</div>
 				</div>
-			</div>
+			 </div>
 			<div class="btnbox">
-				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
-					<router-link to="/admin/stuff/list"></router-link>
-				</div>
 				<div class="btn-crawling">
 					<router-link to="/member/stuff/recommends"></router-link>
+				</div>
+				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
+					<router-link to="/admin/stuff/list"></router-link>
 				</div>
 				<div class="btn-heart">
 					<router-link to="/member/mypage/favorite"></router-link>
@@ -78,4 +80,9 @@ export default {
 
 <style scoped>
 @import "/css/component/admin/member/list-responsive.css";
+.icon-crawling {
+	width: 24px;
+    height: 24px;
+    margin: 1%;
+}
 </style>

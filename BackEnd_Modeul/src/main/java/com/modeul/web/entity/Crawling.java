@@ -18,7 +18,6 @@ public class Crawling {
 	private String imgurl;
 	private Long categoryId;
 	private String categoryName;
-	private Long memberId;
 	
 	// insert용
 	public Crawling(String title, String price,String contenturl, String imgurl,Long categoryId, String categoryName) {

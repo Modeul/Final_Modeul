@@ -2,7 +2,7 @@
 	<div class="canvas">
 		<section class="favorite">
 			<header class="header">
-				<router-link to="/member/mypage" class="back"></router-link>
+				<div class="back" @click="goback"></div>
 				<div class="title">관심 목록</div>
 			</header>
 
@@ -75,6 +75,9 @@ export default {
 	},
 	computed: {},
 	methods: {
+		goback() {
+			this.$router.go(-1);
+		},
 		toggleModal() {
 			this.openModal = !this.openModal;
 		},

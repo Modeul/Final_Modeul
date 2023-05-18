@@ -24,8 +24,20 @@ export default {
 <template>
 	<v-app>
 		<router-view></router-view>
+		<Transition name="fade">
 		<Loader></Loader>
+	</Transition>
 	</v-app>
 </template>
+
+<style scoped>
+
+.fade-leave-active {
+	transition: opacity 0.4s ease;
+}
+.fade-leave-to {
+	opacity: 0;
+}
+</style>
 
 <!-- $store.commit -->

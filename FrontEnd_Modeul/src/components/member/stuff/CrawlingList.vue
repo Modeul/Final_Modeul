@@ -1,7 +1,7 @@
 <script>
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
-import PcHeader from './PcHeader.vue'
+import PcHeader from './PcHeaderCrawling.vue'
 
 
 
@@ -10,8 +10,16 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
+			// dongCode: '',
+			// serchDong: '',
+			// dongName: '',
+			// myDongCode: '',
+			// myDongName: '',
+			// myCoordX: '',
+			// myCoordY: '',
 			page: '',
 			query:'',
+			searchToggle: false,
 			list: [],
 			category: [],
 			categoryId:'',
@@ -23,14 +31,12 @@ export default {
 	computed: {
 	},
 	methods: {
-		regbuttonHandler(e){
-			console.log(e.target.value);
-
-		},
-		searchInput(e){
+		searchInput(queryEmit){
+			if (!this.searchToggle)
+				if (this.query == queryEmit.trim())
+					return;
+			this.query = queryEmit.trim();
 			this.page = 1;
-			e.preventDefault();
-            this.query = e.target.value;
 			console.log(this.query);
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
@@ -53,6 +59,7 @@ export default {
 					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
+					console.log(this.list);
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -62,8 +69,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = dataList.list;
-					if (this.categoryId == 1 || this.categoryId == 2 || this.categoryId == 3 ||this.categoryId == 4)
 					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
@@ -78,6 +83,11 @@ export default {
 				this.addListHandler();
 			}
 		},
+		scrollHandler(){
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		},
+
+		
 	},
 	mounted() {
 		this.page = 0;
@@ -96,9 +106,27 @@ export default {
 
 <style scoped>
 @import url(/css/component/member/stuff/component-crawlinglist.css);
+@import url(/css/component/admin/member/crawlinglist-responsive.css);
+
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
+.d-fl-al{
+justify-content: end;
+}
+
+
 </style>
 <template>
 	<PcHeader @queryEmit="searchInput"></PcHeader>
+
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
 			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
@@ -106,18 +134,19 @@ export default {
 		</v-carousel>
 	</div>
 
-	<div>
-        <router-link to="/member/stuff/list" class="icon icon-back" @click="goback">뒤로가기</router-link>
-    </div>
-	<section class="canvas p-rel b-rad-2">
-		        <!-- 검색창 들어가는 부분 -->
-        <header class="d-fl-al">
-                <div class="search-container">
-                    <div class="d-fl d-b-none search-form">
-                        <h1 class="icon search-dodbogi m-l-6px">돋보기</h1>
-                        <input id="search-bar" class="search-input m-l-6px" name="q" @keyup.enter="searchInput" placeholder="검색어를 입력해주세요.">
-                    </div>
+	<section class="canvas">
+		<header class="d-fl-al header-jc">
+			<Transition name="fade">
+				<div v-if="searchToggle" class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" name="q" placeholder="검색어를 입력해주세요." v-model="query"
+						@keyup.enter="searchInput(query)">
+					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
+			</Transition>
+			<div>
+				<div v-if="!searchToggle" class="icon icon-search" @click="searchToggle = !searchToggle"></div>
+				<div v-else class="icon icon-search-cancel" @click="searchToggle = !searchToggle"></div>
+			</div>
 		</header>
 
 		<nav>
@@ -142,8 +171,8 @@ export default {
 							<div class="li-categ-place">
 								<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
 							</div>
-							<router-link class="d-gr" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
-								<button class="icon-write" v-on:click="regbuttonHandler" name="id" :value="stuff.id"></button>
+							<router-link class="li-write-icon" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
+								<div class="icon-write" name="id" :value="stuff.id"></div>
 							</router-link>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">
@@ -176,6 +205,7 @@ export default {
 
 		
 	</section>
+<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 
