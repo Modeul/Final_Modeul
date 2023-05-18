@@ -250,6 +250,7 @@
   width: 90%;
   margin-top: 15px;
 }
+
 .top-btn {
   width: 30px;
   height: 30px;
@@ -267,4 +268,10 @@
 .top-btn::before {
   content: "\e5d8";
   font-family: "Material Icons";
+}
+
+@media (min-width: 768px) {
+  .icon.icon-back {
+    display: none;
+  }
 }

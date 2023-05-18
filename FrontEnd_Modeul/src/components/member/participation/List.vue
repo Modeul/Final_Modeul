@@ -61,23 +61,7 @@
 
 			<button class="btn-next more-list" @click="addListHandler"> 더보기+<span> {{ listCount }}</span></button>
 		</main>
-		<nav class="navi-bar d-fl-jf">
-			<div class="navi-icon">
-				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
-			</div>
-			<div class="navi-icon">
-				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
-			</div>
-			<div>
-				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
-			</div>
-			<div class="navi-icon">
-				<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
-			</div>
-			<div class="navi-icon">
-				<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
-			</div>
-		</nav>
+	
 	</section>
 </template>
 
@@ -101,7 +85,7 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			orderField:'participation_date',
+			orderField:'`p`articipation_date',
 			orderDir:'asc',
 			order:false,
 		}
