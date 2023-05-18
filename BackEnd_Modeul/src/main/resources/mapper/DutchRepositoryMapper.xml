@@ -69,8 +69,8 @@
     </insert>
 
     <insert id="insertAccount" parameterType="map">
-      insert into account(bank_name, number, member_id)
-      values (#{bankName}, #{number},#{memberId})
+      insert into account(bank_name, number, member_id, stuff_id)
+      values (#{bankName}, #{number},#{memberId},#{stuffId})
     </insert>
 
     <delete id="deleteDutch">
@@ -84,6 +84,16 @@
       where member_id = #{memberId}
       <if test="month != null">
         and month(date) = ${month}
+      </if>
+    </select>
+
+    <select id="findViewBystuffIdmemberId" resultMap="DutchViewResultMap">
+      select *
+      from dutch_view
+      where stuff_id = #{stuffId}
+      and member_id = #{memberId}
+      <if test="orderField != null and orderDir != null">
+        order by ${orderField} ${orderDir}
       </if>
     </select>
 </mapper>

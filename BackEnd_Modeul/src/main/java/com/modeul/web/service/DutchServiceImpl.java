@@ -79,23 +79,26 @@ public class DutchServiceImpl implements DutchService {
         Account account = new Account();
 
         for (String id : accountInfo.keySet()) {
-        if (id == "bankName") {
-        account.setBankName(accountInfo.get(id));
-        }
+            if (id == "bankName") {
+                account.setBankName(accountInfo.get(id));
+            }
 
-        if (id == "number") {
-        account.setNumber(accountInfo.get(id));
-        }
+            if (id == "number") {
+                account.setNumber(accountInfo.get(id));
+            }
 
-        if (id == "memberId") {
-        account.setMemberId(Long.parseLong(accountInfo.get(id)));
-        }
+            if (id == "memberId") {
+                account.setMemberId(Long.parseLong(accountInfo.get(id)));
+            }
+            if (id == "stuffId") {
+                account.setStuffId((Long.parseLong(accountInfo.get(id))));
+            }
         }
 
         System.out.printf(account.toString());
 
         int insertAccountCount = repository.insertAccount(account.getBankName(),
-        account.getNumber(), account.getMemberId());
+        account.getNumber(), account.getMemberId(), account.getStuffId());
         System.out.println("insertAccountCount:" + insertAccountCount);
     }
 
@@ -106,7 +109,6 @@ public class DutchServiceImpl implements DutchService {
 
     @Override
     public int removeDutch(Long stuffId) {
-
         return repository.deleteDutch(stuffId);
     }
 
@@ -116,5 +118,10 @@ public class DutchServiceImpl implements DutchService {
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
+
+    @Override
+    public DutchView getViewBystuffIdmemberId(Long stuffId, Long memberId) {
+        return repository.findViewBystuffIdmemberId(stuffId, memberId, "date", "desc");
+    }
 
 }

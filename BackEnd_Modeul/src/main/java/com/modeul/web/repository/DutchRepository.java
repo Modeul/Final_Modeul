@@ -26,7 +26,7 @@ public interface DutchRepository {
     int insertDutch(Long stuffId, Long memberId, String price);
     
     /* 계좌 정보만 Account 테이블에 insert */
-    int insertAccount(String bankName, String number, Long memberId);
+    int insertAccount(String bankName, String number, Long memberId, Long stuffId);
 
     /* 정산했는지 체크용 정산 내역 목록 조회 */
     List<DutchView> findViewAllBymemberId(Long memberId, String orderField, String orderDir);
@@ -35,4 +35,6 @@ public interface DutchRepository {
     int deleteDutch(Long stuffId);
 
     Long findCountList(int month, Long memberId);
+
+    DutchView findViewBystuffIdmemberId(Long stuffId, Long memberId, String orderField, String orderDir);
 }

@@ -27,6 +27,12 @@ public class AccountServiceImpl implements AccountService {
 
         return accountRepository.findViewById(memberId, size, offset, null, null );
     }
+
+    @Override
+    public Account getAccountById(Long stuffId) {
+
+        return accountRepository.findAccountById(stuffId);
+    }
    
 
     // @Override

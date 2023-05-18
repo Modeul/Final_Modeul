@@ -12,5 +12,7 @@ public interface AccountService {
 
     // List<Account> getViewById(Long memberId);
     List<Account> getViewById(Long memberIds);
+
+    Account getAccountById(Long stuffId);
     
 }
