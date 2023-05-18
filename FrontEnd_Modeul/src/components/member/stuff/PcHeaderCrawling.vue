@@ -13,8 +13,12 @@ export default {
 		};
 	},
 	methods: {
+		handleSelectChange(e) {
+			this.handleChange(e);
+			this.$emit('change', e);
+		},
 		handleChange(e) {
-  		  const selectedOption = e.target.value;
+  		  let selectedOption = e.target.value;
     		if (selectedOption === "main") {
       		this.$router.push("/member/stuff/list"); // "/list"는 실제 경로에 맞게 수정해야 합니다.
     		}
@@ -50,8 +54,8 @@ export default {
 				<div class="search-container">
 					<div class="d-fl d-b-none search-form">
 						<div class="icon icon-crawling"></div>
-							<select class="selectbox-set" @change="handleChange, this.$emit('change',$event)">
-								<option value="" default>추천상품</option>
+							<select class="selectbox-set" @change="handleSelectChange">
+								<option value="crwaling" default>추천상품</option>
 								<option value="main">메인화면</option>
 							</select>
 						<div class="vertical"></div>
