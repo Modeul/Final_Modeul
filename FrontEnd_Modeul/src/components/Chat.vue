@@ -667,7 +667,7 @@ export default {
 			
 			this.isCalc = false;
 			this.isCalcResult = true;
-			this.getAccount();
+			
 		},
 		selectBankHandler() {
 			console.log("bank" + this.selectBank);
@@ -838,24 +838,26 @@ export default {
 		formatPrice(price){
 			return Number(price).toLocaleString();
 		},
-		getAccount(){
-			var myHeaders = new Headers();
-			myHeaders.append("Content-Type", "application/json");
+		// getAccount(){
+		// 	// var myHeaders = new Headers();
+		// 	// myHeaders.append("Content-Type", "application/json");
 
-			var requestOptions = {
-			method: 'GET',
-			headers: myHeaders,
-			redirect: 'follow'
-			};
-
-			fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`, requestOptions)
-			.then(response => response.text())
-			.then(result => {
-				this.selectBank = result.bankName;
-				this.accountNumber = result.number;
-			})
-			.catch(error => console.log('error', error));
-		}
+		// 	// var requestOptions = {
+		// 	// method: 'GET',
+		// 	// headers: myHeaders,
+		// 	// redirect: 'follow'
+		// 	// };
+		// 	if(this.isCalcResult){
+		// 		fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`, requestOptions)
+		// 		.then(response => response.text())
+		// 		.then(result => {
+		// 			console.log(result);
+		// 			this.selectBank = result.bankName;
+		// 			// this.accountNumber = result.number;
+		// 		})
+		// 		.catch(error => console.log('error', error));
+		// 	}
+		// }
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent()
@@ -902,6 +904,20 @@ export default {
 			.then(response => response.json())
 			.then(result => { this.recentAccountInfo = result; })
 			.catch(error => console.log('error', error));
+
+			
+		if(this.isCalcResult){
+	
+
+			await fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`)
+			.then(response => response.json())
+			.then(result => {
+				console.log(result.bankName);
+				this.selectBank = result.bankName;
+				this.accountNumber = result.number;
+			})
+			.catch(error => console.log('error', error));
+		}
 	},
 	beforeUnmount() {
 		window.removeEventListener('beforeunload', this.unLoadEvent);
@@ -941,7 +957,8 @@ export default {
 		totalPriceAlert: function () {
 			if (this.totalPrice > 999999)
 				return console.log("over");
-		}
+		},
+
 	},
 }
 </script>

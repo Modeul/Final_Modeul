@@ -85,7 +85,7 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			orderField:'`p`articipation_date',
+			orderField:'participation_date',
 			orderDir:'asc',
 			order:false,
 		}
@@ -118,7 +118,7 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&o=${this.orderField}&od=${this.orderDir}`)
+			await fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&of=${this.orderField}&od=${this.orderDir}`)
 				.then(response => response.json())
 				.then(dataList => {
 					console.log(dataList);

@@ -1,4 +1,4 @@
-package com.modeul.web.controller;
+package com.modeul.web.controller.api;
 
 import java.util.List;
 
