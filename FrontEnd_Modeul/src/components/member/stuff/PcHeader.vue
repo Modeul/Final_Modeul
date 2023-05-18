@@ -59,11 +59,11 @@ export default {
 				</div>
 			</div>
 			<div class="btnbox">
-				<div class="btn-crawling">
-					<router-link to="/member/stuff/recommends"></router-link>
-				</div>
 				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
 					<router-link to="/admin/stuff/list"></router-link>
+				</div>
+				<div class="btn-crawling">
+					<router-link to="/member/stuff/recommends"></router-link>
 				</div>
 				<div class="btn-heart">
 					<router-link to="/member/mypage/favorite"></router-link>

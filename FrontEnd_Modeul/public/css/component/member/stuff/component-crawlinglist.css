@@ -235,6 +235,10 @@
 }
 
 @media (min-width: 768px) {
+	.icon.icon-back {
+		display: none;
+	}
+
   .navi-bar {
     display: none;
   }
