@@ -210,7 +210,7 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			if (this.participantInfo.memberId == this.userDetails.id)
+			if (this.participantInfo)
 				this.isCheckParticipation = true;
 			else
 				this.isCheckParticipation = false;
@@ -301,7 +301,6 @@ export default {
 		},
 
 		loadFavoriteInfo() {
-			fetch(error => console.log("errr", error));
 			fetch(`${this.defaultStore.host}/api/favorite/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(data => {
