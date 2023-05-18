@@ -109,7 +109,6 @@ public class DutchServiceImpl implements DutchService {
 
     @Override
     public int removeDutch(Long stuffId) {
-
         return repository.deleteDutch(stuffId);
     }
 
@@ -119,5 +118,10 @@ public class DutchServiceImpl implements DutchService {
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
+
+    @Override
+    public DutchView getViewBystuffIdmemberId(Long stuffId, Long memberId) {
+        return repository.findViewBystuffIdmemberId(stuffId, memberId, "date", "desc");
+    }
 
 }

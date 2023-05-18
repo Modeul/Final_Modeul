@@ -75,5 +75,17 @@ public class DutchController {
         service.addAllDutch(stuffId, dutch);
         return "ok";
     }
+
+    @GetMapping("dutch/check")
+    public Map<String, Object> get(
+           Long stuffId, Long memberId) {
+
+        DutchView dutchInfo = service.getViewBystuffIdmemberId(stuffId, memberId);
+
+        Map<String, Object> dataList = new HashMap<>();
+        dataList.put("dutchInfo", dutchInfo);
+
+        return dataList;
+    }
   
 }

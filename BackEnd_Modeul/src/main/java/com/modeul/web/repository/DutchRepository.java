@@ -35,4 +35,6 @@ public interface DutchRepository {
     int deleteDutch(Long stuffId);
 
     Long findCountList(int month, Long memberId);
+
+    DutchView findViewBystuffIdmemberId(Long stuffId, Long memberId, String orderField, String orderDir);
 }

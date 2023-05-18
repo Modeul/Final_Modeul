@@ -86,4 +86,14 @@
         and month(date) = ${month}
       </if>
     </select>
+
+    <select id="findViewBystuffIdmemberId" resultMap="DutchViewResultMap">
+      select *
+      from dutch_view
+      where stuff_id = #{stuffId}
+      and member_id = #{memberId}
+      <if test="orderField != null and orderDir != null">
+        order by ${orderField} ${orderDir}
+      </if>
+    </select>
 </mapper>

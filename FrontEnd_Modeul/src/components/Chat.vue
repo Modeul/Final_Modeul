@@ -377,6 +377,7 @@ export default {
 			openDutchCheckModal: false,
 			checkDutchComplete: false,
 			stuffLeaderName: '',
+			dutchInfo:'',
 		}
 	},
 
@@ -725,6 +726,15 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
+		loadCheckDutchList() {
+			fetch(`${this.defaultStore.host}/api/dutch/check?stuffId=${this.$route.params.stuffId}&
+			memberId=${this.userDetails.id}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.dutchInfo = dataList.dutchInfo;
+				})
+				.catch(error => console.log('error', error));
+		},
 		sumDutchHandler() {
 			let sum = 0;
 
@@ -739,15 +749,23 @@ export default {
 		checkDutchHave() {
 			console.log("Have dutchList:" + this.dutchList);
 			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
-
-			for (let dL of this.dutchList) {
-				console.log("dL.stuffId:" + dL.stuffId + '\n');
-				if (dL.stuffId == this.$route.params.stuffId) {
-					this.isAccount = false;
-					this.isCalcResult = true;
-					this.checkDutchComplete = true;
-				}
+			
+			if (this.dutchInfo.memberId == this.userDetails.id) {	// 2
+				this.isAccount = false;
+				this.isCalcResult = true;
+				this.checkDutchComplete = true;
 			}
+			// ** 이렇게 하는 이유는 정산이 끝나고도 다른 사람이 들어올 수 있기 때문인데 
+			// 이거 막으면, 가능하다. 
+			// 아닌가? 다른사람이 들어오면 정산이 완료되지 않았다고 뜨는게 맞나?
+			// 그렇다면, 그냥 memberId로만 비교하는게 맞다.
+			// for (let dML of this.dutchMemberList) {
+			// 	if (dML.stuffId == this.$route.params.stuffId) {
+			// 		this.isAccount = false;
+			// 		this.isCalcResult = true;
+			// 		this.checkDutchComplete = true;
+			// 	}
+			// }
 		},
 		removeDutchHandler() {
 			var requestOptions = {
@@ -848,6 +866,7 @@ export default {
 		this.stompConnect();
 		this.connect();
 		this.loadDutchList();
+		this.loadCheckDutchList();
 	},
 	updated() {
 
