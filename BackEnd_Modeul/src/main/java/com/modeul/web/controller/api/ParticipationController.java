@@ -9,20 +9,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.modeul.web.entity.Category;
-import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
-import com.modeul.web.service.DutchService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
 
@@ -119,23 +115,5 @@ public class ParticipationController {
 
         System.out.println(memberInfo);
         return data;
-    }
-
-    @PostMapping("/aa")
-    public String putCalResultMsg(@RequestBody Message message) {
-
-        participationService.saveCalResultMsg(message);
-
-        return "ok";
-    }
-
-    @PutMapping("/calc/{stuffId}")
-    public boolean calculate(
-            @PathVariable("stuffId") Long stuffId,
-            @RequestBody Map<Long, Integer> prices) {
-        System.out.println("stuffId: "+stuffId);
-        System.out.println("prices: "+prices);
-        // participationService.calculatedAmount(stuffId, prices);
-        return true;
     }
 }

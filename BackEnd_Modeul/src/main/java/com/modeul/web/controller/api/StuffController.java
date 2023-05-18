@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Crawling;
-import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.entity.Image;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
