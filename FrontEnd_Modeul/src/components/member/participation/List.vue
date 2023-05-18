@@ -85,7 +85,7 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			orderField:'`p`articipation_date',
+			orderField:'participation_date',
 			orderDir:'asc',
 			order:false,
 		}
