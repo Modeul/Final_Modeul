@@ -9,7 +9,11 @@ export default {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
 			query: '',
-			loginMember: ''
+			loginMember: '',
+			upHere1:false,
+			upHere2:false,
+			upHere3:false,
+			upHere4:false
 		};
 	},
 	methods: {
@@ -18,11 +22,11 @@ export default {
 			this.$emit('change', e);
 		},
 		handleChange(e) {
-  		  let selectedOption = e.target.value;
-    		if (selectedOption === "main") {
-      		this.$router.push("/member/stuff/list"); // "/list"는 실제 경로에 맞게 수정해야 합니다.
-    		}
-  		},
+			let selectedOption = e.target.value;
+			if (selectedOption === "main") {
+				this.$router.push("/member/stuff/list"); // "/list"는 실제 경로에 맞게 수정해야 합니다.
+			}
+		},
 		queryHandler(e) {
 			this.$emit('queryEmit', e.target.value);
 		}
@@ -54,39 +58,112 @@ export default {
 				<div class="search-container">
 					<div class="d-fl d-b-none search-form">
 						<div class="icon icon-crawling"></div>
-							<select class="selectbox-set" @change="handleSelectChange">
-								<option value="crwaling" default>추천상품</option>
-								<option value="main">메인화면</option>
-							</select>
+						<select class="selectbox-set" @change="handleSelectChange">
+							<option value="crwaling" default>추천상품</option>
+							<option value="main">메인화면</option>
+						</select>
 						<div class="vertical"></div>
 						<input id="search-bar" class="search-input" placeholder="검색어를 입력해주세요." @keyup.enter="queryHandler">
 						<h1 class="icon search-dodbogi">돋보기</h1>
 					</div>
 				</div>
-			 </div>
-			<div class="btnbox">
-				<div class="btn-crawling">
-					<router-link to="/member/stuff/recommends"></router-link>
+			</div>
+			<div class="btn-wrap" v-if="userDetails.hasRole('ADMIN')">
+				<div class="btnbox">
+					<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting"
+						to="/admin/stuff/list"></router-link>
+					<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling"
+						to="/member/stuff/recommends"></router-link>
+					<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart"
+						to="/member/mypage/favorite"></router-link>
+					<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage"
+						to="/member/mypage"></router-link>
 				</div>
-				<div class="btn-setting" v-if="userDetails.hasRole('ADMIN')">
-					<router-link to="/admin/stuff/list"></router-link>
+				<div class="set-txt" v-show="upHere1">
+					<img src="/images/member/setting.svg" alt="">
 				</div>
-				<div class="btn-heart">
-					<router-link to="/member/mypage/favorite"></router-link>
+				<div class="crawling-txt" v-show="upHere2">
+					<img src="/images/member/crawling.svg" alt="">
 				</div>
-				<div class="btn-mypage">
-					<router-link to="/member/mypage"></router-link>
+				<div class="heart-txt" v-show="upHere3">
+					<img src="/images/member/heart.svg" alt="">
+				</div>
+				<div class="mypage-txt" v-show="upHere4">
+					<img src="/images/member/mypage.svg" alt="">
 				</div>
 			</div>
+			<div class="btn-wrap" v-else>
+				<div class="btnbox">
+					<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting d-none"
+						to="/admin/stuff/list"></router-link>
+					<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling"
+						to="/member/stuff/recommends"></router-link>
+					<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart"
+						to="/member/mypage/favorite"></router-link>
+					<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage"
+						to="/member/mypage"></router-link>
+				</div>
+				<div>
+					<div class="set-txt" v-show="upHere1">
+						<img src="/images/member/setting.svg" alt="">
+					</div>
+					<div class="crawling-txt2" v-show="upHere2">
+						<img src="/images/member/crawling.svg" alt="">
+					</div>
+					<div class="heart-txt2" v-show="upHere3">
+						<img src="/images/member/heart.svg" alt="">
+					</div>
+					<div class="mypage-txt" v-show="upHere4">
+						<img src="/images/member/mypage.svg" alt="">
+					</div>
+				</div>
+			</div>
+
 		</div>
 	</div>
 </template>
 
 <style scoped>
 @import "/css/component/admin/member/list-responsive.css";
+
 .icon-crawling {
 	width: 24px;
-    height: 24px;
-    margin: 1%;
+	height: 24px;
+	margin: 1%;
+}
+.btn-wrap{
+	position: relative;
+	top: 0;
+	right:0;
+}
+.btn-txt-box{
+	display: flex;
+	position: absolute;
+	width: 100%;
+    height: 100%;
+}
+.set-txt{
+	position: absolute;
+	left:-13.57%;
+}
+.crawling-txt{
+	position: absolute;
+	left:12%;
+}
+.heart-txt{
+	position: absolute;
+	left:39%;
+}
+.mypage-txt{
+	position: absolute;
+	right:-14%;
+}
+.crawling-txt2{
+	position: absolute;
+	left:-13%;
+}
+.heart-txt2{
+	position: absolute;
+	left:26%;
 }
 </style>
