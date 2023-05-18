@@ -5,11 +5,19 @@
   
 <mapper namespace="com.modeul.web.repository.AccountRepository">
 
-  <resultMap id="accountViewResultMap" type="Account">
+  <resultMap id="accountResultMap" type="Account">
 		<result property="bankName" column="bank_name" />
 		<result property="regDate" column="reg_date" />
 		<result property="memberId" column="member_id" />
     <result property="stuffId" column="stuff_id" />
+	</resultMap>
+
+  <resultMap id="accountViewResultMap" type="AccountView">
+		<result property="bankName" column="bank_name" />
+		<result property="regDate" column="reg_date" />
+		<result property="memberId" column="member_id" />
+    <result property="stuffId" column="stuff_id" />
+    <result property="memberName" column="member_name" />
 	</resultMap>
 
 
@@ -21,17 +29,18 @@
 
   <select id="findAccountById" resultMap="accountViewResultMap">
     select *
-    from account 
+    from account_view
     where stuff_id = #{stuffId}
+    order by reg_date desc
+    limit 1
   </select>
 
   <!-- 최근 계좌 정보 get -->
-  <select id="findViewById" resultMap="accountViewResultMap">
+  <select id="findViewById" resultMap="accountResultMap">
     select *
     from account
     where member_id = #{memberId}
     order by reg_date desc
     limit ${size} offset ${offset}
-  
   </select>
 </mapper>

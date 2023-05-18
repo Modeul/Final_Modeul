@@ -6,7 +6,6 @@ import { useRoute } from 'vue-router';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 
-
 // Vue3 Composition API으로 작성해보기**
 
 const route = useRoute();
@@ -22,11 +21,9 @@ let userDetails = useUserDetailsStore();
 let defaultStore = useDefaultStore();
 let copyModal = ref(false);
 let listCount = ref();
-let isCalcResult = ref(false);
 let selectBank = ref();
 let accountNumber = ref();
-
-console.log(stuffId.value);
+let stuffLeaderName = ref();
 
 let model = reactive({
 	list: [],
@@ -34,8 +31,6 @@ let model = reactive({
 	memberList: [],
 });
 
-console.log("page:" + page.value);
-console.log("memberId:" + memberId.value);
 
 async function addListHandler() {
 	page.value++;
@@ -83,8 +78,11 @@ async function showAccount() {
 
 	let response = await fetch(`${defaultStore.host}/api/account/${stuffId.value}`);
 	response = await response.json();
-	selectBank = response.bankName;
-	accountNumber = response.number;
+	selectBank = ref(response.bankName + " ");
+	accountNumber = ref(response.number);
+	stuffLeaderName = ref(response.memberName);
+	console.log(selectBank.value);
+	console.log(accountNumber.value);
 }
 
 function formatDateList(list) {
@@ -151,15 +149,14 @@ function showCalcResultHandler(d) {
 	
 	stuffId = ref(d.stuffId);
 	console.log("stuffId :" + stuffId.value);
-	
 	calDrawer.value = !calDrawer.value;
-	this.isCalcResult = true;
+	
 	loadDutchMemberList();
 	showAccount();
 }
 
 function copyHandler() {
-	navigator.clipboard.writeText("dd")
+	navigator.clipboard.writeText(selectBank.value + accountNumber.value)
 		.then(() => {
 			copyModal.value = false;
 
@@ -236,7 +233,7 @@ onMounted(() => {
 		<!-- ** 정산 결과 모달 ** -->
 		<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
-			<section class="calc-result-default" :class="{ 'd-none': !isCalcResult }">
+			<section class="calc-result-default">
 				<h1 class="d-none">calculate</h1>
 
 				<section class="cal-result-main">
@@ -301,69 +298,6 @@ onMounted(() => {
 				</section>
 			</section>
 		</v-navigation-drawer>
-		<!-- <v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px; " v-model="calDrawer" location="bottom"
-			temporary>
-			<section class="calc-result-default">
-				<h1 class="d-none">calculate</h1>
-
-				<section class="cal-result-main">
-
-
-					<header class="cal-result-header">
-						<h1 class="d-none">title</h1>
-						<div class="cal-result-title">정산결과</div>
-					</header>
-
-					<main class="cal-result-user-list" style="overflow: hidden;">
-						<h1 class="d-none">main</h1>
-						<div class="cal-user" v-for="m in model.memberList">
-							<div class="cal-user-img">
-								<img :src="'/images/member/' + m.memberImage" alt="사용자1">
-							</div>
-							<div class="cal-user-name">
-								{{ m.memberNickname }}
-							</div>
-							<div class="cal-user-self-result">
-								{{ formatPrice(m.price) }}원
-							</div>
-						</div>
-					</main>
-
-					<section class="cal-result-sum">
-						<h1 class="d-none">sum</h1>
-						<div>
-							합계
-						</div>
-						<div>
-							{{ formatPrice(sumDutch) }}원
-						</div>
-					</section>
-
-					<section class="cal-result-account-form">
-						<h1 class="d-none">account</h1>
-
-						<div class="cal-result-account-all">
-							<a class="icon-bank-security">은행명</a>
-							<div class="cal-leader-account">
-								하나 32589046473333
-							</div>
-							<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
-						</div>
-
-						<div class="cal-leader-name">
-							한땡땡
-						</div>
-
-					</section>
-
-					<section class="cal-result-check-form">
-						<h1 class="d-none">check</h1>
-						<button class="cal-result-check-btn" @click="calDrawer = !calDrawer">확인</button>
-					</section>
-
-				</section>
-			</section>
-		</v-navigation-drawer> -->
 	</div>
 
 	<div v-if="copyModal" class="error-box ani">
@@ -382,15 +316,6 @@ onMounted(() => {
 	margin: 0 auto;
 	min-width: 360px
 }
-
-/* .dutch {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 360px;
-	height: 740px;
-	margin: auto;
-} */
 
 .dutch .header {
 	display: flex;

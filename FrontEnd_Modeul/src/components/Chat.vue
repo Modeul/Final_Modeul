@@ -280,8 +280,8 @@
 					<div class="cal-result-account-all">
 						<a class="icon-bank-security"></a>
 						<div class="cal-leader-account">
-							<span>{{ this.selectBank }} </span>
-							<span>{{ this.accountNumber }}</span>
+							<span>{{ selectBank }} </span>
+							<span>{{ accountNumber }}</span>
 						</div>
 						<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 					</div>
@@ -813,26 +813,16 @@ export default {
 		formatPrice(price){
 			return Number(price).toLocaleString();
 		},
-		// getAccount(){
-		// 	// var myHeaders = new Headers();
-		// 	// myHeaders.append("Content-Type", "application/json");
-
-		// 	// var requestOptions = {
-		// 	// method: 'GET',
-		// 	// headers: myHeaders,
-		// 	// redirect: 'follow'
-		// 	// };
-		// 	if(this.isCalcResult){
-		// 		fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`, requestOptions)
-		// 		.then(response => response.text())
-		// 		.then(result => {
-		// 			console.log(result);
-		// 			this.selectBank = result.bankName;
-		// 			// this.accountNumber = result.number;
-		// 		})
-		// 		.catch(error => console.log('error', error));
-		// 	}
-		// }
+		async loadRecentAcount(){
+			// 최근 계좌 목록
+			await fetch(`${this.defaultStore.host}/api/account/recent/${this.userDetails.id}`)
+			.then(response => response.json())
+			.then(result => { 
+				this.recentAccountInfo = result; 
+				console.log(this.recentAccountInfo);
+			})
+			.catch(error => console.log('error', error));
+		},
 	},
 	beforeRouteLeave() {
 		this.unLoadEvent()
@@ -844,6 +834,7 @@ export default {
 		this.connect();
 		this.loadDutchList();
 		this.loadCheckDutchList();
+		this.loadRecentAcount();	
 	},
 	updated() {
 
@@ -873,23 +864,15 @@ export default {
 
 		this.checkStuffLeader();
 		this.checkDutchHave();
-
-		// 최근 계좌 목록
-		await fetch(`${this.defaultStore.host}/api/account/recent/${this.userDetails.id}`)
-			.then(response => response.json())
-			.then(result => { this.recentAccountInfo = result; })
-			.catch(error => console.log('error', error));
-
 			
 		if(this.isCalcResult){
-	
-
 			await fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`)
 			.then(response => response.json())
 			.then(result => {
 				console.log(result.bankName);
-				this.selectBank = result.bankName;
+				this.selectBank = result.bankName + " ";
 				this.accountNumber = result.number;
+				this.stuffLeaderName = result.memberName;
 			})
 			.catch(error => console.log('error', error));
 		}
