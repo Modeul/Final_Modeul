@@ -29,7 +29,7 @@
 					<div class="d-gr li-gr m-t-13px list-cl">
 
 						<div class="li-pic b-rad-1">
-							<img v-if="p.imageName != null" class="listview-image" :src="'/images/member/stuff/' + p.imageName"
+							<img v-if="p.imageName != null" class="listview-image" :src="formatImgUrl(p.imageName)"
 								alt="img">
 							<img v-else-if="p.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
 								alt="img">
@@ -85,14 +85,23 @@ export default {
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			orderField:'`p`articipation_date',
-			orderDir:'asc',
+			orderField:'participation_date',
+			orderDir:'desc',
 			order:false,
+			listCount: '',
 		}
 	},
 	methods: {
 		goback() {
 			this.$router.go(-1);
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		},
 		orderHandler(e) {
 			this.page = 1;
@@ -118,7 +127,7 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&o=${this.orderField}&od=${this.orderDir}`)
+			await fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&of=${this.orderField}&od=${this.orderDir}`)
 				.then(response => response.json())
 				.then(dataList => {
 					console.log(dataList);

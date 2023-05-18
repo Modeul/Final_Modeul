@@ -11,7 +11,7 @@
 					<div class="d-gr li-gr m-t-13px list-cl">
 						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 						<div class="li-pic b-rad-1">
-							<img v-if="f.imageName != null" class="listview-image" :src="'/images/member/stuff/' + f.imageName" alt="img">
+							<img v-if="f.imageName != null" class="listview-image" :src="formatImgUrl(f.imageName)" alt="img">
 							<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
 								alt="img">
 							<img v-else-if="f.categoryId == '2'" class="listview-image" src="/public/images/member/stuff/category2.svg"
@@ -192,6 +192,14 @@ export default {
 				resultList.push(item);
 			}
 			return resultList;
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		},
 	},
 	mounted() {
