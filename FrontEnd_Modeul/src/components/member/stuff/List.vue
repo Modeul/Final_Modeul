@@ -131,7 +131,14 @@ export default {
 			}
 			return resultList;
 		},
-
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
+		},
 		onChange(v) {
 			this.page = 1;
 			if (v.target.value === 'cur') {
@@ -145,10 +152,7 @@ export default {
 				this.dongName = '';
 				this.addListHandler(this.serchDong);
 			}
-
-
 		},
-
 		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
@@ -210,7 +214,6 @@ export default {
 		scrollHandler(){
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
-
 	},
 	mounted() {
 		this.target = document.querySelector('.top-btn');
@@ -331,7 +334,7 @@ export default {
 							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
 								<img v-if="stuff.imageName != null" class="listview-image"
-									:src="'/images/member/stuff/' + stuff.imageName" alt="img">
+									:src="formatImgUrl(stuff.imageName)" alt="img">
 								<img v-else-if="stuff.categoryId == '1'" class="listview-image"
 									src="/images/member/stuff/category1.svg" alt="img">
 								<img v-else-if="stuff.categoryId == '2'" class="listview-image"

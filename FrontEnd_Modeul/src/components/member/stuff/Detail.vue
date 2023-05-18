@@ -73,6 +73,14 @@ export default {
 		imageZoomOutHandler() {
 			console.log("zoom-out");
 		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
+		},
 		formatDateStuff() {
 			const deadlineObj = dayjs(this.stuff.deadline).locale('ko');
 			this.stuff.deadline = deadlineObj.format("M월 D일 (dd) HH시까지");
@@ -496,7 +504,7 @@ export default {
 
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList" :src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="formatImgUrl(img.name)"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>

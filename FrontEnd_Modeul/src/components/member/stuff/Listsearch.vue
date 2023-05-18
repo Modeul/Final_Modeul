@@ -100,6 +100,14 @@ export default {
 				resultList.push(item);
 			}
 			return resultList;
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		}
 	},
 	mounted() {
@@ -145,7 +153,7 @@ export default {
 				<router-link :to="'./' + stuff.id">
 					<div class="d-gr li-gr m-t-13px list-cl">
 						<div class="li-pic b-rad-1">
-							<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName"
+							<img v-if="stuff.imageName != null" class="listview-image" :src="formatImgUrl(stuff.imageName)"
 								alt="img">
 							<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
 								alt="img">
