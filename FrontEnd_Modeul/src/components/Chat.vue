@@ -750,22 +750,11 @@ export default {
 			console.log("Have dutchList:" + this.dutchList);
 			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
 			
-			if (this.dutchInfo.memberId == this.userDetails.id) {	// 2
+			if (this.dutchInfo.stuffId == this.$route.params.id) {	// 2
 				this.isAccount = false;
 				this.isCalcResult = true;
 				this.checkDutchComplete = true;
 			}
-			// ** 이렇게 하는 이유는 정산이 끝나고도 다른 사람이 들어올 수 있기 때문인데 
-			// 이거 막으면, 가능하다. 
-			// 아닌가? 다른사람이 들어오면 정산이 완료되지 않았다고 뜨는게 맞나?
-			// 그렇다면, 그냥 memberId로만 비교하는게 맞다.
-			// for (let dML of this.dutchMemberList) {
-			// 	if (dML.stuffId == this.$route.params.stuffId) {
-			// 		this.isAccount = false;
-			// 		this.isCalcResult = true;
-			// 		this.checkDutchComplete = true;
-			// 	}
-			// }
 		},
 		removeDutchHandler() {
 			var requestOptions = {

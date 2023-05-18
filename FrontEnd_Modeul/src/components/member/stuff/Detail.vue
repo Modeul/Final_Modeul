@@ -43,6 +43,7 @@ export default {
 			favorOpenModal: false,
 			stuffUser: false,
 			isCheckNumPeople: true,
+			isDutchComplete: ''
 		};
 	},
 	components: {
@@ -209,7 +210,7 @@ export default {
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			if (this.participantInfo.memberId == this.userDetails.id)
+			if (this.participantInfo)
 				this.isCheckParticipation = true;
 			else
 				this.isCheckParticipation = false;
@@ -300,7 +301,6 @@ export default {
 		},
 
 		loadFavoriteInfo() {
-			fetch(error => console.log("errr", error));
 			fetch(`${this.defaultStore.host}/api/favorite/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(data => {
@@ -384,6 +384,15 @@ export default {
 				this.isCheckNumPeople = false;
 			}
 		},
+		async checkDutchComplete() {
+			const response = await fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.id}`)
+			const dataList = await response.json();
+			console.log(dataList.list.length);
+			if(dataList.list.length > 0)
+				this.isDutchComplete = true;
+			else
+				this.isDutchComplete = false;
+		},
 		urlHandler(url) {
 			const httpPattern = /^http(s):\/\//;
 			const wwwPattern = /^www\./;
@@ -428,6 +437,7 @@ export default {
 		this.checkStuffLeader();
 		this.checkFavoriteList();
 		this.checkStuffUser();
+		this.checkDutchComplete()
 	},
 };
 </script>
@@ -596,15 +606,15 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button class="detail-join-button" v-if="!isCheckParticipation && isCheckNumPeople" @click="participationHandler">
+					<button class="detail-join-button" v-if="!isCheckParticipation && isCheckNumPeople && !isDutchComplete" @click="participationHandler">
 						참여하기
 					</button>
-					<button class="detail-join-end-button" v-else-if="!isCheckParticipation && !isCheckNumPeople" @click="">
+					<button class="detail-join-end-button" v-else-if="!isCheckParticipation && (!isCheckNumPeople || isDutchComplete)" @click="">
 						참여마감
 					</button>
 					<div class="join-button-wrap" v-else-if="isCheckParticipation">
 						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
-						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
+						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority && !isDutchComplete">
 							참여취소
 						</button>
 					</div>
