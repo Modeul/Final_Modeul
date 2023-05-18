@@ -270,7 +270,15 @@ export default {
 				this.showMap = !this.showMap;
 			}
 
-		}
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
+		},
 	},
 	mounted() {
 		this.numPeoplePlusHandler();
@@ -325,7 +333,7 @@ export default {
 						<label for="file">
 							<div class="btn-file">{{ imageList.length }}/6</div>
 							<div class="btn-uploaded-files" v-for="img in imageList">
-								<img class="uploaded-files" :src="changed ? img : '/images/member/stuff/' + img.name">
+								<img class="uploaded-files" :src="changed ? img : formatImgUrl(img.name)">
 							</div>
 						</label>
 						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"

@@ -29,7 +29,7 @@
 					<div class="d-gr li-gr m-t-13px list-cl">
 
 						<div class="li-pic b-rad-1">
-							<img v-if="p.imageName != null" class="listview-image" :src="'/images/member/stuff/' + p.imageName"
+							<img v-if="p.imageName != null" class="listview-image" :src="formatImgUrl(p.imageName)"
 								alt="img">
 							<img v-else-if="p.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
 								alt="img">
@@ -86,13 +86,22 @@ export default {
 			stuffCount: '',
 			memberCount: '',
 			orderField:'participation_date',
-			orderDir:'asc',
+			orderDir:'desc',
 			order:false,
+			listCount: '',
 		}
 	},
 	methods: {
 		goback() {
 			this.$router.go(-1);
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		},
 		orderHandler(e) {
 			this.page = 1;
