@@ -1,7 +1,7 @@
 <script>
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
-import PcHeader from './PcHeader.vue'
+import PcHeader from './PcHeaderCrawling.vue'
 
 
 
@@ -10,6 +10,13 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
+			// dongCode: '',
+			// serchDong: '',
+			// dongName: '',
+			// myDongCode: '',
+			// myDongName: '',
+			// myCoordX: '',
+			// myCoordY: '',
 			page: '',
 			query:'',
 			searchToggle: false,
@@ -24,10 +31,6 @@ export default {
 	computed: {
 	},
 	methods: {
-		regbuttonHandler(e){
-			console.log(e.target.value);
-
-		},
 		searchInput(queryEmit){
 			if (!this.searchToggle)
 				if (this.query == queryEmit.trim())
@@ -83,6 +86,8 @@ export default {
 		scrollHandler(){
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
+
+		
 	},
 	mounted() {
 		this.page = 0;
@@ -101,7 +106,7 @@ export default {
 
 <style scoped>
 @import url(/css/component/member/stuff/component-crawlinglist.css);
-@import url(/css/component/admin/member/list-responsive.css);
+@import url(/css/component/admin/member/crawlinglist-responsive.css);
 
 
 .fade-enter-active,
@@ -113,9 +118,15 @@ export default {
 .fade-leave-to {
 	opacity: 0;
 }
+.d-fl-al{
+justify-content: end;
+}
+
+
 </style>
 <template>
 	<PcHeader @queryEmit="searchInput"></PcHeader>
+
 	<div class="pc-carousel">
 		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
 			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
@@ -160,8 +171,8 @@ export default {
 							<div class="li-categ-place">
 								<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
 							</div>
-							<router-link class="d-gr" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
-								<button class="icon-write" v-on:click="regbuttonHandler" name="id" :value="stuff.id"></button>
+							<router-link class="li-write-icon" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
+								<div class="icon-write" name="id" :value="stuff.id"></div>
 							</router-link>
 							<div class="li-subj">{{ stuff.title }}</div>
 							<div class="li-member">

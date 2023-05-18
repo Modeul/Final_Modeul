@@ -72,14 +72,9 @@
 }
 
 /* 320 * aa  */
-.li-gr {
-  grid-template-columns: 60px 8px minmax(174px, auto) 8px 70px;
-  grid-template-rows: 36px 12px 12px;
-  grid-template-areas:
-    "pic . subj . icon"
-    "pic . . . ."
-    "pic . ct mem mem";
-  align-items: center;
+
+.li-write-icon {
+  grid-area: icon;
 }
 
 .li-pic {
@@ -238,8 +233,7 @@
   width: 64px;
   height: 24px;
   box-shadow: 0 25px 40px -20px #3c4a56;
-  z-index: 3;
-  left: 222px;
+  left: 10px;
 }
 .d-fl-al {
   justify-content: center;
