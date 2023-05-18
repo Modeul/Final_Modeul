@@ -614,7 +614,7 @@ export default {
 					</button>
 					<div class="join-button-wrap" v-else-if="isCheckParticipation">
 						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
-						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority || isDutchComplete">
+						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority && !isDutchComplete">
 							참여취소
 						</button>
 					</div>
