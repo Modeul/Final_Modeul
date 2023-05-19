@@ -24,7 +24,7 @@
                         <div class="error-font">{{ this.nameError }}</div>
                     </div>
 
-                    <div @input="checkNicknameDupl" class="input-field-2">
+                    <div @change="checkNicknameDupl" class="input-field-2">
                         <label for="name" class="name-label signup-label">
                             <span class="d-none">nickname</span>
                             <input type="text" id="nickname" name="nickname" class="input-text-2" placeholder="닉네임을 입력해주세요."
