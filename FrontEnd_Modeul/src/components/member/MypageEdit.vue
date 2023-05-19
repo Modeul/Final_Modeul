@@ -36,38 +36,33 @@
 			</form>
 		</div>
 		<div class="mypage-input">
-			<div class="input-field disable">
+			<div class="input-field">
 				<div class="uid-icon"></div>
 				<span class="text">{{ loginInfo.uid }}</span>
 			</div>
-			<div class="input-field disable">
+			<div class="input-field">
 				<div class="email-icon"></div>
 				<span class="text">{{ loginInfo.email }}</span>
 			</div>
 			<div>
-				<div class="input-field">
+				<div v-if="!this.nicknamebtn" class="input-field">
 					<div class="nickname-icon"></div>
-					<input class="text" type="text" v-model.trim="nickname" v-on:change="checkNicknameChange" />
+					<div class="text" type="text">
+						{{ loginInfo.nickname }}
+						<input @click.prevent="active" class="btn-change" id="btn-auth" type="button" value="변경" />
+					</div>
+				</div>
+				<div v-if="this.nicknamebtn" class="input-field">
+					<div class="nickname-icon"></div>
+					<input class="text" type="text" v-model="loginInfo.nickname" />
 					<input @click.prevent="checkNicknameDupl" class="btn-change" id="btn-auth" type="button" value="확인" />
 				</div>
 				<span class="error-txt">{{ this.ErrorMsg }}</span>
 			</div>
-
-			<div @click.prevent="postCode" class="input-field addr" style="height: 42px;">
-				<div class="address-icon"></div>
-				<input type="text" id="address" class="input-addr" v-model="addr" hidden />
-				<div class="input-text-2" v-text="addr"></div>
-			</div>
-			<div class="input-field">
-				<div class="address-icon"></div>
-				<input type="text" class="input-addr2" v-model="addr2" placeholder="상세 주소" />
-			</div>
-
-			<div @click.prevent="submit" class="btn-save">
-				저장하기
-			</div>
 		</div>
-
+		<div v-if="this.nicknamebtn" @click.prevent="submit" class="btn-save">
+			저장하기
+		</div>
 	</div>
 </template>
 <script>
@@ -81,117 +76,78 @@ export default {
 			defaultStore: useDefaultStore(),
 			// myMemberId: "110",
 			ErrorMsg: "",
-			nickname: "",
 			nicknameDupl: "",
-			nicknamebtn: true,
+			nicknamebtn: false,
 			loginInfo: "",
 			file: [],
 			openModal: false,
 			openModal2: false,
-			addr: '',
-			addr2: '',
-			fullAddr: '',
-			coordX: '',
-			coordY: '',
-			checkNull1: false,
-			checkNull2: false,
-			checkNull3: false,
 		};
 	},
 	methods: {
-		async submit() {
+		submit() {
 			this.ErrorMsg = "";
-			if (!this.nicknamebtn) {
-				this.ErrorMsg = "닉네임 중복 확인을 해주세요.";
+			if (!this.loginInfo.nickname) {
+				this.ErrorMsg = "닉네임은 필수 입력사항입니다.";
+				this.nicknamebtn = false;
+			} else if (!this.nicknameDupl) {
+				this.ErrorMsg = "중복된 닉네임입니다.";
+			} else if (this.loginInfo.nickname.length < 2 || this.loginInfo.nickname.length > 20) {
+				this.ErrorMsg = "닉네임을 2글자 이상 입력해주세요.";
 			}
-
 			if (this.ErrorMsg) {
 				console.log("에러메시지 존재");
 				return false;
 			}
 			if (!this.ErrorMsg) {
 
-				this.checkNull();
+				var myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
 
-				if (!this.checkNull1 || !this.checkNull2) {
-					console.log("처리");
+				var raw = JSON.stringify({
+					"id": this.loginInfo.id,
+					"nickname": this.loginInfo.nickname
+				});
 
-					let myHeaders = new Headers();
-					myHeaders.append("Content-Type", "application/json");
+				var requestOptions = {
+					method: 'PUT',
+					headers: myHeaders,
+					body: raw,
+					redirect: 'follow'
+				};
 
-					let raw = JSON.stringify({
-						"id": this.loginInfo.id,
-						"nickname": this.nickname,
-						"address": this.fullAddr,
-						"coordX": this.coordX,
-						"coordY": this.coordY
-					});
-
-					let requestOptions = {
-						method: 'PUT',
-						headers: myHeaders,
-						body: raw,
-						redirect: 'follow'
-					};
-
-					fetch(`${this.defaultStore.host}/api/member/update`, requestOptions)
-						.then(response => response.text())
-						.then(result => console.log(result))
-						.catch(error => console.log('error', error));
-					// this.$router.replace('/member/mypage');
-				}
+				fetch(`${this.defaultStore.host}/api/member/update`, requestOptions)
+					.then(response => response.text())
+					.then(result => console.log(result))
+					.catch(error => console.log('error', error));
+				// this.$router.replace('/member/mypage');
 				this.openModal2 = true;
 			}
 		},
-		checkNull() {
-			this.checkNull1 =false;
-			this.checkNull2 =false;
-			if (this.nickname == this.loginInfo.nickname || this.nickname == "") {
-				this.checkNull1 = true;
-			}
-			this.fullAddr = this.addr + ',' + this.addr2;
-			if (this.fullAddr == this.loginInfo.address || this.fullAddr == "") {
-				this.checkNull2 = true;
-			}
+		active() {
+			this.nicknamebtn = !this.nicknamebtn;
 		},
-		// active() {
-		// 	this.nicknamebtn = !this.nicknamebtn;
-		// },
 		// 닉네임 중복 검사
-
-		checkNicknameChange() {
-			this.ErrorMsg = "";
-			if (this.nickname !== "" && this.nickname !== this.loginInfo.nickname) {
-				this.nicknamebtn = false;
-			} else {
-				this.nicknamebtn = true;
-			}
-		},
 		checkNicknameDupl() {
-
 			this.nicknameDupl = "";
 			this.ErrorMsg = "";
-			this.nicknamebtn = true;
-			if (this.nickname != "" && this.nickname != this.loginInfo.nickname) {
-				fetch(
-					`${this.defaultStore.host}/api/signup/checkNickname?nickname=${this.nickname}`
-				)
-					.then((response) => response.text())
-					.then((result) => {
-						console.log(result);
-						if (result == "false") this.nicknameDupl = false;
-						else this.nicknameDupl = true;
+			fetch(
+				`${this.defaultStore.host}/api/signup/checkNickname?nickname=${this.loginInfo.nickname}`
+			)
+				.then((response) => response.text())
+				.then((result) => {
+					console.log(result);
+					if (result == "false") this.nicknameDupl = false;
+					else this.nicknameDupl = true;
 
-						if (!this.nicknameDupl) {
-							this.nicknamebtn = false;
-							this.ErrorMsg = "중복된 닉네임 입니다.";
-						} else {
-							this.nicknamebtn = true;
-						}
-					})
-					.catch((error) => console.log("error", error));
-			}
-
+					if (!this.nicknameDupl) {
+						this.nicknamebtn = false;
+						this.ErrorMsg = "중복된 닉네임 입니다.";
+					} else {
+						this.nicknamebtn = true;
+					}
+				})
+				.catch((error) => console.log("error", error));
 		},
 		async uploadImg(e) {
 			this.file = e.target.files;
@@ -226,32 +182,8 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					this.loginInfo = data;
-					this.nickname = this.loginInfo.nickname;
-					[this.addr, this.addr2] = data.address.split(',');
 					console.log(data);
 				})
-		},
-		postCode() {
-			const geocoder = new daum.maps.services.Geocoder();
-			new daum.Postcode({
-				oncomplete: (data) => {
-
-					this.addr = data.address;
-					// this.dongCode = data.bcode;
-					geocoder.addressSearch(data.address, (results, status) => {
-
-						if (status === daum.maps.services.Status.OK) {
-
-							let result = results[0];
-							this.coordX = result.x;
-							this.coordY = result.y;
-							// this.addrError = false;
-							document.querySelector(".input-addr2").focus();
-						}
-					});
-
-				}
-			}).open();
 		}
 	},
 	mounted() {
@@ -262,9 +194,6 @@ export default {
 
 </script>
 <style>
-.input-field.addr{
-	cursor:pointer;
-}
 .mypage {
 	display: flex;
 	flex-direction: column;
@@ -342,7 +271,7 @@ export default {
 	margin-top: 52px;
 
 	width: 312px;
-	height: auto;
+	height: 225px;
 }
 
 .mypage-input .input-field {
@@ -362,10 +291,6 @@ export default {
 	height: 45px;
 	border: 1px solid #7299be;
 	border-radius: 10px;
-}
-
-.disable {
-	background-color: rgba(221, 221, 221, 0.993);
 }
 
 .mypage-input .uid-icon {
@@ -401,14 +326,6 @@ export default {
 	background-image: url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Crect width='25' height='25' fill='url(%23pattern0)'/%3E%3Cdefs%3E%3Cpattern id='pattern0' patternContentUnits='objectBoundingBox' width='1' height='1'%3E%3Cuse xlink:href='%23image0_126_665' transform='scale(0.0208333)'/%3E%3C/pattern%3E%3Cimage id='image0_126_665' width='48' height='48' xlink:href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAiZJREFUaEPtmY0xBEEQhd9FgAgQASJABkRABogAESADIiADZCADRIAIqK9qV82N2Z3ZuZ49WzVddXV7d/PTr1//zdxME5fZxPVXBbBsBq0ZWJV0LulYEs+ufEp6kHQmiWcTsQZwL+kgotmTpH0T7SXTGMDiH4mKrVmxYMnAnqTHBsCzJD67guV3my9ggM8LSwXgmLAykONP1YWqC+X4jTOny4WopqeBapq6XSyNpq7TjqNyX0u69CeGAFw07cDQTdzx1gDatQGAfr8SAkA19fuYoWBKAXiTtBkD8J3gYiFAJVuJTp1CDOQCAJTbLnSxFmInxvBoAGCBYKMjXfG0+mraaZLD0HZ6NAAxS+b+XgHkWs5qXmWgz5IE7FYTmHcJAcp5+ShCjX/kLMYAGeXKUeZF0k5EuZRK76f3YgBeJW14CseOizDAq0/842gxAORzP98fNvneKoBZpxgAitaJo+m7pO2EOBgKrhgAFMGnoZxGi2fe+wSXW4+Mod1wpSiAodb8V0HMPQ8u07bfZCGs19frLB0ACnNiw226zg3cgd50XF7hQn7m8ln0L73MXAiFSZ2pBx4OH7GYSHFBMwBUXS5wU+XPETB1YqkgTilC7t63kngtKmYMLKpI7vwKINdyVvMqA1aWzF1nEAOhDjN3Y+t5NItzRbDU1aK14u16SVeLDKZfIefHusZSivrrYnnqydy9KIMs/+AYC8zcPhXAUszubDp5Bn4AITeSMeOKBiYAAAAASUVORK5CYII='/%3E%3C/defs%3E%3C/svg%3E%0A");
 }
 
-.address-icon::before {
-	content: "\e88a";
-	font-family: 'Material Icons';
-	font-size: 25px;
-	/* margin-right: 8px; */
-	margin-left: 12px;
-}
-
 .mypage-input .input-field .text {
 	display: inline-block;
 	font-size: 14px;
@@ -427,7 +344,6 @@ export default {
 	text-align: center;
 	cursor: pointer;
 	transition: 0.3s;
-	margin-top: 40px;
 }
 
 .btn-save:hover {
@@ -460,8 +376,6 @@ export default {
 	font-size: 12px;
 	color: red;
 	margin-left: 8px;
-	position: absolute;
-	/* padding: 1px auto; */
 }
 
 .black-bg {
