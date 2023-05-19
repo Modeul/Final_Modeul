@@ -85,12 +85,12 @@
 		uid = #{uid}
 	</select>
 
-	<select id="getEmailByName" resultType="String">
-		select email
+	<select id="getNameByEmail" resultType="String">
+		select name
 		from
 		member
 		where
-		name = #{name}
+		email = #{email}
 	</select>
 
 	<update id="update" parameterType="Member">

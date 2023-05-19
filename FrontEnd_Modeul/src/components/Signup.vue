@@ -367,7 +367,7 @@ export default {
 				// this.emailcodeError = "인증번호 확인 완료";
 			} else {
 				this.emailConfirmChk = false;
-				this.emailcodeError = "인증번호가 잘못되었습니다";
+				this.emailcodeError = "인증번호가 잘못되었습니다.";
 			}
 		},
 
@@ -377,8 +377,8 @@ export default {
 			this.uidDupl = ""; // true/false
 			this.uidbtn = "";
 
-			// 비밀번호는 영문자와 숫자를 반드시 포함해야 합니다.
-			const hasLetter = /[a-zA-Z]/.test(this.member.uid);
+			
+			const hasLetter = /^[a-zA-Z0-9]*$/g.test(this.member.uid);
 			if (!hasLetter) {
 				this.uidbtn = false;
 				this.uidError = "한글은 입력할 수 없습니다.";
