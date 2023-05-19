@@ -99,6 +99,12 @@
 			<if test="name != null">
 				name = #{name},
 			</if>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
 			<if
 				test="email != null">
 				email = #{email},
