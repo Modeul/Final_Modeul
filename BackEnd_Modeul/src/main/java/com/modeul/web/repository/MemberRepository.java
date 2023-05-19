@@ -37,7 +37,7 @@ public interface MemberRepository {
 
 	void updateImg(MemberImage memberImage);
 
-	String getEmailByName(Member member);
+	String getNameByEmail(Member member);
 
 	String getUid(String name,String email);
 

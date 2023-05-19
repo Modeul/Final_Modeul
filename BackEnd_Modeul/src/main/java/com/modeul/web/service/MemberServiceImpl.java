@@ -48,7 +48,11 @@ public class MemberServiceImpl implements MemberService {
 			return "해당 아이디가 없습니다.";
 		}
 		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			System.out.println("login");
+			System.out.println(member.getPwd());
+			System.out.println(loginMember.getPwd());
 			return "비밀번호가 일치하지 않습니다.";
+
 		}
 		return null;
 	}
@@ -60,6 +64,9 @@ public class MemberServiceImpl implements MemberService {
 			return false;
 		}
 		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			System.out.println("isValid");
+			System.out.println(member.getPwd());
+			System.out.println(loginMember.getPwd());
 			return false;
 		}
 		return true;
@@ -179,8 +186,8 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Boolean checkEmailByName(Member member) {
-		String UserEmail = repository.getEmailByName(member);
-		Boolean result = UserEmail.equals(member.getEmail());
+		String UserName = repository.getNameByEmail(member);
+		Boolean result = UserName.equals(member.getName());
 
 		return result;
 	}

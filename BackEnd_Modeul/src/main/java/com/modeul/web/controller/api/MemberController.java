@@ -41,6 +41,8 @@ public class MemberController {
 
 	@PostMapping("login")
 	public ResponseEntity<Map<String, Object>> login(@RequestBody Member member) {
+		System.out.println("run login");
+		System.out.println(member);
 		Map<String, Object> dto = new HashMap<>();
         dto.put("loginMember", null);
 
@@ -87,7 +89,8 @@ public class MemberController {
 
 	@PutMapping("updatePwd")
 	public int editMemberPwd(@RequestBody Member member){
-
+		System.out.println("run updatePwd");
+		System.out.println(member);
 		return memberService.changePwdByUid(member);
 	}
 
