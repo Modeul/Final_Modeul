@@ -28,7 +28,6 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList;
-					console.log(dataList);
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
@@ -43,9 +42,7 @@ export default {
 			// this.$router.push("/member/stuff/list");
 			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
-			console.log("삭제완료");
 			this.openModal3 = false;
 			this.addListHandler();
 			this.openModal2 = true;
@@ -59,9 +56,7 @@ export default {
 			// this.$router.push("/member/stuff/list");
 			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
-			console.log("삭제완료");
 			this.openModal = false;
 			this.addListHandler();
 			this.openModal2 = true;

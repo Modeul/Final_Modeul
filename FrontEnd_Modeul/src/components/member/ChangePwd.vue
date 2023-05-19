@@ -91,7 +91,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/member/checkpwd`, requestOptions)
 				.then(response => response.json())
 				.then((result) => {
-					console.log(result);
 					if (result) {
 						this.pwdbtn = true;
 						this.pwdError = ""
@@ -175,7 +174,6 @@ export default {
 
 				fetch(`${this.defaultStore.host}/api/member/update`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
 				this.$router.push('/member/mypage');
 
@@ -187,7 +185,6 @@ export default {
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
-				console.log(this.loginInfo);
 			})
 	}
 }

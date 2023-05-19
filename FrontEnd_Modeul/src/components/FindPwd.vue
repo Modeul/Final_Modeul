@@ -99,7 +99,6 @@ export default {
 
 			fetch("http://localhost:8080/api/member/updatePwd", requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
 		},
 		//임시 비밀번호 발송
@@ -117,7 +116,6 @@ export default {
 				.then(response => response.text())
 				.then((result) => {
 					this.tempPwd = result;
-					console.log("tempPwd : " + result);
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -137,7 +135,6 @@ export default {
 				.then((response) => response.text())
 				.then((code) => {
 					this.emailcode = code;
-					console.log("emailcode : " + this.emailcode);
 				})
 				.catch((error) => console.log("error", error));
 

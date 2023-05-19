@@ -10,10 +10,10 @@ export default {
 			defaultStore: useDefaultStore(),
 			query: '',
 			loginMember: '',
-			upHere1:false,
-			upHere2:false,
-			upHere3:false,
-			upHere4:false
+			upHere1: false,
+			upHere2: false,
+			upHere3: false,
+			upHere4: false
 		};
 	},
 	methods: {
@@ -62,87 +62,102 @@ export default {
 					</div>
 				</div>
 			</div>
-			<div class="btn-wrap" v-if="userDetails.hasRole('ADMIN')" >
+			<div class="btn-wrap" v-if="userDetails.hasRole('ADMIN')">
 				<div class="btnbox">
-					<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting" to="/admin/stuff/list"></router-link>
-					<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling" to="/member/stuff/recommends"></router-link>
-					<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart" to="/member/mypage/favorite"></router-link>
-					<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage" to="/member/mypage"></router-link>
+					<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting"
+						to="/admin/stuff/list"></router-link>
+					<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling"
+						to="/member/stuff/recommends"></router-link>
+					<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart"
+						to="/member/mypage/favorite"></router-link>
+					<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage"
+						to="/member/mypage"></router-link>
 				</div>
+				<div class="set-txt" v-show="upHere1">
+					<img src="/images/member/setting.svg" alt="">
+				</div>
+				<div class="crawling-txt" v-show="upHere2">
+					<img src="/images/member/crawling.svg" alt="">
+				</div>
+				<div class="heart-txt" v-show="upHere3">
+					<img src="/images/member/heart.svg" alt="">
+				</div>
+				<div class="mypage-txt" v-show="upHere4">
+					<img src="/images/member/mypage.svg" alt="">
+				</div>
+			</div>
+			<div class="btn-wrap" v-else>
+				<div class="btnbox">
+					<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting d-none"
+						to="/admin/stuff/list"></router-link>
+					<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling"
+						to="/member/stuff/recommends"></router-link>
+					<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart"
+						to="/member/mypage/favorite"></router-link>
+					<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage"
+						to="/member/mypage"></router-link>
+				</div>
+				<div>
 					<div class="set-txt" v-show="upHere1">
 						<img src="/images/member/setting.svg" alt="">
 					</div>
-					<div class="crawling-txt" v-show="upHere2">
+					<div class="crawling-txt2" v-show="upHere2">
 						<img src="/images/member/crawling.svg" alt="">
 					</div>
-					<div class="heart-txt" v-show="upHere3">
+					<div class="heart-txt2" v-show="upHere3">
 						<img src="/images/member/heart.svg" alt="">
 					</div>
 					<div class="mypage-txt" v-show="upHere4">
 						<img src="/images/member/mypage.svg" alt="">
 					</div>
 				</div>
-				<div class="btn-wrap" v-else >
-					<div class="btnbox">
-						<router-link @mouseover="upHere1 = true" @mouseleave="upHere1 = false" class="btn-setting d-none" to="/admin/stuff/list"></router-link>
-						<router-link @mouseover="upHere2 = true" @mouseleave="upHere2 = false" class="btn-crawling" to="/member/stuff/recommends"></router-link>
-						<router-link @mouseover="upHere3 = true" @mouseleave="upHere3 = false" class="btn-heart" to="/member/mypage/favorite"></router-link>
-						<router-link @mouseover="upHere4 = true" @mouseleave="upHere4 = false" class="btn-mypage" to="/member/mypage"></router-link>
-					</div>
-					<div>
-						<div class="set-txt" v-show="upHere1">
-							<img src="/images/member/setting.svg" alt="">
-						</div>
-						<div class="crawling-txt2" v-show="upHere2">
-							<img src="/images/member/crawling.svg" alt="">
-						</div>
-						<div class="heart-txt2" v-show="upHere3">
-							<img src="/images/member/heart.svg" alt="">
-						</div>
-						<div class="mypage-txt" v-show="upHere4">
-							<img src="/images/member/mypage.svg" alt="">
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
+	</div>
 </template>
 
 <style scoped>
 @import "/css/component/admin/member/list-responsive.css";
-.btn-wrap{
+
+.btn-wrap {
 	position: relative;
 	top: 0;
-	right:0;
+	right: 0;
 }
-.btn-txt-box{
+
+.btn-txt-box {
 	display: flex;
 	position: absolute;
 	width: 100%;
-    height: 100%;
+	height: 100%;
 }
-.set-txt{
+
+.set-txt {
 	position: absolute;
-	left:-13.57%;
+	left: -13.57%;
 }
-.crawling-txt{
+
+.crawling-txt {
 	position: absolute;
-	left:12%;
+	left: 12%;
 }
-.heart-txt{
+
+.heart-txt {
 	position: absolute;
-	left:39%;
+	left: 39%;
 }
-.mypage-txt{
+
+.mypage-txt {
 	position: absolute;
-	right:-14%;
+	right: -14%;
 }
-.crawling-txt2{
+
+.crawling-txt2 {
 	position: absolute;
-	left:-13%;
+	left: -13%;
 }
-.heart-txt2{
+
+.heart-txt2 {
 	position: absolute;
-	left:26%;
-}
-</style>
+	left: 26%;
+}</style>

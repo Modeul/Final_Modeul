@@ -156,7 +156,7 @@ export default {
 		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-			console.log("x"+x);
+
 			if (x == null) {
 				const watchID = navigator.geolocation.getCurrentPosition((position) => {
 					let lat = position.coords.latitude;
@@ -173,7 +173,6 @@ export default {
 
 						this.dongCode = result[0].code;
 						this.serchDong = this.dongCode;
-						console.log(this.dongCode);
 						this.addListHandler(this.serchDong);
 					}
 				});
@@ -192,7 +191,6 @@ export default {
 					if (status === kakao.maps.services.Status.OK) {
 
 						this.myDongCode = result[0].code;
-						console.log(this.myDongCode);
 
 					}
 				});
@@ -223,7 +221,6 @@ export default {
 		this.addListHandler('');
 		this.scrollCheck();
 		this.getMemberCoordInfo();
-		console.log("마운트 " + this.myCoordX);
 
 		document.addEventListener("scroll", (e) => {
 

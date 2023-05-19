@@ -37,13 +37,12 @@ export default {
 					return;
 			this.query = queryEmit.trim();
 			this.page = 1;
-			console.log(this.query);
+
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.list;
 					this.listCount = dataList.listCount;
-					console.log(this.list)
 				}).catch(error => console.log('error', error));
         },
 		goback() {
@@ -52,14 +51,14 @@ export default {
 		categoryHandler(e){
 			this.page=1;
 			this.categoryId = e.target.value;
-			console.log(this.categoryId);
+
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = dataList.list;
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
-					console.log(this.list);
+
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -73,7 +72,7 @@ export default {
 					this.listCount = dataList.listCount;
 					this.category = dataList.category;
 					this.defaultStore.loadingStatus = false;
-					console.log(this.list);
+
 				})
 				.catch(error => console.log('error', error));
 				

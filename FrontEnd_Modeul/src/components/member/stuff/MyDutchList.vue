@@ -6,7 +6,6 @@ import { useRoute } from 'vue-router';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 
-
 // Vue3 Composition API으로 작성해보기**
 
 const route = useRoute();
@@ -22,8 +21,9 @@ let userDetails = useUserDetailsStore();
 let defaultStore = useDefaultStore();
 let copyModal = ref(false);
 let listCount = ref();
-
-console.log(stuffId.value);
+let selectBank = ref();
+let accountNumber = ref();
+let stuffLeaderName = ref();
 
 let model = reactive({
 	list: [],
@@ -31,8 +31,6 @@ let model = reactive({
 	memberList: [],
 });
 
-console.log("page:" + page.value);
-console.log("memberId:" + memberId.value);
 
 async function addListHandler() {
 	page.value++;
@@ -48,7 +46,6 @@ async function addListHandler() {
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
 	listCount = ref(dataList.listCount);
-	console.log("model.months:" + model.months);
 }
 
 async function selectMonthList() {
@@ -65,7 +62,6 @@ async function selectMonthList() {
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
 	listCount = ref(dataList.listCount);
-	console.log("model.months:" + model.months);
 }
 
 async function loadDutchMemberList() {
@@ -73,9 +69,16 @@ async function loadDutchMemberList() {
 	const dataList = await response.json();
 	model.memberList = dataList.list;
 	sumDutchHandler();
-	console.log(model.memberList);
 }
 
+async function showAccount() {
+
+	let response = await fetch(`${defaultStore.host}/api/account/${stuffId.value}`);
+	response = await response.json();
+	selectBank = ref(response.bankName + " ");
+	accountNumber = ref(response.number);
+	stuffLeaderName = ref(response.memberName);
+}
 
 function formatDateList(list) {
 	if (list == null)
@@ -124,29 +127,27 @@ async function sumDutchHandler() {
 	let sum = 0;
 
 	for (let m of model.memberList) {
-		console.log("price:" + m.price + '\n');
 		sum += parseInt(m.price);
 	}
 	sumDutch = ref(sum);
-	console.log(sumDutch.value);
 	return sumDutch.value;
 }
 
 function selectMonthHandler() {
-	console.log(month.value);
 	selectMonthList();
 }
 
 function showCalcResultHandler(d) {
+	
 	stuffId = ref(d.stuffId);
-	console.log("stuffId :" + stuffId.value);
-
-	loadDutchMemberList();
 	calDrawer.value = !calDrawer.value;
+	
+	loadDutchMemberList();
+	showAccount();
 }
 
 function copyHandler() {
-	navigator.clipboard.writeText("dd")
+	navigator.clipboard.writeText(selectBank.value + accountNumber.value)
 		.then(() => {
 			copyModal.value = false;
 
@@ -221,8 +222,8 @@ onMounted(() => {
 		</div>
 		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 		<!-- ** 정산 결과 모달 ** -->
-		<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px; " v-model="calDrawer" location="bottom"
-			temporary>
+		<v-navigation-drawer style="height: 630px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+		temporary>
 			<section class="calc-result-default">
 				<h1 class="d-none">calculate</h1>
 
@@ -232,11 +233,14 @@ onMounted(() => {
 					<header class="cal-result-header">
 						<h1 class="d-none">title</h1>
 						<div class="cal-result-title">정산결과</div>
+						<div class="cal-result-del"><span @click="openDeleteModalHandler"
+								v-if="this.banishAuthority">삭제하기</span></div>
 					</header>
 
-					<main class="cal-result-user-list" style="overflow: hidden;">
+					<main class="cal-result-user-list">
 						<h1 class="d-none">main</h1>
-						<div class="cal-user" v-for="m in model.memberList">
+						<!-- <div class="cal-user" v-for="m in dutchMemberList"> -->
+							<div class="cal-user" v-for="m in model.memberList">
 							<div class="cal-user-img">
 								<img :src="'/images/member/' + m.memberImage" alt="사용자1">
 							</div>
@@ -263,15 +267,16 @@ onMounted(() => {
 						<h1 class="d-none">account</h1>
 
 						<div class="cal-result-account-all">
-							<a class="icon-bank-security">은행명</a>
+							<a class="icon-bank-security"></a>
 							<div class="cal-leader-account">
-								하나 32589046473333
+								<span>{{ selectBank }} </span>
+								<span>{{ accountNumber }}</span>
 							</div>
 							<a class="icon-account-paste" @click.prevent="copyHandler">복사하기</a>
 						</div>
 
 						<div class="cal-leader-name">
-							한땡땡
+							{{ stuffLeaderName }}
 						</div>
 
 					</section>
@@ -302,15 +307,6 @@ onMounted(() => {
 	margin: 0 auto;
 	min-width: 360px
 }
-
-/* .dutch {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 360px;
-	height: 740px;
-	margin: auto;
-} */
 
 .dutch .header {
 	display: flex;

@@ -238,10 +238,9 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					this.crawlingData = data;
-					console.log(this.crawlingData) // Proxy객체로 반환됨.
+					// this.crawlingData Proxy객체로 반환됨.
 					// Proxy를 Object로 변환
       				// this.crawlingData = JSON.parse(JSON.stringify(this.crawlingData));
-					console.log(this.crawlingData.crawlingData.title);
 					this.stuff.title = this.crawlingData.crawlingData.title || '';
 					this.stuff.price = this.crawlingData.crawlingData.price.replace(/,/g, '') || '';
 					this.stuff.url = this.crawlingData.crawlingData.contenturl || '';
@@ -327,11 +326,10 @@ export default {
 
 				await fetch(`${this.defaultStore.host}/api/stuff/crawlingupload`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
+					.then(result => result)
 					.catch(error => console.log('error', error));
 
 				this.$router.replace('/member/stuff/list')
-				console.log(this.stuff.imageList.name);
 			}
 		},
 
@@ -378,7 +376,6 @@ export default {
 
 					this.stuff.place = data.address;
 					this.stuff.dongCode = data.bcode;
-					console.log(this.stuff.place);
 
 					geocoder.addressSearch(data.address, (results, status) => {
 
@@ -387,7 +384,6 @@ export default {
 							let result = results[0];
 							this.stuff.coordX = result.x;
 							this.stuff.coordY = result.y;
-							console.log(this.stuff.coordX);
 							this.showMap = true;
 							this.mapStatus = true;
 							this.mapNav = true;

@@ -54,7 +54,6 @@ export default {
 			fetch(`${this.defaultStore.host}/api/stuff/categories`, requestOptions)
 				.then(response => response.json())
 				.then(categoryList => {
-					console.log(categoryList);
 					this.categoryList = categoryList;
 				})
 				.catch(error => console.log('error', error));
@@ -72,7 +71,7 @@ export default {
 				this.openModal = true;
 				return;
 			} else if (!this.isValidTitle(this.stuff.title)) {
-				this.valiError = "제목을 20자 이하로 입력해주세요.";
+				this.valiError = "제목을 40자 이하로 입력해주세요.";
 				this.openModal = true;
 				return;
 			}
@@ -106,13 +105,13 @@ export default {
 				return;
 			} else if (this.stuff.url) {
 				this.stuff.url = this.stuff.url.toLowerCase();
-				console.log("소문자 변환");
+				// "소문자 변환"
 				if (this.stuff.url.startsWith('h')) {
 					let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
 					if (!regex.test(this.stuff.url)) {
 						this.valiError = "올바른 형식의 주소를 입력하세요.";
 						this.openModal = true;
-						console.log("h 필터");
+						// "h 필터"
 						return;
 					}
 				} else if (this.stuff.url.startsWith('w')) {
@@ -120,11 +119,11 @@ export default {
 					if (!regex.test(this.stuff.url)) {
 						this.valiError = "올바른 형식의 주소를 입력하세요.";
 						this.openModal = true;
-						console.log("w 필터");
+						// "w 필터"
 						return;
 					}
 				} else {
-					console.log("나머지");
+					// "나머지"
 					this.valiError = "올바른 형식의 주소를 입력하세요.";
 					this.openModal = true;
 					return;
@@ -187,17 +186,13 @@ export default {
 					this.stuff = stuffView.stuff;
 					this.category = stuffView.category;
 					this.imageList = stuffView.imageList;
-					// console.log(this.stuffView.stuff)
-					console.log(this.stuffView);
-					console.log(this.stuff);
-					console.log(this.category);
 				})
 				.catch(error => console.log('error', error));
 		},
 
 		// 제목 체크
 		isValidTitle() {
-			if (this.stuff.title.length > 20) {
+			if (this.stuff.title.length > 40) {
 				return false;
 			}
 			return true;
@@ -244,7 +239,6 @@ export default {
 							let result = results[0];
 							this.stuff.coordX = result.x;
 							this.stuff.coordY = result.y;
-							console.log(this.stuff.coordX);
 							this.showMap = true;
 							this.mapStatus = true;
 							document.querySelector("#content").focus();
@@ -276,7 +270,6 @@ export default {
 		},
 
 		toggleMap() {
-			console.log(this.stuff.croodX);
 			let map = document.querySelector("#map");
 			if (this.showMap) {
 				map.style.height = '300px';
@@ -311,11 +304,9 @@ export default {
 
 		this.loadCategory();
 		this.load();
-
-		// console.log(this.stuff);
 	},
 	updated() {
-		//console.log(this.categoryList.id);
+
 	}
 }
 </script>

@@ -57,7 +57,7 @@
 						<div class="error-font">{{ this.nameError }}</div>
 					</div>
 
-					<div @input="checkNicknameDupl" class="input-field-2">
+					<div @change="checkNicknameDupl" class="input-field-2">
 						<label for="name" class="name-label signup-label">
 							<span class="d-none">nickname</span>
 							<input type="text" id="nickname" name="nickname" class="input-text-2" placeholder="닉네임을 입력해주세요."
@@ -125,7 +125,7 @@
 
 				<div v-if="openModal2" class="black-bg">
                     <div class="findpwd-modal-box">
-                        <div class="modal-txt">가입 완료</div>
+                        <div class="modal-txt">가입 완료되었습니다!</div>
                         <button @click.prevent="move" class="modal-btn">확인</button>
                     </div>
                 </div>
@@ -256,9 +256,7 @@ export default {
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
-				console.log(this.member);
 				this.member.address = this.member.address + ',' + this.addr2;
-				console.log(this.member.address);
 				var raw = JSON.stringify(this.member);
 
 				var requestOptions = {
@@ -271,7 +269,6 @@ export default {
 					.then((response) => response.text())
 					.then((result) => console.log(result))
 					.catch((error) => console.log("error", error));
-				console.log("%가입완료");
 				this.toggleModal2();
 			}
 		},
@@ -380,6 +377,24 @@ export default {
 			this.uidDupl = ""; // true/false
 			this.uidbtn = "";
 
+			// 비밀번호는 영문자와 숫자를 반드시 포함해야 합니다.
+			const hasLetter = /[a-zA-Z]/.test(this.member.uid);
+			if (!hasLetter) {
+				this.uidbtn = false;
+				this.uidError = "한글은 입력할 수 없습니다.";
+				return false;
+			}
+			if (this.member.uid.length < 6) {
+				this.uidbtn = false;
+				this.uidError = "6자 이상 입력해주세요.";
+				return false;
+			}
+			if (this.member.uid.length > 16) {
+				this.uidbtn = false;
+				this.uidError = "16자 이하 입력해주세요.";
+				return false;
+			}
+
 			await fetch(
 				`${this.defaultStore.host}/api/signup/checkUid?uid=${this.member.uid}`
 			)
@@ -480,7 +495,6 @@ export default {
 							let result = results[0];
 							this.member.coordX = result.x;
 							this.member.coordY = result.y;
-							console.log(this.member.coordX);
 							this.addrError = false;
 							document.querySelector("#addr2").focus();
 						}

@@ -24,7 +24,7 @@
                         <div class="error-font">{{ this.nameError }}</div>
                     </div>
 
-                    <div @input="checkNicknameDupl" class="input-field-2">
+                    <div @change="checkNicknameDupl" class="input-field-2">
                         <label for="name" class="name-label signup-label">
                             <span class="d-none">nickname</span>
                             <input type="text" id="nickname" name="nickname" class="input-text-2" placeholder="닉네임을 입력해주세요."
@@ -167,7 +167,6 @@ export default {
 
                 fetch(`${this.defaultStore.host}/api/signup/google`, requestOptions)
                     .then(response => response.json())
-                    .then(result => console.log(result))
                     .catch(error => console.log('error', error));
                 this.toggleModal2();
             }
@@ -243,7 +242,6 @@ export default {
                             let result = results[0];
                             this.member.coordX = result.x;
                             this.member.coordY = result.y;
-                            console.log(this.member.coordX);
                             this.addrError = false;
                             document.querySelector("#addr2").focus();
                         }
