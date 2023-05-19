@@ -145,7 +145,7 @@
 	</div>
 
 	<!-- ** 정산 입력 폼 모달 ** -->
-	<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+	<v-navigation-drawer style="height: 630px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 
 		<form class="calc" :class="{ 'd-none': !isAccount }" @submit.prevent="dnoneHandler">
