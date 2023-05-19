@@ -71,7 +71,7 @@ export default {
 				this.openModal = true;
 				return;
 			} else if (!this.isValidTitle(this.stuff.title)) {
-				this.valiError = "제목을 20자 이하로 입력해주세요.";
+				this.valiError = "제목을 40자 이하로 입력해주세요.";
 				this.openModal = true;
 				return;
 			}
@@ -192,7 +192,7 @@ export default {
 
 		// 제목 체크
 		isValidTitle() {
-			if (this.stuff.title.length > 20) {
+			if (this.stuff.title.length > 40) {
 				return false;
 			}
 			return true;
