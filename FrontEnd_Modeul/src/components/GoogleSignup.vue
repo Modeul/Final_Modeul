@@ -167,7 +167,6 @@ export default {
 
                 fetch(`${this.defaultStore.host}/api/signup/google`, requestOptions)
                     .then(response => response.json())
-                    .then(result => console.log(result))
                     .catch(error => console.log('error', error));
                 this.toggleModal2();
             }
@@ -243,7 +242,6 @@ export default {
                             let result = results[0];
                             this.member.coordX = result.x;
                             this.member.coordY = result.y;
-                            console.log(this.member.coordX);
                             this.addrError = false;
                             document.querySelector("#addr2").focus();
                         }

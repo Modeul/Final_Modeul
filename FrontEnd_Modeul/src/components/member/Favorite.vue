@@ -82,9 +82,6 @@ export default {
 			this.openModal = !this.openModal;
 		},
 		toggleFavorite(stuffId) {
-			// this.isfavorite[StuffId] = !this.isfavorite[StuffId];
-			// console.log(`StuffId:${StuffId}`)
-			// console.log(this.isfavorite[StuffId])
 			if (this.isfavorite[stuffId]) {
 				// 등록되지 않은 경우, 등록 요청 수행
 				var myHeaders = new Headers();
@@ -104,10 +101,7 @@ export default {
 				fetch(`${this.defaultStore.host}/api/favorite`, requestOptions)
 					.then(response => response.text())
 					.then(result => {
-						console.log("post");
 						this.isfavorite[stuffId] = !this.isfavorite[stuffId];
-						console.log("p.stuffId:" + stuffId);
-						console.log("p.memberId:" + this.memberId);
 
 					})
 					.catch(error => console.log('error', error));
@@ -132,9 +126,6 @@ export default {
 						response.text();
 					})
 					.then(result => {
-						console.log("delete");
-						console.log("d.stuffId:" + stuffId);
-						console.log("d.memberId:" + this.memberId);
 						this.isfavorite[stuffId] = !this.isfavorite[stuffId];
 					})
 					.catch(error => console.log('error', error));

@@ -43,7 +43,6 @@ export default {
 			let start = (this.page - 1) * this.pageSize;
 			let end = start + this.pageSize;
 			this.pageList = this.list.slice(start, end);
-			console.log(this.pageList);
 		},
 		nextPage() {
 			this.page += 1;

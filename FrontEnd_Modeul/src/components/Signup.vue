@@ -256,9 +256,7 @@ export default {
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
-				console.log(this.member);
 				this.member.address = this.member.address + ',' + this.addr2;
-				console.log(this.member.address);
 				var raw = JSON.stringify(this.member);
 
 				var requestOptions = {
@@ -271,7 +269,6 @@ export default {
 					.then((response) => response.text())
 					.then((result) => console.log(result))
 					.catch((error) => console.log("error", error));
-				console.log("%가입완료");
 				this.toggleModal2();
 			}
 		},
@@ -480,7 +477,6 @@ export default {
 							let result = results[0];
 							this.member.coordX = result.x;
 							this.member.coordY = result.y;
-							console.log(this.member.coordX);
 							this.addrError = false;
 							document.querySelector("#addr2").focus();
 						}
