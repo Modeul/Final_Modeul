@@ -114,8 +114,6 @@ export default {
 				this.checkNull();
 
 				if (!this.checkNull1 || !this.checkNull2) {
-					console.log("처리");
-
 					let myHeaders = new Headers();
 					myHeaders.append("Content-Type", "application/json");
 
@@ -136,7 +134,7 @@ export default {
 
 					fetch(`${this.defaultStore.host}/api/member/update`, requestOptions)
 						.then(response => response.text())
-						.then(result => console.log(result))
+						.then(result => result)
 						.catch(error => console.log('error', error));
 					// this.$router.replace('/member/mypage');
 				}
@@ -178,7 +176,6 @@ export default {
 				)
 					.then((response) => response.text())
 					.then((result) => {
-						console.log(result);
 						if (result == "false") this.nicknameDupl = false;
 						else this.nicknameDupl = true;
 
@@ -195,7 +192,7 @@ export default {
 		},
 		async uploadImg(e) {
 			this.file = e.target.files;
-			console.log(e.target.files);
+
 			this.loginInfo.image = this.file[0].name;
 
 			var formData = new FormData(this.$refs.form);
@@ -209,7 +206,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/member/updateImage`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result)
 					this.load()
 				})
 				.catch(error => console.log('error', error));
@@ -228,7 +224,6 @@ export default {
 					this.loginInfo = data;
 					this.nickname = this.loginInfo.nickname;
 					[this.addr, this.addr2] = data.address.split(',');
-					console.log(data);
 				})
 		},
 		postCode() {

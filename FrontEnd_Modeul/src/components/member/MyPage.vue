@@ -133,7 +133,7 @@ export default {
 
 			fetch(`${this.defaultStore.host}/api/member/delete`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => result)
 				.catch(error => console.log('error', error));
 			this.$router.replace('/');
 		},
@@ -149,7 +149,6 @@ export default {
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
-				console.log(data);
 			})
 	},
 }

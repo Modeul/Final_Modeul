@@ -113,13 +113,13 @@ export default {
 			else if(this.order)
 				this.orderDir = 'asc';
 				
-			console.log(this.orderField);
+
 			fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&of=${this.orderField}&od=${this.orderDir}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
-					console.log(this.list);
+
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -130,11 +130,9 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&of=${this.orderField}&od=${this.orderDir}`)
 				.then(response => response.json())
 				.then(dataList => {
-					console.log(dataList);
 					this.participationList = this.formatDateList(dataList.list);
 					this.stuffCount = dataList.stuffCount;
 					this.listCount = dataList.listCount;
-					console.log(this.participationList);
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));

@@ -69,10 +69,10 @@ export default {
 		},
 
 		imageZoomInHandler() {
-			console.log("zoom-in");
+			// console.log("zoom-in");
 		},
 		imageZoomOutHandler() {
-			console.log("zoom-out");
+			// console.log("zoom-out");
 		},
 		formatImgUrl(imgDir){
 			if(!imgDir)
@@ -149,7 +149,6 @@ export default {
 				.then(response => response.text())
 				.then(result => {
 					if (result === 'OK') {
-						console.log(result);
 						this.modalHandler3();
 						this.modalHandler4();
 					}
@@ -177,7 +176,6 @@ export default {
 			fetch(`${this.defaultStore.host}/api/participation`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
 					this.dialog = true;
@@ -195,7 +193,6 @@ export default {
 				.then(data => {
 					this.participantList = data.list;
 					this.memberCount = data.memberCount;
-					console.log(this.participantList);
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -204,7 +201,6 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					this.participantInfo = data.memberInfo;
-					console.log(this.participantInfo);
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -216,8 +212,6 @@ export default {
 				this.isCheckParticipation = false;
 		},
 		checkStuffLeader() {
-			console.log(this.stuffView.memberId);
-			console.log(this.memberInfo.id);
 			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
@@ -232,7 +226,6 @@ export default {
 			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.userDetails.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
 					this.dialog = true;
@@ -273,7 +266,6 @@ export default {
 		},
 
 		toggleMap() {
-			console.log(this.stuff.croodX);
 			let map = document.querySelector("#map");
 			if (this.showMap) {
 				map.style.height = '300px';
@@ -297,7 +289,6 @@ export default {
 			const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
 
 		loadFavoriteInfo() {
@@ -305,7 +296,6 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					this.favoriteInfo = data.favoriteInfo;
-					console.log(this.favoriteInfo);
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -332,7 +322,7 @@ export default {
 						response.text();
 					})
 					.then(result => {
-						console.log("관심삭제");
+						// "관심삭제"
 						this.isfavorite = !this.isfavorite;
 					})
 					.catch(error => console.log('error', error));
@@ -356,7 +346,7 @@ export default {
 					.then(response => response.text())
 					.then(result => {
 						this.isfavorite = !this.isfavorite;
-						console.log("관심등록");
+						// "관심등록"
 					})
 					.catch(error => console.log('error', error));
 				this.zzimModalMsg = "  관심목록에 추가되었습니다."
@@ -374,7 +364,6 @@ export default {
 		},
 		checkStuffUser() {
 			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
-			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
 		},
 		checkNumPeople(){
 			if(this.memberCount < parseInt(this.stuff.numPeople)){
@@ -387,7 +376,6 @@ export default {
 		async checkDutchComplete() {
 			const response = await fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.id}`)
 			const dataList = await response.json();
-			console.log(dataList.list.length);
 			if(dataList.list.length > 0)
 				this.isDutchComplete = true;
 			else
@@ -432,7 +420,6 @@ export default {
 				this.stuffView = data.stuffView;
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
-				console.log(this.stuff);
 				this.checkNumPeople();
 			})
 			.catch((error) => console.log("error", error));

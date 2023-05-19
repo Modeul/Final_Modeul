@@ -46,7 +46,6 @@ async function addListHandler() {
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
 	listCount = ref(dataList.listCount);
-	console.log("model.months:" + model.months);
 }
 
 async function selectMonthList() {

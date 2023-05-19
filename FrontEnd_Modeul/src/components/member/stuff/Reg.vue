@@ -289,13 +289,13 @@ export default {
 				return;
 			} else if (this.stuff.url) {
 				this.stuff.url = this.stuff.url.toLowerCase();
-				console.log("소문자 변환");
+				// "소문자 변환"
 				if (this.stuff.url.startsWith('h')) {
 					let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
 					if (!regex.test(this.stuff.url)) {
 						this.valiError = "올바른 형식의 링크 주소를 입력하세요.";
 						this.openModal = true;
-						console.log("h 필터");
+						// "h 필터"
 						return;
 					}
 				} else if (this.stuff.url.startsWith('w')) {
@@ -303,11 +303,11 @@ export default {
 					if (!regex.test(this.stuff.url)) {
 						this.valiError = "올바른 형식의 링크 주소를 입력하세요.";
 						this.openModal = true;
-						console.log("w 필터");
+						// "w 필터"
 						return;
 					}
 				} else {
-					console.log("나머지");
+					// "나머지"
 					this.valiError = "올바른 형식의 링크 주소를 입력하세요.";
 					this.openModal = true;
 					return;
@@ -330,7 +330,7 @@ export default {
 
 				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
+					.then(result => result)
 					.catch(error => console.log('error', error));
 
 				this.$router.replace('/member/stuff/list')
@@ -401,7 +401,6 @@ export default {
 
 					this.stuff.place = data.address;
 					this.stuff.dongCode = data.bcode;
-					console.log(this.stuff.place);
 
 					geocoder.addressSearch(data.address, (results, status) => {
 
@@ -410,7 +409,6 @@ export default {
 							let result = results[0];
 							this.stuff.coordX = result.x;
 							this.stuff.coordY = result.y;
-							console.log(this.stuff.coordX);
 							this.showMap = true;
 							this.mapStatus = true;
 							this.mapNav = true;

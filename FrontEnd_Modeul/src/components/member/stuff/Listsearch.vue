@@ -25,7 +25,6 @@ export default {
 			e.preventDefault();
 			this.query = e.target.value;
 
-			console.log(this.query);
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
@@ -45,7 +44,6 @@ export default {
 				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
-					console.log(dataList);
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
