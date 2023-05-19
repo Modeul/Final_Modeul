@@ -222,7 +222,7 @@ onMounted(() => {
 		</div>
 		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
 		<!-- ** 정산 결과 모달 ** -->
-		<v-navigation-drawer style="height: 629px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
+		<v-navigation-drawer style="height: 630px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
 			<section class="calc-result-default">
 				<h1 class="d-none">calculate</h1>
