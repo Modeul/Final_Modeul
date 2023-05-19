@@ -1477,7 +1477,7 @@ input::placeholder {
 .v-app-bar .chat-title {
 	font-size: 14px;
 	font-weight: 700;
-	width: 210px;
+	width: minmax(auto, 80%);
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -1486,7 +1486,7 @@ input::placeholder {
 .v-app-bar .chat-participant-count {
 	font-size: 14px;
 	color: #9F9F9F;
-	margin-left: 4px;
+	margin-left: 8px;
 }
 
 .chat-line-wrap {
