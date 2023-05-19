@@ -101,8 +101,10 @@
 
 		<div class="chat-canvas">
 			<div v-for="m in messageView">
-				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(userDetails.id == m.memberId) ? 'mine' : 'others'">
-					<img v-if="!(userDetails.id == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
+				<div class="chat-line-wrap" v-if="m.type == 'TALK'"
+					:class="(userDetails.id == m.memberId) ? 'mine' : 'others'">
+					<img v-if="!(userDetails.id == m.memberId)" class="user-profile"
+						:src="'/images/member/' + m.memberImage">
 					<div class="chat-box">
 						<p v-if="!(userDetails.id == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
 						<div class="chat-content-wrap">
@@ -376,7 +378,7 @@ export default {
 			openDutchCheckModal: false,
 			checkDutchComplete: false,
 			stuffLeaderName: '',
-			dutchInfo:'',
+			dutchInfo: '',
 		}
 	},
 
@@ -448,10 +450,10 @@ export default {
 					// 1. 소켓 연결 성공하면 바로 구독하기! Topic 연결(방에 들어가면 등장 메세지 보내주기!)
 					this.stompClient.subscribe(`/sub/chat/room/${this.$route.params.stuffId}`, res => {
 						const result = JSON.parse(res.body)
-						if(result.type == 'ENTER' || result.type == 'LEAVE')
+						if (result.type == 'ENTER' || result.type == 'LEAVE')
 							this.loadParticipationList();
-						if(result.type == 'BANISH'){
-							if(result.memberId == this.userDetails.id){
+						if (result.type == 'BANISH') {
+							if (result.memberId == this.userDetails.id) {
 								this.dialog = true;
 								setTimeout(() => {
 									this.$router.go('/member/stuff/list');
@@ -459,9 +461,9 @@ export default {
 							}
 							this.loadParticipationList();
 						}
-						if(result.type == 'DUTCH')
+						if (result.type == 'DUTCH')
 							this.loadDutchMemberList();
-						
+
 						// 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
 						this.messageView.push(result);
 					});
@@ -556,7 +558,7 @@ export default {
 				})
 				.catch(error => console.log('error', error));
 		},
-		banishedHandler(){
+		banishedHandler() {
 			this.dialog = false;
 			this.$router.go('/member/stuff/list')
 		},
@@ -579,16 +581,16 @@ export default {
 			this.openDeleteModal = !this.openDeleteModal;
 		},
 		unLoadEvent() {
-			if(!this.dialog)
-			this.stompClient.send('/pub/chat/exitUser',
-				JSON.stringify({
-					type: 'LEAVE',
-					stuffId: this.$route.params.stuffId,
-					memberId: this.memberInfo.id,
-					sender: this.memberInfo.nickname,
-					memberImage: this.memberInfo.image
-				})
-			);
+			if (!this.dialog)
+				this.stompClient.send('/pub/chat/exitUser',
+					JSON.stringify({
+						type: 'LEAVE',
+						stuffId: this.$route.params.stuffId,
+						memberId: this.memberInfo.id,
+						sender: this.memberInfo.nickname,
+						memberImage: this.memberInfo.image
+					})
+				);
 		},
 		formatChatRegDate() {
 			const chatRegDateObj = dayjs(this.chat.regDate).locale('ko');
@@ -606,10 +608,13 @@ export default {
 		},
 		calc1n() {
 			this.calcSwitch = true;
+			this.personalPrice = {};
 			this.price = {};
 		},
 		calcdir() {
 			this.calcSwitch = false;
+			this.totalPrice = '';
+			this.chipinResult= '0';
 			this.price = {};
 		},
 		dnoneHandler() {
@@ -618,10 +623,13 @@ export default {
 		},
 		resultDnoneHandler() {
 			this.dutchHandler();
-			
+
 			this.isCalc = false;
 			this.isCalcResult = true;
-			
+			this.personalPrice = {};
+			this.totalPrice = '';
+			this.chipinResult= '0';
+			this.price = {};
 		},
 		dutchHandler() {
 
@@ -694,7 +702,7 @@ export default {
 			return this.sumDutch;
 		},
 		checkDutchHave() {
-			if (this.dutchInfo.stuffId == this.$route.params.stuffId) {	
+			if (this.dutchInfo.stuffId == this.$route.params.stuffId) {
 				this.isAccount = false;
 				this.isCalcResult = true;
 				this.checkDutchComplete = true;
@@ -764,20 +772,23 @@ export default {
 				this.totalPrice = Number(this.totalPrice).toLocaleString();
 			else if (typeof this.personalPrice[memberId] === 'string' || typeof this.personalPrice[memberId] === 'number') {
 				this.price[memberId] = this.personalPrice[memberId];
-				this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
+				if (isNaN(this.personalPrice[memberId]))
+					this.personalPrice[memberId] = '';
+				else
+					this.personalPrice[memberId] = Number(this.personalPrice[memberId]).toLocaleString();
 			}
 		},
-		formatPrice(price){
+		formatPrice(price) {
 			return Number(price).toLocaleString();
 		},
-		async loadRecentAcount(){
+		async loadRecentAcount() {
 			// 최근 계좌 목록
 			await fetch(`${this.defaultStore.host}/api/account/recent/${this.userDetails.id}`)
-			.then(response => response.json())
-			.then(result => { 
-				this.recentAccountInfo = result; 
-			})
-			.catch(error => console.log('error', error));
+				.then(response => response.json())
+				.then(result => {
+					this.recentAccountInfo = result;
+				})
+				.catch(error => console.log('error', error));
 		},
 	},
 	beforeRouteLeave() {
@@ -790,7 +801,7 @@ export default {
 		this.connect();
 		this.loadDutchList();
 		this.loadCheckDutchList();
-		this.loadRecentAcount();	
+		this.loadRecentAcount();
 	},
 	updated() {
 
@@ -813,16 +824,16 @@ export default {
 
 		this.checkStuffLeader();
 		this.checkDutchHave();
-			
-		if(this.isCalcResult){
+
+		if (this.isCalcResult) {
 			await fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`)
-			.then(response => response.json())
-			.then(result => {
-				this.selectBank = result.bankName + " ";
-				this.accountNumber = result.number;
-				this.stuffLeaderName = result.memberName;
-			})
-			.catch(error => console.log('error', error));
+				.then(response => response.json())
+				.then(result => {
+					this.selectBank = result.bankName + " ";
+					this.accountNumber = result.number;
+					this.stuffLeaderName = result.memberName;
+				})
+				.catch(error => console.log('error', error));
 		}
 	},
 	beforeUnmount() {
