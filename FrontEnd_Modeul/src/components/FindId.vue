@@ -146,7 +146,6 @@ export default {
 				.then((response) => response.text())
 				.then((code) => {
 					this.emailcode = code;
-					console.log("emailcode : " + this.emailcode);
 				})
 				.catch((error) => console.log("error", error));
 

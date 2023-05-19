@@ -53,9 +53,7 @@ export default {
 			// this.$router.push("/member/stuff/list");
 			await fetch(`${this.defaultStore.host}/api/stuff/${this.deleteId}`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
-			console.log("삭제완료");
 			this.openModal = false;
 			this.addListHandler();
 			this.openModal2 = true;
@@ -80,7 +78,6 @@ export default {
 			let start = (this.page - 1) * this.pageSize;
 			let end = start + this.pageSize;
 			this.pageList = this.list.slice(start, end);
-			console.log(this.pageList);
 		},
 		nextPage() {
 			this.page += 1;

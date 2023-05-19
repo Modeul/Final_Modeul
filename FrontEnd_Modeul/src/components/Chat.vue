@@ -355,7 +355,6 @@ export default {
 			chipinResult: 0,
 			totalPrice: '',
 			totalPriceComma: '',
-			totalPriceAlert: '',
 			totalText: true,
 			memberPrice: 0,
 			banks: ['국민은행', '우리은행', '기업은행', '신한은행', 'KEB하나은행',
@@ -400,7 +399,6 @@ export default {
 
 		sendMessage(e) {
 			if (e.keyCode === 13 && this.message != '' && this.message.trim() != '') {
-				console.log("send");
 				this.send()
 				this.message = ''
 			}
@@ -489,8 +487,6 @@ export default {
 			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.userDetails.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result);
-
 					this.stompClient.send('/pub/chat/exitUser',
 						JSON.stringify({
 							type: 'LEAVE',
@@ -509,9 +505,7 @@ export default {
 						// 소켓 연결 끊기 성공!
 						this.connected = false;
 						this.$router.go(-1);
-						console.log('소켓 연결 끊기 성공!', frame);
 					});
-
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -529,7 +523,6 @@ export default {
 			const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
 		checkStuffLeader() {
 			// 방장에게 추방 권한
@@ -549,7 +542,6 @@ export default {
 			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.stuffId}/${this.banishUser.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result);
 					this.openModal = !this.openModal;
 					this.loadParticipationList();
 
@@ -561,25 +553,6 @@ export default {
 							memberId: this.banishUser.id,
 						})
 					)
-
-					// 퇴장시켰는데 퇴장ID가 그게 본인ID이랑 같으면, 연결 끊어주기
-					// 불린 값 1개 추가해줘서 그 값을 true로 인식하면, 
-
-					// if(this.banishUser.id === this.userDetails.id){
-					//  this.$router.go(0);
-					//  this.stompClient.disconnect((frame) => {
-					//          this.stompClient.unsubscribe(`/sub/chat/room/${this.$route.params.stuffId}`);
-
-					//          // 소켓 연결 끊기 성공!
-					//          this.connected = false;
-					//          console.log('소켓 연결 끊기 성공!', frame);
-
-					//          // 강퇴된 그 사람이 뒤로가기 되기
-
-					//  });
-					//  this.$router.go(-1);
-					// }
-
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -592,8 +565,6 @@ export default {
 			this.banishUser.id = user.memberId;
 			this.banishUser.nickname = user.memberNickname;
 			this.banishUser.image = user.memberImage;
-			console.log("banishUserId:" + this.banishUser.id);
-			console.log("banishUserNickName:" + this.banishUser.nickname);
 		},
 		modalBanishCloseHandler() {
 			this.openModal = !this.openModal;
@@ -642,21 +613,15 @@ export default {
 			this.price = {};
 		},
 		dnoneHandler() {
-			console.log("bank:" + this.selectBank);
-			console.log("accountNumber: " + this.accountNumber);
 			this.isAccount = !this.isAccount;
 			this.isCalc = !this.isCalc;
 		},
 		resultDnoneHandler() {
-			console.log("price:" + this.price);
 			this.dutchHandler();
 			
 			this.isCalc = false;
 			this.isCalcResult = true;
 			
-		},
-		selectBankHandler() {
-			console.log("bank" + this.selectBank);
 		},
 		dutchHandler() {
 
@@ -679,7 +644,6 @@ export default {
 
 			fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
 				.then(result => {
-					console.log(result);
 					this.loadDutchMemberList();
 
 					this.stompClient.send('/pub/chat/dutchComplete',
@@ -708,7 +672,6 @@ export default {
 				.then(response => response.json())
 				.then(dataList => {
 					this.dutchList = dataList.listView;
-					console.log(this.dutchList);
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -725,17 +688,12 @@ export default {
 			let sum = 0;
 
 			for (let dmL of this.dutchMemberList) {
-				console.log("price:" + dmL.price + '\n');
 				sum += parseInt(dmL.price);
 			}
 			this.sumDutch = sum;
-			console.log(this.sumDutch);
 			return this.sumDutch;
 		},
 		checkDutchHave() {
-			console.log("Have dutchList:" + this.dutchList);
-			console.log("this.$route.params.stuffId: " + this.$route.params.stuffId + '\n');
-			
 			if (this.dutchInfo.stuffId == this.$route.params.stuffId) {	
 				this.isAccount = false;
 				this.isCalcResult = true;
@@ -750,7 +708,6 @@ export default {
 
 			fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.stuffId}`, requestOptions)
 				.then(result => {
-					console.log(result);
 					this.isAccount = !this.isAccount;
 					this.isCalcResult = !this.isCalcResult;
 					this.calDrawer = !this.calDrawer;
@@ -819,7 +776,6 @@ export default {
 			.then(response => response.json())
 			.then(result => { 
 				this.recentAccountInfo = result; 
-				console.log(this.recentAccountInfo);
 			})
 			.catch(error => console.log('error', error));
 		},
@@ -847,15 +803,8 @@ export default {
 				this.participantList = dataList.memberList;
 				this.chat = dataList.stuffView;
 				this.formatChatRegDate();
-
-				console.log(this.participantList);
-				console.log("this.participantList.memberId: " + this.participantList[0].memberId);
-				console.log("this.chat.memberId:" + this.chat.memberId);
 			})
 			.catch(error => console.log('error', error));
-
-		console.log(this.userDetails.id);
-		console.log(this.participantList);
 
 		window.addEventListener('beforeunload', this.unLoadEvent);
 		setTimeout(() => {
@@ -869,7 +818,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/account/${this.$route.params.stuffId}`)
 			.then(response => response.json())
 			.then(result => {
-				console.log(result.bankName);
 				this.selectBank = result.bankName + " ";
 				this.accountNumber = result.number;
 				this.stuffLeaderName = result.memberName;
@@ -912,11 +860,6 @@ export default {
 		// totalPriceComma: function(){
 		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
 		// }
-		totalPriceAlert: function () {
-			if (this.totalPrice > 999999)
-				return console.log("over");
-		},
-
 	},
 }
 </script>
