@@ -62,7 +62,6 @@ async function selectMonthList() {
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
 	listCount = ref(dataList.listCount);
-	console.log("model.months:" + model.months);
 }
 
 async function loadDutchMemberList() {
@@ -70,7 +69,6 @@ async function loadDutchMemberList() {
 	const dataList = await response.json();
 	model.memberList = dataList.list;
 	sumDutchHandler();
-	console.log(model.memberList);
 }
 
 async function showAccount() {
@@ -80,8 +78,6 @@ async function showAccount() {
 	selectBank = ref(response.bankName + " ");
 	accountNumber = ref(response.number);
 	stuffLeaderName = ref(response.memberName);
-	console.log(selectBank.value);
-	console.log(accountNumber.value);
 }
 
 function formatDateList(list) {
@@ -131,23 +127,19 @@ async function sumDutchHandler() {
 	let sum = 0;
 
 	for (let m of model.memberList) {
-		console.log("price:" + m.price + '\n');
 		sum += parseInt(m.price);
 	}
 	sumDutch = ref(sum);
-	console.log(sumDutch.value);
 	return sumDutch.value;
 }
 
 function selectMonthHandler() {
-	console.log(month.value);
 	selectMonthList();
 }
 
 function showCalcResultHandler(d) {
 	
 	stuffId = ref(d.stuffId);
-	console.log("stuffId :" + stuffId.value);
 	calDrawer.value = !calDrawer.value;
 	
 	loadDutchMemberList();

@@ -47,7 +47,6 @@ export default {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(dataList);
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
