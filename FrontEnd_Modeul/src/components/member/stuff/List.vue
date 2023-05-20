@@ -51,6 +51,7 @@ export default {
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
+			this.addListHandler()
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}`)
 				.then(response => response.json())
 				.then(dataList => {

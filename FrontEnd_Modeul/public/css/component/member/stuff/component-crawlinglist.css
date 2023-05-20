@@ -57,7 +57,15 @@
 }
 
 .selected[value="3"] {
-  background-color: #f8b62a;
+  background-color: #5b78f7;
+  color: #ffffff;
+}
+.selected[value="4"] {
+  background-color: #f812e1;
+  color: #ffffff;
+}
+.selected[value="5"] {
+  background-color: #fffc63;
   color: #ffffff;
 }
 .default {
@@ -74,11 +82,11 @@
 /* 320 * aa  */
 
 .li-write-icon {
-	margin-left: 4px;
+  margin-left: 4px;
   grid-area: icon;
-	width: 64px;
-	height: 24px;
-	align-items: start;
+  width: 64px;
+  height: 24px;
+  align-items: start;
 }
 
 .li-pic {

@@ -51,7 +51,7 @@ export default {
 		categoryHandler(e){
 			this.page=1;
 			this.categoryId = e.target.value;
-
+			this.addListHandler()
 			fetch(`${this.defaultStore.host}/api/stuff/recommends?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
 				.then(response => response.json())
 				.then(dataList => {

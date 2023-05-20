@@ -243,6 +243,7 @@ export default {
       				// this.crawlingData = JSON.parse(JSON.stringify(this.crawlingData));
 					this.stuff.title = this.crawlingData.crawlingData.title || '';
 					this.stuff.price = this.crawlingData.crawlingData.price.replace(/,/g, '') || '';
+					this.stuff.price = this.stuff.price.replace(/원/g, '') || '';
 					this.stuff.url = this.crawlingData.crawlingData.contenturl || '';
 					this.stuff.imageList.name = this.crawlingData.crawlingData.imgurl || '';
 				})
