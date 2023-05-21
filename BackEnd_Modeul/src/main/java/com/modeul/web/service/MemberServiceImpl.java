@@ -78,12 +78,10 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public String checkPwd(Member loginMember) {
+	public Boolean checkPwd(Member loginMember) {
+		
 		Member member = repository.getPwdByUid(loginMember.getUid());
-		if (passwordEncoder.matches(loginMember.getPwd(), member.getPwd()) == false) {
-			return "비밀번호가 일치하지 않습니다.";
-		} else
-			return "ok";
+		return passwordEncoder.matches(loginMember.getPwd(), member.getPwd()); 
 	}
 	
 	@Override

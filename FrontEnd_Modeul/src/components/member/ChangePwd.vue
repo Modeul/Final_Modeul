@@ -9,7 +9,7 @@
 			<div class="input-box">
 				<div class="input-field">
 					<div class="pwd-icon"></div>
-					<input class="txt" type="password" autofocus placeholder="현재 비밀번호를 입력해주세요." v-model="pwd" @change="checkPwd">
+					<input class="txt" type="password" autofocus placeholder="현재 비밀번호를 입력해주세요." v-model="pwd">
 					<div v-if="this.pwdbtn == ''" class="btn-null"></div>
 					<div v-if="this.pwdbtn == true" class="btn-check"></div>
 					<div v-if="this.pwdbtn == false" class="btn-x"></div>
@@ -91,13 +91,16 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/member/checkpwd`, requestOptions)
 				.then(response => response.json())
 				.then((result) => {
+					console.log("결과" + result);
 					if (result) {
 						this.pwdbtn = true;
 						this.pwdError = ""
+						return true;
 					}
 					else {
 						this.pwdbtn = false;
 						this.pwdError = "비밀번호를 확인하세요."
+						return false;
 					}
 				})
 				.catch(error => console.log('error', error));
@@ -143,7 +146,7 @@ export default {
 			this.newPwdConfirmError = "";
 			return true
 		},
-		submit() {
+		async submit() {
 			let check = null;
 			if (!this.pwd &&
 				!this.newPwd &&
@@ -151,10 +154,12 @@ export default {
 			) {
 				check = false;
 			}
-			else
+			else {
 				check = true;
+			}
 
-			if (this.isValidPwd() &&
+			if (await this.checkPwd() &&
+				this.isValidPwd() &&
 				this.isValidPwdConfirm() &&
 				check) {
 				var myHeaders = new Headers();
@@ -386,4 +391,5 @@ export default {
 
 .btn-save:hover {
 	background: #7299BE;
-}</style>
+}
+</style>
