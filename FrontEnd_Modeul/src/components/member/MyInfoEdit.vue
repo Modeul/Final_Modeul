@@ -47,7 +47,7 @@
 					<div class="txt" v-text="addr"></div>
 				</div>
 			</div>
-			<div class="input-box" @click.prevent="postCode">
+			<div class="input-box">
 				<div class="input-field">
 					<div class="address-icon"></div>
 					<input type="text" class="txt input-addr2" v-model="addr2" placeholder="상세 주소" />
@@ -118,12 +118,14 @@ export default {
 				.then(response => response.json())
 				.then((result) => {
 					if (result) {
+						console.log("true");
 						this.pwdbtn = true;
 						this.pwdError = ""
 						this.chkPwd = true;
 						// return true;
 					}
 					else {
+						console.log("false");
 						this.pwdbtn = false;
 						this.pwdError = "비밀번호를 확인하세요."
 						this.chkPwd = false;
@@ -137,7 +139,6 @@ export default {
 			this.pwdbtn2 = null;
 			// 비밀번호는 8자 이상이어야 합니다.
 			if (this.newPwd == "") {
-				console.log("비번 널 리턴");
 				this.newPwdError = "";
 				return true;
 			}
@@ -171,7 +172,6 @@ export default {
 			this.pwdbtn3 = null;
 
 			if (this.newPwd == "" && this.newPwdConfirm == "") {
-				console.log("비번 확인 널 리턴");
 				this.newPwdConfirmError = "";
 				return true
 			}
@@ -221,18 +221,15 @@ export default {
 				this.newAddress = "";
 				this.coordX = "";
 				this.coordY = "";
-				console.log("주소 같음 검증");
 			}
 
 			if (this.pwd && this.newPwd && this.newPwdConfirm) {
 				check = true;
-				console.log("비번 / 뉴비번 ");
 			}
 			else if (this.pwd && !this.newPwd && !this.newPwdConfirm && this.newAddress) {
 				check = true;
-				console.log("비번 / 주소");
 			} else {
-				false;
+				check = false;
 				console.log("폴스");
 			}
 			await this.checkPwd();
@@ -242,7 +239,6 @@ export default {
 				this.isValidPwdConfirm() &&
 				check) {
 
-				console.log("fetch 진행");
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
@@ -265,8 +261,6 @@ export default {
 					.catch(error => console.log('error', error));
 				this.$router.push('/member/mypage');
 
-			} else {
-				console.log("fetch 실패");
 			}
 
 		}
