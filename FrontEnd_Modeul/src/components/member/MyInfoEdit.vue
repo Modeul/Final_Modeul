@@ -98,6 +98,12 @@ export default {
 	methods: {
 		async checkPwd() {
 			this.pwdbtn = null;
+			if (!this.pwd) {
+				this.pwdbtn = false;
+				this.pwdError = "비밀번호를 확인하세요."
+				this.chkPwd = false;
+				return;
+			}
 
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
@@ -138,7 +144,9 @@ export default {
 		isValidPwd() {
 			this.pwdbtn2 = null;
 			// 비밀번호는 8자 이상이어야 합니다.
-			if (this.newPwd == "") {
+
+			if (!this.newPwd && this.newAddress) {
+	
 				this.newPwdError = "";
 				return true;
 			}
@@ -171,7 +179,7 @@ export default {
 		isValidPwdConfirm() {
 			this.pwdbtn3 = null;
 
-			if (this.newPwd == "" && this.newPwdConfirm == "") {
+			if (!this.newPwd && !this.newPwdConfirm && this.newAddress) {
 				this.newPwdConfirmError = "";
 				return true
 			}
@@ -218,7 +226,7 @@ export default {
 
 			let check = null;
 			if (!this.addrStatus()) {
-				this.newAddress = "";
+				this.newAddress = null;
 				this.coordX = "";
 				this.coordY = "";
 			}
@@ -232,13 +240,13 @@ export default {
 				check = false;
 				console.log("폴스");
 			}
+
 			await this.checkPwd();
 
-			if ( this.chkPwd &&
+			if (this.chkPwd &&
 				this.isValidPwd() &&
 				this.isValidPwdConfirm() &&
 				check) {
-
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
@@ -261,7 +269,9 @@ export default {
 					.catch(error => console.log('error', error));
 				this.$router.push('/member/mypage');
 
+			} else{
 			}
+
 
 		}
 	},
