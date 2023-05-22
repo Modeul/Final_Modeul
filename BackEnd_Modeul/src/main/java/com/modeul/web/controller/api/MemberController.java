@@ -83,7 +83,7 @@ public class MemberController {
 
 	@PutMapping("update")
 	public int editMember(@RequestBody Member member){
-		
+
 		return memberService.updateMember(member);
 	}
 
@@ -113,10 +113,7 @@ public class MemberController {
 	@PostMapping("checkpwd")
 	public Boolean checkPwd(@RequestBody Member member) {
 
-		if (memberService.checkPwd(member) == "ok")
-			return true;
-		else 
-			return false;
+		return memberService.checkPwd(member);
 	}
 
 	@GetMapping("checkUid")

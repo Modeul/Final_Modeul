@@ -2,14 +2,14 @@
 	<div class="wrap">
 		<header class="header">
 			<router-link to="/member/mypage" class="back"></router-link>
-			<div class="changpwd-title">비밀번호 변경</div>
+			<div class="changpwd-title">개인정보 변경</div>
 		</header>
 		<section class="input-sec">
 			<!-- 현재 비밀번호 -->
 			<div class="input-box">
 				<div class="input-field">
 					<div class="pwd-icon"></div>
-					<input class="txt" type="password" autofocus placeholder="현재 비밀번호를 입력해주세요." v-model="pwd" @change="checkPwd">
+					<input class="txt" type="password" autofocus placeholder="현재 비밀번호를 입력해주세요." v-model="pwd">
 					<div v-if="this.pwdbtn == ''" class="btn-null"></div>
 					<div v-if="this.pwdbtn == true" class="btn-check"></div>
 					<div v-if="this.pwdbtn == false" class="btn-x"></div>
@@ -38,6 +38,24 @@
 				</div>
 				<div class="error-txt">{{ this.newPwdConfirmError }}</div>
 			</div>
+
+			<!-- 주소 -->
+			<div class="input-box" @click.prevent="postCode">
+				<div class="input-field">
+					<div class="address-icon"></div>
+					<input type="text" id="address" class="txt input-addr" v-model="addr" hidden />
+					<div class="txt" v-text="addr"></div>
+				</div>
+			</div>
+			<div class="input-box">
+				<div class="input-field">
+					<div class="address-icon"></div>
+					<input type="text" class="txt input-addr2" v-model="addr2" placeholder="상세 주소" />
+				</div>
+			</div>
+
+
+
 		</section>
 		<div @click.prevent="submit" class="btn-save">저장하기</div>
 	</div>
@@ -67,11 +85,25 @@ export default {
 			pwdError: "",
 			newPwdError: "",
 			newPwdConfirmError: "",
+
+			address: "",
+			newAddress: "",
+			addr: "",
+			addr2: "",
+			coordX: "",
+			coordY: "",
+			chkPwd: "",
 		}
 	},
 	methods: {
 		async checkPwd() {
 			this.pwdbtn = null;
+			if (!this.pwd) {
+				this.pwdbtn = false;
+				this.pwdError = "비밀번호를 확인하세요."
+				this.chkPwd = false;
+				return;
+			}
 
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
@@ -92,12 +124,18 @@ export default {
 				.then(response => response.json())
 				.then((result) => {
 					if (result) {
+						console.log("true");
 						this.pwdbtn = true;
 						this.pwdError = ""
+						this.chkPwd = true;
+						// return true;
 					}
 					else {
+						console.log("false");
 						this.pwdbtn = false;
 						this.pwdError = "비밀번호를 확인하세요."
+						this.chkPwd = false;
+						// return false;
 					}
 				})
 				.catch(error => console.log('error', error));
@@ -106,6 +144,12 @@ export default {
 		isValidPwd() {
 			this.pwdbtn2 = null;
 			// 비밀번호는 8자 이상이어야 합니다.
+
+			if (!this.newPwd && this.newAddress) {
+	
+				this.newPwdError = "";
+				return true;
+			}
 			if (this.newPwd.length < 8) {
 				this.pwdbtn2 = false;
 				this.newPwdError = "올바른 비밀번호를 입력해주세요.(8자 이상 영어+숫자)";
@@ -134,6 +178,12 @@ export default {
 		// pwd 일치 검사
 		isValidPwdConfirm() {
 			this.pwdbtn3 = null;
+
+			if (!this.newPwd && !this.newPwdConfirm && this.newAddress) {
+				this.newPwdConfirmError = "";
+				return true
+			}
+
 			if (this.newPwd !== this.newPwdConfirm) {
 				this.pwdbtn3 = false;
 				this.newPwdConfirmError = "비밀번호가 일치하지 않습니다.";
@@ -143,18 +193,58 @@ export default {
 			this.newPwdConfirmError = "";
 			return true
 		},
-		submit() {
-			let check = null;
-			if (!this.pwd &&
-				!this.newPwd &&
-				!this.newPwdConfirm
-			) {
-				check = false;
-			}
-			else
-				check = true;
 
-			if (this.isValidPwd() &&
+		addrStatus() {
+			this.newAddress = this.addr + "," + this.addr2;
+			return this.address === this.newAddress ? false : true;
+		},
+
+		postCode() {
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.addr = data.address;
+					// this.dongCode = data.bcode;
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.coordX = result.x;
+							this.coordY = result.y;
+							// this.addrError = false;
+							document.querySelector(".input-addr2").focus();
+						}
+					});
+
+				}
+			}).open();
+		},
+
+		async submit() {
+
+			let check = null;
+			if (!this.addrStatus()) {
+				this.newAddress = null;
+				this.coordX = "";
+				this.coordY = "";
+			}
+
+			if (this.pwd && this.newPwd && this.newPwdConfirm) {
+				check = true;
+			}
+			else if (this.pwd && !this.newPwd && !this.newPwdConfirm && this.newAddress) {
+				check = true;
+			} else {
+				check = false;
+				console.log("폴스");
+			}
+
+			await this.checkPwd();
+
+			if (this.chkPwd &&
+				this.isValidPwd() &&
 				this.isValidPwdConfirm() &&
 				check) {
 				var myHeaders = new Headers();
@@ -162,7 +252,10 @@ export default {
 
 				var raw = JSON.stringify({
 					"id": this.loginInfo.id,
-					"pwd": this.newPwd
+					"pwd": this.newPwd,
+					"address": this.newAddress,
+					"coordX": this.coordX,
+					"coordY": this.coordY,
 				});
 
 				var requestOptions = {
@@ -171,13 +264,15 @@ export default {
 					body: raw,
 					redirect: 'follow'
 				};
-
 				fetch(`${this.defaultStore.host}/api/member/update`, requestOptions)
 					.then(response => response.text())
 					.catch(error => console.log('error', error));
 				this.$router.push('/member/mypage');
 
+			} else{
 			}
+
+
 		}
 	},
 	mounted() {
@@ -185,7 +280,11 @@ export default {
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
-			})
+				this.address = data.address;
+				[this.addr, this.addr2] = data.address.split(',');
+			});
+
+
 	}
 }
 
@@ -303,6 +402,13 @@ export default {
 	background-image: url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Crect width='25' height='25' fill='url(%23pattern0)'/%3E%3Cdefs%3E%3Cpattern id='pattern0' patternContentUnits='objectBoundingBox' width='1' height='1'%3E%3Cuse xlink:href='%23image0_126_664' transform='scale(0.0208333)'/%3E%3C/pattern%3E%3Cimage id='image0_126_664' width='48' height='48' xlink:href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAbBJREFUaEPtmOFNxDAMhd9twCbABMAmMAFsALcBTABMAhsAm7AByFIjWaFp+ly7uFL75053sfM+20mdHLDx57Bx/dgB/juDWTJwDeACwA0bkAwAIv55EP7CQmQA+ARwqiJPQWQAOAHwboXIACDBN0NkATBDMAD37A5hGC+ZuKvsJtcEA/BjEORl0oTYCsArANlu/zxWgKNXaCs/UkK31W9N8TLOCsDYzWUV8W8AzpTBpPhMACbxWQDM4rMAfLBlo2uSqWW9jTJ2vTWgm7luzdfOGCFRAKJJIC5bW+VUBLIA9LLU/J8BeFBe9Hfz5B6GDIDHfO4+dgD3kJIO9wyQAesN12eOWQ1jtgzQ7xorQOnN5aDh+awCoF/9chHlCREOoMVL5L+qRmxpNkIBxsRL//K9VLWyDwNYQ7xwhACsJT4EoBYvkzw6l42uQN0kztohpwaNiXcs966rHaCclMrdfQnZU2AJtcpp0YGmLiW5z79aCcKnzoazqs5EGohZC2UIQ8pMMABja0Iycd7Nc+AAFqCG8G7maFQLQIGQT89OlBYvBlYA02QRRjtARFQZn5vPwC9zdFMxvDYwdQAAAABJRU5ErkJggg=='/%3E%3C/defs%3E%3C/svg%3E%0A");
 }
 
+.address-icon::before {
+	content: "\e88a";
+	font-family: 'Material Icons';
+	font-size: 25px;
+	/* margin-right: 8px; */
+}
+
 .txt {
 	width: 70%;
 	line-height: 45px;
@@ -386,4 +492,5 @@ export default {
 
 .btn-save:hover {
 	background: #7299BE;
-}</style>
+}
+</style>

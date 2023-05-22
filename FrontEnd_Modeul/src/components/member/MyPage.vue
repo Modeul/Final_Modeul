@@ -44,10 +44,10 @@
                         <span>정산내역</span>
                     </li>
                 </router-link>
-                <router-link to="/member/mypage/changepwd">
+                <router-link to="/member/mypage/myInfoEdit">
                     <li>
                         <img src="/images/member/stuff/password-icon.svg">
-                        <span>비밀번호 변경</span>
+                        <span>개인정보 변경</span>
                     </li>
                 </router-link>
                 <li @click="modalHandler2">

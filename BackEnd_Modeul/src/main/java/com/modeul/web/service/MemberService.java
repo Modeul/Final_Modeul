@@ -24,7 +24,7 @@ public interface MemberService {
 
 	Boolean checkName(String name);
 
-	String checkPwd(Member member);
+	Boolean checkPwd(Member member);
 
 	Boolean checkEmail(String email);
 
