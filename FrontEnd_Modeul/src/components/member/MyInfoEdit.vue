@@ -2,7 +2,7 @@
 	<div class="wrap">
 		<header class="header">
 			<router-link to="/member/mypage" class="back"></router-link>
-			<div class="changpwd-title">비밀번호 변경</div>
+			<div class="changpwd-title">개인정보 변경</div>
 		</header>
 		<section class="input-sec">
 			<!-- 현재 비밀번호 -->
