@@ -155,7 +155,12 @@ export default {
 </script>
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
-
+.header{
+  transition: transform 0.5s;
+}
+.header:hover{
+  transform: scale(1.2); /* 마우스를 올렸을 때 크기를 1.2배로 확대 */
+}
 .canvas {
 	max-width: 600px;
 	padding: 0 20px;

@@ -160,4 +160,5 @@ export default {
 .heart-txt2 {
 	position: absolute;
 	left: 26%;
-}</style>
+}
+</style>
