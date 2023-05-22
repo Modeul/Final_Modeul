@@ -66,19 +66,17 @@
 					<!-- 유저 1명 -->
 					<div v-for="user in participantList" class="chat-side-list-user">
 						<div class="chat-side-list-user-info">
-							<div class="chat-user-img"><img class="chat-user-img"
-									:src="'/images/member/' + user.memberImage"></div>
+							<div class="chat-user-img"><img class="chat-user-img" :src="'/images/member/' + user.memberImage"></div>
 							<div class="chat-user-nickname">{{ user.memberNickname }}</div>
 						</div>
 						<div class="chat-side-list-user-icon">
 							<img @click="modalBanishHandler(user)" :class="{ 'd-none': !showBanish }"
-								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg"
-								alt="추방버튼">
+								v-if="user.memberId !== this.chat.memberId" src="/images/member/stuff/chatpeopleout.svg" alt="추방버튼">
 						</div>
 					</div>
 				</div>
 				<div class="chat-side-bottom">
-					<div class="chat-side-bottom-icon" v-if="!banishAuthority" @click="modalLeaveHandler()"></div>
+					<div class="chat-side-bottom-icon" v-if="!(banishAuthority || checkDutchComplete)" @click="modalLeaveHandler()"></div>
 				</div>
 			</div>
 
@@ -101,10 +99,8 @@
 
 		<div class="chat-canvas">
 			<div v-for="m in messageView">
-				<div class="chat-line-wrap" v-if="m.type == 'TALK'"
-					:class="(userDetails.id == m.memberId) ? 'mine' : 'others'">
-					<img v-if="!(userDetails.id == m.memberId)" class="user-profile"
-						:src="'/images/member/' + m.memberImage">
+				<div class="chat-line-wrap" v-if="m.type == 'TALK'" :class="(userDetails.id == m.memberId) ? 'mine' : 'others'">
+					<img v-if="!(userDetails.id == m.memberId)" class="user-profile" :src="'/images/member/' + m.memberImage">
 					<div class="chat-box">
 						<p v-if="!(userDetails.id == m.memberId)" class="chat-nickname">{{ m.sender }}</p>
 						<div class="chat-content-wrap">
@@ -208,8 +204,8 @@
 					<section class="calc-total">
 						<h1 class="d-none">합계</h1>
 						<div v-if="calcSwitch" class="calc-input-total">
-							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8"
-								@input="chipinHandler" placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
+							<input type="text" pattern="(\d+,)*\d+" v-model.number="totalPrice" maxlength="8" @input="chipinHandler"
+								placeholder="총금액을 입력해 주세요." @focus="inputFocus" @blur="inputBlur">원
 						</div>
 					</section>
 					<div class="calc-members-title">참여 인원</div>
@@ -223,9 +219,9 @@
 							<div class="calc-member-price">
 								<span v-if="calcSwitch" class="calc-member-span-price">{{ chipinResult }} 원</span>
 								<span v-if="!calcSwitch" class="calc-member-span-price">
-									<input type="text" v-model.number=personalPrice[user.memberId] maxlength="8"
-										pattern="(\d+,)*\d+" required placeholder="금액 입력" @keydown="inputCheck"
-										@focus="inputFocus(user.memberId)" @blur="inputBlur(user.memberId)"> 원
+									<input type="text" v-model.number=personalPrice[user.memberId] maxlength="8" pattern="(\d+,)*\d+"
+										required placeholder="금액 입력" @keydown="inputCheck" @focus="inputFocus(user.memberId)"
+										@blur="inputBlur(user.memberId)"> 원
 								</span>
 							</div>
 						</div>
@@ -247,8 +243,7 @@
 				<header class="cal-result-header">
 					<h1 class="d-none">title</h1>
 					<div class="cal-result-title">정산결과</div>
-					<div class="cal-result-del"><span @click="openDeleteModalHandler"
-							v-if="this.banishAuthority">삭제하기</span></div>
+					<div class="cal-result-del"><span @click="openDeleteModalHandler" v-if="this.banishAuthority">삭제하기</span></div>
 				</header>
 
 				<main class="cal-result-user-list">
@@ -614,7 +609,7 @@ export default {
 		calcdir() {
 			this.calcSwitch = false;
 			this.totalPrice = '';
-			this.chipinResult= '0';
+			this.chipinResult = '0';
 			this.price = {};
 		},
 		dnoneHandler() {
@@ -628,7 +623,7 @@ export default {
 			this.isCalcResult = true;
 			this.personalPrice = {};
 			this.totalPrice = '';
-			this.chipinResult= '0';
+			this.chipinResult = '0';
 			this.price = {};
 		},
 		dutchHandler() {
