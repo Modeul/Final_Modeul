@@ -84,6 +84,12 @@ public class StuffServiceImpl implements StuffService {
 
 		// 이미지 유효성 검사
 		if (imgs.get(0).getOriginalFilename().equals("")) {
+			Participation participation = new Participation();
+			participation.setStuffId(stuff.getId());
+			participation.setMemberId(stuff.getMemberId()); // 아직은 null 값이다..
+	
+			int participationCount = participationRepository.insert(participation);
+			System.out.printf("participationCount: %d\n", participationCount);
 			return;
 		}
 
@@ -127,9 +133,7 @@ public class StuffServiceImpl implements StuffService {
 
 		Participation participation = new Participation();
 		participation.setStuffId(stuff.getId());
-		participation.setMemberId(stuff.getMemberId()); // 아직은 null 값이다..
-
-		// 글 삭제 시, 참여 채팅방도 같이 사라져야 한다???, 일단 편의를 위해 이렇게 동작하도록 함.
+		participation.setMemberId(stuff.getMemberId()); 
 
 		int participationCount = participationRepository.insert(participation);
 		System.out.printf("participationCount: %d\n", participationCount);
@@ -324,8 +328,17 @@ public class StuffServiceImpl implements StuffService {
 		int insertCount = repository.insert(stuff);
 		
 
-		if (stuff.getImgurl() == "" || stuff.getImgurl() == null)
+		if (stuff.getImgurl() == "" || stuff.getImgurl() == null){
+			
+			Participation participation = new Participation();
+			participation.setStuffId(stuff.getId());
+			participation.setMemberId(stuff.getMemberId());
+	
+			int participationCount = participationRepository.insert(participation);
+			System.out.printf("participationCount: %d\n", participationCount);
+
 			return;
+		}
 
 		repository.uploadImgurl(stuff.getImgurl(),stuff.getId());
 		
