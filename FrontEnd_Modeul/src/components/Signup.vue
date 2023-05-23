@@ -99,7 +99,7 @@
 					<div class="input-field-2" @input="checkEmailConfirm">
 						<label for="email" class="email-confirm-label signup-label">
 							<span class="d-none">email-confirm</span>
-							<input type="text" id="email" name="reemail" class="input-text-2" placeholder="인증번호를 입력해주세요."
+							<input type="text" id="email-confirm" name="reemail" class="input-text-2" placeholder="인증번호를 입력해주세요."
 								v-model="emailconfirm" />
 							<!-- 이메일이 중복이 아닐 때 전송버튼 표시(emailDupl==true) -->
 							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post" id="btn-post"
