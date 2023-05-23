@@ -44,8 +44,6 @@
 							<input class="btn-signup" type="submit" value="회원가입">
 						</router-link>
 					</div>
-					<!-- <div> 또는</div>
-					<GoogleLogin :callback="googleLoginHandler" /> -->
 				</form>
 			</div>
 			<!-- 아이디찾기 ~ 플렉스 -->
@@ -69,9 +67,8 @@
 </template>
 
 <script>
-import { useUserDetailsStore } from '../stores/useUserDetailsStore';
 import { useDefaultStore } from '../stores/useDefaultStore';
-import { decodeCredential } from 'vue3-google-login';
+import { useUserDetailsStore } from '../stores/useUserDetailsStore';
 
 export default {
 	data() {
@@ -140,7 +137,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/signup/checkEmail?email=${this.userDetails.email}`)
 				.then(response => response.json())
 				.then(result => {
-					console.log(result);
 					if (result)// 이메일 없으면 true
 						this.$router.push("/googlesignup");
 					else if (!result) {
@@ -177,11 +173,8 @@ export default {
 			this.$router.push('/member/stuff/list');
 		}
 	},
-
-
 }
 </script>
-
 
 <style scoped>
 @import "/css/component/component.css";
