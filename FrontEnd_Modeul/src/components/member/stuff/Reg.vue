@@ -246,7 +246,6 @@ export default {
 
 		// 파일 업로드시, 이벤트 처리
 		async upload() {
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -328,12 +327,18 @@ export default {
 					redirect: 'follow'
 				};
 
+				this.defaultStore.loadingStatus = true;
+
 				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
-					.then(result => result)
+					.then(result => {
+						setTimeout(() => {
+							this.$router.replace('/member/stuff/list');
+						}, 1000);
+						this.defaultStore.loadingStatus = false;
+					})
 					.catch(error => console.log('error', error));
 
-				this.$router.replace('/member/stuff/list')
 			}
 		},
 
