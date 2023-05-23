@@ -145,7 +145,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		String currentDir = System.getProperty("user.dir");
 
-		String realPath = "../FrontEnd_Modeul/images/member";
+		String realPath = "src/main/resources/static/images/member/";
 
 		File savePath = new File(currentDir, realPath);
 
