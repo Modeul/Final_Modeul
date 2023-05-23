@@ -227,7 +227,7 @@ export default {
 				this.pwdbtn = false;
 				this.ErrorMsg = "비밀번호는 필수 입력사항입니다.";
 			} else if (this.member.pwd !== this.member.pwdConfirm) {
-				this.ErrorMsg = "비밀번호가 일치하지 않습니다.";
+				this.ErrorMsg = "비밀번호를 확인해주세요.";
 			} else if (!this.isValidPwd(this.member.pwd)) {
 				this.ErrorMsg = "비밀번호를 확인해주세요. (8자리 이상 영문+숫자)";
 			}
@@ -236,7 +236,7 @@ export default {
 				this.ErrorMsg = "아이디는 필수 입력사항입니다.";
 				this.uidbtn = false;
 			} else if (!this.uidDupl) {
-				this.ErrorMsg = "중복 된 아이디입니다.";
+				this.ErrorMsg = "아이디를 확인해주세요.";
 			}
 			// 만약 ErrorMsg 가 있다면 모달창 띄우기
 			if (this.ErrorMsg) {
@@ -250,7 +250,8 @@ export default {
 				this.namebtn &&
 				this.nicknameDupl &&
 				!this.emailError &&
-				!this.addrError
+				!this.addrError &&
+				this.emailConfirmChk
 			) {
 				var myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
@@ -381,16 +382,19 @@ export default {
 			if (!hasLetter) {
 				this.uidbtn = false;
 				this.uidError = "한글은 입력할 수 없습니다.";
+				this.ErrorMsg = "아이디를 확인해주세요.";
 				return false;
 			}
 			if (this.member.uid.length < 6) {
 				this.uidbtn = false;
 				this.uidError = "6자 이상 입력해주세요.";
+				this.ErrorMsg = "아이디를 확인해주세요.";
 				return false;
 			}
 			if (this.member.uid.length > 16) {
 				this.uidbtn = false;
 				this.uidError = "16자 이하 입력해주세요.";
+				this.ErrorMsg = "아이디를 확인해주세요.";
 				return false;
 			}
 
@@ -452,13 +456,13 @@ export default {
 					if (!emailRegex) {
 						this.emailbtn = false;
 						this.emailCheckError = "올바른 이메일 형식으로 입력해주세요.";
+					}
+					else if (!this.emailDupl) {
+						this.emailError = "이미 가입된 이메일 입니다.";
+						this.emailbtn = false;
 						return false;
-						if (!this.emailDupl) {
-							this.emailError = "이미 가입된 이메일 입니다.";
-							this.emailbtn = false;
-							return false;
-						}
-					} else {
+					}
+					else {
 						this.emailError = "";
 						this.emailbtn = true;
 						this.emailDupl = true;
