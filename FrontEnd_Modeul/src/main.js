@@ -122,7 +122,7 @@ const routes = [
           { path: "edit/:id", component: EditReg },
           { path: "listsearch", component: ListSearch },
           { path: "recommends", component: CrawlingList },
-          { path: "crawlingreg/:id", component: CrawlingReg },
+          { path: "recommend/:id", component: CrawlingReg },
           { path: "gps", component: Gps }
         ]
       },

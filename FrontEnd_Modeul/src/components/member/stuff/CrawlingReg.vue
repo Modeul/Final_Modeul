@@ -234,7 +234,7 @@ export default {
 				method: 'GET',
 				redirect: 'follow'
 			};
-			fetch(`${this.defaultStore.host}/api/stuff/crawlingreg/${this.id}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/crawling/${this.id}`, requestOptions)
 				.then(response => response.json())
 				.then(data => {
 					this.crawlingData = data;
@@ -325,7 +325,7 @@ export default {
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.defaultStore.host}/api/stuff/crawlingupload`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/recommend`, requestOptions)
 					.then(response => response.text())
 					.then(result => result)
 					.catch(error => console.log('error', error));
