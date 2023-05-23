@@ -222,6 +222,8 @@ export default {
 		}
 	},
 	mounted() {
+		this.target = document.querySelector('.top-btn');
+		this.target.addEventListener('scroll', this.handleScroll);
 		this.page = 0;
 		this.addListHandler('');
 		this.scrollCheck();
