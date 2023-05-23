@@ -391,6 +391,7 @@ export default {
 	<div>
 		<router-link to="/member/stuff/reg" class="pc-reg-stuff"></router-link>
 	</div>
+	<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 
