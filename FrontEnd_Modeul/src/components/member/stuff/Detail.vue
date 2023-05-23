@@ -668,7 +668,8 @@ export default {
 	}
 
 	#map {
-		width: inherit;
+		width: 470px;
+		border-radius: 10px;
 	}
 }
 
