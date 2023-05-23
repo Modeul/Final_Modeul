@@ -72,8 +72,7 @@
 					<div @click.prevent="postCode" class="input-field-2">
 						<label for="address" class="address-label signup-label">
 							<span class="d-none">addr</span>
-							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address"
-								hidden />
+							<input type="text" id="address" name="address" class="input-text-2" v-model="member.address" hidden />
 							<div class="input-text-3" v-text="member.address"></div>
 						</label>
 					</div>
@@ -103,8 +102,8 @@
 							<input type="text" id="email" name="reemail" class="input-text-2" placeholder="인증번호를 입력해주세요."
 								v-model="emailconfirm" />
 							<!-- 이메일이 중복이 아닐 때 전송버튼 표시(emailDupl==true) -->
-							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post"
-								id="btn-post" type="button" value="전송" />
+							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post" id="btn-post"
+								type="button" value="전송" />
 							<div v-if="emailConfirmChk" class="btn-check"></div>
 							<!-- <div v-if="!emailConfirmChk" class="btn-x"></div>  -->
 						</label>
@@ -124,11 +123,11 @@
 				</div>
 
 				<div v-if="openModal2" class="black-bg">
-                    <div class="findpwd-modal-box">
-                        <div class="modal-txt">가입 완료되었습니다!</div>
-                        <button @click.prevent="move" class="modal-btn">확인</button>
-                    </div>
-                </div>
+					<div class="findpwd-modal-box">
+						<div class="modal-txt">가입 완료되었습니다!</div>
+						<button @click.prevent="move" class="modal-btn">확인</button>
+					</div>
+				</div>
 
 			</div>
 			<!-- flex 끝 -->
@@ -207,7 +206,7 @@ export default {
 			} else if (!this.emailConfirmChk) {
 				this.ErrorMsg = "이메일 인증번호를 확인해주세요.";
 			}
-			
+
 			if (this.addrError) {
 				this.ErrorMsg = "주소는 필수 입력사항입니다.";
 			}
@@ -328,7 +327,7 @@ export default {
 			this.namebtn = true;
 			return true;
 		},
-		isValidEmail(){
+		isValidEmail() {
 			const hasEmail = /^[A-Za-z0-9]+$/.test(this.member.email);
 			if (!hasEmail) {
 				this.emailError = "이메일은 영문만 가능합니다.";
@@ -377,7 +376,7 @@ export default {
 			this.uidDupl = ""; // true/false
 			this.uidbtn = "";
 
-			
+
 			const hasLetter = /^[a-zA-Z0-9]*$/g.test(this.member.uid);
 			if (!hasLetter) {
 				this.uidbtn = false;
@@ -454,17 +453,13 @@ export default {
 						this.emailbtn = false;
 						this.emailCheckError = "올바른 이메일 형식으로 입력해주세요.";
 						return false;
-					} else {
-						this.ErrorMsg = "";
-						// this.emailDupl = true;
-					}
-					if (!this.emailDupl) {
-						this.emailError = "이미 가입된 이메일 입니다.";
-						this.emailbtn = false;
-						return false;
+						if (!this.emailDupl) {
+							this.emailError = "이미 가입된 이메일 입니다.";
+							this.emailbtn = false;
+							return false;
+						}
 					} else {
 						this.emailError = "";
-						this.ErrorMsg = "";
 						this.emailbtn = true;
 						this.emailDupl = true;
 						return true;
@@ -476,11 +471,11 @@ export default {
 			this.openModal = !this.openModal;
 		},
 		toggleModal2() {
-            this.openModal2 = !this.openModal2;
-        },
-        move(){
-            this.$router.push('/login');
-        },
+			this.openModal2 = !this.openModal2;
+		},
+		move() {
+			this.$router.push('/login');
+		},
 		postCode() {
 			const geocoder = new daum.maps.services.Geocoder();
 			new daum.Postcode({
@@ -510,6 +505,7 @@ export default {
 @import url(/css/component/component.css);
 @import url(/css/component/component-sign-up.css);
 @import url(/css/button.css);
+
 .findpwd-modal-box {
 	width: 253px;
 	height: 113px;
