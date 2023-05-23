@@ -85,20 +85,24 @@ export default {
 		scrollHandler(){
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
-
+		scroll() {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+				if (this.listCount !== 0) {
+					this.addListHandler(this.serchDong);
+				}
+			}
+		}
 		
 	},
 	mounted() {
 		this.page = 0;
 		this.addListHandler();
 		this.scrollCheck();
-		document.addEventListener("scroll", (e) => {
-			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
-				if (this.listCount !== 0) {
-					this.addListHandler();
-				}
-			}
-		})
+		document.addEventListener("scroll", this.scroll)
+
+	},
+	beforeUnmount() {
+		document.removeEventListener("scroll", this.scroll)
 	}
 }
 </script>

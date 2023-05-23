@@ -132,10 +132,10 @@ export default {
 			}
 			return resultList;
 		},
-		formatImgUrl(imgDir){
-			if(!imgDir)
+		formatImgUrl(imgDir) {
+			if (!imgDir)
 				return imgDir;
-			if(imgDir.substr(0, 4) == 'http')
+			if (imgDir.substr(0, 4) == 'http')
 				return imgDir
 			else
 				return '/images/member/stuff/' + imgDir
@@ -145,10 +145,10 @@ export default {
 			if (v.target.value === 'cur') {
 				this.getDongInfo(null, null);
 			} else if (v.target.value === 'my') {
-				this.serchDong =  this.myDongCode;
+				this.serchDong = this.myDongCode;
 				this.dongName = this.myDongName;
 				this.addListHandler(this.serchDong);
-			} else{
+			} else {
 				this.serchDong = '';
 				this.dongName = '';
 				this.addListHandler(this.serchDong);
@@ -172,11 +172,11 @@ export default {
 					geocoder.coord2RegionCode(lng, lat, (result, status) => {
 						if (status === kakao.maps.services.Status.OK) {
 
-						this.dongCode = result[0].code;
-						this.serchDong = this.dongCode;
-						this.addListHandler(this.serchDong);
-					}
-				});
+							this.dongCode = result[0].code;
+							this.serchDong = this.dongCode;
+							this.addListHandler(this.serchDong);
+						}
+					});
 
 				}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
 
@@ -210,9 +210,16 @@ export default {
 					this.getDongInfo(this.myCoordX, this.myCoordY);
 				}).catch(error => console.log('error', error));
 		},
-		scrollHandler(){
+		scrollHandler() {
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
+		scroll() {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+				if (this.listCount !== 0) {
+					this.addListHandler(this.serchDong);
+				}
+			}
+		}
 	},
 	mounted() {
 		this.target = document.querySelector('.top-btn');
@@ -223,15 +230,11 @@ export default {
 		this.scrollCheck();
 		this.getMemberCoordInfo();
 
-		document.addEventListener("scroll", (e) => {
+		document.addEventListener("scroll", this.scroll)
 
-			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
-				if (this.listCount !== 0) {
-					this.addListHandler(this.serchDong);
-				}
-			}
-		})
-
+	},
+	beforeUnmount() {
+		document.removeEventListener("scroll", this.scroll)
 	}
 }
 </script>
@@ -263,7 +266,7 @@ export default {
 						@keyup.enter="searchInput(query)">
 					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
-				<div v-else-if="dongName" > {{ dongName }}</div>
+				<div v-else-if="dongName"> {{ dongName }}</div>
 			</Transition>
 
 			<div>
