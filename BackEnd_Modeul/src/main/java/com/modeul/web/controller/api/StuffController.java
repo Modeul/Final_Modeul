@@ -192,7 +192,7 @@ public class StuffController {
 
 		return dataList;
 	}
-	@GetMapping("/stuff/crawlingreg/{id}")
+	@GetMapping("/stuff/crawling/{id}")
 	public Map<String, Object> getCrwalingReg(@PathVariable("id") long id) {
 
 		
@@ -203,7 +203,7 @@ public class StuffController {
 
 		return data;
 	}
-	@PostMapping("/stuff/crawlingupload")
+	@PostMapping("/stuff/recommend")
 	public String regCrawlingStuff(Stuff stuff) {
 		service.regCrawlingStuff(stuff);
 

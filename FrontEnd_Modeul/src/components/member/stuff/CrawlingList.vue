@@ -175,7 +175,7 @@ justify-content: end;
 							<div class="li-categ-place">
 								<span class="li-categ-place-categoryName">{{stuff.categoryName}}</span>
 							</div>
-							<router-link class="li-write-icon" :to="{ path : '/member/stuff/crawlingreg/' + stuff.id}" >
+							<router-link class="li-write-icon" :to="{ path : '/member/stuff/recommend/' + stuff.id}" >
 								<div class="icon-write" name="id" :value="stuff.id"></div>
 							</router-link>
 							<div class="li-subj">{{ stuff.title }}</div>
