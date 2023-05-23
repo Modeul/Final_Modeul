@@ -149,7 +149,7 @@ public class MemberController {
 	}
 
 	@PostMapping("updateImage")
-	public String updateImage(@RequestParam("id") long id, List<MultipartFile> imgs){
+	public String updateImage(long id, List<MultipartFile> imgs){
 
 		memberService.updateImg(id, imgs);
 

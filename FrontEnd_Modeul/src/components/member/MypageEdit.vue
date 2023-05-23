@@ -26,7 +26,7 @@
 			<div class="profile-img">
 				<img class="profile-img" :src="'/images/member/' + loginInfo.image" />
 			</div>
-			<form @submit="uploadImg" method="post" enctype="multipart/form-data" ref="form">
+			<form method="post" enctype="multipart/form-data" ref="form">
 				<label for="file">
 					<div class="edit-btn2">
 						<input type="file" class="d-none" id="file" name="imgs" @change.prevent="uploadImg" />
@@ -74,7 +74,6 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			// myMemberId: "110",
 			ErrorMsg: "",
 			nicknameDupl: "",
 			nicknamebtn: false,
