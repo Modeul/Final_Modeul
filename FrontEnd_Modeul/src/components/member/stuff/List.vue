@@ -265,7 +265,7 @@ export default {
 						@keyup.enter="searchInput(query)">
 					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
-				<div v-else-if="dongName"> {{ dongName }}</div>
+				<!-- <div v-else-if="dongName"> {{ dongName }}</div> -->
 			</Transition>
 
 			<div>

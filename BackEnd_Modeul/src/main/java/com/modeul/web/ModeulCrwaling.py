@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import time
+import time , pyautogui , pyperclip
 import pymysql
 import requests
 from bs4 import BeautifulSoup
@@ -61,7 +61,7 @@ n = 0
 driver.get("https://www.coupang.com/np/categories/194276") # 쿠팡
 items = driver.find_elements(By.CLASS_NAME,"baby-product-link") # 상품 정보 목록
 for item in items:
-    time.sleep(0.05)
+    time.sleep(0.1)
     title = item.find_element(By.CLASS_NAME,'name').text
     price = item.find_element(By.CLASS_NAME,'price-value').text
     link = item.get_attribute('href')
@@ -180,54 +180,41 @@ for item in items:
 print("=================================인터파크==========================================")
 
 
+driver.get("https://corners.auction.co.kr/corner/categorybest.aspx") #옥션
+items = driver.find_elements(By.CLASS_NAME,"img-list")
+for item in items:
+    time.sleep(0.05)
+    title = item.find_element(By.TAG_NAME,'em').text
+    price = item.find_element(By.CLASS_NAME,'sale').text
+    link = item.find_element(By.TAG_NAME,'a').get_attribute('href')
+    img = item.find_element(By.CLASS_NAME,'line').get_attribute('src')
+    categoryname = '옥션'
+    print(f"{n}번째 상품명:{title}\n가격:{price}\n링크:{link}\n이미지:{img}\n")
+    n = n + 1
+    # INSERT 쿼리 실행
+    cursor.execute(insert, (title, price, link, img, 5,categoryname))
+    if n == 200:
+        n = 0
+        break
+print("=================================옥션==========================================")
 
-# driver.get("https://store.kakao.com/home/best") # 카카오톡
-# driver.find_element(By.TAG_NAME,"body").send_keys(Keys.END)
-# time.sleep(1)
-# items = driver.find_elements(By.CLASS_NAME,"item_product")
-# for item in items:
-#     time.sleep(0.05)
-#     title = item.find_element(By.CLASS_NAME,'product_name').text
-#     price = item.find_element(By.CLASS_NAME,'txt_number').text
-#     link = item.find_element(By.CLASS_NAME,'link_thumb').get_attribute('href')
-#     response = requests.get(link , headers={'User-agent':'Mozila/5.0'})
-#     print(response)
-#     html = response.text
-#     soup = BeautifulSoup(html , 'html.parser')
-#     print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
-#     categoryname = '카카오톡'
-#     # print(f"{n}번째 상품명:{title}\n가격:{price}\n링크:{link}\n이미지:{img}\n")
-#     n = n + 1
-#     # INSERT 쿼리 실행
-#     # cursor.execute(insert, (title, price, link, img, 5,categoryname))
-#     if n == 5:
-#         n = 0
-#         break
-# print("=================================카카오톡==========================================")
-
-# response = requests.get("https://www.kurly.com/collections/market-best", headers={'User-agent':'Mozila/5.0'})
-# html = response.text
-# soup = BeautifulSoup(html , 'html.parser')
-# # driver.get("https://www.kurly.com/collections/market-best") # 마켓컬리
-# items = soup.select("a.css-1xyd46f")
-# print("ㅎㅎㅎㅎ")
-# print(items)
-# print("ㅋㅋㅋㅋ")
-# for item in items:
-#     time.sleep(0.05)
-#     title = item.select_one('span.css-1dry2r1').text
-#     price = item.select_one('span.sales-price').text
-#     link = item.attrs['href']
-#     img=1
-#     categoryname = '마켓컬리'
-#     print(f"{n}번째 상품명:{title}\n가격:{price}\n링크:{link}\n이미지:{img}\n")
-#     n = n + 1
-#     # INSERT 쿼리 실행
-#     cursor.execute(insert, (title, price, link, img, 4,categoryname))
-#     if n == 20:
-#         break
-# print("=================================마켓컬리==========================================")
-
+driver.get("https://www.oliveyoung.co.kr/store/main/getBestList.do") #올리브영
+items = driver.find_elements(By.CLASS_NAME,"prd_info")
+for item in items:
+    time.sleep(0.05)
+    title = item.find_element(By.CLASS_NAME,'tx_name').text
+    price = item.find_element(By.CLASS_NAME,'tx_num').text
+    link = item.find_element(By.TAG_NAME,'a').get_attribute('href')
+    img = item.find_element(By.TAG_NAME,'img').get_attribute('src')
+    categoryname = '올리브영'
+    print(f"{n}번째 상품명:{title}\n가격:{price}\n링크:{link}\n이미지:{img}\n")
+    n = n + 1
+    # INSERT 쿼리 실행
+    cursor.execute(insert, (title, price, link, img, 6,categoryname))
+    if n == len(items):
+        n = 0
+        break
+print("=================================올리브영==========================================")
 
 
 db.commit()

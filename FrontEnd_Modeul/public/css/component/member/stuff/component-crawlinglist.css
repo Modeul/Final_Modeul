@@ -68,6 +68,10 @@
   background-color: #fffc63;
   color: #ffffff;
 }
+.selected[value="6"] {
+  background-color: #06b0f9;
+  color: #ffffff;
+}
 .default {
   background-color: #b9d9f8;
   color: #40709e;
