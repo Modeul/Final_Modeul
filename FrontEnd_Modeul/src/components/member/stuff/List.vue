@@ -222,9 +222,6 @@ export default {
 		}
 	},
 	mounted() {
-		this.target = document.querySelector('.top-btn');
-		this.target.addEventListener('scroll', this.handleScroll);
-
 		this.page = 0;
 		this.addListHandler('');
 		this.scrollCheck();
@@ -392,7 +389,6 @@ export default {
 	<div>
 		<router-link to="/member/stuff/reg" class="pc-reg-stuff"></router-link>
 	</div>
-	<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 
