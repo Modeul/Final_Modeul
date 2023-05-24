@@ -640,8 +640,5 @@ MigrationBackup/
 # End of https://www.toptal.com/developers/gitignore/api/java,git,eclipse,vs,intellij,maven,netbeans
 
 # BackEnd_Modeul/src/main/resources/static
-BackEnd_Modeul/src/main/resources/static/assets
-BackEnd_Modeul/src/main/resources/static/index.html
-BackEnd_Modeul/src/main/resources/static/css
 BackEnd_Modeul/src/test
 Memo
