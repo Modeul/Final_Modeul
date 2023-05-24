@@ -1,0 +1,64 @@
+.map-content {
+
+    height: auto;
+    width: auto;
+    position: relative;
+    background-color: white;
+    border: 2px solid rgba(114, 153, 190, 1);
+    border-radius: .4em;
+    font-size: 0.8rem;
+
+    padding: 0 6px;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 1fr 1fr;
+    /* gap: 0px 0px; */
+    grid-template-areas:
+        "place place"
+        "vmap fmap";
+
+}
+
+.map-content:after {
+
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: rgba(114, 153, 190, 1);
+    border-bottom: 0;
+    margin-left: -10px;
+    margin-bottom: -10px;
+
+}
+
+.map-content-items {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: lighter;
+}
+
+.map-content-items:nth-child(1) {
+    grid-area: place;
+    border-bottom: 2px solid rgba(114, 153, 190, 1);
+
+}
+
+.map-content-items:nth-child(2) {
+    grid-area: vmap;
+    border-right: 1px solid rgba(114, 153, 190, 1);
+    color: rgb(50, 70, 255);
+
+}
+
+.map-content-items:nth-child(3) {
+    grid-area: fmap;
+    border-left: 1px solid rgba(114, 153, 190, 1);
+    color: rgb(50, 70, 255);
+
+
+}

@@ -1,0 +1,120 @@
+@charset "UTF-8"; 
+
+.m-t-31px{
+  margin-top: 31px;
+}
+
+.m-t-38px{
+  margin-top: 38px;
+}
+
+.m-t-42px{
+  margin-top: 42px;
+}
+
+.m-t-44px{
+  margin-top: 44px;
+}
+
+.m-t-69px{
+  margin-top: 69px;
+}
+.header{
+  width: 312px;
+  margin-top: 25px;
+}
+.wrap{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  
+  position: relative;
+  width: 360px;
+  
+  margin:0 auto;
+}
+.icon-back{
+  position: unset !important;
+}
+.signup-title{
+  margin-left: 110px;
+}
+.sign-up-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.signup-label{
+    width: 300px;
+    display: flex;
+    border: 1px solid #aeaeae;
+    padding: 6px 10px;
+    border-radius: 5px;
+    position: relative;
+}
+.uid-label::before{
+  content: "\f2bb";
+  font-family: "Font Awesome 5 Free";
+  font-size: 18px;
+  margin-right: 8px;
+  
+}
+.password-label::before {
+  content: "\f042";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
+.password-confirm-label::before {
+  content: "\eade";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.name-label::before {
+  content: "\ea67";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.address-label::before {
+  content: "\e88a";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
+.email-label::before {
+  content: "\e158";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
+.email-confirm-label::before {
+  content: "\f18c";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.input-text-2{
+  width: 200px;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+.input-text-3{
+  width: 200px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  line-height: 27px;
+  color: rgb(103, 103, 103);
+}
+/* 에러메시지 */
+.error-font{
+  font-size: 12px;
+  color: brown;
+}

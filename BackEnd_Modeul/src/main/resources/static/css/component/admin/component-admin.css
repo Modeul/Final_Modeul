@@ -1,0 +1,121 @@
+@charset "UTF-8"; 
+
+/* flex-container */
+.header-container{
+    display: flex;
+    justify-content: center;
+}
+
+/* 관리자 네비게이션 바의 검색창 */
+
+.search-container-admin {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: flex-end;
+    border-radius: 10px;
+  
+    width: 100%;            /* 여기 수정 */
+    margin-right: 144px;
+}
+
+.search-container-admin-sr {
+    width: 280px;            /* 여기 수정 */
+}
+
+.search-container-admin1 {
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 10px;
+  width: 30%;         
+  margin-right: 200px;
+}
+
+.search-container-admin2 {
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+
+  width: 60%;            /* 여기 수정 */
+}
+
+/* ========= 목록 : 테이블 버전 ============== */
+
+table {
+  width:100%; 
+  border-collapse:collapse; 
+}
+
+table thead {
+  background:#D1D5DB; 
+  color:#000;  
+}
+
+table thead th {
+  text-align:center; 
+  padding:1em; 
+}
+
+table tbody tr{
+  border-bottom:1px solid #D1D5DB;
+}
+
+table tbody td {
+  padding:1em; 
+  text-align:center; 
+}
+
+table tbody tr.bg td {
+  background:#eee;
+}
+
+/* ============================= */
+
+
+/* 카테고리 추가 관련 버튼 추가 */
+
+.btn-admin-category{
+  position: absolute;
+  top: 70px;
+  right: 300px;
+}
+.admin-categ-table{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+}
+.table-head{
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.table-body{
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  font-size: 14px;
+  text-align: left;
+  padding: 0;
+}
+.search-box{
+  width: 70%;
+  margin: auto;
+}
+.side-menu-wrap{
+  margin-top: 200px;
+}
+.admin-header{
+  padding: 110px 0 28px 20px;
+  box-sizing: border-box;
+  font-size: 32px;
+  border-bottom: #D1D5DB solid 1px;
+  color: #333;
+}
+.add-cate-box{
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  padding-right: 12px;
+  box-sizing: border-box;
+}
