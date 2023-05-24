@@ -13,7 +13,7 @@
 
   gap: 0.6rem;
   padding-bottom: 13px;
-  /* border-bottom: 0.3px #d5d5d5 solid; */
+  border-bottom: 0.3px #d5d5d5 solid;
 }
 
 .list-cl {
@@ -32,9 +32,8 @@
 
   overflow: hidden;
   padding: 3px 8px;
-  font-size: 14px;
+  font-size: 8px;
   cursor: pointer;
-  width: 100px;
 }
 .selected,
 .default {
@@ -44,9 +43,8 @@
 
   overflow: hidden;
   padding: 3px 8px;
-  font-size: 14px;
+  font-size: 8px;
   cursor: pointer;
-  width: 100px;
 }
 .selected[value="1"] {
   background-color: #e84c23;
