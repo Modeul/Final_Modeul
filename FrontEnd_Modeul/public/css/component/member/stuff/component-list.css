@@ -66,8 +66,8 @@
 
 .stuff-list {
   padding: 12px 0;
-  /* border-bottom: 0.5px raga(0, 0, 0, 0.3) solid; */
-  /* border-bottom: 0.3px #d5d5d5 solid; */
+  border-bottom: 0.5px raga(0, 0, 0, 0.3) solid;
+  border-bottom: 0.3px #d5d5d5 solid;
   box-sizing: border-box;
 }
 
