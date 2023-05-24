@@ -161,14 +161,17 @@ export default {
 				body: formData,
 				redirect: 'follow'
 			};
+			this.defaultStore.loadingStatus = true;
 			await fetch(`${this.defaultStore.host}/api/member/updateImage`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result)
-					this.load()
+					setTimeout(() => {
+						this.load();
+						this.defaultStore.loadingStatus = false;
+						this.openModal = true;
+					}, 500);
 				})
 				.catch(error => console.log('error', error));
-			this.openModal = true;
 		},
 		modalHandler() {
 			this.openModal = !this.openModal;
