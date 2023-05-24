@@ -169,7 +169,7 @@ export default {
 						this.load();
 						this.defaultStore.loadingStatus = false;
 						this.openModal = true;
-					}, 500);
+					}, 1000);
 				})
 				.catch(error => console.log('error', error));
 		},
