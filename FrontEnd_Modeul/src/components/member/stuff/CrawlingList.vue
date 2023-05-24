@@ -132,9 +132,10 @@ justify-content: end;
 	<PcHeader @queryEmit="searchInput"></PcHeader>
 
 	<div class="pc-carousel">
-		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
-			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
-			<v-carousel-item src="https://gcdn.market09.kr/data/banner/1682557050291.jpg"></v-carousel-item>
+		<v-carousel cycle interval="6000" height="370" hide-delimiter-background :show-arrows="false" color="white">
+			<v-carousel-item src="/images/member/banner1.png"></v-carousel-item>
+			<v-carousel-item src="/images/member/banner2.png"></v-carousel-item>
+			<v-carousel-item src="/images/member/banner3.png"></v-carousel-item>
 		</v-carousel>
 	</div>
 
