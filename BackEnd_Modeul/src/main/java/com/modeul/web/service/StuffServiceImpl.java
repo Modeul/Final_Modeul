@@ -96,8 +96,8 @@ public class StuffServiceImpl implements StuffService {
 		// 파일 경로 알아 내기(논리적, 물리적)** : urlPath, realPath
 		String currentDir = System.getProperty("user.dir");
 
-		// String realPath = "src/main/resources/static/images/member/stuff/";
-		String realPath = "images/member/stuff/";
+		String realPath = "src/main/resources/static/images/member/stuff/";
+		// String realPath = "images/member/stuff/";
 
 		// 물리 경로에 폴더가 없으면, 폴더도 생성
 		File savePath = new File(currentDir, realPath);
@@ -241,8 +241,8 @@ public class StuffServiceImpl implements StuffService {
 
 		// 경로 설정
 		String currentDir = System.getProperty("user.dir");
-		// String realPath = "src/main/resources/static/images/member/stuff/";
-		String realPath = "images/member/stuff";
+		String realPath = "src/main/resources/static/images/member/stuff/";
+		// String realPath = "images/member/stuff";
 		File savePath = new File(currentDir, realPath);
 
 		// 이미지 정보 얻어오기
@@ -312,8 +312,8 @@ public class StuffServiceImpl implements StuffService {
 
 		String currentDir = System.getProperty("user.dir");
 
-		// String realPath = "src/main/resources/static/images/member/stuff/";
-		String realPath = "images/member/stuff/";
+		String realPath = "src/main/resources/static/images/member/stuff/";
+		// String realPath = "images/member/stuff/";
 
 		File savePath = new File(currentDir, realPath);
 
