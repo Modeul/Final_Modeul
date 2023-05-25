@@ -233,8 +233,6 @@ onMounted(() => {
 					<header class="cal-result-header">
 						<h1 class="d-none">title</h1>
 						<div class="cal-result-title">정산결과</div>
-						<div class="cal-result-del"><span @click="openDeleteModalHandler"
-								v-if="this.banishAuthority">삭제하기</span></div>
 					</header>
 
 					<main class="cal-result-user-list">
