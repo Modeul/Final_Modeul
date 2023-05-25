@@ -665,7 +665,7 @@ export default {
 				.then(dataList => {
 					this.dutchMemberList = dataList.list;
 					this.sumDutchHandler();
-					this.loadDutchList();
+					this.loadCheckDutchList();
 					this.checkDutchHave();
 				})
 				.catch(error => console.log('error', error));
