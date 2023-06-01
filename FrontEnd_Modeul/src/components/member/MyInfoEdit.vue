@@ -71,7 +71,6 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			// myMemberId: '110',
 			loginInfo: '',
 
 			pwd: "",
@@ -205,7 +204,6 @@ export default {
 				oncomplete: (data) => {
 
 					this.addr = data.address;
-					// this.dongCode = data.bcode;
 					geocoder.addressSearch(data.address, (results, status) => {
 
 						if (status === daum.maps.services.Status.OK) {
@@ -213,7 +211,6 @@ export default {
 							let result = results[0];
 							this.coordX = result.x;
 							this.coordY = result.y;
-							// this.addrError = false;
 							document.querySelector(".input-addr2").focus();
 						}
 					});
@@ -327,7 +324,6 @@ export default {
 
 .changpwd-title {
 	margin-left: 86px;
-	/* font-size: 14px; */
 	color: #333;
 }
 
@@ -406,7 +402,6 @@ export default {
 	content: "\e88a";
 	font-family: 'Material Icons';
 	font-size: 25px;
-	/* margin-right: 8px; */
 }
 
 .txt {

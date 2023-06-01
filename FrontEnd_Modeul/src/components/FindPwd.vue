@@ -163,7 +163,6 @@ export default {
 			if (this.emailCodeChk == this.emailcode) {
 				this.emailChkBtn = true;
 				this.emailcodeError = "";
-				// this.emailcodeError = "인증번호 확인 완료";
 			} else {
 				this.emailChkBtn = false;
 				this.emailcodeError = "인증번호가 잘못되었습니다.";

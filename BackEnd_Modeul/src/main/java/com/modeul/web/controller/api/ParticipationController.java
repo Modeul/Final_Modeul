@@ -61,7 +61,6 @@ public class ParticipationController {
         return dataList;
     }
 
-    // 참여하기 버튼 누르면 실시간 참여 멤버 인원 업데이트를 위해 필요하다.
     @GetMapping("/participation/stuff/{stuffId}")
     public Map<String, Object> get(
             @PathVariable("stuffId") Long stuffId) {

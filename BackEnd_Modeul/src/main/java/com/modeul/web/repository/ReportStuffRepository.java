@@ -12,5 +12,4 @@ public interface ReportStuffRepository {
 	List<ReportStuff> findAll();
 	int insert(ReportStuff reportStuff);
 	int delete(Integer id);
-	
 }

@@ -39,7 +39,6 @@ export default {
 				method: 'DELETE',
 				redirect: 'follow'
 			};
-			// this.$router.push("/member/stuff/list");
 			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}&c=c`, requestOptions)
 				.then(response => response.text())
 				.catch(error => console.log('error', error));
@@ -53,7 +52,6 @@ export default {
 				method: 'DELETE',
 				redirect: 'follow'
 			};
-			// this.$router.push("/member/stuff/list");
 			await fetch(`${this.defaultStore.host}/api/reports/stuff?id=${this.deleteId}`, requestOptions)
 				.then(response => response.text())
 				.catch(error => console.log('error', error));
@@ -73,7 +71,6 @@ export default {
 			this.openModal2 = !this.openModal2;
 		},
 		formatDate(date){
-
 				let regdate = dayjs(date).locale('ko');
 				let formatDate = regdate.format('YYYY-M-D HH:mm');
 				return formatDate;

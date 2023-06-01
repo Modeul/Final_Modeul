@@ -15,12 +15,6 @@
     values(#{stuffId}, #{chatLog})
   </insert>
 
-  <!-- <select id="findChatLogBystuffId" resultMap="ChatResultMap">
-    select * 
-    from chat
-    where stuff_id = #{stuffId}
-  </select> -->
-
 	<select id="findChatLogBystuffId" resultType="String">
     select chat_log
     from chat

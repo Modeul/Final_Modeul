@@ -105,7 +105,6 @@
 							<input @click.prevent="checkEmail" v-if="emailDupl && !emailconfirmbtn" class="btn-post" id="btn-post"
 								type="button" value="전송" />
 							<div v-if="emailConfirmChk" class="btn-check"></div>
-							<!-- <div v-if="!emailConfirmChk" class="btn-x"></div>  -->
 						</label>
 						<div class="error-font">{{ this.emailcodeError }} </div>
 					</div>

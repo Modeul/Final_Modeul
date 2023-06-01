@@ -6,8 +6,6 @@ import { useRoute } from 'vue-router';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 
-// Vue3 Composition API으로 작성해보기**
-
 const route = useRoute();
 const todayMonth = new dayjs().locale('ko').format("M");
 
@@ -34,15 +32,11 @@ let model = reactive({
 
 async function addListHandler() {
 	page.value++;
-	// 쿼리스트링을 Composition API에서는 어떻게 SpringBoot로 비동기 처리하여 요청하지? 
-	// ** 컴포지션 API에서 넘기는 방법? 방법이 body 밖에 없는데? body는 POST요청에서만 이용
-	// **결론, 'value' 이용!
-	// vuex를 composition API에서 이용하기 위해서는 this와 $를 없애자(원래는 'this.$state.host') 
+	
 	const response = await fetch(`${defaultStore.host}/api/dutchs?p=${page.value}&memberId=${memberId.value}&m=${month.value}`, {
-		// body:`p=${page}&memberId=${memberId}`
 	});
 
-	const dataList = await response.json(); // 여기 await 중요!
+	const dataList = await response.json();
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
 	listCount = ref(dataList.listCount);
@@ -50,15 +44,11 @@ async function addListHandler() {
 
 async function selectMonthList() {
 	page = ref(1);
-	// 쿼리스트링을 Composition API에서는 어떻게 SpringBoot로 비동기 처리하여 요청하지? 
-	// ** 컴포지션 API에서 넘기는 방법? 방법이 body 밖에 없는데? body는 POST요청에서만 이용
-	// **결론, 'value' 이용!
-	// vuex를 composition API에서 이용하기 위해서는 this와 $를 없애자(원래는 'this.$state.host') 
+
 	const response = await fetch(`${defaultStore.host}/api/dutchs?p=${page.value}&memberId=${memberId.value}&m=${month.value}`, {
-		// body:`p=${page}&memberId=${memberId}`
 	});
 
-	const dataList = await response.json(); // 여기 await 중요!
+	const dataList = await response.json(); 
 	model.list = formatDateList(dataList.list);
 	model.months = dataList.months;
 	listCount = ref(dataList.listCount);
@@ -174,7 +164,6 @@ onMounted(() => {
 </script>
 
 <template>
-	<!-- Vue3 composition API에서 SpringBoot DB 데이터를 받아와서 이용하는 방법 -->
 	<div class="dutch canvas">
 
 		<header class="header">
@@ -221,6 +210,7 @@ onMounted(() => {
 			</div>
 		</div>
 		<button class="btn-next more-list" @click="addListHandler()"> 더보기 <span> +{{ listCount }}</span></button>
+
 		<!-- ** 정산 결과 모달 ** -->
 		<v-navigation-drawer style="height: 630px; border-radius: 30px 30px 0px 0px;" v-model="calDrawer" location="bottom"
 		temporary>
@@ -357,7 +347,6 @@ select:focus {
 .dutch .header .content {
 	display: flex;
 	flex-direction: column;
-	/* justify-content: center; */
 	height: 121px;
 	width: 250px;
 	margin-top: 32px;
@@ -384,8 +373,6 @@ select:focus {
 		"pic . nic price price";
 
 	align-items: center;
-	/* grid-row-gap: 1%; */
-	/* grid-column-gap: 10px; */
 }
 
 .li-pic {
@@ -394,7 +381,6 @@ select:focus {
 	height: 60px;
 	display: inline-block;
 	overflow: hidden;
-	/* text-indent: -999px; */
 	justify-self: center;
 	align-self: center;
 	border-radius: 50%;
@@ -407,7 +393,6 @@ select:focus {
 	display: flex;
 	justify-self: flex-start;
 	align-self: center;
-	/* padding-left: 13px; */
 }
 
 .li-manager-icon::before {
@@ -422,8 +407,6 @@ select:focus {
 
 	position: relative;
 	top: 2px;
-
-	/* background-image: url("data:image/svg+xml,%3Csvg width='10' height='12' viewBox='0 0 10 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.99992 5.3999C6.36222 5.3999 7.46655 4.29553 7.46655 2.93323C7.46655 1.57093 6.36222 0.466553 4.99992 0.466553C3.63762 0.466553 2.5332 1.57093 2.5332 2.93323C2.5332 4.29553 3.63762 5.3999 4.99992 5.3999Z' fill='%23929090'/%3E%3Cpath d='M7.86713 11.4667C8.80046 11.4667 9.46716 10.4667 9.06716 9.6C8.33383 8.06666 6.80051 7 5.00051 7C3.20051 7 1.60053 8.06666 0.933858 9.6C0.533858 10.4667 1.20048 11.4667 2.13381 11.4667H7.86713Z' fill='%23929090'/%3E%3C/svg%3E%0A"); */
 }
 
 .li-manager-name {
@@ -435,39 +418,33 @@ select:focus {
 	text-align: center;
 	border-radius: 5px;
 	font-size: 0.5rem;
-	/* width: 64px; */
 	height: 15px;
 	line-height: 15px;
 	margin-top: 0px;
-	/* margin-left: 35px; */
 	font-weight: 600;
 }
 
 .li-dday .expired {
 	background-color: #19191982;
 	width: 35px;
-	/* margin-left: 35px; */
 	color: #FFFFFF;
 }
 
 .li-dday .day-left {
 	background-color: #b8ccff82;
 	width: 30px;
-	/* margin-left: 40px; */
 	color: #56A4FF;
 }
 
 .li-dday .hour-left {
 	background-color: #FAEEF0;
 	width: 70px;
-	/* margin-left: 34px; */
 	color: #FF687B;
 }
 
 .li-dday .minute-left {
 	background-color: #FAEEF0;
 	width: 70px;
-	/* margin-left: 34px; */
 	color: #FF687B;
 }
 
@@ -484,7 +461,6 @@ select:focus {
 	grid-area: price;
 	font-size: 12px;
 	font-weight: 700;
-	/* margin-left: 15px; */
 	justify-self: flex-end;
 	align-self: center;
 	margin-right: 2px;
@@ -493,7 +469,6 @@ select:focus {
 .calc-result-default {
 	display: flex;
 	flex-direction: column;
-
 
 	position: relative;
 	width: 100%;
@@ -521,9 +496,6 @@ select:focus {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	/* justify-content: center; */
-	/* justify-content: center; */
-
 	width: 327px;
 	height: 74px;
 
@@ -751,14 +723,7 @@ select:focus {
 	top: 15%;
 	padding: auto 0;
 	line-height: 40px;
-	/* left: 50%; */
-	/* transform: translate(-50%, -50%); */
-	/* display: flex; */
-	/* align-items: center; */
-	/* padding: 0 12px; */
-	/* box-sizing: border-box; */
-	/* border-radius: 5px; */
-	/* font-size: 12px; */
+
 	font-weight: bold;
 	z-index: 9999;
 }

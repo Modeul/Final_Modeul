@@ -2,17 +2,17 @@
 > ![java](https://img.shields.io/badge/Java-17-DEB887?style=flat)
 > <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/>
 > <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=flat&logo=SpringSecurity&logoColor=white"/>
-> <img src="https://img.shields.io/badge/mariaDB-003545?style=flat-square&logo=MariaDB&logoColor=white"> 
+> <img src="https://img.shields.io/badge/MariaDB-003545?style=flat-square&logo=MariaDB&logoColor=white"> 
 > <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>
-> <img src="https://img.shields.io/badge/vue.js-4FC08D?style=flat-square&logo=Vue.js&logoColor=white">
-> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=black">
-> <img src="https://img.shields.io/badge/html5-E34F26?style=flat-square&logo=HTML5&logoColor=white"> 
-> <img src="https://img.shields.io/badge/css-1572B6?style=flat-square&logo=CSS3&logoColor=white">  
+> <img src="https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=Vue.js&logoColor=white">
+> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=black">
+> <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=HTML5&logoColor=white"> 
+> <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=CSS3&logoColor=white">  
 > <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=Vite&logoColor=white">
-> <img src="https://img.shields.io/badge/github-181717?style=flat-square&logo=GitHub&logoColor=white">
-> <img src="https://img.shields.io/badge/git-F05032?style=flat-square&logo=Git&logoColor=white">
+> <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=Git&logoColor=white">
+> <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white">
 > <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white">
-> <img src="https://img.shields.io/badge/visualstudiocode-007ACC?style=flat-square&logo=VisualStudioCode&logoColor=white">
+> <img src="https://img.shields.io/badge/VisualStudioCode-007ACC?style=flat-square&logo=VisualStudioCode&logoColor=white">
 > <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=Figma&logoColor=white">
 > ![Notion](https://img.shields.io/badge/Notion-606060.svg?style=flat&logo=notion&logoColor=white)    
 >

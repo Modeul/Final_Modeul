@@ -14,10 +14,6 @@
 					<img src="/images/member/stuff/mp-edit-btn.svg">
 				</router-link>
 				<div class="profile-name">{{ loginInfo.nickname }}</div>
-				<!-- <div class="star">
-                    <img src="/images/member/stuff/star.svg">
-                    <span class="star-avg">5.0</span>
-                </div> -->
             </div>
             <ul class="mypage-list">
                 <router-link to="/member/mypage/myreglist">
@@ -108,7 +104,6 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			// myMemberId: 110,
 			loginInfo: '',
 			openModal: false,
 			openModal2: false,
@@ -159,7 +154,7 @@ export default {
   transition: transform 0.5s;
 }
 .header:hover{
-  transform: scale(1.2); /* 마우스를 올렸을 때 크기를 1.2배로 확대 */
+  transform: scale(1.2);
 }
 .canvas {
 	max-width: 600px;

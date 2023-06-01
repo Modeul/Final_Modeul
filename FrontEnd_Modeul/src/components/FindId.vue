@@ -215,7 +215,6 @@ export default {
 
 .find-title {
 	margin-left: 86px;
-	/* font-size: 14px; */
 	color: #333;
 }
 

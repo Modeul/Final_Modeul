@@ -10,13 +10,6 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			// dongCode: '',
-			// serchDong: '',
-			// dongName: '',
-			// myDongCode: '',
-			// myDongName: '',
-			// myCoordX: '',
-			// myCoordY: '',
 			page: '',
 			query:'',
 			searchToggle: false,
@@ -188,7 +181,6 @@ justify-content: end;
 				</div>
 			</div>
 
-			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 </button> -->
 			<nav class="navi-bar d-fl-jf">
 				<div class="navi-icon">
 					<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>

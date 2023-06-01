@@ -3,7 +3,6 @@ import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
 export default {
-	// props: ["dongName"],
 	data() {
 		return {
 			userDetails: useUserDetailsStore(),
@@ -24,7 +23,7 @@ export default {
 		handleChange(e) {
 			let selectedOption = e.target.value;
 			if (selectedOption === "main") {
-				this.$router.push("/member/stuff/list"); // "/list"는 실제 경로에 맞게 수정해야 합니다.
+				this.$router.push("/member/stuff/list"); 
 			}
 		},
 		queryHandler(e) {

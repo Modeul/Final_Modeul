@@ -20,12 +20,10 @@
 		<result property="detail" column="detail" />
 	</resultMap>
 
-
 	<select id="findAll" resultMap="reportResultViewMap">
 		select *
 		from report_stuff_view
 	</select>
-
 
 	<insert id="insert" parameterType="ReportStuff">
 		insert into report_stuff(stuff_id, member_id, detail ) values

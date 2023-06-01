@@ -36,7 +36,6 @@ export default {
 			},
 			favoriteList: [],
 			favoriteInfo: {},
-			//heartStuffId: '',
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
@@ -66,13 +65,6 @@ export default {
 		},
 		modalHandler4() {
 			this.openModal4 = !this.openModal4;
-		},
-
-		imageZoomInHandler() {
-			// console.log("zoom-in");
-		},
-		imageZoomOutHandler() {
-			// console.log("zoom-out");
 		},
 		formatImgUrl(imgDir){
 			if(!imgDir)
@@ -253,12 +245,10 @@ export default {
 			</div>
 			</div>`;
 
-
 			var customOverlay = new kakao.maps.CustomOverlay({
 				position: coords,
 				content: content
 			});
-
 
 			map.relayout();
 			map.setCenter(coords);
@@ -277,7 +267,6 @@ export default {
 						this.mapStatus = false;
 					}, 500);
 				}
-
 
 			} else {
 				map.style.height = 0;
@@ -382,17 +371,9 @@ export default {
 				this.isDutchComplete = false;
 		},
 		urlHandler(url) {
-			// const httpPattern = /^http(s):\/\//;
-			// const wwwPattern = /^www\./;
 			if(url.startsWith('w')){
 				url = 'https://' + url;
 			}
-			// let output = false;
-			// if (wwwPattern.test(url))
-				// output = 'http://' + url;
-			// else if (httpPattern.test(url))
-			// 	output = url;
-			// return output;
 			return url;
 		}
 	},
@@ -435,11 +416,7 @@ export default {
 
 <template>
 	<PcHeader></PcHeader>
-
-	<!-- detail : flex-container -->
 	<div class="detail">
-
-
 		<!-- detail - item1  -->
 		<main>
 			<!-- detail-main : flex-container -->
@@ -447,8 +424,8 @@ export default {
 				<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
 				<!-- 수정/삭제 모달 버튼 -->
-
 				<i @click="modalHandler" class="icon-edit"></i>
+
 				<!-- 모달 배경 -->
 				<div v-if="openModal">
 					<div class="icon-edit2" v-if="this.stuffUser">
@@ -502,7 +479,6 @@ export default {
 			<div class="detail-main">
 
 				<!-- detail-img : detail-main - item1 -->
-
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
 						<v-carousel-item v-for="img in imageList" :src="formatImgUrl(img.name)"></v-carousel-item>
@@ -525,10 +501,6 @@ export default {
 
 						</div>
 						<p class="detail-heading-title">{{ stuff.title }}</p>
-						<!-- <div class="d-fl">
-							<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-							<div class="ed-text" @click="deleteStuff">삭제</div>
-						</div> -->
 						<div class="detail-price">{{ stuffPrice }}원</div>
 
 					</section>
@@ -550,7 +522,6 @@ export default {
 						<div class="detail-in">
 							<div class="detail-info-title">링크</div>
 							<div v-if="stuff.url" class="detail-info-txt"><a class="detail-info-txt-a" :href="urlHandler(stuff.url)" target="_blank">{{ stuff.url }}</a></div>
-							<!-- <div v-if="stuff.url" class="detail-info-txt"><a class="detail-info-txt-a" :href="stuff.url" target="_blank">{{stuff.url}}</a></div> -->
 							<div v-else class="detail-info-txt"> 게시된 링크가 없습니다. </div>
 						</div>
 
@@ -563,9 +534,6 @@ export default {
 					<!-- detail-writing : detail-main - item4 -->
 					<section class="canvas detail-writing">
 						<h1 class="d-none">writing</h1>
-						<!-- <p class="detail-paragraph">
-									            {{ stuff.content }}
-									          </p> -->
 						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
 					</section>
 				</div>
@@ -694,9 +662,6 @@ export default {
 	object-fit: cover;
 }
 
-/* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
-개발자모드에서 보여지는 css 계층의 값 변경 가능*/
-
 .v-dialog :deep {
 	font-size: 14px;
 }
@@ -722,7 +687,6 @@ export default {
 	display: inline-block;
 	text-indent: -9999px;
 }
-
 
 .error-box {
 	position: absolute;

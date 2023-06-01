@@ -9,7 +9,6 @@
 			<div class="stuff-list" v-for="f in list" :key="f.stuffId">
 				<router-link :to="'/member/stuff/' + f.stuffId">
 					<div class="d-gr li-gr m-t-13px list-cl">
-						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 						<div class="li-pic b-rad-1">
 							<img v-if="f.imageName != null" class="listview-image" :src="formatImgUrl(f.imageName)" alt="img">
 							<img v-else-if="f.categoryId == '1'" class="listview-image" src="/public/images/member/stuff/category1.svg"
@@ -33,8 +32,6 @@
 
 
 						<div :class="isfavorite[f.stuffId] ? 'empty-heart' : 'filled-heart'" @click.prevent="toggleFavorite(f.stuffId)">
-							<!-- <input type="image" v-model=heartId[f.stuffId] v-if="!heartId[f.stuffId]" src="/images/member/stuff/empty-heart.png" alt="img">
-							<input type="image" v-model=heartId[f.stuffId] v-else src="/images/member/stuff/filled-heart.png" alt="img">	  -->
 
 						</div>
 					</div>
@@ -61,7 +58,6 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			// memberId: '',
 			page: '',
 			list: [],
 			listCount: '',
@@ -212,16 +208,6 @@ export default {
 	margin: 0 auto;
 	min-width: 360px;
 }
-/* .favorite {
-	display: flex;
-	flex-direction: column;
-	padding: 0;
-	position: relative;
-	
-	height: 740px;
-	background: #FFFFFF;
-	margin: 0 auto;
-} */
 
 .header {
 	display: flex;
@@ -265,7 +251,6 @@ export default {
 	height: 68px;
 	display: inline-block;
 	overflow: hidden;
-	/* text-indent: -999px; */
 	justify-self: center;
 	align-self: center;
 }

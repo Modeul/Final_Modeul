@@ -46,7 +46,6 @@ import EditReg from "./components/member/stuff/EditReg.vue";
 import ListSearch from "./components/member/stuff/ListSearch.vue";
 import CrawlingList from "./components/member/stuff/CrawlingList.vue";
 import CrawlingReg from "./components/member/stuff/CrawlingReg.vue";
-import Gps from "./components/member/stuff/Gps.vue";
 import ParticipationList from "./components/member/participation/List.vue";
 
 import AdminLayout from "./components/admin/Layout.vue";
@@ -123,7 +122,6 @@ const routes = [
           { path: "listsearch", component: ListSearch },
           { path: "recommends", component: CrawlingList },
           { path: "recommend/:id", component: CrawlingReg },
-          { path: "gps", component: Gps }
         ]
       },
       { path: "participation/list", component: ParticipationList }
@@ -159,16 +157,13 @@ const routes = [
 ];
 
 const router = createRouter({
-  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-  // router 기록!
   history: createWebHashHistory(),
-  routes // short for `routes: routes`
+  routes 
 });
 
 const pinia = createPinia();
 pinia.use(piniaPersist);
 
-// 이제는 .js파일이 아니라 뷰엔진(변환기!!)이 들어간 .vue 파일을 이용한다.
 createApp(App)
   .use(router)
   .use(vuetify)

@@ -234,7 +234,6 @@ export default {
                 oncomplete: (data) => {
 
                     this.member.address = data.address;
-                    // this.dongCode = data.bcode;
                     geocoder.addressSearch(data.address, (results, status) => {
 
                         if (status === daum.maps.services.Status.OK) {

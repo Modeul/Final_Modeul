@@ -14,28 +14,24 @@
 			</router-link>
 			<router-link class="admin-side-wrap" to="/admin/member/list">
 				<div class="iconbox-admin m-t-35px">
-					<!-- <a href="../member/list.html" class="icon-admin1 icon-membermanage">회원 관리</a> -->
 					<div class="icon-admin1 icon-membermanage">회원 관리</div>
 					<h1 class="label-admin">회원 관리</h1>
 				</div>
 			</router-link>
 			<router-link class="admin-side-wrap" to="/admin/stuff/list">
 				<div class="iconbox-admin m-t-35px">
-					<!-- <a href="../stuff/list.html" class="icon-admin1 icon-stuffmanage">게시글 관리</a> -->
 					<div class="icon-admin1 icon-stuffmanage">게시글 관리</div>
 					<h1 class="label-admin">게시글 관리</h1>
 				</div>
 			</router-link>
 			<router-link class="admin-side-wrap" to="/admin/category/list">
 				<div class="iconbox-admin m-t-35px">
-					<!-- <a href="../category/list.html" class="icon-admin1 icon-category">카테고리 관리</a> -->
 					<div div class="icon-admin1 icon-category">카테고리 관리</div>
 					<h1 class="label-admin">카테고리 관리</h1>
 				</div>
 			</router-link>
 			<router-link class="admin-side-wrap" to="/admin/report/list">
 				<div class="iconbox-admin m-t-35px">
-					<!-- <a href="../category/list.html" class="icon-admin1 icon-category">카테고리 관리</a> -->
 					<div div class="icon-admin1 icon-report">신고 관리</div>
 					<h1 class="label-admin">신고 관리</h1>
 				</div>
@@ -54,9 +50,6 @@ export default {
 		}
 	},
 	methods: {
-		// openAside() {
-		// this.isCheck = !this.isCheck;
-		// }
 	},
 }
 </script>

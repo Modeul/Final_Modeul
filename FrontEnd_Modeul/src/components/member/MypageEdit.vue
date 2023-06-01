@@ -119,7 +119,6 @@ export default {
 					.then(response => response.text())
 					.then(result => console.log(result))
 					.catch(error => console.log('error', error));
-				// this.$router.replace('/member/mypage');
 				this.openModal2 = true;
 			}
 		},

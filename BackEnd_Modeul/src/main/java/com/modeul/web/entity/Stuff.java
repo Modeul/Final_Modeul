@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Stuff {
 
-	// LocalDateTime으로 타입 변경!
 	private Long id;
 	private String title;
 	private String place;

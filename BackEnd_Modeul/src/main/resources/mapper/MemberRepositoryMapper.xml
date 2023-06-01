@@ -9,7 +9,6 @@
 		<result property="coordY" column="coord_y" />
 	</resultMap>
 
-	<!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
 	<insert id="insert" parameterType="Member">
 		insert into member(uid,pwd,name,email,nickname,address,coord_x,coord_y)
 		values(#{uid},#{pwd},#{name},#{email},#{nickname},#{address},#{coordX},#{coordY})
@@ -156,18 +155,5 @@
 		where
 		email = #{email}
 	</select>
-
-	<!-- <update id="delete" parameterType="Member">
-		update member
-		set pwd
-	= '',
-			uid = '',
-			name = '',
-			email = '',
-			address = '',
-	nickname = '',
-			level = '1'
-		where id=#{id}
-	</update> -->
 
 </mapper>

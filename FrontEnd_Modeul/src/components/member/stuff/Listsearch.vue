@@ -39,9 +39,6 @@ export default {
 
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
-				// .then(response => {
-				// 	console.log(response)
-				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);

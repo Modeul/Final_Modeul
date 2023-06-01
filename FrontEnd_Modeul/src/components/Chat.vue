@@ -856,32 +856,23 @@ export default {
 			}
 		}
 	},
-	// computed: { chatLength: () => this.messageView.length },
 	watch: {
 		chatLength: function () {
 			setTimeout(() => {
 				window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 			}, 50);
 		},
-		// totalPriceComma: function(){
-		// 	return this.totalPrice = parseFloat(this.totalPrice.toLocaleString('ko-KR'));
-		// }
 	},
 }
 </script>
 
 <style scoped>
 .calc {
-	/* display: flex; */
-	/* flex-direction: column; */
-	/* align-items: center; */
 	padding: 0px 24px 24px;
 	position: relative;
-	/* height: 635px; */
 	width: 375px;
 	align-self: center;
 	margin: auto;
-
 	background: #F1F2F2;
 	border-radius: 30px 30px 0px 0px;
 }
@@ -891,8 +882,6 @@ export default {
 	flex-direction: row;
 	align-items: center;
 	justify-content: start;
-	/* justify-content: space-between; */
-	/* padding: 12px 40px; */
 	gap: 100px;
 	width: 327px;
 	height: 71px;
@@ -909,46 +898,25 @@ export default {
 
 .calc-back {
 	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
-
 	width: 16px;
 	height: 16px;
-
 	z-index: 9;
 }
 
 
 .calc-contents {
-
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	padding: 0px 24px 0px;
-	/* overflow: auto; */
-
 	width: 327px;
 	height: 531px;
-	/* height: 80%; */
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
 	flex: none;
 	order: 1;
 	flex-grow: 1;
 }
-
-/* .calc-account {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	padding: 0px;
-
-	width: 279px;
-	height: 92px;
-
-	flex: none;
-	order: 0;
-	flex-grow: 0;
-} */
 
 .account-title {
 	font-weight: 600;
@@ -969,11 +937,9 @@ export default {
 	flex-direction: column;
 	align-self: center;
 	justify-content: center;
-
 	flex: none;
 	order: 1;
 	flex-grow: 0;
-
 	padding-top: 28px;
 }
 
@@ -1038,14 +1004,11 @@ select option[value=""][disabled] {
 	align-items: center;
 	padding: 10px 0px;
 	gap: 1px;
-
 	width: 279px;
 	height: 56px;
-
 	flex: none;
 	order: 0;
 	flex-grow: 0;
-
 	font-weight: 700;
 }
 
@@ -1055,12 +1018,9 @@ select option[value=""][disabled] {
 	justify-content: center;
 	align-items: center;
 	padding: 0px 10px;
-
 	width: 50%;
-	/* width: 138px; */
 	height: 32px;
 	font-size: 14px;
-
 	flex: none;
 	order: 0;
 	flex-grow: 0;
@@ -1077,29 +1037,21 @@ select option[value=""][disabled] {
 	justify-content: center;
 	align-items: center;
 	padding: 0px;
-
 	width: 50%;
 	height: 32px;
 	font-size: 14px;
-
 	flex: none;
 	order: 1;
 	flex-grow: 0;
 }
 
 .calc-members {
-	/* display: flex; */
-	/* flex-direction: column; */
 	align-items: center;
-	/* padding: 20px 0px; */
 	width: 100%;
 	height: 230px;
-	/* flex: none; */
 	order: 4;
-	/* flex-grow: 0; */
 	overflow: scroll;
 }
-
 .calc-members::-webkit-scrollbar {
 	display: none;
 }
@@ -1120,11 +1072,9 @@ select option[value=""][disabled] {
 .calc-member-span-price {
 	position: relative;
 	right: 4px;
-
 	font-size: 12px;
 	font-weight: 700;
 	color: #8A8787;
-
 	margin: auto;
 }
 
@@ -1151,16 +1101,13 @@ input::placeholder {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	/* padding: 12px 16px 0px; */
 	margin-top: 18px;
 	gap: 16px;
 	font-size: 12px;
 	font-weight: 700;
 	color: #8A8787;
-
 	width: 279px;
 	height: 28px;
-
 	flex: none;
 	order: 3;
 	flex-grow: 0;
@@ -1171,21 +1118,15 @@ input::placeholder {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	/* align-items: flex-start; */
 	align-items: center;
 	margin-top: 26px;
-
-	/* gap: 4px; */
-
 	width: 270px;
 	height: 48px;
 	font-size: 18px;
 	font-weight: 600;
-
 	flex: none;
 	order: 2;
 	flex-grow: 0;
-
 	border-bottom: 2px solid #222;
 }
 
@@ -1198,20 +1139,16 @@ input::placeholder {
 .calc-button {
 	width: 136px;
 	height: 45px;
-
 	position: absolute;
 	left: 119.5px;
 	right: 119.5px;
 	top: 514px;
 	bottom: 90.6px;
-
 	border-radius: 10px;
-
 	background: #63A0C2;
 	font-size: 12px;
 	color: #fff;
 	font-weight: 700;
-
 	flex: none;
 	order: 2;
 	flex-grow: 0;
@@ -1220,8 +1157,6 @@ input::placeholder {
 .calc-result-default {
 	display: flex;
 	flex-direction: column;
-
-
 	position: relative;
 	width: 100%;
 	background: #f5f1f1;
@@ -1235,7 +1170,6 @@ input::placeholder {
 	align-self: center;
 	padding: 0px 24px 0px;
 	overflow: auto;
-
 	height: 629px;
 	background: #fff;
 	border-radius: 30px 30px 10px 10px;
@@ -1248,12 +1182,8 @@ input::placeholder {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	/* justify-content: center; */
-	/* justify-content: center; */
-
 	width: 327px;
 	height: 74px;
-
 }
 
 .cal-result-title {
@@ -1266,15 +1196,11 @@ input::placeholder {
 
 .cal-result-del {
 	width: 327px;
-
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
-
 	padding: 7px 8px 0px 0px;
-
 	padding: 7px 8px 0px 0px;
-
 	font-size: 12px;
 	color: #8A8787;
 
@@ -1288,16 +1214,13 @@ input::placeholder {
 	width: 327px;
 	height: 210px;
 	height: 210px;
-
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
 	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
 	border-image-slice: 200 100;
 	border-image-width: 1px;
 	border-image-repeat: repeat;
-
 	margin-top: 11px;
 	padding-bottom: 9px;
 	overflow: auto;
@@ -1307,7 +1230,6 @@ input::placeholder {
 	/* 익스플로러, 앳지 */
 	scrollbar-width: none;
 	/* 파이어폭스 */
-
 }
 
 .cal-result-user-list::-webkit-scrollbar {
@@ -1365,18 +1287,14 @@ input::placeholder {
 .cal-result-sum {
 	width: 327px;
 	height: 48px;
-
 	display: flex;
 	justify-content: space-between;
-
 	margin-top: 18px;
 	padding: 0px 7px 18px 4px;
-
 	border-image: url("data:image/svg+xml,%3Csvg width='335' height='1' viewBox='0 0 335 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.25' y='0.25' width='334.5' height='0.5' stroke='black' stroke-width='0.5' stroke-dasharray='3 3'/%3E%3C/svg%3E%0A");
 	border-image-slice: 0 0 200 0;
 	border-image-width: 1px;
 	border-image-repeat: repeat;
-
 	font-size: 14px;
 	color: #222222;
 	font-weight: bold;
@@ -1393,7 +1311,6 @@ input::placeholder {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-
 }
 
 .icon-bank-security {
@@ -1520,7 +1437,6 @@ input::placeholder {
 	word-break: break-all;
 	text-align: center;
 }
-
 
 .dutch-final-result-btn {
 	font-size: 12px;

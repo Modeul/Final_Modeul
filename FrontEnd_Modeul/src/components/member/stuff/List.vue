@@ -66,9 +66,6 @@ export default {
 
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
-				// .then(response => {
-				// 	console.log(response)
-				// 	return response.json()})
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -190,16 +187,10 @@ export default {
 				});
 				geocoder.coord2RegionCode(x, y, (result, status) => {
 					if (status === kakao.maps.services.Status.OK) {
-
 						this.myDongCode = result[0].code;
-
 					}
 				});
-
-
 			}
-
-
 		},
 		getMemberCoordInfo() {
 			fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
@@ -266,7 +257,6 @@ export default {
 						@keyup.enter="searchInput(query)">
 					<h1 class="icon search-dodbogi">돋보기</h1>
 				</div>
-				<!-- <div v-else-if="dongName"> {{ dongName }}</div> -->
 			</Transition>
 
 			<div>
@@ -324,15 +314,11 @@ export default {
 			</div>
 		</nav>
 
-		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
-
 			<div class="list-wrap">
-
 				<div class="stuff-list" v-for="stuff in list">
 					<router-link :to="'./' + stuff.id">
 						<div class="d-gr li-gr m-t-13px list-cl">
-							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
 								<img v-if="stuff.imageName != null" class="listview-image"
 									:src="formatImgUrl(stuff.imageName)" alt="img">
@@ -360,10 +346,6 @@ export default {
 								<span class="li-member-limit"> {{ stuff.participantCount }} </span>
 								/ {{ stuff.numPeople }} 명
 							</div>
-							<!-- <div class="li-place">{{ stuff.place }}</div> -->
-							<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
-
-							<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
 						</div>
 					</router-link>
 				</div>

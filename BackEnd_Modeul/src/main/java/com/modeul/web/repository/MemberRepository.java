@@ -10,7 +10,6 @@ import com.modeul.web.entity.MemberImage;
 @Mapper
 public interface MemberRepository {
 
-
 	int insert(Member member);
 	
 	Member getbyId(int id);

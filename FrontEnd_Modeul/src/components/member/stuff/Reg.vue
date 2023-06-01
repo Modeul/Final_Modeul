@@ -86,7 +86,6 @@
 
 
 					<select class="category-box" name="categoryId">
-						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
 						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
 							v-text="c.name">
@@ -410,7 +409,6 @@ export default {
 					geocoder.addressSearch(data.address, (results, status) => {
 
 						if (status === daum.maps.services.Status.OK) {
-
 							let result = results[0];
 							this.stuff.coordX = result.x;
 							this.stuff.coordY = result.y;
@@ -418,7 +416,6 @@ export default {
 							this.mapStatus = true;
 							this.mapNav = true;
 							document.querySelector("#content").focus();
-
 						}
 					});
 
@@ -434,9 +431,7 @@ export default {
 				level: 5
 			};
 
-
 			let map = new daum.maps.Map(mapContainer, mapOption);
-
 
 			let marker = new daum.maps.Marker({
 				position: coords,
@@ -487,7 +482,7 @@ select {
 	-moz-appearance: none;
 	/* 파이어폭스 화살표 없애기 */
 	appearance: none
-		/* 화살표 없애기 */
+	/* 화살표 없애기 */
 
 }
 </style>

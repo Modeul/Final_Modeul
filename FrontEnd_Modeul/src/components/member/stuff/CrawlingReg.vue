@@ -80,7 +80,6 @@
 
 
 					<select class="category-box" name="categoryId">
-						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
 						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
 							v-text="c.name">
@@ -238,9 +237,6 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					this.crawlingData = data;
-					// this.crawlingData Proxy객체로 반환됨.
-					// Proxy를 Object로 변환
-      				// this.crawlingData = JSON.parse(JSON.stringify(this.crawlingData));
 					this.stuff.title = this.crawlingData.crawlingData.title || '';
 					this.stuff.price = this.crawlingData.crawlingData.price.replace(/,/g, '') || '';
 					this.stuff.price = this.stuff.price.replace(/원/g, '') || '';
@@ -266,8 +262,6 @@ export default {
 
 		// 파일 업로드시, 이벤트 처리
 		async upload() {
-
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -369,8 +363,6 @@ export default {
 		},
 
 		postCode() {
-
-
 			const geocoder = new daum.maps.services.Geocoder();
 			new daum.Postcode({
 				oncomplete: (data) => {

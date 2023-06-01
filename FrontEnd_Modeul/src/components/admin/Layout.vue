@@ -15,7 +15,6 @@ export default {
 </script>
 
 <template>
-	<!-- <section class="canvas-2 d-fl fl-dir-col"> -->
 	<section>
 		<Header />
 		<!-- --------------------------------------- -->

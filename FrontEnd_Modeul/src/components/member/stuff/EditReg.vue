@@ -60,9 +60,6 @@ export default {
 		},
 
 		async update() {
-			// var myHeaders = new Headers();
-			// myHeaders.append("Content-Type", "multipart/form-data");
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -139,15 +136,12 @@ export default {
 
 				var requestOptions = {
 					method: 'PUT',
-					// headers: myHeaders,
 					body: formData,
 					redirect: 'follow'
 				};
-				// this.defaultStore.loadingStatus = true;
 				await fetch(`${this.defaultStore.host}/api/stuff/update/${this.$route.params.id}`, requestOptions)
 					.then(response => response.text())
 					.then(result => {
-						// this.defaultStore.loadingStatus = false;
 						this.$router.replace('/member/stuff/' + this.stuff.id);
 					})
 					.catch(error => console.log('error', error));

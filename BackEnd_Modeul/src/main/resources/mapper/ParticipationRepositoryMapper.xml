@@ -61,7 +61,6 @@
     order by participation_date
   </select>
 
-
   <!-- 공구상품별 공구상품 글에 참여한 회원 1명 정보 조회  -->
   <select id="findMemberBystuffIdmemberId" resultMap="ParticipationMemberViewResultMap">
     select * 
@@ -70,7 +69,6 @@
     and member_Id = #{memberId}
     order by participation_date
   </select>
-
 
   <!-- 상세 페이지의 참여 취소 기능 -->
   <delete id="delete" parameterType="Participation">
@@ -124,6 +122,5 @@
     participation_view
     where member_id = #{memberId}
   </select>
-
 
 </mapper>
