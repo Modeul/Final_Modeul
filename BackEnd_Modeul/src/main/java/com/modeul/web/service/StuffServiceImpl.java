@@ -285,16 +285,7 @@ public class StuffServiceImpl implements StuffService {
 			}
 
 		});
-
-		// if(updateCount == 1 && stuff.getImageList() != null &&
-		// stuff.getImageList().size() > 0) {
-		// repository.deleteImage(stuff.getId());
-
-		// stuff.getImageList().forEach(image -> {
-		// image.setStuffId(stuff.getId());
-		// repository.uploadImage(image);
-		// });
-		// }
+		
 		return updateCount;
 	}
 
