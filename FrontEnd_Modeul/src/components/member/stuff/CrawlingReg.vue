@@ -65,14 +65,8 @@
 					<!-- 이미지 업로드  -->
 					<div class="file-box">
 						<label for="file">
-							<div class="btn-file">{{ imageList.length }}/6</div>
-							<div class="btn-uploaded-files" v-for="item in imageList">
-								<img class="uploaded-files" :src="item" />
-							</div>
+								<img class="uploaded-crawlingimg" :src="this.stuff.imageList.name" />
 						</label>
-
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
-							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -86,7 +80,6 @@
 
 
 					<select class="category-box" name="categoryId">
-						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
 						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
 							v-text="c.name">
@@ -180,6 +173,8 @@ export default {
 			showMap: false,
 			mapStatus: false,
 			mapNav: false,
+			crawlingData : [],
+			id:'',
 
 			croodX: 0,
 			croodY: 0,
@@ -231,6 +226,25 @@ export default {
 				this.stuff.numPeople--;
 		},
 
+		// 선택한 데이터 받아오기ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+		loadCrawlingData() {
+			this.id = this.$route.params.id;
+			var requestOptions = {
+				method: 'GET',
+				redirect: 'follow'
+			};
+			fetch(`${this.defaultStore.host}/api/stuff/crawling/${this.id}`, requestOptions)
+				.then(response => response.json())
+				.then(data => {
+					this.crawlingData = data;
+					this.stuff.title = this.crawlingData.crawlingData.title || '';
+					this.stuff.price = this.crawlingData.crawlingData.price.replace(/,/g, '') || '';
+					this.stuff.price = this.stuff.price.replace(/원/g, '') || '';
+					this.stuff.url = this.crawlingData.crawlingData.contenturl || '';
+					this.stuff.imageList.name = this.crawlingData.crawlingData.imgurl || '';
+				})
+				.catch(error => console.log('error', error));
+		},
 		/* selectbox에 카테고리 목록 불러오기 */
 		loadCategory() {
 			var requestOptions = {
@@ -248,8 +262,6 @@ export default {
 
 		// 파일 업로드시, 이벤트 처리
 		async upload() {
-
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -258,7 +270,7 @@ export default {
 				this.openModal = true;
 				return;
 			} else if (!this.isValidTitle(this.stuff.title)) {
-				this.valiError = "제목을 20자 이하로 입력해주세요.";
+				this.valiError = "제목을 100자 이하로 입력해주세요.";
 				this.openModal = true;
 				return;
 			}
@@ -298,6 +310,8 @@ export default {
 
 			if (!this.valiError) {
 				var formData = new FormData(this.$refs.form);
+				formData.append('imgurl' , this.stuff.imageList.name);
+				formData.append("memberId",this.userDetails.id);
 
 				var requestOptions = {
 					method: 'POST',
@@ -305,39 +319,18 @@ export default {
 					redirect: 'follow'
 				};
 
-				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/recommend`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
+					.then(result => result)
 					.catch(error => console.log('error', error));
 
 				this.$router.replace('/member/stuff/list')
 			}
 		},
 
-		// 썸네일 조작
-		uploadImage(e) {
-			this.files = e.target.files;
-
-			if (this.files.length > 6) {
-				this.valiError = "이미지는 최대 6개까지 선택할 수 있습니다.";
-				this.openModal = true;
-				return;
-			}
-
-			// 취소 버튼을 눌렀을 때 이미지 초기화 방지
-			if (this.files.length <= 0) {
-				return;
-			}
-
-			this.imageList = [];
-
-			for (let file of this.files) {
-				this.imageList.push(URL.createObjectURL(file));
-			}
-		},
 		// 제목 체크
 		isValidTitle() {
-			if (this.stuff.title.length > 20) {
+			if (this.stuff.title.length > 100) {
 				return false;
 			}
 			return true;
@@ -370,15 +363,12 @@ export default {
 		},
 
 		postCode() {
-
-
 			const geocoder = new daum.maps.services.Geocoder();
 			new daum.Postcode({
 				oncomplete: (data) => {
 
 					this.stuff.place = data.address;
 					this.stuff.dongCode = data.bcode;
-					console.log(this.stuff.place);
 
 					geocoder.addressSearch(data.address, (results, status) => {
 
@@ -387,7 +377,6 @@ export default {
 							let result = results[0];
 							this.stuff.coordX = result.x;
 							this.stuff.coordY = result.y;
-							console.log(this.stuff.coordX);
 							this.showMap = true;
 							this.mapStatus = true;
 							this.mapNav = true;
@@ -445,6 +434,7 @@ export default {
 	},
 	mounted() {
 		this.loadCategory();
+		this.loadCrawlingData();
 
 	},
 }

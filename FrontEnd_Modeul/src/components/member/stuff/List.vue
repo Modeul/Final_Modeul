@@ -4,40 +4,55 @@ import 'dayjs/locale/ko'
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
+
 export default {
 	data() {
 		return {
 			page: '',
 			dongCode: '',
+			serchDong: '',
 			dongName: '',
+			myDongCode: '',
+			myDongName: '',
+			myCoordX: '',
+			myCoordY: '',
 			list: [],
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
 			query: '',
+			searchToggle: false,
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore()
 		};
 	},
+	components: {
+		PcHeader
+	},
 	computed: {
 	},
 	methods: {
-		searchInput(e) {
+		searchInput(queryEmit) {
+			if (!this.searchToggle)
+				if (this.query == queryEmit.trim())
+					return;
+			this.query = queryEmit.trim();
 			this.page = 1;
-			e.preventDefault();
-			this.query = e.target.value;
-
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
+			this.defaultStore.loadingStatus = true;
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.queryList);
-
+					this.list = this.formatDateList(dataList.list);
+					this.listCount = dataList.listCount;
+					this.defaultStore.loadingStatus = false;
 				}).catch(error => console.log('error', error));
 		},
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
+			this.addListHandler()
+			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.serchDong}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -45,15 +60,12 @@ export default {
 					this.categoryList = dataList.categoryList;
 				}).catch(error => console.log('error', error));
 		},
-		async addListHandler() {
+		async addListHandler(c) {
 			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}`)
-				// .then(response => {
-				// 	console.log(response)
-				// 	return response.json()})
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${c}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
@@ -66,7 +78,7 @@ export default {
 		},
 		scrollCheck() {
 			if (window.innerHeight >= 718) {
-				this.addListHandler();
+				this.addListHandler(this.serchDong);
 			}
 		},
 
@@ -117,105 +129,140 @@ export default {
 			}
 			return resultList;
 		},
-
-		onChage(v) {
-			if (v.target.value === 'cur') {
-				this.getDongInfo();
-			} else {
-				this.dongCode = '';
-				this.dongName = '';
-				this.addListHandler();
-			}
-
-
+		formatImgUrl(imgDir) {
+			if (!imgDir)
+				return imgDir;
+			if (imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		},
-
-		getDongInfo() {
+		onChange(v) {
+			this.page = 1;
+			if (v.target.value === 'cur') {
+				this.getDongInfo(null, null);
+			} else if (v.target.value === 'my') {
+				this.serchDong = this.myDongCode;
+				this.dongName = this.myDongName;
+				this.addListHandler(this.serchDong);
+			} else {
+				this.serchDong = '';
+				this.dongName = '';
+				this.addListHandler(this.serchDong);
+			}
+		},
+		getDongInfo(x, y) {
 
 			const geocoder = new kakao.maps.services.Geocoder();
-			const watchID = navigator.geolocation.getCurrentPosition((position) => {
-				let lat = position.coords.latitude;
-				let lng = position.coords.longitude;
 
-				geocoder.coord2Address(lng, lat, (result, status) => {
+			if (x == null) {
+				const watchID = navigator.geolocation.getCurrentPosition((position) => {
+					let lat = position.coords.latitude;
+					let lng = position.coords.longitude;
+
+					geocoder.coord2Address(lng, lat, (result, status) => {
+						if (status === kakao.maps.services.Status.OK) {
+
+							this.dongName = result[0].address.region_3depth_name;
+						}
+					});
+					geocoder.coord2RegionCode(lng, lat, (result, status) => {
+						if (status === kakao.maps.services.Status.OK) {
+
+							this.dongCode = result[0].code;
+							this.serchDong = this.dongCode;
+							this.addListHandler(this.serchDong);
+						}
+					});
+
+				}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+
+			} else {
+
+				geocoder.coord2Address(x, y, (result, status) => {
 					if (status === kakao.maps.services.Status.OK) {
 
-						this.dongName = result[0].address.region_3depth_name;
+						this.myDongName = result[0].address.region_3depth_name;
 					}
 				});
-				geocoder.coord2RegionCode(lng, lat, (result, status) => {
+				geocoder.coord2RegionCode(x, y, (result, status) => {
 					if (status === kakao.maps.services.Status.OK) {
-
-						this.dongCode = result[0].code;
-
-						this.addListHandler();
+						this.myDongCode = result[0].code;
 					}
 				});
-
-			}, () => { alert("죄송합니다. 위치 정보를 사용할 수 없습니다.") });
+			}
 		},
-
-	},
-	mounted() {
-		this.page = 0;
-		this.addListHandler();
-		this.scrollCheck();
-		// this.getDongInfo();
-
-		document.addEventListener("scroll", (e) => {
-
+		getMemberCoordInfo() {
+			fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`)
+				.then(response => response.json())
+				.then(dataList => {
+					this.myCoordX = dataList.coordX;
+					this.myCoordY = dataList.coordY;
+					this.getDongInfo(this.myCoordX, this.myCoordY);
+				}).catch(error => console.log('error', error));
+		},
+		scrollHandler() {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		},
+		scroll() {
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
 				if (this.listCount !== 0) {
-					this.addListHandler();
+					this.addListHandler(this.serchDong);
 				}
 			}
-		})
+		}
+	},
+	mounted() {
+		this.target = document.querySelector('.top-btn');
+		this.target.addEventListener('scroll', this.handleScroll);
+		this.page = 0;
+		this.addListHandler('');
+		this.scrollCheck();
+		this.getMemberCoordInfo();
 
+		document.addEventListener("scroll", this.scroll)
+
+	},
+	beforeUnmount() {
+		document.removeEventListener("scroll", this.scroll)
 	}
 }
 </script>
 
 <template>
-	<div class="pc-header-wrap">
-		<div class="header-menu">
-			<div v-if="!userDetails.isAuthenticated" class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div v-if="!userDetails.isAuthenticated" class="login"><router-link to="/login">로그인</router-link></div>
-			<div v-else @click.prevent="userDetails.logout" class="login">로그아웃</div>
-		</div>
-		<div class="pc-header">
-			<div class="logo-moduel header-logo"></div>
-			<div class="search-container">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
-					<h1 class="icon search-dodbogi">돋보기</h1>
-				</div>
-			</div>
-			<div class="btnbox">
-				<div class="btn-heart"></div>
-				<div class="btn-location"></div>
-			</div>
-		</div>
-	</div>
+	<PcHeader @queryEmit="searchInput" :dongName="myDongName" @change="onChange"></PcHeader>
+
 	<div class="pc-carousel">
-		<v-carousel cycle interval="6000" height="400" hide-delimiter-background :show-arrows="false" color="white">
-			<v-carousel-item src="https://gcdn.market09.kr/data/banner/166495322415.jpg"></v-carousel-item>
-			<v-carousel-item src="https://gcdn.market09.kr/data/banner/1682557050291.jpg"></v-carousel-item>
+		<v-carousel cycle interval="6000" height="370" hide-delimiter-background :show-arrows="false" color="white">
+			<v-carousel-item src="/images/member/banner1.png"></v-carousel-item>
+			<v-carousel-item src="/images/member/banner2.png"></v-carousel-item>
+			<v-carousel-item src="/images/member/banner3.png"></v-carousel-item>
 		</v-carousel>
 	</div>
 
 	<section class="canvas">
 		<header class="d-fl-al header-jc">
-			<select class="selectbox-set" @change="onChage($event)">
-				<option value="" default>전체</option>
-				<option value="">신설동</option>
-				<option value="cur">현재위치</option>
-			</select>
-			<div> {{ dongName }}</div>
+			<div class="gps-box">
+				<div class="icon icon-location"></div>
+				<select class="selectbox-set" @change="onChange($event)">
+					<option value="" default>전체</option>
+					<option value="my">{{ myDongName }}</option>
+					<option value="cur">현재위치</option>
+				</select>
+				<div class="select__arrow"></div>
+			</div>
+			<Transition name="fade">
+				<div v-if="searchToggle" class="d-fl d-b-none search-form">
+					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." v-model="query"
+						@keyup.enter="searchInput(query)">
+					<h1 class="icon search-dodbogi">돋보기</h1>
+				</div>
+			</Transition>
 
 			<div>
-				<!-- <a class="icon icon-menu">메뉴</a> -->
-				<a class="icon icon-alarm">알림</a>
-				<a class="icon">
+				<div v-if="!searchToggle" class="icon icon-search" @click="searchToggle = !searchToggle"></div>
+				<div v-else class="icon icon-search-cancel" @click="searchToggle = !searchToggle"></div>
+				<!-- <a class="icon">
 					<input type="checkbox" id="menuicon">
 					<label for="menuicon">
 						<span></span>
@@ -249,40 +296,38 @@ export default {
 							</span>
 						</div>
 					</div>
-				</a>
+				</a> -->
 			</div>
 		</header>
 
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c"
+						:class="(this.categoryId != '') ? 'header-categ' : 'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button @click="categoryHandler" name="c" :value="c.id"
+						:class="(this.categoryId == c.id) ? 'selected' : 'header-categ'">{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
 
-		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
-
 			<div class="list-wrap">
-
 				<div class="stuff-list" v-for="stuff in list">
 					<router-link :to="'./' + stuff.id">
 						<div class="d-gr li-gr m-t-13px list-cl">
-							<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 							<div class="li-pic b-rad-1">
 								<img v-if="stuff.imageName != null" class="listview-image"
-									:src="'/images/member/stuff/' + stuff.imageName" alt="img">
-								<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
-									alt="img">
-								<img v-else-if="stuff.categoryId == '2'" class="listview-image" src="/images/member/stuff/category2.svg"
-									alt="img">
-								<img v-else-if="stuff.categoryId == '3'" class="listview-image" src="/images/member/stuff/category3.svg"
-									alt="img">
+									:src="formatImgUrl(stuff.imageName)" alt="img">
+								<img v-else-if="stuff.categoryId == '1'" class="listview-image"
+									src="/images/member/stuff/category1.svg" alt="img">
+								<img v-else-if="stuff.categoryId == '2'" class="listview-image"
+									src="/images/member/stuff/category2.svg" alt="img">
+								<img v-else-if="stuff.categoryId == '3'" class="listview-image"
+									src="/images/member/stuff/category3.svg" alt="img">
 								<img v-else class="listview-image" src="/images/member/stuff/member.png" alt="img">
 							</div>
 							<div class="li-categ-place">
@@ -301,19 +346,10 @@ export default {
 								<span class="li-member-limit"> {{ stuff.participantCount }} </span>
 								/ {{ stuff.numPeople }} 명
 							</div>
-							<!-- <div class="li-place">{{ stuff.place }}</div> -->
-							<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
-
-							<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
 						</div>
 					</router-link>
 				</div>
 			</div>
-
-			<!-- <button class="btn-next more-list" @click="addListHandler"> 더보기 <span> + {{ listCount }}</span></button> -->
-			<router-link to="/member/stuff/reg">
-				<div class="reg-stuff d-none"></div>
-			</router-link>
 		</main>
 
 		<nav class="navi-bar d-fl-jf">
@@ -321,7 +357,7 @@ export default {
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
 			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 			</div>
 			<div>
 				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
@@ -334,6 +370,11 @@ export default {
 			</div>
 		</nav>
 	</section>
+
+	<div>
+		<router-link to="/member/stuff/reg" class="pc-reg-stuff"></router-link>
+	</div>
+	<div class="top-btn" @click="scrollHandler"></div>
 </template>
 
 
@@ -341,4 +382,14 @@ export default {
 @import "/css/component/member/stuff/component-list.css";
 @import "/css/component/admin/member/list-responsive.css";
 @import "/css/button.css";
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
 </style>

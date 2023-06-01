@@ -17,7 +17,6 @@ public interface ParticipationRepository {
 
     /* 멤버별 참여 목록 전체 조회 */
     List<ParticipationView> findByMemberId(Long memberId, 
-                                            Long categoryId, 
                                             String orderField, 
                                             String orderDir,
                                             Integer size, 
@@ -44,5 +43,7 @@ public interface ParticipationRepository {
     void insertAccount(@Param("stuffId") Long stuffId, String account);
 
     String getAccount(Long leaderId);
+
+    Long findCountList(Long memberId);
 
 }

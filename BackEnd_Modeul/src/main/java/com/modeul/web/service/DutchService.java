@@ -19,4 +19,8 @@ public interface DutchService {
     List<DutchView> getViewAllBymemberId(Long memberId);
 
     int removeDutch(Long stuffId);
+
+    Long getListCount(Long memberId, int page, int month);
+
+    DutchView getViewBystuffIdmemberId(Long stuffId, Long memberId);
 }

@@ -32,7 +32,7 @@ public class StuffServiceImpl implements StuffService {
 	@Override
 	public List<StuffView> getViewAll() {
 		
-		return repository.findViewAll("", null, null, null, null, null, null,null);
+		return repository.findViewAll("", null, "reg_date", "desc", null, null, null,null);
 	}
 
 	@Override
@@ -84,13 +84,20 @@ public class StuffServiceImpl implements StuffService {
 
 		// 이미지 유효성 검사
 		if (imgs.get(0).getOriginalFilename().equals("")) {
+			Participation participation = new Participation();
+			participation.setStuffId(stuff.getId());
+			participation.setMemberId(stuff.getMemberId()); // 아직은 null 값이다..
+	
+			int participationCount = participationRepository.insert(participation);
+			System.out.printf("participationCount: %d\n", participationCount);
 			return;
 		}
 
 		// 파일 경로 알아 내기(논리적, 물리적)** : urlPath, realPath
 		String currentDir = System.getProperty("user.dir");
 
-		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
+		String realPath = "src/main/resources/static/images/member/stuff/";
+		// String realPath = "images/member/stuff/";
 
 		// 물리 경로에 폴더가 없으면, 폴더도 생성
 		File savePath = new File(currentDir, realPath);
@@ -127,9 +134,7 @@ public class StuffServiceImpl implements StuffService {
 
 		Participation participation = new Participation();
 		participation.setStuffId(stuff.getId());
-		participation.setMemberId(stuff.getMemberId()); // 아직은 null 값이다..
-
-		// 글 삭제 시, 참여 채팅방도 같이 사라져야 한다???, 일단 편의를 위해 이렇게 동작하도록 함.
+		participation.setMemberId(stuff.getMemberId()); 
 
 		int participationCount = participationRepository.insert(participation);
 		System.out.printf("participationCount: %d\n", participationCount);
@@ -177,6 +182,13 @@ public class StuffServiceImpl implements StuffService {
 	public Long getListCount(Long categoryId, int page, Long memberId) {
 
 		Long countList = repository.getCountList(categoryId, memberId) - (page * pageSize);
+		Long result = countList <= 0 ? 0 : countList;
+		return result;
+	}
+
+	public Long getListCount(Long categoryId, int page, Long memberId, String query) {
+
+		Long countList = repository.getCountList(categoryId, memberId, query) - (page * pageSize);
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
@@ -229,7 +241,8 @@ public class StuffServiceImpl implements StuffService {
 
 		// 경로 설정
 		String currentDir = System.getProperty("user.dir");
-		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
+		String realPath = "src/main/resources/static/images/member/stuff/";
+		// String realPath = "images/member/stuff/";
 		File savePath = new File(currentDir, realPath);
 
 		// 이미지 정보 얻어오기
@@ -299,7 +312,8 @@ public class StuffServiceImpl implements StuffService {
 
 		String currentDir = System.getProperty("user.dir");
 
-		String realPath = "../FrontEnd_Modeul/public/images/member/stuff";
+		String realPath = "src/main/resources/static/images/member/stuff/";
+		// String realPath = "images/member/stuff/";
 
 		File savePath = new File(currentDir, realPath);
 
@@ -307,6 +321,39 @@ public class StuffServiceImpl implements StuffService {
 			File file = new File(savePath, image.getName());
 			file.delete();
 		});
+	}
+
+	@Transactional
+	@Override
+	public void regCrawlingStuff(Stuff stuff) {
+
+
+		int insertCount = repository.insert(stuff);
+		
+
+		if (stuff.getImgurl() == "" || stuff.getImgurl() == null){
+			
+			Participation participation = new Participation();
+			participation.setStuffId(stuff.getId());
+			participation.setMemberId(stuff.getMemberId());
+	
+			int participationCount = participationRepository.insert(participation);
+			System.out.printf("participationCount: %d\n", participationCount);
+
+			return;
+		}
+
+		repository.uploadImgurl(stuff.getImgurl(),stuff.getId());
+		
+		Participation participation = new Participation();
+		participation.setStuffId(stuff.getId());
+		participation.setMemberId(stuff.getMemberId());
+
+
+		int participationCount = participationRepository.insert(participation);
+		System.out.printf("participationCount: %d\n", participationCount);
+
+
 	}
 
 

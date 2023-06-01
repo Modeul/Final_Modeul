@@ -9,29 +9,22 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.modeul.web.entity.Category;
-import com.modeul.web.entity.Message;
 import com.modeul.web.entity.Participation;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.ParticipationView;
 import com.modeul.web.entity.StuffView;
 import com.modeul.web.service.CategoryService;
-import com.modeul.web.service.DutchService;
 import com.modeul.web.service.ParticipationService;
 import com.modeul.web.service.StuffService;
 
 @RestController
 @RequestMapping("api")
 public class ParticipationController {
-
-    @Autowired
-    private DutchService dutchService;
 
     @Autowired
     private ParticipationService participationService;
@@ -49,25 +42,25 @@ public class ParticipationController {
         return "ok";
     }
 
-    @GetMapping("/participations/{memberId}")
+    @GetMapping("/participations")
     public Map<String, Object> getList(
-            @PathVariable("memberId") Long memberId,
+            Long memberId,
             @RequestParam(name = "p", defaultValue = "1") int page,
-            @RequestParam(name = "c", required = false) Long categoryId) {
+            @RequestParam(name = "of", required = false) String orderField,
+            @RequestParam(name = "od", required = false) String orderDir) {
 
-        List<ParticipationView> list = participationService.getByMemberId(memberId, categoryId, page);
-        List<Category> categoryList = categoryService.getList();
+        List<ParticipationView> list = participationService.getByMemberId(memberId, orderField, orderDir, page);
         int stuffCount = participationService.getStuffCountBymemberId(memberId);
+        Long listCount = participationService.getCountList(memberId, page);
 
         Map<String, Object> dataList = new HashMap<>();
         dataList.put("list", list);
-        dataList.put("categoryList", categoryList);
         dataList.put("stuffCount", stuffCount);
+        dataList.put("listCount", listCount);
 
         return dataList;
     }
 
-    // 참여하기 버튼 누르면 실시간 참여 멤버 인원 업데이트를 위해 필요하다.
     @GetMapping("/participation/stuff/{stuffId}")
     public Map<String, Object> get(
             @PathVariable("stuffId") Long stuffId) {
@@ -121,34 +114,5 @@ public class ParticipationController {
 
         System.out.println(memberInfo);
         return data;
-    }
-
-    @PostMapping("/aa")
-    public String putCalResultMsg(@RequestBody Message message) {
-
-        participationService.saveCalResultMsg(message);
-
-        return "ok";
-    }
-
-    @PutMapping("/calc/{stuffId}")
-    public boolean calculate(
-            @PathVariable("stuffId") Long stuffId,
-            @RequestBody Map<Long, Integer> prices) {
-        System.out.println("stuffId: "+stuffId);
-        System.out.println("prices: "+prices);
-        // participationService.calculatedAmount(stuffId, prices);
-        return true;
-    }
-
-    @PostMapping("/dutch/{stuffId}")
-    public String addDutch(
-            @PathVariable("stuffId") Long stuffId,
-            @RequestBody Map<String, Object> dutch) {
-        System.out.println("stuffId: "+stuffId);
-        System.out.println("dutch: "+dutch);
-
-        dutchService.addAllDutch(stuffId, dutch);
-        return "ok";
     }
 }

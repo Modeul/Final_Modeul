@@ -24,5 +24,7 @@ public class Member {
 	private LocalDateTime regDate;
 	private Long level;
 	private String image;
+	private Double coordX;
+	private Double coordY;
 	
 }

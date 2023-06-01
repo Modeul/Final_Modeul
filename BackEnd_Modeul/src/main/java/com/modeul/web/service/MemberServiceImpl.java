@@ -3,6 +3,7 @@ package com.modeul.web.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,11 @@ public class MemberServiceImpl implements MemberService {
 			return "해당 아이디가 없습니다.";
 		}
 		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			System.out.println("login");
+			System.out.println(member.getPwd());
+			System.out.println(loginMember.getPwd());
 			return "비밀번호가 일치하지 않습니다.";
+
 		}
 		return null;
 	}
@@ -59,6 +64,9 @@ public class MemberServiceImpl implements MemberService {
 			return false;
 		}
 		if (!passwordEncoder.matches(member.getPwd(), loginMember.getPwd())) {
+			System.out.println("isValid");
+			System.out.println(member.getPwd());
+			System.out.println(loginMember.getPwd());
 			return false;
 		}
 		return true;
@@ -70,12 +78,10 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public String checkPwd(Member loginMember) {
+	public Boolean checkPwd(Member loginMember) {
+		
 		Member member = repository.getPwdByUid(loginMember.getUid());
-		if (passwordEncoder.matches(loginMember.getPwd(), member.getPwd()) == false) {
-			return "비밀번호가 일치하지 않습니다.";
-		} else
-			return "ok";
+		return passwordEncoder.matches(loginMember.getPwd(), member.getPwd()); 
 	}
 	
 	@Override
@@ -139,7 +145,8 @@ public class MemberServiceImpl implements MemberService {
 		}
 		String currentDir = System.getProperty("user.dir");
 
-		String realPath = "../FrontEnd_Modeul/images/member";
+		String realPath = "src/main/resources/static/images/member/";
+		// String realPath = "images/member/";
 
 		File savePath = new File(currentDir, realPath);
 
@@ -178,8 +185,8 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Boolean checkEmailByName(Member member) {
-		String UserEmail = repository.getEmailByName(member);
-		Boolean result = UserEmail.equals(member.getEmail());
+		String UserName = repository.getNameByEmail(member);
+		Boolean result = UserName.equals(member.getName());
 
 		return result;
 	}
@@ -195,6 +202,93 @@ public class MemberServiceImpl implements MemberService {
 	public List<Member> getMemberList() {
 
 		return repository.findAll();
+	}
+
+	@Override
+	public Member getMemberByEmail(String email) {
+
+		return repository.getMemberByEmail(email);
+	}
+
+	@Override
+	public int addGoogleMember(Member member) {
+		
+		//랜덤 패스워드 생성
+		String ranPwd = createPwd(); 
+		String encodedPassword = passwordEncoder.encode(ranPwd);
+		// 랜덤 아이디 생성
+		String ranUid = "";
+		boolean isdup = false;
+		do {
+			ranUid = "G-" + createUid();
+			isdup = (repository.getbyUid(ranUid) != null ? true : false);
+		} while (isdup);
+		
+		// 멤버 객체에 패스워드 넣어주기
+		member.setPwd(encodedPassword);
+		//멤버 객체에 아이디 넣어주기
+		member.setUid(ranUid);
+		return repository.insert(member);
+	}
+
+	@Override
+	public String createUid() {
+		StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 8; i++) { // 인증코드 : 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+
+            switch (index) {
+                case 0:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+
+                case 1:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    // A~Z
+                    break;
+
+                case 2:
+                    key.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+
+            }
+
+        }
+        return key.toString();
+	}
+
+	@Override
+	public String createPwd() {
+		StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+
+        for (int i = 0; i < 8; i++) { // 인증코드 : 8자리
+            int index = rnd.nextInt(3); // 0~2 까지 랜덤, rnd 값에 따라서 아래 switch 문이 실행됨
+
+            switch (index) {
+                case 0:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    // a~z (ex. 1+97=98 => (char)98 = 'b')
+                    break;
+
+                case 1:
+                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    // A~Z
+                    break;
+
+                case 2:
+                    key.append((rnd.nextInt(10)));
+                    // 0~9
+                    break;
+
+            }
+
+        }
+        return key.toString();
 	}
 
 

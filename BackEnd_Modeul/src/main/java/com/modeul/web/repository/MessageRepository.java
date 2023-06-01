@@ -8,9 +8,7 @@ import com.modeul.web.entity.Chat;
 public interface MessageRepository {
 
 	int insert(Chat chat);
-
 	int update(Chat chat);
 	int delete(Long stuffId);
-	// Chat findChatLogBystuffId(Long stuffId);
 	String findChatLogBystuffId(Long stuffId);
 }

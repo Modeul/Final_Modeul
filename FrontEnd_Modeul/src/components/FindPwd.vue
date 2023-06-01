@@ -37,7 +37,7 @@
 					<input class="txt" type="text" placeholder="인증 코드를 입력해주세요." v-model="emailCodeChk">
 					<div v-if="this.emailChkBtn == false" class="btn-x"></div>
 					<button v-if="this.emailChkBtn == true" class="btn-change"
-						@click.prevent="[modalHandler(), sendTempPwd(), updatePwd()]">확인</button>
+						@click.prevent="updata">확인</button>
 				</div>
 				<div class="error-txt">{{ emailcodeError }}</div>
 			</div>
@@ -48,7 +48,7 @@
 			<div class="findpwd-modal-box">
 				<div class="modal-txt">입력하신 이메일 주소로<br>
 					임시 비밀번호가 발송되었습니다.</div>
-				<button @click.prevent="modalHandler" class="modal-btn">확인</button>
+				<button @click.prevent="move" class="modal-btn">확인</button>
 			</div>
 		</div>
 	</div>
@@ -78,10 +78,24 @@ export default {
 		};
 	},
 	methods: {
+		async updata(){
+			console.log(this.tempPwd)
+			console.log(this.pwd)
+			await this.sendTempPwd();
+			console.log(this.tempPwd)
+			console.log(this.pwd)
+			await this.updatePwd();
+			await this.modalHandler();
+		},
 		modalHandler() {
 			this.openModal = !this.openModal;
 		},
-		updatePwd() {
+		move() {
+			this.$router.replace('/login');
+		},
+		async updatePwd() {
+			console.log(" run updatePwd")
+			console.log(this.tempPwd)
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -97,13 +111,15 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch("http://localhost:8080/api/member/updatePwd", requestOptions)
-				.then(response => response.text())
-				.then(result => console.log(result))
+			await fetch(`${this.defaultStore.host}/api/member/updatePwd`, requestOptions)
+				.then(response => response.json())
 				.catch(error => console.log('error', error));
+			console.log(" end updatePwd")
+			console.log(raw)
+
 		},
 		//임시 비밀번호 발송
-		sendTempPwd() {
+		async sendTempPwd() {
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -113,16 +129,16 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.defaultStore.host}/api/member/sendTempPwd?email=${this.email}`, requestOptions)
+			await fetch(`${this.defaultStore.host}/api/member/sendTempPwd?email=${this.email}`, requestOptions)
 				.then(response => response.text())
 				.then((result) => {
 					this.tempPwd = result;
-					console.log("tempPwd : " + result);
+					console.log(this.tempPwd);
 				})
 				.catch(error => console.log('error', error));
 		},
 		//email 인증번호 보내기
-		sendEmailTmp() {
+		async sendEmailTmp() {
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -131,13 +147,12 @@ export default {
 				headers: myHeaders,
 				redirect: "follow",
 			};
-			fetch(
+			await fetch(
 				`${this.defaultStore.host}/api/signup/mailConfirm?email=${this.email}`, requestOptions
 			)
 				.then((response) => response.text())
 				.then((code) => {
 					this.emailcode = code;
-					console.log("emailcode : " + this.emailcode);
 				})
 				.catch((error) => console.log("error", error));
 
@@ -148,7 +163,6 @@ export default {
 			if (this.emailCodeChk == this.emailcode) {
 				this.emailChkBtn = true;
 				this.emailcodeError = "";
-				// this.emailcodeError = "인증번호 확인 완료";
 			} else {
 				this.emailChkBtn = false;
 				this.emailcodeError = "인증번호가 잘못되었습니다.";
@@ -163,7 +177,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`http://localhost:8080/api/member/checkUid?uid=${this.uid}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/member/checkUid?uid=${this.uid}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					// uid db에 존재
@@ -196,7 +210,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch("http://localhost:8080/api/member/checkEmail", requestOptions)
+			fetch(`${this.defaultStore.host}/api/member/checkEmail`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					if (result == "false") {
@@ -411,4 +425,5 @@ export default {
 
 .modal-btn:hover {
 	background-color: #d5d5d566;
-}</style>
+}
+</style>

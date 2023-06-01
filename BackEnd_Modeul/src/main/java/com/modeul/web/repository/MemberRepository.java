@@ -10,7 +10,6 @@ import com.modeul.web.entity.MemberImage;
 @Mapper
 public interface MemberRepository {
 
-
 	int insert(Member member);
 	
 	Member getbyId(int id);
@@ -37,7 +36,9 @@ public interface MemberRepository {
 
 	void updateImg(MemberImage memberImage);
 
-	String getEmailByName(Member member);
+	String getNameByEmail(Member member);
 
 	String getUid(String name,String email);
+
+    Member getMemberByEmail(String email);
 }

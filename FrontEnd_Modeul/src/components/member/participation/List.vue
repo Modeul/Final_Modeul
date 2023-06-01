@@ -1,19 +1,24 @@
 <template>
-	<section class="canvas">
-		<header>
-			<router-link to="/member/stuff/list" class="icon icon-back">뒤로가기</router-link>
+	<section class="canvas p-rel">
+
+		<header class="header">
+			<div>
+				<router-link to="/member/mypage" class="back"></router-link>
+			</div>
+			<div class="title">참여 목록</div>
 		</header>
 
 		<nav>
-			<h1 class="m-t-4 f-size-2 f-weight">공동구매에<br><span class="f-color-2">{{ stuffCount }}건</span> 참여하고 있어요</h1>
+			<h1 class="m-t-2 f-size-2 f-weight">공동구매에<br><span class="f-color-2">{{ stuffCount }}건</span> 참여하고 있어요</h1>
 
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
-				</div>
-
-				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button @click="orderHandler" class="header-categ participation" name="orderField" value="participation_date">
+						최근참여순
+					</button>
+					<button @click="orderHandler" class="header-categ deadline" value="stuff_deadline">
+						마감일순
+					</button>
 				</div>
 			</div>
 		</nav>
@@ -24,7 +29,7 @@
 					<div class="d-gr li-gr m-t-13px list-cl">
 
 						<div class="li-pic b-rad-1">
-							<img v-if="p.imageName != null" class="listview-image" :src="'/images/member/stuff/' + p.imageName"
+							<img v-if="p.imageName != null" class="listview-image" :src="formatImgUrl(p.imageName)"
 								alt="img">
 							<img v-else-if="p.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
 								alt="img">
@@ -54,25 +59,9 @@
 				</router-link>
 			</div>
 
-			<button class="btn-next more-list" @click="addListHandler"> 더보기 <span> {{ listCount }}</span></button>
+			<button class="btn-next more-list" @click="addListHandler"> 더보기+<span> {{ listCount }}</span></button>
 		</main>
-		<nav class="navi-bar d-fl-jf">
-			<div class="navi-icon">
-				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
-			</div>
-			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
-			</div>
-			<div>
-				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
-			</div>
-			<div class="navi-icon">
-				<router-link to="/member/participation/list" class="icon icon-chat">chat</router-link>
-			</div>
-			<div class="navi-icon">
-				<router-link to="/member/mypage" class="icon icon-info">mypage</router-link>
-			</div>
-		</nav>
+	
 	</section>
 </template>
 
@@ -89,31 +78,48 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			memberId: 2,
+			memberId: '',
 			page: '',
 			categoryList: [],
 			participationList: [],
 			categoryId: '',
 			stuffCount: '',
 			memberCount: '',
-			//listCount:''
+			orderField:'participation_date',
+			orderDir:'desc',
+			order:false,
+			listCount: '',
 		}
 	},
 	methods: {
 		goback() {
 			this.$router.go(-1);
 		},
-		categoryHandler(e) {
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
+		},
+		orderHandler(e) {
 			this.page = 1;
-			this.categoryId = e.target.value;
-			console.log(this.categoryId);
-			fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			this.orderField = e.target.value;
+			this.order = !this.order;
+
+			if(!this.order)
+				this.orderDir = 'desc';
+			else if(this.order)
+				this.orderDir = 'asc';
+				
+
+			fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&of=${this.orderField}&od=${this.orderDir}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
-					// this.listCount = dataList.listCount;    // 이거 API 하나 더 추가
-					console.log(this.list)
+					this.listCount = dataList.listCount;
+
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -121,15 +127,12 @@ export default {
 			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
 
 			this.page++;
-			await fetch(`${this.defaultStore.host}/api/participations/${this.memberId}?p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/participations?memberId=${this.memberId}&p=${this.page}&of=${this.orderField}&od=${this.orderDir}`)
 				.then(response => response.json())
 				.then(dataList => {
-					console.log(dataList);
 					this.participationList = this.formatDateList(dataList.list);
-					this.categoryList = dataList.categoryList;
 					this.stuffCount = dataList.stuffCount;
-					// this.listCount = dataList.listCount;
-					console.log(this.participationList);
+					this.listCount = dataList.listCount;
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
@@ -184,6 +187,7 @@ export default {
 		},
 	},
 	mounted() {
+		this.memberId = this.userDetails.id;
 		this.page = 0;
 		this.addListHandler();
 	},
@@ -198,7 +202,57 @@ export default {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
 }
+
+.li-gr {
+    grid-template-columns: 70px 8px minmax(174px, auto) 0px 70px;
+}
+
+.back {
+	background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z' fill='black'/%3E%3C/svg%3E%0A");
+	width: 23.04px;
+	height: 24px;
+	margin-top: 9px;
+}
+
+.canvas .header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 0px;
+	gap: 10px;
+	width: 100%;
+	margin-top: 25px;
+}
+
+.header .title {
+	margin: 0 auto;
+	padding-right: 23px;
+}
+.f-weight{
+	font-weight: 500;
+}
+
+.header-categ:not([value]) {
+  background-color: #b9d9f8;
+  color: #40709e;
+}
+
+.header-categ[value="participation_date"] {
+  background-color: #f5cd81;
+  color: #ffffff;
+}
+
+.header-categ[value="stuff_deadline"] {
+  background-color: #08b8b8;
+  color: #ffffff;
+}
+
+.header-categ.deadline{
+	margin:5px;
+}
+
 </style>
 
 

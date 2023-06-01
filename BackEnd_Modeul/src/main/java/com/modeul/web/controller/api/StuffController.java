@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.modeul.web.entity.Category;
 import com.modeul.web.entity.Crawling;
-import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.entity.Image;
 import com.modeul.web.entity.ParticipationMemberView;
 import com.modeul.web.entity.Stuff;
@@ -62,15 +61,14 @@ public class StuffController {
 			@RequestParam(name = "dc", required = false) String dongCode
 			) {
 		System.out.println("동코드"+dongCode);
-		List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
-		List<StuffView> list = service.getRecentViewList(categoryId, page, memberId, dongCode); 
+		// List<StuffView> queryList = service.getRecentViewList(query, categoryId, page, dongCode);
+		List<StuffView> list = service.getRecentViewList(query, categoryId, page, memberId, dongCode); 
 		List<Category> categoryList = categoryService.getList();
 		
-		
-		Long listCount = service.getListCount(categoryId, page, memberId);
+		Long listCount = service.getListCount(categoryId, page, memberId, query);
 
 		Map<String, Object> dataList = new HashMap<>();
-		dataList.put("queryList", queryList);
+		// dataList.put("queryList", queryList);
 		dataList.put("list", list);
 		dataList.put("categoryList", categoryList);
 		dataList.put("listCount", listCount);
@@ -82,7 +80,7 @@ public class StuffController {
 	public List<StuffView> getListAll() {
 
 		return service.getViewAll();
-	}
+	} 
 
 	@GetMapping("/stuff/categories")
 	public List<Category> getCategoryList() {
@@ -102,7 +100,6 @@ public class StuffController {
 		List<ParticipationMemberView> participantList = participationService.getMemberBystuffId(stuff.getId());
 		int memberCount = participationService.getMemberCountBystuffId(stuff.getId());
 		StuffView stuffView = service.getViewById(id);
-		FavoriteView favoriteView = favoriteService.getListByStuffId(id);
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("stuff", stuff);
@@ -111,17 +108,10 @@ public class StuffController {
 		data.put("participantList", participantList);
 		data.put("memberCount", memberCount);
 		data.put("stuffView", stuffView);
-		data.put("favoriteView", favoriteView);
 
 		return data;
 	}
 
-	// ======================== 추후에 카테고리 Id 추가 ===========================
-
-	// post 요청은 먼저 JS로 와서 JS가 해당 RESTAPI url로
-	// 요청 바디에 데이터를 실어서 해당 요청 바디에 대한 서버의 응답 데이터를 요청하고
-	// 그 응답 데이터를 받아와서 비교해서 그다음을 동작 시킨다!
-	/* 공구상품 글 등록 */
 	@PostMapping("/stuff/upload")
 	public String regStuff(Stuff stuff, List<MultipartFile> imgs) {
 		
@@ -133,48 +123,19 @@ public class StuffController {
 	/* 공구상품 정보 수정 */
 	@PutMapping("/stuff/update/{id}")
 	public String editStuff(Stuff stuff, List<MultipartFile> imgs) {
-			
-		/* 수정시 이미지 처리 무시 -> 1차 이후 활용 */
-		/*
-			for (int i = 0; i < imgs.length; i++) {			
-				MultipartFile img = imgs[i]; 			// 파일 업로드가 안될 시, 예외 처리		
-
-				if (img.isEmpty())				
-					continue; 			// 파일 경로 알아 내기(논리적, 물리적)** : urlPath, realPath
-
-				String urlPath = "/images/member/stuff/" + img.getOriginalFilename();			
-				String realPath = request.getServletContext().getRealPath(urlPath); 			
-				
-				System.out.printf("%s", realPath); 			// 물리 경로에 폴더가 없으면, 폴더도 생성			
-				File savePath = new File(realPath); 			
 		
-				~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1차까지 주석처리~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-				if (!savePath.exists())				
-					savePath.mkdirs(); 			// 그 물리적 경로로 파일 저장하는 방법**			
-			
-				img.transferTo(new File(realPath));
-				
-				System.out.printf("%s", realPath); 			// 그 이미지를 DB에 저장하기!!**			
-			
-				Image image = new Image();			
-				image.setName(img.getOriginalFilename()); 			// ArrayList에 add해서 Image 정보 넣기!			
-				imageList.add(image);		
-			} 		
-	 */
-	
 			int updateCount = service.editStuff(stuff, imgs);
 	
 			return "ok";
 
 	}
 
-		@DeleteMapping("/stuff/{id}")
-			public String deleteStuff(
-				@PathVariable("id") Long id){
-					service.deleteStuff(id);
-			return "stuff del:";      
-   		}
+	@DeleteMapping("/stuff/{id}")
+		public String deleteStuff(
+			@PathVariable("id") Long id){
+				service.deleteStuff(id);
+		return "stuff del:";      
+	}
 
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 크롤링 컨트롤러 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
@@ -186,34 +147,31 @@ public class StuffController {
 			@RequestParam(name="c", required=false) Long categoryId,
 			@RequestParam(name="cname", required=false) String categoryName) {
 		
-		List<Crawling> crawlingList = crawlingservice.getViewAll(page);
-		List<Crawling> queryList = crawlingservice.getViewAll(query , page , categoryId);
+		List<Crawling> list = crawlingservice.getViewAll(query , page , categoryId);
 		List<Crawling> category = crawlingservice.getCategoryNameList(page , categoryName);
-		List<Crawling> categoryList = crawlingservice.getViewAll(page , categoryId);
 		Long listCount = crawlingservice.getListCount(categoryId, page);
 		Map<String, Object> dataList = new HashMap<>();
-		dataList.put("crawlingList", crawlingList);
-		dataList.put("queryList", queryList);
+		dataList.put("list", list);
 		dataList.put("listCount", listCount);
 		dataList.put("category", category);
-		dataList.put("categoryList", categoryList);
 
 		return dataList;
 	}
-	@GetMapping("/stuff/recommend/reg/{id}")
+	@GetMapping("/stuff/crawling/{id}")
 	public Map<String, Object> getCrwalingReg(@PathVariable("id") long id) {
 
 		
-		Crawling stuff = crawlingservice.getById(id);
-
-
+		Crawling crawlingData = crawlingservice.getById(id);
 
 		Map<String, Object> data = new HashMap<>();
-		data.put("stuff", stuff);
-		// data.put("participantList", participantList);
-		// data.put("memberCount", memberCount);
-		// data.put("stuffView", stuffView);
+		data.put("crawlingData", crawlingData);
 
 		return data;
+	}
+	@PostMapping("/stuff/recommend")
+	public String regCrawlingStuff(Stuff stuff) {
+		service.regCrawlingStuff(stuff);
+
+		return "ok";
 	}
 }

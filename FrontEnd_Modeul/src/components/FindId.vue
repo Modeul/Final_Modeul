@@ -46,7 +46,7 @@
 		<div v-if="openModal" class="black-bg">
 			<div class="findpwd-modal-box">
 				<div class="modal-txt">{{ this.name }}님의 아이디는<br> "{{ this.uid }}" 입니다.</div>
-				<button @click.prevent="modalHandler" class="modal-btn">확인</button>
+				<button @click.prevent="move" class="modal-btn">확인</button>
 			</div>
 		</div>
 	</div>
@@ -79,13 +79,16 @@ export default {
 		modalHandler() {
 			this.openModal = !this.openModal;
 		},
+		move(){
+			this.$router.replace('/login');
+		},
 		checkName() {
 			var requestOptions = {
 				method: 'GET',
 				redirect: 'follow'
 			};
 
-			fetch(`http://localhost:8080/api/member/checkName?name=${this.name}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/member/checkName?name=${this.name}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					if (result == "false") {
@@ -116,7 +119,7 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch("http://localhost:8080/api/member/checkEmailByName", requestOptions)
+			fetch(`${this.defaultStore.host}/api/member/checkEmailByName`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
 					if (result == "true") {
@@ -146,7 +149,6 @@ export default {
 				.then((response) => response.text())
 				.then((code) => {
 					this.emailcode = code;
-					console.log("emailcode : " + this.emailcode);
 				})
 				.catch((error) => console.log("error", error));
 
@@ -164,7 +166,7 @@ export default {
 		},
 		getUid() {
 
-			fetch(`http://localhost:8080/api/member/findUid?name=${this.name}&email=${this.email}`)
+			fetch(`${this.defaultStore.host}/api/member/findUid?name=${this.name}&email=${this.email}`)
 				.then(response => response.text())
 				.then(result => this.uid = result)
 				.catch(error => console.log('error', error));
@@ -213,7 +215,6 @@ export default {
 
 .find-title {
 	margin-left: 86px;
-	/* font-size: 14px; */
 	color: #333;
 }
 

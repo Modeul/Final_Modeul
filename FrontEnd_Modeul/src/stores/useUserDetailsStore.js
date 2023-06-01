@@ -18,7 +18,7 @@ export const useUserDetailsStore = defineStore("userDetails", {
 		// role을 받아서 true,false를 반환해주자.
 		hasRole(role) {
 
-			let result = this.roles.indexOf(role) < 0 ? false : true; // 있는 곳의 인덱스 값이 나온다. == 0 , 찾지 못하면 -1
+			let result = this.roles.indexOf(role) < 0 ? false : true; 
 
 			return result;
 		}

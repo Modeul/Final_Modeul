@@ -14,10 +14,6 @@
 					<img src="/images/member/stuff/mp-edit-btn.svg">
 				</router-link>
 				<div class="profile-name">{{ loginInfo.nickname }}</div>
-				<!-- <div class="star">
-                    <img src="/images/member/stuff/star.svg">
-                    <span class="star-avg">5.0</span>
-                </div> -->
             </div>
             <ul class="mypage-list">
                 <router-link to="/member/mypage/myreglist">
@@ -29,10 +25,10 @@
                 <router-link to="/member/participation/list">
                     <li>
                         <img src="/images/member/stuff/cart.svg">
-                        <span>참여 딜 목록</span>
+                        <span>참여목록</span>
                     </li>
                 </router-link>
-                <router-link to="/member/mypage/favorite?memberId=2">
+                <router-link to="/member/mypage/favorite">
                     <li>
                         <img src="/images/member/stuff/heart_plus.svg">
                         <span>관심목록</span>
@@ -41,22 +37,22 @@
                 <router-link to="/member/mypage/mydutchlist">
                     <li>
                         <img src="/images/member/stuff/dutch.svg">
-                        <span>정산 내역 목록</span>
+                        <span>정산내역</span>
                     </li>
                 </router-link>
-                <router-link to="/member/mypage/changepwd">
+                <router-link to="/member/mypage/myInfoEdit">
                     <li>
                         <img src="/images/member/stuff/password-icon.svg">
-                        <span>비밀번호 변경</span>
+                        <span>개인정보 변경</span>
                     </li>
                 </router-link>
-                <li>
+                <li @click="modalHandler2">
                     <img src="/images/member/stuff/logout.svg">
-                    <span @click="modalHandler2">로그아웃</span>
+                    <span>로그아웃</span>
                 </li>
-                <li>
+                <li @click="modalHandler">
                     <img src="/images/member/stuff/out.svg">
-                    <span @click="modalHandler">탈퇴하기</span>
+                    <span>탈퇴하기</span>
                 </li>
             </ul>
         </section>
@@ -65,7 +61,7 @@
 				<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 			</div>
 			<div class="navi-icon">
-				<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+				<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 			</div>
 			<div>
 				<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>
@@ -93,7 +89,7 @@
 		<div class="delete-box">
 			<div class="delete-box-1">정말로 로그아웃 하시겠습니까?</div>
 			<div class="delete-box-2">
-				<div @click="logout" class="delete-box-3">로그아웃</div>
+				<div @click="userDetails.logout" class="delete-box-3"> <router-link to="/login">로그아웃</router-link></div>
 				<div @click="modalHandler2" class="delete-box-4">취소</div>
 			</div>
 		</div>
@@ -108,7 +104,6 @@ export default {
 		return {
 			userDetails: useUserDetailsStore(),
 			defaultStore: useDefaultStore(),
-			// myMemberId: 110,
 			loginInfo: '',
 			openModal: false,
 			openModal2: false,
@@ -133,12 +128,9 @@ export default {
 
 			fetch(`${this.defaultStore.host}/api/member/delete`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => result)
 				.catch(error => console.log('error', error));
-			this.$router.replace('/index');
-		},
-		logout() {
-
+			this.$router.replace('/');
 		},
 		modalHandler() {
 			this.openModal = !this.openModal;
@@ -152,18 +144,23 @@ export default {
 			.then(response => response.json())
 			.then(data => {
 				this.loginInfo = data;
-				console.log(data);
 			})
 	},
 }
 </script>
 <style scoped>
 @import "/css/component/member/stuff/component-list.css";
-
+.header{
+  transition: transform 0.5s;
+}
+.header:hover{
+  transform: scale(1.2);
+}
 .canvas {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
 }
 
 .header {
@@ -323,5 +320,11 @@ section {
 	line-height: 26px;
 	margin-left: 25px;
 	cursor: pointer;
+}
+
+@media (min-width: 768px) {
+	.navi-bar {
+		display: none;
+	}
 }
 </style>

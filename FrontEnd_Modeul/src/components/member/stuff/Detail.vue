@@ -4,6 +4,7 @@ import 'dayjs/locale/ko';
 import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
 import { useDefaultStore } from '../../../stores/useDefaultStore';
 
+import PcHeader from './PcHeader.vue'
 
 export default {
 	data() {
@@ -12,13 +13,14 @@ export default {
 			defaultStore: useDefaultStore(),
 			showMap: true,
 			mapStatus: true,
-			memberId: 2,
-			stuffId: 1,
+			memberId: '',
+			stuffId: '',
 			openModal: false,
 			openModal2: false,
 			openModal3: false,
 			openModal4: false,
 			stuff: {},
+			stuffPrice: 0,
 			category: {},
 			imageList: '',
 			participantList: [],
@@ -30,23 +32,26 @@ export default {
 			stuffAuthority: false,
 			stuffView: '',
 			Report: {
-				stuffId: 0,
-				memberId: 113,
 				detail: '',
 			},
 			favoriteList: [],
-			heartStuffId: '',
+			favoriteInfo: {},
 			isfavorite: false,
 			list: [],
 			zzimModalMsg: "",
 			favorOpenModal: false,
 			stuffUser: false,
+			isCheckNumPeople: true,
+			isDutchComplete: ''
 		};
+	},
+	components: {
+		PcHeader
 	},
 	methods: {
 		/* 뒤로가기 : 이전페이지로 이동 */
 		goback() {
-			this.$router.go(-1);
+			this.$router.push('list');
 		},
 		/* 모달 이벤트 */
 		modalHandler() {
@@ -61,12 +66,13 @@ export default {
 		modalHandler4() {
 			this.openModal4 = !this.openModal4;
 		},
-
-		imageZoomInHandler() {
-			console.log("zoom-in");
-		},
-		imageZoomOutHandler() {
-			console.log("zoom-out");
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		},
 		formatDateStuff() {
 			const deadlineObj = dayjs(this.stuff.deadline).locale('ko');
@@ -106,11 +112,14 @@ export default {
 				method: 'DELETE',
 				redirect: 'follow'
 			};
-			this.$router.push("/member/stuff/list");
+			this.defaultStore.loadingStatus = true;
 
 			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
+				.then(result => {
+					this.defaultStore.loadingStatus = false
+					this.$router.push("/member/stuff/list");
+				})
 				.catch(error => console.log('error', error));
 		},
 
@@ -123,7 +132,7 @@ export default {
 				},
 				body: JSON.stringify({
 					stuffId: this.$route.params.id,
-					memberId: this.Report.memberId,
+					memberId: this.userDetails.id,
 					detail: this.Report.detail,
 				})
 			};
@@ -132,7 +141,6 @@ export default {
 				.then(response => response.text())
 				.then(result => {
 					if (result === 'OK') {
-						console.log(result);
 						this.modalHandler3();
 						this.modalHandler4();
 					}
@@ -146,10 +154,8 @@ export default {
 			myHeaders.append("Content-Type", "application/json");
 
 			var raw = JSON.stringify({
-				// memberid:this.stuff.memberId,
-				memberId: this.memberId,
+				memberId: this.userDetails.id,
 				stuffId: this.stuff.id,
-				// stuffId:this.stuffId
 			});
 
 			var requestOptions = {
@@ -162,7 +168,6 @@ export default {
 			fetch(`${this.defaultStore.host}/api/participation`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
 					this.dialog = true;
@@ -180,31 +185,25 @@ export default {
 				.then(data => {
 					this.participantList = data.list;
 					this.memberCount = data.memberCount;
-					console.log(this.participantList);
 				})
 				.catch(error => console.log('error', error));
 		},
 		loadParticipantInfo() {
-			fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.id}/${this.memberId}`)
+			fetch(`${this.defaultStore.host}/api/chat/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
 				.then(data => {
 					this.participantInfo = data.memberInfo;
-					console.log(this.participantInfo);
 				})
 				.catch(error => console.log('error', error));
 		},
 		// 참여버튼 참여한지에 따라 초기값 설정
 		checkParticipation() {
-			for (let p of this.participantList) {
-				console.log("p.memberId: " + p.memberId + '\n');
-				if (p.memberId === this.participantInfo.memberId) {
-					this.isCheckParticipation = !this.isCheckParticipation;
-				}
-			}
+			if (this.participantInfo)
+				this.isCheckParticipation = true;
+			else
+				this.isCheckParticipation = false;
 		},
 		checkStuffLeader() {
-			console.log(this.stuffView.memberId);
-			console.log(this.memberInfo.id);
 			if (this.stuffView.memberId === this.memberInfo.id) {
 				this.stuffAuthority = !this.stuffAuthority;
 			}
@@ -216,10 +215,9 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.memberId}`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/participation/${this.$route.params.id}/${this.userDetails.id}`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result);
 					this.loadParticipationList();
 					this.isCheckParticipation = !this.isCheckParticipation;
 					this.dialog = true;
@@ -247,12 +245,10 @@ export default {
 			</div>
 			</div>`;
 
-
 			var customOverlay = new kakao.maps.CustomOverlay({
 				position: coords,
 				content: content
 			});
-
 
 			map.relayout();
 			map.setCenter(coords);
@@ -260,7 +256,6 @@ export default {
 		},
 
 		toggleMap() {
-			console.log(this.stuff.croodX);
 			let map = document.querySelector("#map");
 			if (this.showMap) {
 				map.style.height = '300px';
@@ -273,7 +268,6 @@ export default {
 					}, 500);
 				}
 
-
 			} else {
 				map.style.height = 0;
 				this.showMap = !this.showMap;
@@ -281,21 +275,18 @@ export default {
 
 		},
 		async loadParticipant() {
-			const response = await fetch(`${this.defaultStore.host}/api/member/${this.memberId}`);
+			const response = await fetch(`${this.defaultStore.host}/api/member/${this.userDetails.id}`);
 			const data = await response.json();
 			this.memberInfo = data;
-			console.log("this.memberInfo:" + this.memberInfo.id);
 		},
 
-		loadFavoriteList() {
-			fetch(`${this.defaultStore.host}/api/favorites?memberId=${this.memberId}`)
+		loadFavoriteInfo() {
+			fetch(`${this.defaultStore.host}/api/favorite/${this.$route.params.id}/${this.userDetails.id}`)
 				.then(response => response.json())
-				.then(dataList => {
-					this.list = dataList.list;
-					this.categoryList = dataList.categoryList;
-					this.defaultStore.loadingStatus = false;
+				.then(data => {
+					this.favoriteInfo = data.favoriteInfo;
 				})
-				.catch(error => console.log("error", error));
+				.catch(error => console.log('error', error));
 		},
 
 		toggleFavorite() {
@@ -306,8 +297,8 @@ export default {
 
 				var raw = JSON.stringify({
 
-					"heartStuffId": this.stuff.id,
-					"memberId": this.memberInfo.id,
+					stuffId: this.stuff.id,
+					memberId: this.userDetails.id,
 				});
 				var requestOptions = {
 					method: 'DELETE',
@@ -320,7 +311,7 @@ export default {
 						response.text();
 					})
 					.then(result => {
-						console.log("관심삭제");
+						// "관심삭제"
 						this.isfavorite = !this.isfavorite;
 					})
 					.catch(error => console.log('error', error));
@@ -330,8 +321,8 @@ export default {
 				myHeaders.append("Content-Type", "application/json");
 
 				var raw = JSON.stringify({
-					"heartStuffId": this.stuff.id,
-					"memberId": this.memberInfo.id,
+					stuffId: this.stuff.id,
+					memberId: this.userDetails.id,
 				});
 
 				var requestOptions = {
@@ -344,7 +335,7 @@ export default {
 					.then(response => response.text())
 					.then(result => {
 						this.isfavorite = !this.isfavorite;
-						console.log("관심등록");
+						// "관심등록"
 					})
 					.catch(error => console.log('error', error));
 				this.zzimModalMsg = "  관심목록에 추가되었습니다."
@@ -352,18 +343,38 @@ export default {
 			}
 		},
 		checkFavoriteList() {
-			for (let f of this.list) {
-				if (f.stuffId == this.stuff.id) {
-					this.isfavorite = !this.isfavorite;
-				}
-			}
+			if (this.favoriteInfo)
+				this.isfavorite = true;
+			else
+				this.isfavorite = false;
 		},
 		aniEndHandler() {
 			this.favorOpenModal = false;
 		},
 		checkStuffUser() {
 			this.stuffUser = this.userDetails.id !== this.stuff.memberId ? false : true;
-			console.log("유저 " + this.userDetails.id + "멤버 " + this.stuff.memberId + ' ' + this.stuffUser);
+		},
+		checkNumPeople(){
+			if(this.memberCount < parseInt(this.stuff.numPeople)){
+				this.isCheckNumPeople = true;
+			}
+			else{
+				this.isCheckNumPeople = false;
+			}
+		},
+		async checkDutchComplete() {
+			const response = await fetch(`${this.defaultStore.host}/api/dutch/${this.$route.params.id}`)
+			const dataList = await response.json();
+			if(dataList.list.length > 0)
+				this.isDutchComplete = true;
+			else
+				this.isDutchComplete = false;
+		},
+		urlHandler(url) {
+			if(url.startsWith('w')){
+				url = 'https://' + url;
+			}
+			return url;
 		}
 	},
 	computed: {
@@ -373,7 +384,7 @@ export default {
 		this.loadParticipant();
 		this.loadParticipationList();
 		this.loadParticipantInfo();
-		this.loadFavoriteList();
+		this.loadFavoriteInfo();
 	},
 	async mounted() {
 		this.defaultStore.loadingStatus = true;
@@ -381,6 +392,7 @@ export default {
 			.then((response) => response.json())
 			.then((data) => {
 				this.stuff = data.stuff;
+				this.stuffPrice = Number(data.stuff.price).toLocaleString();
 				this.category = data.category;
 				this.imageList = data.imageList;
 				this.participantList = data.participantList;
@@ -389,7 +401,7 @@ export default {
 				this.stuffView = data.stuffView;
 				this.favoriteList = data.favoriteView;
 				this.defaultStore.loadingStatus = false;
-				console.log(this.stuff);
+				this.checkNumPeople();
 			})
 			.catch((error) => console.log("error", error));
 
@@ -397,103 +409,79 @@ export default {
 		this.checkStuffLeader();
 		this.checkFavoriteList();
 		this.checkStuffUser();
+		this.checkDutchComplete()
 	},
 };
 </script>
 
 <template>
-
-<div class="pc-header-wrap">
-		<div class="header-menu">
-			<div class="signup"><router-link to="/signup">회원가입</router-link></div>
-			<div class="login"><router-link to="/login">로그인</router-link></div>
-		</div>
-		<div class="pc-header">
-			<div class="logo-moduel header-logo"></div>
-			<div class="search-container">
-				<div class="d-fl d-b-none search-form">
-					<input id="search-bar" class="search-input m-l-6px" placeholder="검색어를 입력해주세요." @keyup.enter="searchInput">
-					<h1 class="icon search-dodbogi">돋보기</h1>
-				</div>
-			</div>
-			<div class="btnbox">
-				<div class="btn-heart"></div>
-				<div class="btn-location"></div>
-			</div>
-		</div>
-	</div>
-
-	<!-- detail : flex-container -->
+	<PcHeader></PcHeader>
 	<div class="detail">
-		<header class="detail-header">
-			<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
-
-			<!-- 수정/삭제 모달 버튼 -->
-			<!-- <i v-if="stuffAuthority" @click="modalHandler" class="icon-edit"></i> -->
-			<i v-if="true" @click="modalHandler" class="icon-edit"></i> <!-- 임시-->
-			<!-- 모달 배경 -->
-			<div v-if="openModal">
-				<div class="icon-edit2" v-if="this.stuffUser">
-					<div class="d-fl-al fl-dir-col">
-						<router-link :to="'./edit/' + stuff.id">
-							<div class="icon-edit3"></div>
-						</router-link>
-						<div @click="modalHandler2" class="icon-edit4"></div>
-					</div>
-				</div>
-				<div class="icon-report" v-else>
-					<div class="d-fl-al fl-dir-col">
-						<div @click="modalHandler3">신고</div>
-					</div>
-				</div>
-				<!-- 취소 확인 모달 -->
-				<div v-if="openModal2" class="black-bg">
-					<div class="delete-box">
-						<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
-						<div class="delete-box-2">
-							<div @click="deleteStuff" class="delete-box-3">삭제</div>
-							<div @click="modalHandler2" class="delete-box-4">취소</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="openModal3" class="black-bg">
-				<div class="report-box">
-					<div class="delete-box-1">신고 하시겠습니까?</div>
-					<div>사유</div>
-					<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
-					<div class="delete-box-2">
-						<div @click="reportStuff" class="delete-box-3">신고</div>
-						<div @click="modalHandler3" class="delete-box-4">취소</div>
-					</div>
-				</div>
-			</div>
-
-			<div v-if="openModal4" class="black-bg">
-				<div class="delete-box">
-					<div class="delete-box-1">신고 완료</div>
-					<div class="delete-box-2">
-						<div @click="modalHandler4" class="delete-box-3">닫기</div>
-					</div>
-				</div>
-			</div>
-
-
-
-
-		</header>
-
 		<!-- detail - item1  -->
 		<main>
 			<!-- detail-main : flex-container -->
-			<div class="detail-main">
-				<!-- detail-img : detail-main - item1 -->
+			<header class="detail-header">
+				<router-link to="list" class="icon icon-back" @click.prevent="goback">뒤로가기</router-link>
 
+				<!-- 수정/삭제 모달 버튼 -->
+				<i @click="modalHandler" class="icon-edit"></i>
+
+				<!-- 모달 배경 -->
+				<div v-if="openModal">
+					<div class="icon-edit2" v-if="this.stuffUser">
+						<div class="box">
+							<router-link :to="'./edit/' + stuff.id">
+								<div class="icon-edit3">
+									<div class="icon"></div>수정 하기
+								</div>
+							</router-link>
+							<div @click="modalHandler2" class="icon-edit4">
+								<div class="icon"></div>삭제 하기
+							</div>
+						</div>
+					</div>
+					<div class="icon-report" v-else @click="modalHandler3">
+						<div class="icon"></div>신고 하기
+					</div>
+					<!-- 취소 확인 모달 -->
+					<div v-if="openModal2" class="black-bg">
+						<div class="delete-box">
+							<div class="delete-box-1">정말로 삭제하시겠습니까?</div>
+							<div class="delete-box-2">
+								<div @click="deleteStuff" class="delete-box-3">삭제</div>
+								<div @click="modalHandler2" class="delete-box-4">취소</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal3" class="black-bg">
+					<div class="report-box">
+						<div class="delete-box-1">신고 하시겠습니까?</div>
+						<div>사유</div>
+						<textarea maxlength="100" placeholder="100자 이하" v-model="Report.detail"></textarea>
+						<div class="delete-box-2">
+							<div @click="reportStuff" class="delete-box-3">신고</div>
+							<div @click="modalHandler3" class="delete-box-4">취소</div>
+						</div>
+					</div>
+				</div>
+
+				<div v-if="openModal4" class="black-bg">
+					<div class="delete-box">
+						<div class="delete-box-1">신고 완료</div>
+						<div class="delete-box-2">
+							<div @click="modalHandler4" class="delete-box-3">닫기</div>
+						</div>
+					</div>
+				</div>
+			</header>
+			<div class="detail-main">
+
+				<!-- detail-img : detail-main - item1 -->
 				<div class="detail-img">
 					<v-carousel v-if="imageList.length != 0" hide-delimiters show-arrows="hover" height="100%">
-						<v-carousel-item v-for="img in imageList"
-							:src="'/images/member/stuff/' + img.name"></v-carousel-item>
+						<v-carousel-item v-for="img in imageList" :src="formatImgUrl(img.name)"></v-carousel-item>
 					</v-carousel>
 					<div v-else class="noImg"></div>
 				</div>
@@ -509,15 +497,11 @@ export default {
 										(stuff.deadlineState == 2) ? 'hour-left' : 'minute-left'">{{ stuff.dDay }}</div>
 							</div>
 
-						<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
+							<div :class="isfavorite ? 'filledHeart' : 'emptyHeart'" @click.prevent="toggleFavorite"></div>
 
-					</div>
-					<p class="detail-heading-title">{{ stuff.title }}</p>
-					<!-- <div class="d-fl">
-						<div class="ed-text"><router-link :to="'./'+stuff.id+'/edit/'">수정</router-link></div>
-						<div class="ed-text" @click="deleteStuff">삭제</div>
-					</div> -->
-						<div class="detail-price">{{ stuff.price }}원</div>
+						</div>
+						<p class="detail-heading-title">{{ stuff.title }}</p>
+						<div class="detail-price">{{ stuffPrice }}원</div>
 
 					</section>
 					<!-- detail-info : detail-main - item3 -->
@@ -535,19 +519,21 @@ export default {
 							<div class="detail-info-title">장소</div>
 							<div class="detail-info-txt">{{ stuff.place }}</div>
 						</div>
+						<div class="detail-in">
+							<div class="detail-info-title">링크</div>
+							<div v-if="stuff.url" class="detail-info-txt"><a class="detail-info-txt-a" :href="urlHandler(stuff.url)" target="_blank">{{ stuff.url }}</a></div>
+							<div v-else class="detail-info-txt"> 게시된 링크가 없습니다. </div>
+						</div>
 
 					</section>
 					<section class="canvas map">
-						<div @click="toggleMap" v-if="showMap">지도 열기</div>
-						<div @click="toggleMap" v-else>지도 닫기</div>
+						<div class="map-txt" @click="toggleMap" v-if="showMap">지도 열기</div>
+						<div class="map-txt" @click="toggleMap" v-else>지도 닫기</div>
 						<div id="map"></div>
 					</section>
 					<!-- detail-writing : detail-main - item4 -->
 					<section class="canvas detail-writing">
 						<h1 class="d-none">writing</h1>
-						<!-- <p class="detail-paragraph">
-								            {{ stuff.content }}
-								          </p> -->
 						<p v-html="getContent(stuff.content)" class="detail-paragraph"></p>
 					</section>
 				</div>
@@ -556,7 +542,7 @@ export default {
 		<div class="favorModal" @animationend="aniEndHandler">
 			<div v-if="favorOpenModal == true">
 				<div class="error-box">{{ zzimModalMsg }}</div>
-				<router-link :to="'/member/mypage/favorite?memberId=' + memberId">
+				<router-link to="/member/mypage/favorite">
 					<div class="error-gotofavor">관심목록 보기</div>
 				</router-link>
 			</div>
@@ -580,14 +566,15 @@ export default {
 
 				<!-- ** vuex와 store를 이용해서 참여 중이면 취소 버튼 보이게 상태 유지 값 만들기 -->
 				<div class="detail-join-button-wrap">
-					<button class="detail-join-button" v-if="!isCheckParticipation" @click="participationHandler">
+					<button class="detail-join-button" v-if="!isCheckParticipation && isCheckNumPeople && !isDutchComplete" @click="participationHandler">
 						참여하기
 					</button>
-
-					<div class="join-button-wrap" v-if="isCheckParticipation">
-						<router-link :to="'../../chat/' + stuff.id + '/' + this.memberId"
-							class="detail-chat-button">채팅하기</router-link>
-						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority">
+					<button class="detail-join-end-button" v-else-if="!isCheckParticipation && (!isCheckNumPeople || isDutchComplete)" @click="">
+						참여마감
+					</button>
+					<div class="join-button-wrap" v-else-if="isCheckParticipation">
+						<router-link :to="'../../chat/' + stuff.id" class="detail-chat-button">채팅하기</router-link>
+						<button class="detail-cancel-button" @click="cancelParticipationHandler" v-if="!stuffAuthority && !isDutchComplete">
 							참여취소
 						</button>
 					</div>
@@ -622,7 +609,6 @@ export default {
 
 <style scoped>
 @import "/css/component/member/stuff/component-detail.css";
-@import "/css/component/admin/member/list-responsive.css";
 
 @media (min-width: 768px) {
 	.detail-main {
@@ -630,19 +616,28 @@ export default {
 		flex-direction: row;
 	}
 
-	main
-	{
+	main {
 		max-width: 1050px;
 		margin: 0 auto;
 	}
 
 	.detail-img {
 		width: 50%;
+		max-height: 525px;
 	}
 
 	.detail-content-wrap {
 		width: 50%;
 		margin: auto 0;
+	}
+
+	.icon.icon-back {
+		display: none;
+	}
+
+	#map {
+		width: 470px;
+		border-radius: 10px;
 	}
 }
 
@@ -666,9 +661,6 @@ export default {
 .v-img__img--contain {
 	object-fit: cover;
 }
-
-/* Vuetify css 변경하는 v-deep 이용하는 방법!! : 
-개발자모드에서 보여지는 css 계층의 값 변경 가능*/
 
 .v-dialog :deep {
 	font-size: 14px;
@@ -698,39 +690,56 @@ export default {
 
 .error-box {
 	position: absolute;
-    background-color: white;
-    width: 70%;
-    height: 40px;
-    text-align: center;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    padding: 0 26px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 500;
+	background-color: white;
+	width: 70%;
+	height: 40px;
+	text-align: center;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	padding: 0 26px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	font-size: 12px;
+	font-weight: 500;
 	animation-timing-function: ease-in-out;
-	animation: fadeout 4s;
+	animation: fadeout 3s;
 	animation-fill-mode: forwards;
 
 }
 
 .error-gotofavor {
 	position: absolute;
-    text-align: center;
-    top: 5%;
-    right: 15%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    /* padding: 0 12px; */
-    font-weight: 600;
+	text-align: center;
+	top: 5%;
+	right: 15%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	font-weight: 600;
 	font-size: 10px;
 	animation-timing-function: ease-in-out;
-	animation: fadeout 4s;
+	animation: fadeout 3s;
 	animation-fill-mode: forwards;
+}
+
+.map-txt {
+	cursor: pointer;
+	color: #727272;
+	font-size: 12px;
+	font-weight: 500;
+	margin-top: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.map-txt::before {
+	content: "\e55b";
+	font-family: 'Material Icons';
+	font-size: 16px;
+	margin-right: 2px;
 }
 </style>
 
@@ -738,12 +747,16 @@ export default {
 @import "/css/component/member/stuff/map-content.css";
 
 @keyframes fadeout {
-        from {
-            opacity: 1;
-        }
-		50%  {opacity: 1;}
-        to {
-            opacity: 0;
-        }
-    }
+	from {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
 </style>

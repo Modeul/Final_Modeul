@@ -108,7 +108,6 @@ export default {
 				.then(response => response.json())
 				.then(result => {
 					this.categoryList = result
-					console.log(this.categoryList)
 				})
 				.catch(error => console.log('error', error));
 		},
@@ -144,7 +143,6 @@ export default {
 			await fetch(`${this.defaultStore.host}/api/category`, requestOptions)
 				.then(response => response.text())
 				.then(result => {
-					console.log(result)
 					this.load();
 					this.showAdd = false;
 				})
@@ -153,7 +151,6 @@ export default {
 		editCategory(item) {
 			var myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
-			console.log(item);
 			var raw = JSON.stringify({
 				"id": item.id,
 				"name": item.name
@@ -168,7 +165,6 @@ export default {
 
 			fetch(`${this.defaultStore.host}/api/category`, requestOptions)
 				.then(response => response.text())
-				.then(result => console.log(result))
 				.catch(error => console.log('error', error));
 			this.editId = '';
 		},

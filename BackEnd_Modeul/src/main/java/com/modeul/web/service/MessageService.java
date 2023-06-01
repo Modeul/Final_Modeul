@@ -11,4 +11,6 @@ public interface MessageService {
 		MessageView enterUser(MessageView messageView);
 		MessageView exitUser(MessageView messageView) throws JsonProcessingException;
 		MessageView defaultMessage(MessageView messageView);
+
+        MessageView dutchComplete(MessageView messageView);
 }

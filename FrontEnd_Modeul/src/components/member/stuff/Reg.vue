@@ -71,7 +71,8 @@
 							</div>
 						</label>
 
-						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage">
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
+							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -85,9 +86,9 @@
 
 
 					<select class="category-box" name="categoryId">
-						<!-- <option class="d-none" value="null">{{ stuff.categoryId }}</option> -->
 
-						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id v-text="c.name">
+						<option v-for="c in categoryList" v-bind:selected="c.id == stuff.categoryId" :value=c.id
+							v-text="c.name">
 						</option>
 
 					</select>
@@ -102,19 +103,22 @@
 					<div class="select-box2 d-fl">
 						<label for="" class="input-field-txt">인원</label>
 						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
+							<input class="btn-minus" id="people-count" type="button" value=""
+								@click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
+							<input type="text" class="people-count-num" name="numPeople" id="result"
+								v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
+							<input class="btn-plus" id="people-count" type="button" value=""
+								@click.prevent="numPeoplePlusHandler">
 						</div>
 					</div>
 
 					<!-- 마감일 설정 -->
 					<div id="btn-date" class="select-box d-fl jf-sb">
 						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
-							name="deadline" v-model="stuff.deadline">
+						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
+							aria-required="true" name="deadline" v-model="stuff.deadline">
 
 					</div>
 
@@ -126,7 +130,7 @@
 					<div class="select-box" @click.prevent="postCode">
 						<label for="place" class="input-field-txt">장소</label>
 						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" hidden>
-						<div class="input-field">{{ stuff.place }}</div>
+						<div class="input-field input-address">{{ stuff.place }}</div>
 					</div>
 					<div class="select-box toggle-map" v-if="mapNav">
 						<div v-if="showMap" @click="toggleMap">지도 열기</div>
@@ -241,8 +245,6 @@ export default {
 
 		// 파일 업로드시, 이벤트 처리
 		async upload() {
-
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -251,7 +253,7 @@ export default {
 				this.openModal = true;
 				return;
 			} else if (!this.isValidTitle(this.stuff.title)) {
-				this.valiError = "제목을 20자 이하로 입력해주세요.";
+				this.valiError = "제목을 40자 이하로 입력해주세요.";
 				this.openModal = true;
 				return;
 			}
@@ -283,6 +285,31 @@ export default {
 				this.valiError = "날짜를 입력하세요.";
 				this.openModal = true;
 				return;
+			} else if (this.stuff.url) {
+				this.stuff.url = this.stuff.url.toLowerCase();
+				// "소문자 변환"
+				if (this.stuff.url.startsWith('h')) {
+					let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 링크 주소를 입력하세요.";
+						this.openModal = true;
+						// "h 필터"
+						return;
+					}
+				} else if (this.stuff.url.startsWith('w')) {
+					let regex = /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 링크 주소를 입력하세요.";
+						this.openModal = true;
+						// "w 필터"
+						return;
+					}
+				} else {
+					// "나머지"
+					this.valiError = "올바른 형식의 링크 주소를 입력하세요.";
+					this.openModal = true;
+					return;
+				}
 			} else if (!this.stuff.content) {
 				this.valiError = "내용을 입력하세요.";
 				this.openModal = true;
@@ -291,19 +318,26 @@ export default {
 
 			if (!this.valiError) {
 				var formData = new FormData(this.$refs.form);
+				formData.append("memberId", this.userDetails.id);
 
 				var requestOptions = {
-					method: '',
+					method: 'POST',
 					body: formData,
 					redirect: 'follow'
 				};
 
+				this.defaultStore.loadingStatus = true;
+
 				await fetch(`${this.defaultStore.host}/api/stuff/upload`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
+					.then(result => {
+						setTimeout(() => {
+							this.$router.replace('/member/stuff/list');
+						}, 1000);
+						this.defaultStore.loadingStatus = false;
+					})
 					.catch(error => console.log('error', error));
 
-				this.$router.replace('/member/stuff/list')
 			}
 		},
 
@@ -330,7 +364,7 @@ export default {
 		},
 		// 제목 체크
 		isValidTitle() {
-			if (this.stuff.title.length > 20) {
+			if (this.stuff.title.length > 40) {
 				return false;
 			}
 			return true;
@@ -371,21 +405,17 @@ export default {
 
 					this.stuff.place = data.address;
 					this.stuff.dongCode = data.bcode;
-					console.log(this.stuff.place);
 
 					geocoder.addressSearch(data.address, (results, status) => {
 
 						if (status === daum.maps.services.Status.OK) {
-
 							let result = results[0];
 							this.stuff.coordX = result.x;
 							this.stuff.coordY = result.y;
-							console.log(this.stuff.coordX);
 							this.showMap = true;
 							this.mapStatus = true;
 							this.mapNav = true;
 							document.querySelector("#content").focus();
-
 						}
 					});
 
@@ -401,9 +431,7 @@ export default {
 				level: 5
 			};
 
-
 			let map = new daum.maps.Map(mapContainer, mapOption);
-
 
 			let marker = new daum.maps.Marker({
 				position: coords,
@@ -454,7 +482,7 @@ select {
 	-moz-appearance: none;
 	/* 파이어폭스 화살표 없애기 */
 	appearance: none
-		/* 화살표 없애기 */
+	/* 화살표 없애기 */
 
 }
 </style>

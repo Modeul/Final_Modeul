@@ -80,13 +80,18 @@
   margin-right: 8px;
 }
 
+.address-label::before {
+  content: "\e88a";
+  font-family: 'Material Icons';
+  font-size: 18px;
+  margin-right: 8px;
+}
 .email-label::before {
   content: "\e158";
   font-family: 'Material Icons';
   font-size: 18px;
   margin-right: 8px;
 }
-
 .email-confirm-label::before {
   content: "\f18c";
   font-family: 'Material Icons';
@@ -99,6 +104,14 @@
   border: none;
   background: none;
   font-size: 14px;
+}
+.input-text-3{
+  width: 200px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  line-height: 27px;
+  color: rgb(103, 103, 103);
 }
 /* 에러메시지 */
 .error-font{

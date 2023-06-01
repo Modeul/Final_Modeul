@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modeul.web.entity.Chat;
 import com.modeul.web.entity.MessageView;
+import com.modeul.web.entity.MessageView.MessageType;
 import com.modeul.web.repository.MessageRepository;
 
 @Service
@@ -92,7 +93,11 @@ public class MessageServiceImpl implements MessageService {
 		Set<Long> participationSet = (Set<Long>) chatBuffer.get("participationSet");
 		participationSet.remove(messageView.getMemberId());
 
-		messageView.setContent(messageView.getSender() + "님이 퇴장하셨습니다.");
+		if(messageView.getType().equals(MessageType.LEAVE))
+			messageView.setContent(messageView.getSender() + "님이 퇴장하셨습니다.");
+		else
+			messageView.setContent(messageView.getSender() + "님이 방장에 의해 강제퇴장됐습니다.");
+
 		List<MessageView> chatList = (List<MessageView>) chatBuffer.get("buffer");
 		chatList.add(messageView);
 
@@ -125,6 +130,18 @@ public class MessageServiceImpl implements MessageService {
 		
 		chatBuffer.put("buffer", buffer);
 		chatBuffers.put(messageView.getStuffId(), chatBuffer);
+
+		return messageView;
+	}
+
+	@Override
+	public MessageView dutchComplete(MessageView messageView) {
+		String content = "정산이 완료되었습니다." + System.lineSeparator() + "정산 결과를 확인해주세요.";
+		messageView.setContent(content);
+
+		Map<String, Object> chatBuffer = chatBuffers.get(messageView.getStuffId());
+		List<MessageView> chatList = (List<MessageView>) chatBuffer.get("buffer");
+		chatList.add(messageView);
 
 		return messageView;
 	}

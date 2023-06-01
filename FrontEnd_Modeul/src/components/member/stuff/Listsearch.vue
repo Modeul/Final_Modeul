@@ -12,11 +12,11 @@ export default {
 			defaultStore: useDefaultStore(),
 			page: '',
 			list: [],
-			queryList: [],
 			categoryId: '',
 			query: '',
 			queryisVal: true,
-			// listCount: ''
+			listCount: '',
+			dongCode: ''
 		}
 	},
 	methods: {
@@ -25,26 +25,32 @@ export default {
 			e.preventDefault();
 			this.query = e.target.value;
 
-			console.log(this.query);
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.queryList);
+					this.list = this.formatDateList(dataList.list);
 
 				}).catch(error => console.log('error', error));
 		},
-		addListHandler() {
+
+		async addListHandler() {
+			this.defaultStore.loadingStatus = true; // 해당 함수 true/false 로 어디서나 추가 가능
+			// setTimeout(() => { this.defaultStore.loadingStatus = false; }, 400); //settimout은 지워도 됨
+
 			this.page++;
-			fetch(`${this.defaultStore.host}/api/stuffs?q=${this.query}&p=${this.page}&c=${this.categoryId}`)
+			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&dc=${this.dongCode}&q=${this.query}`)
 				.then(response => response.json())
 				.then(dataList => {
-					this.list = this.formatDateList(dataList.queryList);
-					console.log(this.list);
+					this.list = this.formatDateList(dataList.list);
+					this.listCount = dataList.listCount;
+					this.categoryList = dataList.categoryList;
+					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
+
 		},
 		formatDateList(list) {
-			if (list.length == 0)
+			if (list == null)
 				return;
 			let resultList = [];
 			for (let item of list) {
@@ -89,6 +95,14 @@ export default {
 				resultList.push(item);
 			}
 			return resultList;
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		}
 	},
 	mounted() {
@@ -130,12 +144,11 @@ export default {
 		</header>
 
 		<main>
-
 			<div class="stuff-list" v-for="stuff in list">
 				<router-link :to="'./' + stuff.id">
 					<div class="d-gr li-gr m-t-13px list-cl">
 						<div class="li-pic b-rad-1">
-							<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName"
+							<img v-if="stuff.imageName != null" class="listview-image" :src="formatImgUrl(stuff.imageName)"
 								alt="img">
 							<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
 								alt="img">
@@ -173,7 +186,7 @@ export default {
 					<router-link to="/member/stuff/list" class="icon icon-home">home</router-link>
 				</div>
 				<div class="navi-icon">
-					<router-link to="/member/stuff/listsearch" class="icon icon-search">search</router-link>
+					<router-link to="/member/stuff/recommends" class="icon icon-crawling">search</router-link>
 				</div>
 				<div>
 					<router-link to="/member/stuff/reg" class="reg-stuff"></router-link>

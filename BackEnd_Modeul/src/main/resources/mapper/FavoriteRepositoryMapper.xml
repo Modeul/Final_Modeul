@@ -21,19 +21,7 @@
 		<result property="imageName" column="image_name" />
 	</resultMap>
 
-	<!-- 멤버아이디로 찜목록찾을거야 -->
-	<!-- <select id="findByMemberId" resultMap="FavoriteViewResultMap">
-		select * 
-		from favorite_view
-		where member_id = #{memberId}
-		order by favorite_date
-		<if test="size != null">
-			limit ${size} 
-		</if>
-		
-	</select> -->
-
-	 <select id="findViewByStuffId" resultMap="FavoriteViewResultMap">
+	<select id="findViewByStuffId" resultMap="FavoriteViewResultMap">
 		select * 
 		from favorite_view
 		where stuff_id = #{stuffId}
@@ -51,6 +39,13 @@
 				limit ${size} offset ${offset}
 			</if>
 	</select>
+
+	<select id="findListBystuffIdmemberId" resultMap="FavoriteResultMap">
+		select * 
+		from favorite
+		where stuff_id = #{stuffId}
+		and member_Id = #{memberId}
+  	</select>
 
 	<select id="getCountList" resultType="Long" parameterType="FavoriteView">
 		select count(id)

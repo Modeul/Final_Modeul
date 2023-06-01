@@ -15,7 +15,7 @@ export default {
 			categoryList: [],
 			categoryId: '',
 			listCount: '',
-			myMemberId: '2',
+			myMemberId: '',
 		};
 	},
 	computed: {
@@ -24,14 +24,12 @@ export default {
 		categoryHandler(e) {
 			this.page = 1;
 			this.categoryId = e.target.value;
-			console.log(this.categoryId);
 			fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(this.list)
 				}).catch(error => console.log('error', error));
 		},
 		async addListHandler() {
@@ -41,15 +39,12 @@ export default {
 
 			this.page++;
 			await fetch(`${this.defaultStore.host}/api/stuffs?p=${this.page}&c=${this.categoryId}&id=${this.myMemberId}`)
-				// .then(response => {
-				// 	console.log(response)
-				// 	return response.json()})
+
 				.then(response => response.json())
 				.then(dataList => {
 					this.list = this.formatDateList(dataList.list);
 					this.listCount = dataList.listCount;
 					this.categoryList = dataList.categoryList;
-					console.log(dataList);
 					this.defaultStore.loadingStatus = false;
 				})
 				.catch(error => console.log('error', error));
@@ -102,8 +97,17 @@ export default {
 			}
 			return resultList;
 		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
+		}
 	},
 	mounted() {
+		this.myMemberId = this.userDetails.id;
 		this.page = 0;
 		this.addListHandler();
 
@@ -123,23 +127,21 @@ export default {
 		<nav>
 			<div class="header-categ-box">
 				<div>
-					<button class="header-categ" @click="categoryHandler" name="c">전체</button>
+					<button class="header-categ" @click="categoryHandler" name="c" :class="(this.categoryId != '')?'header-categ':'default'">전체</button>
 				</div>
 
 				<div v-for="c in categoryList">
-					<button class="header-categ" @click="categoryHandler" name="c" :value="c.id">{{ c.name }}</button>
+					<button  @click="categoryHandler" name="c" :value="c.id" :class="(this.categoryId == c.id)?'selected':'header-categ'" >{{ c.name }}</button>
 				</div>
 			</div>
 		</nav>
 
-		<!-- 나중에 onclick 이벤트 하트 부분만 빼고 넣기 -->
 		<main>
 			<div class="stuff-list" v-for="stuff in list">
 				<router-link :to="'../stuff/' + stuff.id">
 					<div class="d-gr li-gr m-t-13px list-cl">
-						<!-- 나중에 전체를 div로 묶어서 main으로 크게 묶기 -->
 						<div class="li-pic b-rad-1">
-							<img v-if="stuff.imageName != null" class="listview-image" :src="'/images/member/stuff/' + stuff.imageName"
+							<img v-if="stuff.imageName != null" class="listview-image" :src="formatImgUrl(stuff.imageName)"
 								alt="img">
 							<img v-else-if="stuff.categoryId == '1'" class="listview-image" src="/images/member/stuff/category1.svg"
 								alt="img">
@@ -165,10 +167,6 @@ export default {
 							<span class="li-member-limit"> {{ stuff.participantCount }} </span>
 							/ {{ stuff.numPeople }} 명
 						</div>
-						<!-- <div class="li-place">{{ stuff.place }}</div> -->
-						<!-- <div class="li-date">{{ stuff.deadline }} | {{'D' + stuff.dDay }}</div> -->
-
-						<!-- <div class="li-date">{{'D' + stuff.dDay }}</div> -->
 					</div>
 				</router-link>
 			</div>
@@ -183,19 +181,12 @@ export default {
 @import "/css/component/member/stuff/component-list.css";
 @import "/css/button.css";
 
-.canvas {
-	max-width: 600px;
-	padding: 0 20px;
-	margin: 0 auto;
-}
-
 .header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	padding: 0px;
 	gap: 10px;
-
 	width: 100%;
 	margin-top: 25px;
 }
@@ -217,5 +208,6 @@ export default {
 	max-width: 600px;
 	padding: 0 20px;
 	margin: 0 auto;
+	min-width: 360px
 }
 </style>

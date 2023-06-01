@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.modeul.web.entity.Favorite;
 import com.modeul.web.entity.FavoriteView;
 import com.modeul.web.repository.FavoriteRepository;
 @Service
@@ -16,7 +17,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     private FavoriteRepository favoriteRepository;
 
 
-    static int pageSize = 7;
+    static int pageSize = 8;
 
 
     // @Override
@@ -31,7 +32,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
 	public List<FavoriteView> getFavoriteByMemberId(Long memberId,Long categoryId, int page) {
-		int size = page * 7;
+		int size = page * 8;
 
 		return favoriteRepository.findViewById( memberId,categoryId, "favorite_date", "desc", size, 0);
 	}
@@ -67,6 +68,13 @@ public class FavoriteServiceImpl implements FavoriteService {
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
+
+
+
+    @Override
+    public Favorite getListBystuffIdmemberId(Long stuffId, Long memberId) {
+        return favoriteRepository.findListBystuffIdmemberId(stuffId, memberId);
+    }
 
     
 

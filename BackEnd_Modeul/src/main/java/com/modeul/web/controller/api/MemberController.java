@@ -41,6 +41,8 @@ public class MemberController {
 
 	@PostMapping("login")
 	public ResponseEntity<Map<String, Object>> login(@RequestBody Member member) {
+		System.out.println("run login");
+		System.out.println(member);
 		Map<String, Object> dto = new HashMap<>();
         dto.put("loginMember", null);
 
@@ -53,6 +55,19 @@ public class MemberController {
 
 		return new ResponseEntity<Map<String, Object>>(dto, HttpStatus.OK);
 	}
+
+	@PostMapping("googleLogin")
+	public ResponseEntity<Map<String, Object>> googleLogin(@RequestBody Member member) {
+		Map<String, Object> dto = new HashMap<>();
+        dto.put("loginMember", null);
+
+		//이메일로 db에서 멤버 가져오기
+		Member loginMember = memberService.getMemberByEmail(member.getEmail());
+		dto.put("loginMember", loginMember);
+
+		return new ResponseEntity<Map<String, Object>>(dto, HttpStatus.OK);
+	}
+
 
 	@GetMapping("{id}")
 	public Member getMember(@PathVariable("id") int id){
@@ -74,7 +89,8 @@ public class MemberController {
 
 	@PutMapping("updatePwd")
 	public int editMemberPwd(@RequestBody Member member){
-
+		System.out.println("run updatePwd");
+		System.out.println(member);
 		return memberService.changePwdByUid(member);
 	}
 
@@ -97,10 +113,7 @@ public class MemberController {
 	@PostMapping("checkpwd")
 	public Boolean checkPwd(@RequestBody Member member) {
 
-		if (memberService.checkPwd(member) == "ok")
-			return true;
-		else 
-			return false;
+		return memberService.checkPwd(member);
 	}
 
 	@GetMapping("checkUid")
@@ -136,7 +149,7 @@ public class MemberController {
 	}
 
 	@PostMapping("updateImage")
-	public String updateImage(@RequestParam("id") long id, List<MultipartFile> imgs){
+	public String updateImage(long id, List<MultipartFile> imgs){
 
 		memberService.updateImg(id, imgs);
 

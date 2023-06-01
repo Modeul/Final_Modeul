@@ -13,12 +13,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class MessageView {
 
-	// 중요!!
-    // 메세지 타입을 enum 클래스로 상수 열거형으로 설정!
-    // 메세지 타입에 따라서 동작하는 구조가 달라진다!!
-
     public enum MessageType{
-        ENTER, TALK, LEAVE;
+        ENTER, TALK, LEAVE, DUTCH, BANISH;
     }
 
     private MessageType type; // 메세지 타입

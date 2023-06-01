@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.modeul.web.entity.Account;
+import com.modeul.web.entity.AccountView;
 import com.modeul.web.repository.AccountRepository;
 
 @Service
@@ -27,12 +28,11 @@ public class AccountServiceImpl implements AccountService {
 
         return accountRepository.findViewById(memberId, size, offset, null, null );
     }
-   
 
-    // @Override
-    // public Account getById(Long memberId) {
-        
-    //     return accountRepository.findAccountById(memberId);
-    // }
+    @Override
+    public AccountView getAccountById(Long stuffId) {
+
+        return accountRepository.findAccountById(stuffId);
+    }
     
 }
