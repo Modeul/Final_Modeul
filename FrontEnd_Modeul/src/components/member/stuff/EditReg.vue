@@ -1,15 +1,21 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
+import { useUserDetailsStore } from '../../../stores/useUserDetailsStore';
+import { useDefaultStore } from '../../../stores/useDefaultStore';
+
 
 export default {
 	data() {
 		return {
+			userDetails: useUserDetailsStore(),
+			defaultStore: useDefaultStore(),
+			showMap: true,
+			mapStatus: true,
 			isNext: false,
 			categoryList: [],
-			file: [],
+			files: [],
 			url: '',
-			imageURL: '',
 			stuffView: '',
 			stuff: '',
 			category: '',
@@ -17,6 +23,7 @@ export default {
 			imageList: '',
 
 			valiError: "",
+			changed: false,
 			openModal: false,
 
 		}
@@ -44,19 +51,15 @@ export default {
 				redirect: 'follow'
 			};
 
-			fetch(`${this.$store.state.host}/api/stuff/categories`, requestOptions)
+			fetch(`${this.defaultStore.host}/api/stuff/categories`, requestOptions)
 				.then(response => response.json())
 				.then(categoryList => {
-					console.log(categoryList);
 					this.categoryList = categoryList;
 				})
 				.catch(error => console.log('error', error));
 		},
 
 		async update() {
-			// var myHeaders = new Headers();
-			// myHeaders.append("Content-Type", "multipart/form-data");
-
 			this.valiError = "";
 
 			// 제목 체크 (글자 수)
@@ -65,7 +68,7 @@ export default {
 				this.openModal = true;
 				return;
 			} else if (!this.isValidTitle(this.stuff.title)) {
-				this.valiError = "제목을 20자 이하로 입력해주세요.";
+				this.valiError = "제목을 40자 이하로 입력해주세요.";
 				this.openModal = true;
 				return;
 			}
@@ -97,59 +100,93 @@ export default {
 				this.valiError = "날짜를 입력하세요.";
 				this.openModal = true;
 				return;
-			} else if (!this.stuff.content) {
+			} else if (this.stuff.url) {
+				this.stuff.url = this.stuff.url.toLowerCase();
+				// "소문자 변환"
+				if (this.stuff.url.startsWith('h')) {
+					let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 주소를 입력하세요.";
+						this.openModal = true;
+						// "h 필터"
+						return;
+					}
+				} else if (this.stuff.url.startsWith('w')) {
+					let regex = /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+					if (!regex.test(this.stuff.url)) {
+						this.valiError = "올바른 형식의 주소를 입력하세요.";
+						this.openModal = true;
+						// "w 필터"
+						return;
+					}
+				} else {
+					// "나머지"
+					this.valiError = "올바른 형식의 주소를 입력하세요.";
+					this.openModal = true;
+					return;
+				}
+			}else if (!this.stuff.content) {
 				this.valiError = "내용을 입력하세요.";
 				this.openModal = true;
 				return;
 			}
 
 			if (!this.valiError) {
-			var formData = new FormData(this.$refs.form);
+				var formData = new FormData(this.$refs.form);
 
 				var requestOptions = {
 					method: 'PUT',
-					// headers: myHeaders,
 					body: formData,
 					redirect: 'follow'
 				};
-
-				await fetch(`${this.$store.state.host}/api/stuff/update/${this.$route.params.id}`, requestOptions)
+				await fetch(`${this.defaultStore.host}/api/stuff/update/${this.$route.params.id}`, requestOptions)
 					.then(response => response.text())
-					.then(result => console.log(result))
+					.then(result => {
+						this.$router.replace('/member/stuff/' + this.stuff.id);
+					})
 					.catch(error => console.log('error', error));
 
-				this.$router.replace('/member/stuff/' + this.stuff.id);
 			}
 		},
 
 		// 썸네일 조작
 		uploadImage(e) {
-			this.file = e.target.files;
-			console.log(this.file);
-			this.url = URL.createObjectURL(this.file[0]);
-			console.log(this.url);
-			this.imageURL = this.url;
+			this.files = e.target.files;
+
+			if (this.files.length > 6) {
+				this.valiError = "이미지는 최대 6개까지 선택할 수 있습니다.";
+				this.openModal = true;
+				return;
+			}
+
+			// 취소 버튼을 눌렀을 때 이미지 초기화 방지
+			if (this.files.length <= 0) {
+				return;
+			}
+
+			this.changed = true;
+			this.imageList = [];
+
+			for (let file of this.files) {
+				this.imageList.push(URL.createObjectURL(file));
+			}
 		},
 
 		load() {
-			fetch(`${this.$store.state.host}/api/stuff/${this.$route.params.id}`)
+			fetch(`${this.defaultStore.host}/api/stuff/${this.$route.params.id}`)
 				.then(response => response.json())
 				.then(stuffView => {
 					this.stuffView = stuffView;
 					this.stuff = stuffView.stuff;
 					this.category = stuffView.category;
 					this.imageList = stuffView.imageList;
-					// console.log(this.stuffView.stuff)
-					console.log(this.stuffView);
-					console.log(this.stuff);
-					console.log(this.category);
 				})
 				.catch(error => console.log('error', error));
 		},
 
 		// 제목 체크
 		isValidTitle() {
-			if (this.stuff.title.length > 20) {
+			if (this.stuff.title.length > 40) {
 				return false;
 			}
 			return true;
@@ -172,13 +209,87 @@ export default {
 		},
 		isValidDeadline() {
 			const deadlineObj = new dayjs(this.stuff.deadline)
-			if(deadlineObj.diff(dayjs(), 'minute') <= 0)
+			if (deadlineObj.diff(dayjs(), 'minute') <= 0)
 				return false;
 			else
 				return true;
 		},
 		toggleModal() {
 			this.openModal = !this.openModal;
+		},
+
+		postCode() {
+
+			const geocoder = new daum.maps.services.Geocoder();
+			new daum.Postcode({
+				oncomplete: (data) => {
+
+					this.stuff.place = data.address;
+
+					geocoder.addressSearch(data.address, (results, status) => {
+
+						if (status === daum.maps.services.Status.OK) {
+
+							let result = results[0];
+							this.stuff.coordX = result.x;
+							this.stuff.coordY = result.y;
+							this.showMap = true;
+							this.mapStatus = true;
+							document.querySelector("#content").focus();
+
+						}
+					});
+
+				}
+			}).open();
+		},
+		drawMap() {
+			const mapContainer = document.getElementById('map');
+
+			let coords = new daum.maps.LatLng(this.stuff.coordY, this.stuff.coordX);
+			let mapOption = {
+				center: coords,
+				level: 5
+			};
+
+			let map = new daum.maps.Map(mapContainer, mapOption);
+			let marker = new daum.maps.Marker({
+				position: coords,
+				map: map
+			});
+
+			map.relayout();
+			map.setCenter(coords);
+			marker.setPosition(coords);
+		},
+
+		toggleMap() {
+			let map = document.querySelector("#map");
+			if (this.showMap) {
+				map.style.height = '300px';
+				this.showMap = !this.showMap;
+
+				if (this.mapStatus) {
+					setTimeout(() => {
+						this.drawMap();
+						this.mapStatus = false;
+					}, 500);
+				}
+
+
+			} else {
+				map.style.height = 0;
+				this.showMap = !this.showMap;
+			}
+
+		},
+		formatImgUrl(imgDir){
+			if(!imgDir)
+				return imgDir;
+			if(imgDir.substr(0, 4) == 'http')
+				return imgDir
+			else
+				return '/images/member/stuff/' + imgDir
 		},
 	},
 	mounted() {
@@ -187,11 +298,9 @@ export default {
 
 		this.loadCategory();
 		this.load();
-
-		// console.log(this.stuff);
 	},
 	updated() {
-		//console.log(this.categoryList.id);
+
 	}
 }
 </script>
@@ -232,12 +341,13 @@ export default {
 					<!-- 이미지 업로드  -->
 					<div class="file-box">
 						<label for="file">
-							<div class="btn-file"></div>
+							<div class="btn-file">{{ imageList.length }}/6</div>
 							<div class="btn-uploaded-files" v-for="img in imageList">
-								<img class="uploaded-files" :src="'/images/member/stuff/' + img.name">
+								<img class="uploaded-files" :src="changed ? img : formatImgUrl(img.name)">
 							</div>
 						</label>
-						<!-- <input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*" @change="uploadImage"> -->
+						<input type="file" class="d-none" id="file" name="imgs" multiple accept="image/*"
+							@change="uploadImage">
 					</div>
 
 					<!-- 에러메시지 모달창 -->
@@ -246,63 +356,82 @@ export default {
 							<div @click="toggleModal" class="error-close"></div>
 						</div>
 					</div>
+					<div class="form-text">
+						<!-- 카테고리 목록 선택 -->
+						<select class="category-box" name="categoryId" v-model="category.id">
+							<option v-for="c in categoryList" :value="c.id" class="" name="categoryId" v-text="c.name">
+							</option>
+						</select>
 
-					<!-- 카테고리 목록 선택 -->
-					<select class="category-box" name="categoryId" v-model="category.id">
-						<option v-for="c in categoryList" :value="c.id" class="" name="categoryId" v-text="c.name"></option>
-					</select>
-
-					<div class="select-box">
-						<label for="title" class="input-field-txt">제목</label>
-						<input type="text" class="input-field" id="title" name="title" v-model="stuff.title">
-					</div>
+						<div class="select-box">
+							<label for="title" class="input-field-txt">제목</label>
+							<input type="text" class="input-field" id="title" name="title" v-model="stuff.title">
+						</div>
 
 
-					<!-- 인원수 조절 -->
-					<div class="select-box2 d-fl">
-						<label for="" class="input-field-txt">인원</label>
-						<div class="people-count-box">
-							<input class="btn-minus" id="people-count" type="button" value="" @click.prevent="numPeopleMinusHandler">
+						<!-- 인원수 조절 -->
+						<div class="select-box2 d-fl">
+							<label for="" class="input-field-txt">인원</label>
+							<div class="people-count-box">
+								<input class="btn-minus" id="people-count" type="button" value=""
+									@click.prevent="numPeopleMinusHandler">
 
-							<input type="text" class="people-count-num" name="numPeople" id="result" v-model="stuff.numPeople">
+								<input type="text" class="people-count-num" name="numPeople" id="result"
+									v-model="stuff.numPeople">
 
-							<input class="btn-plus" id="people-count" type="button" value="" @click.prevent="numPeoplePlusHandler">
+								<input class="btn-plus" id="people-count" type="button" value=""
+									@click.prevent="numPeoplePlusHandler">
+							</div>
+						</div>
+
+						<!-- 마감일 설정 -->
+						<div id="btn-date" class="select-box d-fl jf-sb">
+							<label for="datetime-local" class="input-field-txt">마감시간</label>
+							<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required
+								aria-required="true" name="deadline" v-model="stuff.deadline">
+						</div>
+
+
+						<div class="select-box">
+							<label for="price" class="input-field-txt">가격</label>
+							<input type="text" class="input-field" name="price" id="price" v-model="stuff.price">
+						</div>
+
+						<div class="select-box" @click.prevent="postCode">
+							<label for="place" class="input-field-txt">장소</label>
+							<input type="text" class="input-field" name="place" id="place" v-model="stuff.place" hidden>
+							<div class="input-field">{{ stuff.place }}</div>
+						</div>
+						<div class="select-box toggle-map" v-if="showMap" @click="toggleMap">지도 열기</div>
+						<div class="select-box toggle-map" v-else @click="toggleMap">지도 닫기</div>
+						<div id="map"></div>
+						<input type="text" class="input-field" name="coordX" v-show="false" v-model="stuff.coordX">
+						<input type="text" class="input-field" name="coordY" v-show="false" v-model="stuff.coordY">
+
+						<div class="select-box">
+							<label for="url" class="input-field-txt">링크</label>
+							<input type="text" class="input-field" name="url" id="url" v-model="stuff.url">
+						</div>
+
+						<div class="select-box select-content d-f fl-dir-col">
+							<label for="content" class="input-field-txt2">내용</label>
+							<textarea class="input-field input-content" name="content" id="content" cols="30" rows="10"
+								v-model="stuff.content"></textarea>
 						</div>
 					</div>
-
-					<!-- 마감일 설정 -->
-					<div id="btn-date" class="select-box d-fl jf-sb">
-						<label for="datetime-local" class="input-field-txt">마감시간</label>
-						<input class="date-pic" type="datetime-local" data-placeholder="날짜를 선택해주세요." required aria-required="true"
-							name="deadline" v-model="stuff.deadline">
-					</div>
-
-
-					<div class="select-box">
-						<label for="price" class="input-field-txt">가격</label>
-						<input type="text" class="input-field" name="price" id="price" v-model="stuff.price">
-					</div>
-
-					<div class="select-box">
-						<label for="place" class="input-field-txt">장소</label>
-						<input type="text" class="input-field" name="place" id="place" v-model="stuff.place">
-					</div>
-
-					<div class="select-box">
-						<label for="url" class="input-field-txt">링크</label>
-						<input type="text" class="input-field" name="url" id="url" v-model="stuff.url">
-					</div>
-
-					<div class="select-box select-content d-f fl-dir-col">
-						<label for="content" class="input-field-txt2">내용</label>
-						<textarea class="input-field input-content" name="content" id="content" cols="30" rows="10"
-							v-model="stuff.content"></textarea>
-					</div>
 				</form>
+
 			</main>
 
 		</section>
 	</section>
 </template>
-
+<style scoped>
+.form-text {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: column;
+	align-items: center;
+}
+</style>
 

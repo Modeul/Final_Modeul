@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.modeul.web.repository.AccountRepository">
+
+  <resultMap id="accountResultMap" type="Account">
+		<result property="bankName" column="bank_name" />
+		<result property="regDate" column="reg_date" />
+		<result property="memberId" column="member_id" />
+    <result property="stuffId" column="stuff_id" />
+	</resultMap>
+
+  <resultMap id="accountViewResultMap" type="AccountView">
+		<result property="bankName" column="bank_name" />
+		<result property="regDate" column="reg_date" />
+		<result property="memberId" column="member_id" />
+    <result property="stuffId" column="stuff_id" />
+    <result property="memberName" column="member_name" />
+	</resultMap>
+
+
+  <!-- 계좌 정보 등록 -->
+	<insert id="insertAccount" parameterType="Account">
+		insert into account(bank_name,number,member_id)
+		values(#{bankName}, #{number}, #{memberId})
+	</insert>
+
+  <select id="findAccountById" resultMap="accountViewResultMap">
+    select *
+    from account_view
+    where stuff_id = #{stuffId}
+    order by reg_date desc
+    limit 1
+  </select>
+
+  <!-- 최근 계좌 정보 get -->
+  <select id="findViewById" resultMap="accountResultMap">
+    select *
+    from account
+    where member_id = #{memberId}
+    order by reg_date desc
+    limit ${size} offset ${offset}
+  </select>
+</mapper>

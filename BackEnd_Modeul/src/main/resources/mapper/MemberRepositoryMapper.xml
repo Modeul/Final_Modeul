@@ -1,36 +1,159 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.modeul.web.repository.MemberRepository">
-<!-- mySQL에서 문자열은 ''로 묶여야 한다. 그래서 #{}으로 묶인다. -->
-  <insert id="insert" parameterType="Member">
-    insert into member(uid,pwd,name,email,nickname)
-    values(#{uid},#{pwd},#{name},#{email},#{nickname})
-  </insert>
-  
-   <select id="getbyUid" resultType="String">
-	  select uid
-	  from
-	  member
-	  where
-	  uid = #{uid}
-  </select>
-  
-  <select id="getByEmail" resultType="String">
-	  select email
-	  from
-	  member
-	  where
-	  email = #{email}
-  </select>
-  
-  <select id="getByNickname" resultType="String">
-	  select nickname
-	  from
-	  member
-	  where
-	  nickname = #{nickname}
-  </select>
+
+	<resultMap id="MemberResultMap" type="Member">
+		<result property="regDate" column="reg_date" />
+		<result property="coordX" column="coord_x" />
+		<result property="coordY" column="coord_y" />
+	</resultMap>
+
+	<insert id="insert" parameterType="Member">
+		insert into member(uid,pwd,name,email,nickname,address,coord_x,coord_y)
+		values(#{uid},#{pwd},#{name},#{email},#{nickname},#{address},#{coordX},#{coordY})
+	</insert>
+
+	<select id="getbyId" resultMap="MemberResultMap">
+		select *
+		from member
+		where
+		id = #{id}
+	</select>
+
+	<select id="findAll" resultMap="MemberResultMap">
+		select *
+		from member
+		where level = 1
+	</select>
+
+	<select id="getUid" resultType="String">
+		select uid
+		from member
+		where
+		name=#{name}
+		and
+		email=#{email}
+	</select>
+
+	<select id="getbyUid" resultType="String">
+		select uid
+		from
+		member
+		where
+		uid = #{uid}
+	</select>
+
+	<select id="getPwdByUid" resultType="Member">
+		select *
+		from
+		member
+		where
+		uid = #{uid}
+	</select>
+
+	<select id="getByEmail" resultType="String">
+		select email
+		from
+		member
+		where
+		email = #{email}
+	</select>
+
+	<select id="getByName" resultType="String">
+		select name
+		from
+		member
+		where
+		name = #{name}
+	</select>
+
+	<select id="getByNickname" resultType="String">
+		select nickname
+		from
+		member
+		where
+		nickname = #{nickname}
+	</select>
+
+	<select id="getEmailByUid" resultType="String">
+		select email
+		from
+		member
+		where
+		uid = #{uid}
+	</select>
+
+	<select id="getNameByEmail" resultType="String">
+		select name
+		from
+		member
+		where
+		email = #{email}
+	</select>
+
+	<update id="update" parameterType="Member">
+		update member <trim prefix="SET"
+			suffixOverrides=",">
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if
+				test="email != null">
+				email = #{email},
+			</if>
+			<if
+				test="address != null">
+				address = #{address},
+			</if>
+			<if
+				test="nickname != null">
+				nickname = #{nickname},
+			</if>
+			<if
+				test="level != null">
+				level = #{level},
+			</if>
+			<if
+				test="coordX != null">
+				coord_x = #{coordX},
+			</if>
+			<if
+				test="coordY != null">
+				coord_y = #{coordY}
+			</if>
+		</trim> where id=#{id} 
+		</update>
+
+	<update id="updatePwd" parameterType="Member"> update member <set>
+			<if test="pwd != null">
+				pwd = #{pwd},
+			</if>
+		</set> where uid=#{uid} </update>
+
+	<update id="updateImg" parameterType="Image">
+		update member
+		set image = #{name}
+		where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="Member">
+		delete from member
+		where id=#{id}
+	</delete>
+
+	<select id="getMemberByEmail" resultType="Member">
+		select *
+		from
+		member
+		where
+		email = #{email}
+	</select>
+
 </mapper>

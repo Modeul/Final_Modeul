@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.modeul.web.repository.DutchRepository">
+
+    <resultMap id="DutchViewResultMap" type="DutchView">
+        <result property="memberId" column="member_id" />
+        <result property="stuffId" column="stuff_id" />
+        <result property="stuffTitle" column="stuff_title" />
+        <result property="stuffDeadline" column="stuff_deadline" />
+        <result property="stuffPrice" column="stuff_price" />
+        <result property="stuffManagerId" column="stuff_manager_id" />
+        <result property="stuffManagerNickname" column="stuff_manager_nickname" />
+        <result property="stuffManagerImage" column="stuff_manager_image" />
+    </resultMap>
+
+    <resultMap id="DutchMemberViewResultMap" type="DutchMemberView">
+        <result property="stuffId" column="stuff_id" />
+        <result property="memberId" column="member_id" />
+        <result property="memberNickname" column="member_nickname" />
+        <result property="memberImage" column="member_image" />
+        <result property="participationDate" column="participation_date" />
+    </resultMap>
+
+    <select id="findViewBymemberId" resultMap="DutchViewResultMap">
+        select *
+        from dutch_view
+        where member_id = #{memberId}
+        <if test="month != null">
+          and month(date) = ${month}
+        </if>
+        <if test="orderField != null and orderDir != null">
+          order by ${orderField} ${orderDir}
+        </if>
+        <if test="size != null and offset != null">
+			limit ${size} offset ${offset}
+		</if>
+    </select>
+    
+    <select id="findViewMonthBymemberId" resultType="Map">
+        select month(date) month
+        from dutch_view
+        where member_id = #{memberId}
+        group by month(date)
+        order by date
+    </select>
+
+    <select id="findMemberViewBystuffId" resultMap="DutchMemberViewResultMap">
+      select * 
+      from dutch_member_view
+      where stuff_id = #{stuffId}
+      order by stuff_id, participation_date;
+    </select>
+
+    <select id="findViewAllBymemberId" resultMap="DutchViewResultMap">
+      select *
+      from dutch_view
+      where member_id = #{memberId}
+      <if test="orderField != null and orderDir != null">
+        order by ${orderField} ${orderDir}
+      </if>
+    </select>
+
+    <insert id="insertDutch" parameterType="map">
+      insert into dutch(stuff_id, member_id, price)
+      values (#{stuffId}, #{memberId},#{price})
+    </insert>
+
+    <insert id="insertAccount" parameterType="map">
+      insert into account(bank_name, number, member_id, stuff_id)
+      values (#{bankName}, #{number},#{memberId},#{stuffId})
+    </insert>
+
+    <delete id="deleteDutch">
+      delete from dutch where stuff_id = #{stuffId};
+    </delete>
+
+    <select id="findCountList" resultType="Long" parameterType="DutchView">
+      select count(stuff_title)
+      from
+      dutch_view
+      where member_id = #{memberId}
+      <if test="month != null">
+        and month(date) = ${month}
+      </if>
+    </select>
+
+    <select id="findViewBystuffIdmemberId" resultMap="DutchViewResultMap">
+      select *
+      from dutch_view
+      where stuff_id = #{stuffId}
+      and member_id = #{memberId}
+      <if test="orderField != null and orderDir != null">
+        order by ${orderField} ${orderDir}
+      </if>
+    </select>
+</mapper>

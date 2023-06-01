@@ -20,11 +20,7 @@
 }
 
 .search-container-admin-sr {
-    display: flex;
-    justify-content: center;
-    border-radius: 10px;
-  
-    width: 37.5%;            /* 여기 수정 */
+    width: 280px;            /* 여기 수정 */
 }
 
 .search-container-admin1 {
@@ -60,10 +56,13 @@ table thead th {
   padding:1em; 
 }
 
+table tbody tr{
+  border-bottom:1px solid #D1D5DB;
+}
+
 table tbody td {
   padding:1em; 
   text-align:center; 
-  border-bottom:1px solid #D1D5DB;
 }
 
 table tbody tr.bg td {
@@ -80,19 +79,43 @@ table tbody tr.bg td {
   top: 70px;
   right: 300px;
 }
-
-.tablebox-admin{
+.admin-categ-table{
   display: flex;
   flex-direction: column;
-  border: 2px solid #D1D5DB;
-  border-radius: 10px;
-  width: 50%;
-}
-
-
-.admin-categ-table{
   width: 100%;
-  height: 100%;
-  margin:auto;
-}
 
+}
+.table-head{
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.table-body{
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  font-size: 14px;
+  text-align: left;
+  padding: 0;
+}
+.search-box{
+  width: 70%;
+  margin: auto;
+}
+.side-menu-wrap{
+  margin-top: 200px;
+}
+.admin-header{
+  padding: 110px 0 28px 20px;
+  box-sizing: border-box;
+  font-size: 32px;
+  border-bottom: #D1D5DB solid 1px;
+  color: #333;
+}
+.add-cate-box{
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  padding-right: 12px;
+  box-sizing: border-box;
+}

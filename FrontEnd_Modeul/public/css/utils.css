@@ -71,7 +71,9 @@
 .m-t-13{ 
     margin-top: 13px;
 } 
-
+.m-t-28px{
+    margin-top: 28px;
+}
 /* gps, index, login에서 사용 */
 .m-t-35px{
     margin-top: 35px;
@@ -88,6 +90,9 @@
 
 .m-t-77px{
     margin-top: 77px;
+}
+.m-t-80px{
+    margin-top: 80px;
 }
 .m-t-90px{
     margin-top: 90px;
@@ -406,4 +411,13 @@
 
 .over-h{
     overflow: hidden;
+}
+
+.border-radious {
+    border-radius: 10px;
+}
+
+.dialog-title {
+    text-align: start;
+    font-size: 20px;
 }
