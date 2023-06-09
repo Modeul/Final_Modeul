@@ -124,18 +124,25 @@
 
 <br>
 
-### 5.5. 관심 목록 시스템, 마이페이지, 신고 페이지 및 관리자 페이지
+### 5.5. 관심 목록 시스템, 마이페이지
 
 - 물품 상세 페이지에서 즐겨찾기 표시를 하면 관심 목록에서 확인이 가능하고 관심 페이지에서도 등록/삭제가 가능합니다.
 
 - 본인이 작성한 글 목록, 참여한 공동구매 목록, 관심목록, 정산 목록 조회가 가능하며 프로필사진, 닉네임, 비밀번호, 주소 변경, 로그아웃, 회원 탈퇴가 가능합니다.
 
+|관심 목록 시스템|마이페이지|
+|:---:|:---:|
+| <img src="https://github.com/Modeul/Final_Modeul/assets/37978853/407035f0-4a19-4169-a9f6-1836ceb4117f"/> | <img src="https://github.com/Modeul/Final_Modeul/assets/37978853/703b784d-1734-4c60-b2b0-e48dd72ceeab" /> |
+
+<br>
+
+### 5.6. 신고 페이지 및 관리자 페이지
+
 - 사용자는 부적절한 게시글에 관하여 신고를 할 수 있으며, 관리자 권한을 가진 사용자는 관리자 페이지에 접근하여 Modeul의 회원관리, 게시글 관리, 카테고리 관리, 신고 관리 기능을 사용할 수 있습니다.
 
-|관심 목록 시스템|마이페이지|신고 페이지 및 관리자 페이지|
-|:---:|:---:|:---:|
-| <img src="https://github.com/Modeul/Final_Modeul/assets/37978853/407035f0-4a19-4169-a9f6-1836ceb4117f"/> | <img src="https://github.com/Modeul/Final_Modeul/assets/37978853/703b784d-1734-4c60-b2b0-e48dd72ceeab" /> | <img src="https://github.com/Modeul/Final_Modeul/assets/37978853/3bdbb436-eeb3-49ec-b53f-9b287f773192"/> |
-
+|신고 페이지 및 관리자 페이지|
+|:---:|
+| <img src="https://github.com/Modeul/Final_Modeul/assets/37978853/3bdbb436-eeb3-49ec-b53f-9b287f773192" width="80%" height="80%"/> |
 
 
 ---
