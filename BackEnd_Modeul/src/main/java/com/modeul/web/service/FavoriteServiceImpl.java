@@ -1,6 +1,5 @@
 package com.modeul.web.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +11,11 @@ import com.modeul.web.repository.FavoriteRepository;
 @Service
 public class FavoriteServiceImpl implements FavoriteService {
 
-
     @Autowired
     private FavoriteRepository favoriteRepository;
 
-
     static int pageSize = 8;
-
-
-    // @Override
-	// public List<FavoriteView> getFavoriteByMemberId(Long memberId, int page) {
-		
-	// 	int size = page * 7;
-	// 	return favoriteRepository.findViewById( memberId , size);
-	// }
-
     
-         
-
     @Override
 	public List<FavoriteView> getFavoriteByMemberId(Long memberId,Long categoryId, int page) {
 		int size = page * 8;
@@ -37,8 +23,6 @@ public class FavoriteServiceImpl implements FavoriteService {
 		return favoriteRepository.findViewById( memberId,categoryId, "favorite_date", "desc", size, 0);
 	}
   
-
-
     @Override
     public void addFavorite(Long memberId, Long stuffId) {
         //LocalDateTime date = LocalDateTime.now();
@@ -50,17 +34,10 @@ public class FavoriteServiceImpl implements FavoriteService {
         favoriteRepository.deleteList(memberId, stuffId);
     }
 
-
-
-
-
-
     @Override
     public FavoriteView getListByStuffId(Long stuffId) {
        return favoriteRepository.findViewByStuffId(stuffId);
     }
-
-
 
 	@Override
 	public Long getListCount(Long categoryId, int page, Long memberId) {
@@ -69,15 +46,8 @@ public class FavoriteServiceImpl implements FavoriteService {
 		return result;
 	}
 
-
-
     @Override
     public Favorite getListBystuffIdmemberId(Long stuffId, Long memberId) {
         return favoriteRepository.findListBystuffIdmemberId(stuffId, memberId);
     }
-
-    
-
-
-    
 }

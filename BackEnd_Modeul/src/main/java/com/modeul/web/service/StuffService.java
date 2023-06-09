@@ -9,11 +9,9 @@ import com.modeul.web.entity.StuffView;
 
 public interface StuffService {
 	
-	// 레코드 행이 2개로 반환 되어서 List<Stuff> 형으로 타입 바꾸기
 	void regStuff(Stuff stuff, List<MultipartFile> imgs);
 	
 	void regCrawlingStuff(Stuff stuff);
-	
 	
 	List<StuffView> getViewAll();	// 전체 페이지 목록 조회용
 	List<StuffView> getViewAll(int page);	// 페이지 더보기용
@@ -37,9 +35,5 @@ public interface StuffService {
 	Long getListCount(Long categoryId, int page, Long memberId, String query);
 
 	int editStuff(Stuff stuff, List<MultipartFile> imgs);
-
 	void deleteStuff(Long id);
-
-
-
 }

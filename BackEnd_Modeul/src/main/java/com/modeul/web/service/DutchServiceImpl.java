@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.annotation.JacksonInject.Value;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modeul.web.entity.Account;
 import com.modeul.web.entity.DutchMemberView;
@@ -46,21 +45,7 @@ public class DutchServiceImpl implements DutchService {
     public void addAllDutch(Long stuffId, Map<String, Object> dutch) {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        // Map<String, String> prices = new HashMap<>();
-
-        // prices = (Map<String, String>) objectMapper.convertValue(dutch.get("prices"),
-        // Map.class);
-
-        // for (String memberId : prices.keySet()) {
-        // String price = prices.get(memberId);
-
-        // int insertDutchCount = repository.insertDutch(stuffId,
-        // Long.parseLong(memberId), price);
-        // System.out.println("insertDutchCount:" + insertDutchCount);
-        // }
-
-        // ----------------------------------------------------------------------------
-
+        
         Map<String, Integer> prices = (Map<String, Integer>) dutch.get("prices");
 
         for (Map.Entry<String, Integer> entry : prices.entrySet()) {
