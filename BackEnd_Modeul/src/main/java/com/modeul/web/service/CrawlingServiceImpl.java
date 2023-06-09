@@ -49,7 +49,6 @@ public class CrawlingServiceImpl implements CrawlingService {
 		return result;
 	}
 
-
     @Override
     public List<Crawling> getCategoryNameList(int page, String categoryName) {
         int size = page * pageSize;
@@ -60,7 +59,4 @@ public class CrawlingServiceImpl implements CrawlingService {
     public Crawling getById(long id) {
         return repository.findbyId(id);
     }
-
-
-    
 }

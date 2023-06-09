@@ -33,12 +33,6 @@ public class MemberController {
 	@Autowired
 	MailService mailService;
 
-	// @PostMapping("login")
-	// public String login(@RequestBody Member member) {
-	// 	String result = memberService.login(member);
-	// 	return result;
-	// }
-
 	@PostMapping("login")
 	public ResponseEntity<Map<String, Object>> login(@RequestBody Member member) {
 		System.out.println("run login");
@@ -71,7 +65,6 @@ public class MemberController {
 
 	@GetMapping("{id}")
 	public Member getMember(@PathVariable("id") int id){
-
 		return memberService.getMember(id);
 	}
 
@@ -83,7 +76,6 @@ public class MemberController {
 
 	@PutMapping("update")
 	public int editMember(@RequestBody Member member){
-
 		return memberService.updateMember(member);
 	}
 
@@ -96,7 +88,6 @@ public class MemberController {
 
 	@DeleteMapping("delete")
 	public int deleteMember(@RequestBody Member member){
-
 		return memberService.deleteMember(member);
 	}
 	
@@ -112,13 +103,11 @@ public class MemberController {
 
 	@PostMapping("checkpwd")
 	public Boolean checkPwd(@RequestBody Member member) {
-
 		return memberService.checkPwd(member);
 	}
 
 	@GetMapping("checkUid")
 	public Boolean checkUid (String uid) {
-
 		Boolean chk = memberService.checkUid(uid);
 		
 		return chk;
@@ -126,7 +115,6 @@ public class MemberController {
 
 	@GetMapping("checkName")
 	public Boolean checkName (String name) {
-
 		Boolean chk = memberService.checkName(name);
 		
 		return chk;
@@ -134,7 +122,6 @@ public class MemberController {
 
 	@PostMapping("checkEmail")
 	public Boolean checkEmailByUid (@RequestBody Member member){
-
 		Boolean chk = memberService.checkEmailByUid(member);
 		
 		return chk;
@@ -142,7 +129,6 @@ public class MemberController {
 
 	@PostMapping("checkEmailByName")
 	public Boolean checkEmailByName (@RequestBody Member member){
-
 		Boolean chk = memberService.checkEmailByName(member);
 		
 		return chk;
@@ -150,7 +136,6 @@ public class MemberController {
 
 	@PostMapping("updateImage")
 	public String updateImage(long id, List<MultipartFile> imgs){
-
 		memberService.updateImg(id, imgs);
 
 		return "ok";
@@ -158,7 +143,6 @@ public class MemberController {
 
 	@GetMapping("list")
 	public List<Member> getMemberList(){
-
 		return memberService.getMemberList();
 	}
 }

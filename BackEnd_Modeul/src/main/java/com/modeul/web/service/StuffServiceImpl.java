@@ -168,7 +168,6 @@ public class StuffServiceImpl implements StuffService {
 		}
 		return repository.findViewAll(null, categoryId, "reg_date", "desc", size, 0, memberId, dongCode);
 	}
-	
 
 	@Override
 	public Long getListCount(Long categoryId, int page) {
@@ -192,7 +191,6 @@ public class StuffServiceImpl implements StuffService {
 		Long result = countList <= 0 ? 0 : countList;
 		return result;
 	}
-
 
 	@Override
 	public List<StuffView> getRecentViewList(String query, Long categoryId, int page) {
@@ -224,12 +222,10 @@ public class StuffServiceImpl implements StuffService {
 		return repository.findViewAll(query, categoryId, "reg_date", "desc", size, 0, memberId, dongCode);
 	}
 
-
 	/* 공구상품 정보 수정 */
 	@Transactional
 	@Override
 	public int editStuff(Stuff stuff, List<MultipartFile> imgs) {
-
 		System.out.println(stuff);
 		System.out.println(imgs.get(0).getOriginalFilename());
 		int updateCount = repository.update(stuff);
@@ -257,7 +253,6 @@ public class StuffServiceImpl implements StuffService {
 				file.delete();
 			});
 		}
-
 		// uuid 추가
 		String uuid = UUID.randomUUID().toString();
 
@@ -275,7 +270,6 @@ public class StuffServiceImpl implements StuffService {
 					.build();
 
 			repository.uploadImage(image);
-
 			// 그 물리적 경로로 파일 저장하는 방법**
 			try {
 				img.transferTo(new File(savePath, uploadFileName));
@@ -283,9 +277,7 @@ public class StuffServiceImpl implements StuffService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		});
-		
 		return updateCount;
 	}
 
@@ -293,7 +285,6 @@ public class StuffServiceImpl implements StuffService {
 	@Transactional
 	@Override
 	public void deleteStuff(Long id) {
-
 		List<Image> images = repository.findImagebyId(id);
 
 		repository.delete(id);
@@ -317,10 +308,7 @@ public class StuffServiceImpl implements StuffService {
 	@Transactional
 	@Override
 	public void regCrawlingStuff(Stuff stuff) {
-
-
 		int insertCount = repository.insert(stuff);
-		
 
 		if (stuff.getImgurl() == "" || stuff.getImgurl() == null){
 			
@@ -340,13 +328,7 @@ public class StuffServiceImpl implements StuffService {
 		participation.setStuffId(stuff.getId());
 		participation.setMemberId(stuff.getMemberId());
 
-
 		int participationCount = participationRepository.insert(participation);
 		System.out.printf("participationCount: %d\n", participationCount);
-
-
 	}
-
-
-
 }

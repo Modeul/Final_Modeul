@@ -53,14 +53,12 @@ public class FavoriteController {
         @PathVariable("memberId") Long memberId){
 
         Favorite favoriteInfo = favoriteService.getListBystuffIdmemberId(stuffId,memberId);
-
         Map<String, Object> data = new HashMap<>();
         data.put("favoriteInfo", favoriteInfo);
         System.out.println(favoriteInfo);
-            return data;
 
+        return data;
     }
-
     
     //찜등록
     @PostMapping("/favorite")
@@ -68,8 +66,6 @@ public class FavoriteController {
         Long memberId = request.get("memberId");
         Long stuffId = request.get("stuffId");
         favoriteService.addFavorite(memberId,stuffId);
-        
-      
     }
     
     //찜해제

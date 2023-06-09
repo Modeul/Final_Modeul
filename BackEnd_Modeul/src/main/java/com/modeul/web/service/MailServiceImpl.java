@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 
-// MimeMessage, JavaMailSender에 대한 이해 필요
 @Service
 public class MailServiceImpl implements MailService {
 
@@ -68,7 +66,6 @@ public class MailServiceImpl implements MailService {
 
     }
 
-    // StringBuffer에 대한 이해 필요
     // 랜덤 인증 코드 전송
     @Override
     public String createKey() {

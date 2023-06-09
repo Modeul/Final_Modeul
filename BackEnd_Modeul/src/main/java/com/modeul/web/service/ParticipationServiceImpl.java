@@ -69,37 +69,25 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     public void saveCalResultMsg(Message message) {
-
         repository.putCalResultMsg(message);
     }
 
     @Override
     @Transactional
     public void calculatedAmount(Long stuffId, Map<Long, Integer> prices) {
-
-        // System.out.println(prices.keySet());
-
         for (Long key : prices.keySet()) {
             Integer value = prices.get(key);
             repository.insertCalculatedAmount(stuffId, key, value);
         }
-
-        
-
-        // ((Object) prices).keySet().stream().forEach(System.out::println);
-
-        
     }
 
     @Override
     public void inputAccount(Long stuffId, String account) {
-        
         repository.insertAccount(stuffId, account);        
     }
 
     @Override
     public String getAccount(Long leaderId) {
-        
         return repository.getAccount(leaderId);
     }
 

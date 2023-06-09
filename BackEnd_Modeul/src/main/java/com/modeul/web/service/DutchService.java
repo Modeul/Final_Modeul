@@ -13,7 +13,6 @@ public interface DutchService {
 
     List<Integer> getViewMonthBymemberId(Long memberId);
 
-    // void addAllDutch(Long stuffId, Map<Long, Integer> prices, Account account);
     void addAllDutch(Long stuffId, Map<String, Object> dutch);
 
     List<DutchView> getViewAllBymemberId(Long memberId);
