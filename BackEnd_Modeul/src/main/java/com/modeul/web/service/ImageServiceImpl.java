@@ -29,10 +29,4 @@ public class ImageServiceImpl implements ImageService{
 		
 		return repository.findListById(stuffId);
 	}
-
-	// @Override
-	// public List<Image> getList() {
-	// 	return repository.findAll();
-	// }
-
 }
