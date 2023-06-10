@@ -43,7 +43,6 @@ public class MessageServiceImpl implements MessageService {
 
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
 			chatLog = repository.findChatLogBystuffId(stuffId);
-			// repository.delete(stuffId);
 			// ---------- DB에서 chatLog를 얻어오는 서비스 실행!!!!! ----------
 
 			if (chatLog == null) { // DB에 chatLog가 비어있는 경우
@@ -108,7 +107,7 @@ public class MessageServiceImpl implements MessageService {
 			String json = objectMapper.writeValueAsString(chatList);
 			json = json.replace("\"", "\\\"");
 			System.out.println("!!!!!!!!!!!BUFFER DB에 저장!!!!!!!!!!!!!");
-			// System.out.println(json);
+			
 			Chat chatLog = new Chat(messageView.getStuffId(), json);
 			repository.update(chatLog);
 
