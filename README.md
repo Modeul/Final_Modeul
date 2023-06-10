@@ -181,7 +181,7 @@
 
 - 해결 방법 :
   - 채팅 메시지를 한 번 입력할 때마다 DB에 저장하는 방법과 파일에 저장하는 방법이 있었지만, 팀원들이 모두 채팅 메시지를 공유할 수 있고 DB에서 바로 확인할 수 있기 때문에 DB에 채팅 메시지를 저장하기로 했다.
-  - 또한, 채팅 메시지를 한번 입력할 때마다 DB에 바로 저장하기보다는 [페이지를 이동하거나 브라우저에서 벗어날 때, DB에 메시지를 저장](https://github.com/Modeul/Final_Modeul/blob/4e44a112174be8f3cf7948384fe8ed9f4a6f0233/BackEnd_Modeul/src/main/java/com/modeul/web/service/MessageServiceImpl.java#L30)하기로 했다.
+  - 또한, 채팅 메시지를 한번 입력할 때마다 DB에 바로 저장하기보다는 [페이지를 이동하거나 브라우저에서 벗어날 때, DB에 메시지를 저장](https://github.com/Modeul/Final_Modeul/blob/a7a06fa831e6572eed08ba1ac4c88a55eff76611/BackEnd_Modeul/src/main/java/com/modeul/web/service/MessageServiceImpl.java#L30)하기로 했다.
   - 이렇게 구현하면, 서버 요청의 빈번도와 DB의 IO 빈번도를 줄일 수 있어서 성능을 높일 수 있는 결과를 만들었다.
 
 <br>
@@ -216,7 +216,7 @@
 
 - 해결 방법 : 
   - DTO를 추가로 생성하여 처리하거나 JSON 데이터를 여러 객체로 나누어서 처리한다. 
-  - DTO를 사용하는 경우는 최초 개발 시점에서만 처리 가능하기 때문에 [JSON 데이터를 여러 객체로 나누어서 처리하는 방향](https://github.com/Modeul/Final_Modeul/blob/4e44a112174be8f3cf7948384fe8ed9f4a6f0233/BackEnd_Modeul/src/main/java/com/modeul/web/service/DutchServiceImpl.java#L45)으로 진행하였다.
+  - DTO를 사용하는 경우는 최초 개발 시점에서만 처리 가능하기 때문에 [JSON 데이터를 여러 객체로 나누어서 처리하는 방향](https://github.com/Modeul/Final_Modeul/blob/a7a06fa831e6572eed08ba1ac4c88a55eff76611/BackEnd_Modeul/src/main/java/com/modeul/web/service/DutchServiceImpl.java#L45)으로 진행하였다.
 
 <br>
 
